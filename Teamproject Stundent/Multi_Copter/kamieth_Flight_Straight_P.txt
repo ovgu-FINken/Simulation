@@ -1,0 +1,143 @@
+-- DO NOT WRITE CODE OUTSIDE OF THE if-then-end SECTIONS BELOW!! (unless the code is a function definition)
+-- function definition to shorten the code to output to additional console
+-- adapt this to output info to the existing console below at the status bar
+function output(text)
+	-- simAuxiliaryConsolePrint(out,text)
+	simAddStatusbarMessage(text)
+end
+function pid_control(controller)
+	local dt = simGetSimulationTimeStep()
+	local error = controller.desiredValue - controller.actualValue
+	controller.integral = controller.integral + error*dt
+	local derivative = (error - controller.previousError)/dt
+	local p_out = controller.Kp*error + controller.Ki*controller.integral + controller.Kd*derivative
+	controller.previousError = error
+	output("SP"..controller.desiredValue)
+	output("PV"..controller.actualValue)
+	output("POUT"..p_out)
+	return p_out
+end
+
+if (sim_call_type==sim_childscriptcall_initialization) then
+	-- this opens an additional debug window with 10 lines to write some
+	-- debug info to
+	-- out = simAuxiliaryConsoleOpen("Debug", 10, 1)
+	output("------------------------------------------------")
+	-- retrieve the copter's object handle
+	SimFinken = simGetObjectHandle("SimFinken")
+	-- retrieve the corresp. script
+	finkenScript = simGetScriptAssociatedWithObject(SimFinken)
+
+	-- this dummy contains the actual (higher level) control script
+	flyStraightDummy = simGetObjectHandle("flyStraightDummy")
+	flyStraightScript = simGetScriptAssociatedWithObject(flyStraightDummy)
+	-- this script can be customized using this pitch value
+	pitchAngle = simGetScriptSimulationParameter(flyStraightScript, "pitchAngle")
+
+	-- initialization of global variables used by different simulation steps
+	count = 0
+	pos = simGetObjectPosition(SimFinken, -1)
+	controllers = {}
+	controllers["ZV"] = {previousError = 0, integral = 0, desiredValue = 0.5, actualValue = pos[3],
+							Kp = 0.8, Ki = 0, Kd = 0}
+	controllers["ZA"] = {previousError = 0, integral = 0, desiredValue = 0, actualValue = 0,
+							Kp = 10, Ki = 0, Kd = 0}
+
+	controllers["XV"] = {previousError = 0, integral = 0, desiredValue = pos[1], actualValue = pos[1],
+							Kp = 0.8, Ki = 0, Kd = 0}
+	controllers["XP"] = {previousError = 0, integral = 0, desiredValue = 0, actualValue = 0,
+							Kp = 10, Ki = 0, Kd = 0}
+
+	controllers["YV"] = {previousError = 0, integral = 0, desiredValue = pos[2], actualValue = pos[2],
+							Kp = 0.8, Ki = 0, Kd = 0}
+	controllers["YR"] = {previousError = 0, integral = 0, desiredValue = 0, actualValue = 0,
+							Kp = 10, Ki = 0, Kd = 0}
+
+end
+
+
+if (sim_call_type==sim_childscriptcall_actuation) then
+	if(count == 40) then
+		-- controllers["ZV"].desiredValue = 1
+		controllers["YV"].desiredValue = controllers["YV"].desiredValue - 2
+		--output("Val"..controllers["YV"].desiredValue)
+	elseif(count == 140) then
+		--controllers["ZV"].desiredValue = 2
+		--controllers["ZV"].desiredValue = 2
+		controllers["XV"].desiredValue = controllers["XV"].desiredValue + 2
+	elseif(count == 240) then
+		controllers["YV"].desiredValue = controllers["YV"].desiredValue + 2
+	elseif(count == 340) then
+		controllers["XV"].desiredValue = controllers["XV"].desiredValue - 2
+		-- controllers["ZV"].desiredValue = 0.5
+		count = -60
+	end
+
+end
+
+
+if (sim_call_type==sim_childscriptcall_sensing) then
+	
+	local pos = simGetObjectPosition(SimFinken, -1)
+	-- Put your main SENSING code here
+
+	-- we test a p controller 2 times cascaded:
+	-- outer loop controls velocity via distance (v / s)
+	-- inner loop controls acceleration via velocity (a / v) a = throttle
+	-- store and label the current height value
+	local currentHeight = pos[3]
+	-- store the last current height, and overwrite current height with newest value
+	local lastHeight = controllers["ZV"].actualValue -- must be before setting the value
+	controllers["ZV"].actualValue = currentHeight
+	-- let the control algorithm run yielding velocity
+	local velocity = pid_control(controllers["ZV"])
+	
+	-- change set point to converge to new velocity and calculate delta height as current velocity
+	controllers["ZA"].desiredValue = velocity
+	controllers["ZA"].actualValue = (currentHeight - lastHeight) / simGetSimulationTimeStep()
+	-- yield acceleration / throttle force from controller
+	local acceleration = pid_control(controllers["ZA"])
+	local throttle = acceleration / 0.1962 + 50
+	-- same for pitch
+	local currentX = pos[1]
+	local lastX = controllers["XV"].actualValue
+	controllers["XV"].actualValue = currentX
+	local velocityX = pid_control(controllers["XV"])
+
+	controllers["XP"].desiredValue = velocityX
+	controllers["XP"].actualValue = (currentX - lastX) / simGetSimulationTimeStep()
+	local accelerationX = pid_control(controllers["XP"])
+	
+	-- as well as roll
+	local currentY = pos[2]
+	local lastY = controllers["YV"].actualValue
+	controllers["YV"].actualValue = currentY
+	output("YV")
+	local velocityY = pid_control(controllers["YV"])
+
+	controllers["YR"].desiredValue = velocityY
+	controllers["YR"].actualValue = (currentY - lastY) / simGetSimulationTimeStep()
+	local accelerationY = pid_control(controllers["YR"])
+
+	--output( "S(" .. desiredHeight .. "," .. currentHeight .. ") is " .. velocity)
+	--output( "V(" .. velocity .. "," .. currentVelocity .. ") is " .. acceleration)
+
+	-- actually not here
+	simSetScriptSimulationParameter(finkenScript, "throttle", throttle)
+	simSetScriptSimulationParameter(finkenScript, "pitch", math.deg(math.atan(accelerationX / throttle)))
+	simSetScriptSimulationParameter(finkenScript, "roll",  - math.deg(math.atan(accelerationY / throttle)))
+	count = count + 1
+	--local lastHeight = currentHeight
+	--currentHeight = simGetObjectPosition(SimFinken, -1)[3]
+	--currentVelocity = (currentHeight - lastHeight) / simGetSimulationTimeStep()
+	-- lin, ang = simGetObjectVelocity(SimFinken)
+	-- output("V "..lin[1])
+	-- velocityX = lin[1]
+end
+
+
+if (sim_call_type==sim_childscriptcall_cleanup) then
+
+	-- Put some restoration code here
+
+end
