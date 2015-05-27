@@ -22,7 +22,34 @@ function newPIDController(p, i, d)
 	}
 end
 
-function newFinken(object)
+function euclideanDistance(firstObject, secondObject)
+	local firstPosition = simGetObjectPosition(firstObject, -1)
+	local secondPosition = simGetObjectPosition(secondObject, -1)
+
+	local sum = (firstPosition[1] - secondPosition[1]) ^ 2 
+				+ (firstPosition[2] - secondPosition[2]) ^ 2 
+				+ (firstPosition[3] - secondPosition[3]) ^ 2
+
+	return math.sqrt(sum)
+end
+
+function detect(fromObject, toObjects)
+	local distances = {}
+
+	local fromPosition = simGetObjectPosition(fromObject, -1)
+
+	for _, toObject in ipairs(toObjects) do
+		table.insert(distances, euclideanDistance(fromObject, toObject))
+	end
+
+	return distances
+end
+
+function newFinken(object, otherObjects)
+	local State = {DEFAULT = "DEFAULT", CRASH = "CRASH", ESCAPE = "ESCAPE"}
+
+	local currentState = State.DEFAULT
+
 	local script = simGetScriptAssociatedWithObject(object)
 
 	local xPIDController = newPIDController(5, 0, 8)
@@ -37,53 +64,81 @@ function newFinken(object)
 
 	local previousPosition = simGetObjectPosition(object, -1)
 
+	local crashDistance = 0.3
+	local safetyDistance = 1
+
 	function move(targetPosition)
-		local currentPosition = simGetObjectPosition(object, -1)
+		if (not (currentState == State.CRASH)) then
+			currentState = State.DEFAULT
 
-		-- Manipulate X with pitch ajustment.
-		local targetX = targetPosition[1]
-		local currentX = currentPosition[1]
-		
-		local pitchError = xPIDController.adjust(targetX - currentX)
+			local distances = detect(object, otherObjects)
 
-		if (pitchError > maxPitch) then
-			pitchError = maxPitch
-		elseif (pitchError < minPitch) then
-			pitchError = minPitch
+			for _, distance in ipairs(distances) do
+				if (distance < crashDistance) then
+					currentState = State.CRASH
+					break
+				elseif (distance < safetyDistance) then
+					currentState = State.ESCAPE
+					targetPosition = previousPosition
+					break
+				end 
+			end
 		end
 
-		simSetScriptSimulationParameter(script, 'pitch', pitchError)
+		print(object .. ' ' .. currentState)
 
-		-- Manipulate Y with roll adjustment.
-		local targetY = targetPosition[2]
-		local currentY = currentPosition[2]
+		if (currentState == State.DEFAULT or currentState == State.ESCAPE) then
+			local currentPosition = simGetObjectPosition(object, -1)
+
+			-- Manipulate X with pitch ajustment.
+			local targetX = targetPosition[1]
+			local currentX = currentPosition[1]
+			
+			local pitchError = xPIDController.adjust(targetX - currentX)
+
+			if (pitchError > maxPitch) then
+				pitchError = maxPitch
+			elseif (pitchError < minPitch) then
+				pitchError = minPitch
+			end
+
+			simSetScriptSimulationParameter(script, 'pitch', pitchError)
+
+			-- Manipulate Y with roll adjustment.
+			local targetY = targetPosition[2]
+			local currentY = currentPosition[2]
+			
+			local rollError = -1 * yPIDController.adjust(targetY - currentY)
+
+			if (rollError > maxRoll) then
+				rollError = maxRoll
+			elseif (rollError < minRoll) then
+				rollError = minRoll
+			end
+
+			simSetScriptSimulationParameter(script, 'roll', rollError)
+
+			-- Manipulate Z with velocity-thorottle ajustment.
+			local timeStep = simGetSimulationTimeStep()
+
+			local targetZ = targetPosition[3]
+			local currentZ = currentPosition[3]
+			local previousZ = previousPosition[3]
+
+			local targetVelocity = (targetZ - currentZ) / timeStep
+			local currentVelocity = (currentZ - previousZ) / timeStep
 		
-		local rollError = -1 * yPIDController.adjust(targetY - currentY)
+			local throttleError = velocityPIDController.adjust(targetVelocity - currentVelocity)
 
-		if (rollError > maxRoll) then
-			rollError = maxRoll
-		elseif (rollError < minRoll) then
-			rollError = minRoll
+			simSetScriptSimulationParameter(script, 'throttle', 50 + throttleError)
+
+			-- Update previous position
+			if (currentState == State.DEFAULT) then
+				previousPosition = currentPosition
+			end
+		elseif (currentState == State.CRASH) then
+			simSetScriptSimulationParameter(script, 'throttle', 0)
 		end
-
-		simSetScriptSimulationParameter(script, 'roll', rollError)
-
-		-- Manipulate Z with velocity-thorottle ajustment.
-		local timeStep = simGetSimulationTimeStep()
-
-		local targetZ = targetPosition[3]
-		local currentZ = currentPosition[3]
-		local previousZ = previousPosition[3]
-
-		local targetVelocity = (targetZ - currentZ) / timeStep
-		local currentVelocity = (currentZ - previousZ) / timeStep
-	
-		local throttleError = velocityPIDController.adjust(targetVelocity - currentVelocity)
-
-		simSetScriptSimulationParameter(script, 'throttle', 50 + throttleError)
-
-		-- Update previous position
-		previousPosition = currentPosition
 	end
 
 	return {
