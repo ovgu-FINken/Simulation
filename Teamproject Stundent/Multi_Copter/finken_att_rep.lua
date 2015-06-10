@@ -13,14 +13,8 @@ function newFinken(object, otherObjects)
 
 	local previousPosition = simGetObjectPosition(object, -1)
 
-	function move(swarmTargetPosition)
-		local targetPosition = {0,0,0}
-		if(otherObjects) then
-			targetPosition = getTargetPosition(object, otherObjects, swarmTargetPosition)
-		else
-			targetPosition = swarmTargetPosition
-		end
-
+	function move(leaderTargetPosition)
+		local targetPosition = getTargetPosition(object, otherObjects, leaderTargetPosition)
 		local currentPosition = simGetObjectPosition(object, -1)
 
 		-- Manipulate X with pitch ajustment.
@@ -88,63 +82,77 @@ function newPIDController(p, i, d)
 end
 
 function getTargetPosition(object, otherObjects, targetPosition)
+	-- b > a
 	local a = 0.4
 	local b = 0.5
 	local c = 5
+
+	-- wCohesion + wTarget = 1
+	local wCohesion = 0.7
+	local wTarget = 0.3
+
 	local sum = {0, 0, 0}
 	
 	local objectPosition = simGetObjectPosition(object, -1)
 	
 	for _, otherObject in ipairs(otherObjects) do
-		local repultion = b * math.exp(- (euclideanDistance(object, otherObject) ^ 2) / c)
-		
 		local otherObjectPosition = simGetObjectPosition(otherObject, -1)
-		local vec = substractVectors(objectPosition, otherObjectPosition)
-		local func =  multiplyVectorByScalar(vec, repultion - a)
+
+		local repultion = b * math.exp(- euclideanDistance(objectPosition, otherObjectPosition, 2) / c)
 		
-		sum = addVectors(sum, func)
+		local vector = substractVectors(objectPosition, otherObjectPosition)
+		sum = addVectors(sum, multiplyVectorByScalar(vector, repultion - a))
 	end
 
-	--sum = multiplyVectorByScalar(sum, 0.7)
+	if (targetPosition) then
+		sum = multiplyVectorByScalar(sum, wCohesion)
+
+		local targetVector = substractVectors(targetPosition, objectPosition)
+		sum = addVectors(sum, multiplyVectorByScalar(targetVector, a * wTarget))
+	end
 
 	return addVectors(objectPosition, sum)
-
-	--local targetFunc = substractVectors(targetPosition, objectPosition)
-	
-	--return addVectors(result, multiplyVectorByScalar(targetFunc,a * 0.3))
 end
 
-function euclideanDistance(object1, object2)
-	local position1 = simGetObjectPosition(object1, -1)
-	local position2 = simGetObjectPosition(object2, -1)
+function euclideanDistance(position1, position2, power)
+	local vector = substractVectors(position1, position2)
+	local scalarProduct = scalarProduct(vector, vector)
 
-	local sum = (position1[1] - position2[1]) ^ 2 
-				+ (position1[2] - position2[2]) ^ 2
-				+ (position1[3] - position2[3]) ^ 2
+	power = power or 1
 
-	return math.sqrt(sum)
+	if (power == 2) then
+		return scalarProduct
+	else
+		return math.sqrt(scalarProduct) ^ power
+	end
 end
 
 function addVectors(vector1, vector2)
 	return {
-			vector1[1] + vector2[1], 
-			vector1[2] + vector2[2], 
-			vector1[3] + vector2[3]
-		}
+		vector1[1] + vector2[1], 
+		vector1[2] + vector2[2], 
+		vector1[3] + vector2[3]
+	}
 end
 
 function substractVectors(vector1, vector2)
 	return {
-			vector1[1] - vector2[1], 
-			vector1[2] - vector2[2], 
-			vector1[3] - vector2[3]
-		}
+		vector1[1] - vector2[1], 
+		vector1[2] - vector2[2], 
+		vector1[3] - vector2[3]
+	}
 end
 
 function multiplyVectorByScalar(vector, scalar)
 	return {
-			vector[1] * scalar,
-			vector[2] * scalar,
-			vector[3] * scalar
-		}
+		vector[1] * scalar,
+		vector[2] * scalar,
+		vector[3] * scalar
+	}
+end
+
+function scalarProduct(vector1, vector2)
+	return vector1[1] * vector2[1] 
+		+ vector1[2] * vector2[2] 
+		+ vector1[3] * vector2[3]
 end
