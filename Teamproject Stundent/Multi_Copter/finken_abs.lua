@@ -1,50 +1,3 @@
-function newPIDController(p, i, d)
-	local integral = 0
-	local previousError = 0
-
-	function adjust(error)
-		local timeStep = simGetSimulationTimeStep()
-
-		integral = integral + (error * timeStep)
-		local derivative = (error - previousError) / timeStep
-
-		if (previousError == 0) then
-			derivative = 0
-		end
-		
-		previousError = error
-
-		return (p * error) + (i * integral) + (d * derivative)
-	end
-
-	return {
-		adjust = adjust
-	}
-end
-
-function euclideanDistance(firstObject, secondObject)
-	local firstPosition = simGetObjectPosition(firstObject, -1)
-	local secondPosition = simGetObjectPosition(secondObject, -1)
-
-	local sum = (firstPosition[1] - secondPosition[1]) ^ 2 
-				+ (firstPosition[2] - secondPosition[2]) ^ 2 
-				+ (firstPosition[3] - secondPosition[3]) ^ 2
-
-	return math.sqrt(sum)
-end
-
-function detect(fromObject, toObjects)
-	local distances = {}
-
-	local fromPosition = simGetObjectPosition(fromObject, -1)
-
-	for _, toObject in ipairs(toObjects) do
-		table.insert(distances, euclideanDistance(fromObject, toObject))
-	end
-
-	return distances
-end
-
 function newFinken(object, otherObjects)
 	local State = {DEFAULT = "DEFAULT", CRASH = "CRASH", ESCAPE = "ESCAPE"}
 
@@ -52,8 +5,8 @@ function newFinken(object, otherObjects)
 
 	local script = simGetScriptAssociatedWithObject(object)
 
-	local xPIDController = newPIDController(5, 0, 8)
-	local yPIDController = newPIDController(5, 0, 8)
+	local xPIDController = newPIDController(6, 0, 8)
+	local yPIDController = newPIDController(6, 0, 8)
 	local velocityPIDController = newPIDController(1, 0, 1)
 
 	local maxPitch = 30
@@ -85,7 +38,7 @@ function newFinken(object, otherObjects)
 			end
 		end
 
-		print(object .. ' ' .. currentState)
+		--print(object .. ' ' .. currentState)
 
 		if (currentState == State.DEFAULT or currentState == State.ESCAPE) then
 			local currentPosition = simGetObjectPosition(object, -1)
@@ -108,7 +61,7 @@ function newFinken(object, otherObjects)
 			local targetY = targetPosition[2]
 			local currentY = currentPosition[2]
 			
-			local rollError = -1 * yPIDController.adjust(targetY - currentY)
+			local rollError = yPIDController.adjust(targetY - currentY)
 
 			if (rollError > maxRoll) then
 				rollError = maxRoll
@@ -144,4 +97,51 @@ function newFinken(object, otherObjects)
 	return {
 		move = move
 	}
+end
+
+function newPIDController(p, i, d)
+	local integral = 0
+	local previousError = 0
+
+	function adjust(error)
+		local timeStep = simGetSimulationTimeStep()
+
+		integral = integral + (error * timeStep)
+		local derivative = (error - previousError) / timeStep
+
+		if (previousError == 0) then
+			derivative = 0
+		end
+		
+		previousError = error
+
+		return (p * error) + (i * integral) + (d * derivative)
+	end
+
+	return {
+		adjust = adjust
+	}
+end
+
+function detect(fromObject, toObjects)
+	local distances = {}
+
+	local fromPosition = simGetObjectPosition(fromObject, -1)
+
+	for _, toObject in ipairs(toObjects) do
+		table.insert(distances, euclideanDistance(fromObject, toObject))
+	end
+
+	return distances
+end
+
+function euclideanDistance(firstObject, secondObject)
+	local firstPosition = simGetObjectPosition(firstObject, -1)
+	local secondPosition = simGetObjectPosition(secondObject, -1)
+
+	local sum = (firstPosition[1] - secondPosition[1]) ^ 2 
+				+ (firstPosition[2] - secondPosition[2]) ^ 2 
+				+ (firstPosition[3] - secondPosition[3]) ^ 2
+
+	return math.sqrt(sum)
 end
