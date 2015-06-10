@@ -57,10 +57,10 @@ function newFinken(object, otherObjects)
 
 	local script = simGetScriptAssociatedWithObject(object)
 
-	local xPIDController = newPIDController(0.5, 0, 0)
-	local pitchPIDController = newPIDController(2, 0, 0)
-	local yPIDController = newPIDController(0.5, 0, 0)
-	local rollPIDController = newPIDController(2, 0, 0)
+	local xPIDController = newPIDController(0.7, 0, 0)
+	local pitchPIDController = newPIDController(1, 0, 0)
+	local yPIDController = newPIDController(0.7, 0, 0)
+	local rollPIDController = newPIDController(1, 0, 0)
 	
 	local zPIDController = newPIDController(0.5, 0, 0)
 	local throttlePIDController = newPIDController(2, 0, 0)
@@ -205,7 +205,7 @@ function newFinken(object, otherObjects)
 		if(previousDistance == nil or previousDistance > distance) then
 			rndYaw = rnd * 5
 		else
-			rndYaw = rnd * 45
+			rndYaw = rnd * 120
 		end
 		yawDirection = yawDirection + rndYaw
 
