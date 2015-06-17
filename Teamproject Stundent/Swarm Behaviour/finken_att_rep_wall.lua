@@ -12,6 +12,8 @@ function newFinken(object, suffix, otherObjects)
 	local minRoll = -30
 
 	local previousPosition = simGetObjectPosition(object, -1)
+	
+	iterationCount = 0
 
 	function move(leaderTargetPosition)
 		local targetPosition = getTargetPosition(object,suffix)
@@ -98,22 +100,37 @@ function getTargetPosition(object, suffix)
 	
 	local otherObjectPositions = {}
 	
+	local hasDetectedSomething = false
+	
 	if(frontDist) then
 		table.insert(otherObjectPositions, {objectPosition[1] - frontDist, objectPosition[2], objectPosition[3]})
+		hasDetectedSomething = true
 	end
 	
 	if(backDist) then
 		table.insert(otherObjectPositions, {objectPosition[1] + backDist, objectPosition[2], objectPosition[3]})
+		hasDetectedSomething = true
 	end
 	
 	if(leftDist) then
 		table.insert(otherObjectPositions, {objectPosition[1], objectPosition[2] - leftDist, objectPosition[3]})
+		hasDetectedSomething = true
 	end
 	
 	if(rightDist) then
 		table.insert(otherObjectPositions, {objectPosition[1], objectPosition[2] + rightDist, objectPosition[3]})
+		hasDetectedSomething = true
 	end
-
+		
+	if(hasDetectedSomething == false) then
+		iterationCount = iterationCount + 1
+		if(iterationCount % 5 == 0) then
+			table.insert(otherObjectPositions, getRandomDirection(objectPosition))
+			--table.insert(otherObjectPositions, getRandomDirection(objectPosition, frontDist, backDist, leftDist, rightDist))
+			simAddStatusbarMessage("Finken" .. suffix .. " Random Mode")
+		end
+	end
+		
 	-- b > a
 	local a = 0.4
 	local b = 0.5
@@ -129,6 +146,16 @@ function getTargetPosition(object, suffix)
 	end
 
 	return addVectors(objectPosition, sum)
+end
+
+function getRandomDirection(objectPosition)
+	local randomDirections = { {objectPosition[1] - 2, objectPosition[2], objectPosition[3]},
+							   {objectPosition[1] + 2, objectPosition[2], objectPosition[3]},
+							   {objectPosition[1], objectPosition[2] - 2, objectPosition[3]},
+							   {objectPosition[1], objectPosition[2] + 2, objectPosition[3]}}
+	
+	local index = math.random(4)
+	return randomDirections[index]
 end
 
 function euclideanDistance(position1, position2, power)
