@@ -116,11 +116,11 @@ function ajustConfig(config)
 
 	-- b > a, wCohesion + wTarget = 1
 	config.attr_rep = config.attr_rep or {}
-	config.attr_rep.a = config.attr_rep.a or 0.4
-	config.attr_rep.b = config.attr_rep.b or 0.5
+	config.attr_rep.a = config.attr_rep.a or 0.6
+	config.attr_rep.b = config.attr_rep.b or 0.8
 	config.attr_rep.c = config.attr_rep.c or 5
-	config.attr_rep.wCohesion = config.attr_rep.wCohesion or 0.3
-	config.attr_rep.wTarget = config.attr_rep.wTarget or 0.7
+	config.attr_rep.wCohesion = config.attr_rep.wCohesion or 0.7
+	config.attr_rep.wTarget = config.attr_rep.wTarget or 0.3
 
 	return config
 end
