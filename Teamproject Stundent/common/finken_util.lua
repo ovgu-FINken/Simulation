@@ -8,14 +8,15 @@ function newFinken(config)
 		front = simGetObjectHandle(getNameWithSuffix(config.front_sensor, config.suffix)),
 		back = simGetObjectHandle(getNameWithSuffix(config.back_sensor, config.suffix)),
 		left = simGetObjectHandle(getNameWithSuffix(config.left_sensor, config.suffix)),
-		right = simGetObjectHandle(getNameWithSuffix(config.right_sensor, config.suffix))
+		right = simGetObjectHandle(getNameWithSuffix(config.right_sensor, config.suffix)),
+		bottom = simGetObjectHandle(getNameWithSuffix(config.bottom_sensor, config.suffix))
 	}
 
 	local actuate = function()
 		simAddStatusbarMessage("Mode is NOT supported: " .. config.mode)
 	end
 
-	if (config.mode == "attr_rep_sens_abs" or 
+	if (config.mode == "attr_rep_sens_rel" or 
 		config.mode == "attr_rep_dist_abs" or 
 		config.mode == "test_abs" or 
 		config.mode == "test_rel")
@@ -37,8 +38,9 @@ function newFinken(config)
 			local nextPosition
 			local currentPosition
 			
-			if (config.mode == "attr_rep_sens_abs") then
+			if (config.mode == "attr_rep_sens_rel") then
 				nextPosition = getNextPositionAttrRepSensRel(object, sensors, config, iterationCount)
+				currentPosition = {0, 0, 0}
 			elseif (config.mode == "attr_rep_dist_abs") then
 				nextPosition = getNextPositionAttrRepDistAbs(object, otherObjects, config)
 			elseif (config.mode == "test_abs") then
@@ -68,7 +70,7 @@ end
 function ajustConfig(config)
 	config = config or {}
 
-	config.mode = config.mode or "attr_rep_sens_abs"
+	config.mode = config.mode or "attr_rep_sens_rel"
 
 	config.name = config.name or "SimFinken"
 	config.suffix = config.suffix or ""
@@ -77,6 +79,7 @@ function ajustConfig(config)
 	config.back_sensor = config.back_sensor or "SimFinken_sensor_back"
 	config.left_sensor = config.left_sensor or "SimFinken_sensor_left"
 	config.right_sensor = config.right_sensor or "SimFinken_sensor_right"
+	config.bottom_sensor = config.bottom_sensor or "SimFinken_sensor_bottom"
 
 	config.other_suffixes = config.other_suffixes or {}
 	config.target = config.target or nil
@@ -118,7 +121,7 @@ function ajustConfig(config)
 	config.attr_rep = config.attr_rep or {}
 	config.attr_rep.a = config.attr_rep.a or 0.6
 	config.attr_rep.b = config.attr_rep.b or 0.8
-	config.attr_rep.c = config.attr_rep.c or 5
+	config.attr_rep.c = config.attr_rep.c or 8
 	config.attr_rep.wCohesion = config.attr_rep.wCohesion or 0.7
 	config.attr_rep.wTarget = config.attr_rep.wTarget or 0.3
 
@@ -130,12 +133,16 @@ function getNextPositionAttrRepSensRel(object, sensors, config, iterationCount)
 	local _, backDist = simReadProximitySensor(sensors.back)
 	local _, leftDist = simReadProximitySensor(sensors.left)
 	local _, rightDist = simReadProximitySensor(sensors.right)
+	local _, bottomDist = simReadProximitySensor(sensors.bottom)
+
+	if (config.suffix == "") then
+		print((frontDist or "f") .. " " .. (backDist or "b") .. " " .. (leftDist or "l") .. " " .. (rightDist or "r") .. " " .. (bottomDist or "bt"))
+	end
 	
-	local objectPosition = simGetObjectPosition(object, -1);
-	objectPosition[3] = 1.5
+	local objectPosition = {0, 0, 0}
+	objectPosition[3] = 2 - (bottomDist or 2)
 	
 	local otherObjectPositions = {}
-	
 	local hasDetectedSomething = false
 	
 	if(frontDist) then
@@ -159,7 +166,7 @@ function getNextPositionAttrRepSensRel(object, sensors, config, iterationCount)
 	end
 		
 	if(hasDetectedSomething == false) then
-		if(iterationCount % 5 == 0) then
+		if(iterationCount % 10 == 0) then
 			table.insert(otherObjectPositions, getRandomDirection(objectPosition))
 		end
 	end
@@ -238,10 +245,10 @@ end
 
 function getRandomDirection(position)
 	local directions = {
-		{position[1] - 2, position[2], position[3]},
-		{position[1] + 2, position[2], position[3]},
-		{position[1], position[2] - 2, position[3]},
-		{position[1], position[2] + 2, position[3]}
+		{position[1] - 0.5, position[2], position[3]},
+		{position[1] + 0.5, position[2], position[3]},
+		{position[1], position[2] - 0.5, position[3]},
+		{position[1], position[2] + 0.5, position[3]}
 	}
 	
 	return directions[math.random(4)]
