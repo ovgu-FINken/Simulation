@@ -12,6 +12,13 @@ function newFinken(config)
 		bottom = simGetObjectHandle(getNameWithSuffix(config.bottom_sensor, config.suffix))
 	}
 
+	local context = {
+		iterationCount = 0,
+		pitch = 0,
+		roll = 0,
+		randomDirection = {0, 0, 0}
+	}
+
 	local actuate = function()
 		simAddStatusbarMessage("Mode is NOT supported: " .. config.mode)
 	end
@@ -30,16 +37,12 @@ function newFinken(config)
 			table.insert(otherObjects, simGetObjectHandle(getNameWithSuffix(config.name, otherObjectSuffix)))
 		end
 
-		local iterationCount = 0
-
 		actuate = function()
-			iterationCount = iterationCount + 1
-
 			local nextPosition
 			local currentPosition
 			
 			if (config.mode == "attr_rep_sens_rel") then
-				nextPosition = getNextPositionAttrRepSensRel(object, sensors, config, iterationCount)
+				nextPosition = getNextPositionAttrRepSensRel(object, sensors, context, config)
 				currentPosition = {0, 0, 0}
 			elseif (config.mode == "attr_rep_dist_abs") then
 				nextPosition = getNextPositionAttrRepDistAbs(object, otherObjects, config)
@@ -56,9 +59,11 @@ function newFinken(config)
 			local positionError = substractVectors(nextPosition, currentPosition)
 
 			-- Ajust X with PITCH, Y with ROLL, Z with THROTTLE.
-			ajustParameter(positionError[1], xPIDController, config.pitch, script)
-			ajustParameter(positionError[2], yPIDController, config.roll, script)
+			context.pitch = ajustParameter(positionError[1], xPIDController, config.pitch, script)
+			context.roll = ajustParameter(positionError[2], yPIDController, config.roll, script)
 			ajustParameter(positionError[3], zPIDController, config.throttle, script)
+
+			context.iterationCount = context.iterationCount + 1
 		end
 	end
 
@@ -85,14 +90,14 @@ function ajustConfig(config)
 	config.target = config.target or nil
 
 	config.x_pid = config.x_pid or {}
-	config.x_pid.p = config.x_pid.p or 6
+	config.x_pid.p = config.x_pid.p or 4
 	config.x_pid.i = config.x_pid.i or 0
-	config.x_pid.d = config.x_pid.d or 8
+	config.x_pid.d = config.x_pid.d or 6
 
 	config.y_pid = config.y_pid or {}
-	config.y_pid.p = config.y_pid.p or 6
+	config.y_pid.p = config.y_pid.p or 4
 	config.y_pid.i = config.y_pid.i or 0
-	config.y_pid.d = config.y_pid.d or 8
+	config.y_pid.d = config.y_pid.d or 6
 
 	config.z_pid = config.z_pid or {}
 	config.z_pid.p = config.z_pid.p or 6
@@ -101,14 +106,14 @@ function ajustConfig(config)
 
 	config.pitch = config.pitch or {}
 	config.pitch.name = config.pitch.name or "pitch"
-	config.pitch.min = config.pitch.min or -30
-	config.pitch.max = config.pitch.max or 30
+	config.pitch.min = config.pitch.min or -15
+	config.pitch.max = config.pitch.max or 15
 	config.pitch.default = config.pitch.default or 0
 
 	config.roll = config.roll or {}
 	config.roll.name = config.roll.name or "roll"
-	config.roll.min = config.roll.min or -30
-	config.roll.max = config.roll.max or 30
+	config.roll.min = config.roll.min or -15
+	config.roll.max = config.roll.max or 15
 	config.roll.default = config.roll.default or 0
 
 	config.throttle = config.throttle or {}
@@ -120,15 +125,20 @@ function ajustConfig(config)
 	-- b > a, wCohesion + wTarget = 1
 	config.attr_rep = config.attr_rep or {}
 	config.attr_rep.a = config.attr_rep.a or 0.6
-	config.attr_rep.b = config.attr_rep.b or 0.8
-	config.attr_rep.c = config.attr_rep.c or 8
-	config.attr_rep.wCohesion = config.attr_rep.wCohesion or 0.7
-	config.attr_rep.wTarget = config.attr_rep.wTarget or 0.3
+	config.attr_rep.b = config.attr_rep.b or 0.9
+	config.attr_rep.c = config.attr_rep.c or 4
+	config.attr_rep.wCohesion = config.attr_rep.wCohesion or 0.9
+	config.attr_rep.wTarget = config.attr_rep.wTarget or 0.1
+
+	config.sens_rel = config.sens_rel or {}
+	config.sens_rel.height = config.sens_rel.height or 2.4
+	config.sens_rel.random_change = config.sens_rel.random_change or 1
+	config.sens_rel.random_iterations = config.sens_rel.random_iterations or 10
 
 	return config
 end
 
-function getNextPositionAttrRepSensRel(object, sensors, config, iterationCount)
+function getNextPositionAttrRepSensRel(object, sensors, context, config)
 	local _, frontDist = simReadProximitySensor(sensors.front)
 	local _, backDist = simReadProximitySensor(sensors.back)
 	local _, leftDist = simReadProximitySensor(sensors.left)
@@ -140,38 +150,63 @@ function getNextPositionAttrRepSensRel(object, sensors, config, iterationCount)
 	end
 	
 	local objectPosition = {0, 0, 0}
-	objectPosition[3] = 2 - (bottomDist or 2)
-	
+
 	local otherObjectPositions = {}
-	local hasDetectedSomething = false
-	
-	if(frontDist) then
-		table.insert(otherObjectPositions, {objectPosition[1] - frontDist, objectPosition[2], objectPosition[3]})
-		hasDetectedSomething = true
-	end
-	
-	if(backDist) then
-		table.insert(otherObjectPositions, {objectPosition[1] + backDist, objectPosition[2], objectPosition[3]})
-		hasDetectedSomething = true
-	end
-	
-	if(leftDist) then
-		table.insert(otherObjectPositions, {objectPosition[1], objectPosition[2] - leftDist, objectPosition[3]})
-		hasDetectedSomething = true
-	end
-	
-	if(rightDist) then
-		table.insert(otherObjectPositions, {objectPosition[1], objectPosition[2] + rightDist, objectPosition[3]})
-		hasDetectedSomething = true
-	end
-		
-	if(hasDetectedSomething == false) then
-		if(iterationCount % 10 == 0) then
-			table.insert(otherObjectPositions, getRandomDirection(objectPosition))
-		end
+
+	local frontWall = false
+	local backWall = false
+	local leftWall = false
+	local rightWall = false
+
+
+	if (areWallDistances(leftDist, frontDist, backDist) or areWallDistances(rightDist, frontDist, backDist)) then
+		frontWall = true
+		backWall = true
 	end
 
-	return getAttractionRepulsionPosition(objectPosition, otherObjectPositions, nil, config.attr_rep)
+	if (areWallDistances(frontDist, leftDist, rightDist) or areWallDistances(backDist, leftDist, rightDist)) then
+		leftWall = true
+		rightWall = true
+	end
+
+	if(frontDist and not frontWall) then
+		table.insert(otherObjectPositions, {-frontDist, 0, 0})
+	end
+	
+	if(backDist and not backWall) then
+		table.insert(otherObjectPositions, {backDist, 0, 0})
+	end
+	
+	if(leftDist and not leftWall) then
+		table.insert(otherObjectPositions, {0, -leftDist, 0})
+	end
+	
+	if(rightDist and not rightWall) then
+		table.insert(otherObjectPositions, {0, rightDist, 0})
+	end
+
+	if(context.iterationCount % config.sens_rel.random_iterations == 0) then
+		local change = config.sens_rel.random_change
+		if (context.iterationCount > 0 and not frontDist and not backDist and not leftDist and not rightDist) then
+			change = 4 * change
+		end
+
+		context.randomDirection = {
+			change * math.random(-1, 1), 
+			change * math.random(-1, 1), 
+			0
+		}
+	end
+
+	if (bottomDist) then
+		objectPosition[3] = config.sens_rel.height - (bottomDist / math.sqrt(1 + math.tan(math.rad(context.pitch)) ^ 2 + math.tan(math.rad(context.roll)) ^ 2 ))
+	end
+
+	return getAttractionRepulsionPosition(objectPosition, otherObjectPositions, context.randomDirection, config.attr_rep)
+end
+
+function areWallDistances(h, a, b)
+	return h and a and b and (h - a * b /math.sqrt(a ^ 2 + b ^ 2)) < 0.05
 end
 
 function getNextPositionAttrRepDistAbs(object, otherObjects, config)
@@ -243,17 +278,6 @@ function scalarProduct(vector1, vector2)
 		+ vector1[3] * vector2[3]
 end
 
-function getRandomDirection(position)
-	local directions = {
-		{position[1] - 0.5, position[2], position[3]},
-		{position[1] + 0.5, position[2], position[3]},
-		{position[1], position[2] - 0.5, position[3]},
-		{position[1], position[2] + 0.5, position[3]}
-	}
-	
-	return directions[math.random(4)]
-end
-
 function getNameWithSuffix(name, suffix)
 	if (suffix == nil or suffix == "") then
 		return name
@@ -272,6 +296,8 @@ function ajustParameter(error, pidController, config, script)
 	end
 
 	simSetScriptSimulationParameter(script, config.name,  value)
+
+	return value
 end
 
 function newPIDController(config)
