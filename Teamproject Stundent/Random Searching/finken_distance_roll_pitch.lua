@@ -211,68 +211,16 @@ function newFinken(object, otherObjects)
 
 		simAddStatusbarMessage("YAW:" .. yawDirection)
 		simAddStatusbarMessage("DIST" .. distance)
+		
+		local target = {math.cos(math.rad(yawDirection)),
+						math.sin(math.rad(yawDirection)),
+						0}
+						
+
+		simSetObjectPosition(RelTarget, simGetObjectHandle("SimFinken"), {0, target[2], target[3]})
+		move(target)
 		-- Manipulate Z with velocity-thorottle adjustment.
-
-		local targetZ = height
-		local currentZ = currentPosition[3]
-		local previousZ = previousPosition[3]
-
-		local velocityZError = zPIDController.adjust(targetZ - currentZ)
-		local currentVelocity = (currentZ - previousZ) / timeStep
-	
-		local throttleError = throttlePIDController.adjust(velocityZError - currentVelocity)
-		local throttle = 50 + throttleError
-		simAddStatusbarMessage("H"..targetZ.."cH"..currentZ.."pH"..previousZ.."vE"..velocityZError)
-		simAddStatusbarMessage("cV"..currentVelocity.."TH"..throttle)
 		
-		simSetScriptSimulationParameter(script, 'throttle', throttle)
-		simSetGraphUserData(graphParams, "TH", throttle)
-		-- Manipulate X with pitch ajustment.
-		local targetX = math.cos(math.rad(yawDirection))
-		local currentX = 0
-		local lastTargetX = xPIDController.lastDesired or targetX
-	
-		velocityXError = xPIDController.adjust(targetX - currentX)
-
-		xPIDController.lastDesired = targetX
-		local currentVelocityX = (lastTargetX - targetX) / timeStep
-
-		local pitchError = pitchPIDController.adjust(velocityXError - currentVelocityX)
-		local pitch = math.deg(math.atan(pitchError / throttle))
-		if (pitch > maxPitch) then
-			pitch = maxPitch
-		elseif (pitch < minPitch) then
-			pitch = minPitch
-		end
-
-		simSetScriptSimulationParameter(script, 'pitch', pitch)
-		simSetGraphUserData(graphParams, "PI", pitch)
-		-- Manipulate Y with roll adjustment.
-		local targetY = math.sin(math.rad(yawDirection))
-		local currentY = 0
-		local lastTargetY = yPIDController.lastDesired or targetY
-		
-		local velocityYError = yPIDController.adjust(targetY - currentY)
-		yPIDController.lastDesired = targetY
-		local currentVelocityY = (lastTargetY - targetY) / timeStep
-		if(math.abs(lastTargetY - targetY) > 0.5) then
-			currentVelocityY = velocityYError
-			-- wait for next round, when "same" target is used
-		end
-		local rollError = rollPIDController.adjust(velocityYError - currentVelocityY)
-		local roll = math.deg(math.atan(rollError / throttle))
-		if (roll > maxRoll) then
-			roll = maxRoll
-		elseif (roll < minRoll) then
-			roll = minRoll
-		end
-
-		simSetScriptSimulationParameter(script, 'roll', roll)
-		
-		simSetGraphUserData(graphParams, "RO", roll)
-
-		simSetObjectPosition(RelTarget, simGetObjectHandle("SimFinken"), {0, targetX, targetY})
-		previousPosition = currentPosition
 		previousDistance = distance
 	end
 	return {
