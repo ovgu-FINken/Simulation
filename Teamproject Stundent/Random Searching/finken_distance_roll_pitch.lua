@@ -57,9 +57,9 @@ function newFinken(object, otherObjects)
 
 	local script = simGetScriptAssociatedWithObject(object)
 
-	local xPIDController = newPIDController(0.7, 0, 0)
+	local xPIDController = newPIDController(1.4, 0, 0)
 	local pitchPIDController = newPIDController(1, 0, 0)
-	local yPIDController = newPIDController(0.7, 0, 0)
+	local yPIDController = newPIDController(1.4, 0, 0)
 	local rollPIDController = newPIDController(1, 0, 0)
 	
 	local zPIDController = newPIDController(0.5, 0, 0)
@@ -76,6 +76,11 @@ function newFinken(object, otherObjects)
 	local previousDistance = nil
 	local yawDirection = 0
 	local RelTarget = simGetObjectHandle("SimRelTarget")
+	
+	local previousPitch = 0
+	local previousRoll = 0
+	local previousLightness = 0
+	
 	local crashDistance = 0.3
 	local safetyDistance = 1
 
@@ -112,7 +117,7 @@ function newFinken(object, otherObjects)
 			local currentRelative = transformToLocalSystem(object,currentPosition)
 			local targetRelative = transformToLocalSystem(object,targetPosition)
 			
-			-- Manipulate Z with velocity-thorottle ajustment.
+			-- Manipulate Z with velocity-throttle adjustment.
 
 			local targetZ = targetPosition[3]
 			local currentZ = currentPosition[3]
@@ -126,7 +131,7 @@ function newFinken(object, otherObjects)
 			
 			simSetScriptSimulationParameter(script, 'throttle', throttle)
 			
-			-- Manipulate X with pitch ajustment.
+			-- Manipulate X with pitch adjustment.
 			local targetX = targetRelative[2]
 			local currentX = currentRelative[2]
 			local lastTargetX = xPIDController.lastDesired or targetX
@@ -223,9 +228,43 @@ function newFinken(object, otherObjects)
 		
 		previousDistance = distance
 	end
+	
+	function followLight(currentLightness, height)
+		simAddStatusbarMessage("LIGHT:" .. currentLightness)
+		local timeStep = simGetSimulationTimeStep()
+		local currentPosition = simGetObjectPosition(object, -1)
+		local currentRelative = transformToLocalSystem(object,currentPosition)
+		
+		local rnd = math.random()-0.5
+		local rndYaw = 0
+		if(previousLightness > currentLightness) then
+			rndYaw = rnd * 5
+			simAddStatusbarMessage("GOOD DELTA:"..rndYaw)
+		else
+			rndYaw = rnd * 120
+			simAddStatusbarMessage(" BAD DELTA:"..rndYaw)
+		end
+		yawDirection = yawDirection + rndYaw
+
+		--simAddStatusbarMessage("YAW:" .. yawDirection)
+		--simAddStatusbarMessage("DIST" .. currentLightness)
+		
+		local target = {math.cos(math.rad(yawDirection)),
+						math.sin(math.rad(yawDirection)),
+						height}
+						
+
+		simSetObjectPosition(RelTarget, simGetObjectHandle("SimFinken"), {0, target[2], target[3]})
+		move(target)
+		-- Manipulate Z with velocity-thorottle adjustment.
+		
+		previousLightness = currentLightness
+	end
+	
 	return {
 		move = move,
 		randomWalk = randomWalk,
+		followLight = followLight,
 		transformToLocalSystem = transformToLocalSystem
 	}
 end
