@@ -100,9 +100,9 @@ function ajustConfig(config)
 	config.y_pid.d = config.y_pid.d or 6
 
 	config.z_pid = config.z_pid or {}
-	config.z_pid.p = config.z_pid.p or 6
+	config.z_pid.p = config.z_pid.p or 4
 	config.z_pid.i = config.z_pid.i or 0
-	config.z_pid.d = config.z_pid.d or 8
+	config.z_pid.d = config.z_pid.d or 6
 
 	config.pitch = config.pitch or {}
 	config.pitch.name = config.pitch.name or "pitch"
@@ -145,19 +145,19 @@ function getNextPositionAttrRepSensRel(object, sensors, context, config)
 	local _, rightDist = simReadProximitySensor(sensors.right)
 	local _, bottomDist = simReadProximitySensor(sensors.bottom)
 
+	--[[
 	if (config.suffix == "") then
 		print((frontDist or "f") .. " " .. (backDist or "b") .. " " .. (leftDist or "l") .. " " .. (rightDist or "r") .. " " .. (bottomDist or "bt"))
 	end
+	--]]
 	
 	local objectPosition = {0, 0, 0}
-
 	local otherObjectPositions = {}
 
 	local frontWall = false
 	local backWall = false
 	local leftWall = false
 	local rightWall = false
-
 
 	if (areWallDistances(leftDist, frontDist, backDist) or areWallDistances(rightDist, frontDist, backDist)) then
 		frontWall = true
@@ -206,7 +206,7 @@ function getNextPositionAttrRepSensRel(object, sensors, context, config)
 end
 
 function areWallDistances(h, a, b)
-	return h and a and b and (h - a * b /math.sqrt(a ^ 2 + b ^ 2)) < 0.05
+	return h and a and b and (h - a * b / math.sqrt(a ^ 2 + b ^ 2)) < 0.05
 end
 
 function getNextPositionAttrRepDistAbs(object, otherObjects, config)
