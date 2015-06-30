@@ -13,58 +13,38 @@ function newFinken(config)
 	}
 
 	local context = {
-		iterationCount = 0,
+		randomDirection = {0, 0, 0},
 		pitch = 0,
 		roll = 0,
-		randomDirection = {0, 0, 0}
+		yaw = 0,
+		yawIterations = 0,
+		iterations = 0
 	}
 
-	local actuate = function()
-		simAddStatusbarMessage("Mode is NOT supported: " .. config.mode)
-	end
+	local xPIDController = newPIDController(config.x_pid)
+	local yPIDController = newPIDController(config.y_pid)
+	local zPIDController = newPIDController(config.z_pid)
 
-	if (config.mode == "attr_rep_sens_rel" or 
-		config.mode == "attr_rep_dist_abs" or 
-		config.mode == "test_abs" or 
-		config.mode == "test_rel")
-	then
-		local xPIDController = newPIDController(config.x_pid)
-		local yPIDController = newPIDController(config.y_pid)
-		local zPIDController = newPIDController(config.z_pid)
+	function actuate()
+		local nextPosition, yawChange = getNextPosition(sensors, context, config)
 
-		local otherObjects = {}
-		for _, otherObjectSuffix in ipairs(config.other_suffixes) do
-			table.insert(otherObjects, simGetObjectHandle(getNameWithSuffix(config.name, otherObjectSuffix)))
-		end
+		-- Ajust X with PITCH, Y with ROLL, Z with THROTTLE.
+		context.pitch = ajustParameter(nextPosition[1], xPIDController, config.pitch, script)
+		context.roll = ajustParameter(nextPosition[2], yPIDController, config.roll, script)
+		ajustParameter(nextPosition[3], zPIDController, config.throttle, script)
 
-		actuate = function()
-			local nextPosition
-			local currentPosition
-			
-			if (config.mode == "attr_rep_sens_rel") then
-				nextPosition = getNextPositionAttrRepSensRel(object, sensors, context, config)
-				currentPosition = {0, 0, 0}
-			elseif (config.mode == "attr_rep_dist_abs") then
-				nextPosition = getNextPositionAttrRepDistAbs(object, otherObjects, config)
-			elseif (config.mode == "test_abs") then
-				nextPosition = {3, 3, 3}
-			elseif (config.mode == "test_rel") then
-				nextPosition = {1, 1, 1}
-				currentPosition = {0, 0, 0}
-			else
-				simAddStatusbarMessage("Next position is NOT calculated for mode: " .. config.mode)
+		-- Ajust YAW by keeping it between 0 and 90. yawChange is nil or positive value.
+		if (yawChange) then
+			local newYaw = context.yaw + yawChange
+			if (newYaw > 90) then
+				newYaw = newYaw - 90
 			end
 
-			currentPosition = currentPosition or simGetObjectPosition(object, -1)
-			local positionError = substractVectors(nextPosition, currentPosition)
-
-			-- Ajust X with PITCH, Y with ROLL, Z with THROTTLE.
-			context.pitch = ajustParameter(positionError[1], xPIDController, config.pitch, script)
-			context.roll = ajustParameter(positionError[2], yPIDController, config.roll, script)
-			ajustParameter(positionError[3], zPIDController, config.throttle, script)
-
-			context.iterationCount = context.iterationCount + 1
+			simSetScriptSimulationParameter(script, "yaw", newYaw)
+			context.yaw = newYaw
 		end
+
+		context.iterations = context.iterations + 1
 	end
 
 	return {
@@ -75,19 +55,15 @@ end
 function ajustConfig(config)
 	config = config or {}
 
-	config.mode = config.mode or "attr_rep_sens_rel"
-
 	config.name = config.name or "SimFinken"
 	config.suffix = config.suffix or ""
+	config.height = config.height or 2.4
 
 	config.front_sensor = config.front_sensor or "SimFinken_sensor_front"
 	config.back_sensor = config.back_sensor or "SimFinken_sensor_back"
 	config.left_sensor = config.left_sensor or "SimFinken_sensor_left"
 	config.right_sensor = config.right_sensor or "SimFinken_sensor_right"
 	config.bottom_sensor = config.bottom_sensor or "SimFinken_sensor_bottom"
-
-	config.other_suffixes = config.other_suffixes or {}
-	config.target = config.target or nil
 
 	config.x_pid = config.x_pid or {}
 	config.x_pid.p = config.x_pid.p or 4
@@ -130,64 +106,86 @@ function ajustConfig(config)
 	config.attr_rep.wCohesion = config.attr_rep.wCohesion or 0.9
 	config.attr_rep.wTarget = config.attr_rep.wTarget or 0.1
 
-	config.sens_rel = config.sens_rel or {}
-	config.sens_rel.height = config.sens_rel.height or 2.4
-	config.sens_rel.random_change = config.sens_rel.random_change or 1
-	config.sens_rel.random_iterations = config.sens_rel.random_iterations or 10
-
 	return config
 end
 
-function getNextPositionAttrRepSensRel(object, sensors, context, config)
-	local _, frontDist = simReadProximitySensor(sensors.front)
-	local _, backDist = simReadProximitySensor(sensors.back)
-	local _, leftDist = simReadProximitySensor(sensors.left)
-	local _, rightDist = simReadProximitySensor(sensors.right)
-	local _, bottomDist = simReadProximitySensor(sensors.bottom)
-
-	--[[
-	if (config.suffix == "") then
-		print((frontDist or "f") .. " " .. (backDist or "b") .. " " .. (leftDist or "l") .. " " .. (rightDist or "r") .. " " .. (bottomDist or "bt"))
+function getNameWithSuffix(name, suffix)
+	if (suffix == nil or suffix == "") then
+		return name
+	else
+		return name .. "#" .. suffix
 	end
-	--]]
-	
+end
+
+function getNextPosition(sensors, context, config)
+	local _, frontDistance = simReadProximitySensor(sensors.front)
+	local _, backDistance = simReadProximitySensor(sensors.back)
+	local _, leftDistance = simReadProximitySensor(sensors.left)
+	local _, rightDistance = simReadProximitySensor(sensors.right)
+	local _, bottomDistance = simReadProximitySensor(sensors.bottom)
+
 	local objectPosition = {0, 0, 0}
+
+	if (bottomDistance) then
+		local pitchTan = math.tan(math.rad(context.pitch))
+		local rollTan = math.tan(math.rad(context.roll))
+
+		bottomDistance = bottomDistance / math.sqrt(1 + pitchTan ^ 2 + rollTan ^ 2)
+		objectPosition[3] = config.height - bottomDistance
+	end
+
+	local yawChange = nil
+
+	local frontEnabled = true
+	local backEnabled = true
+	local leftEnabled = true
+	local rightEnabled = true 
+
+	if areDistancesToWall(frontDistance, leftDistance, backDistance) or areDistancesToWall(frontDistance, rightDistance, backDistance) then
+		frontEnabled = false
+		backEnabled = false
+
+		yawChange = math.deg(math.atan2(backDistance, frontDistance))
+	elseif areDistancesToWall(leftDistance, frontDistance, rightDistance) or areDistancesToWall(leftDistance, backDistance, rightDistance) then
+		leftEnabled = false
+		rightEnabled = false
+
+		yawChange = math.deg(math.atan2(rightDistance, leftDistance))
+	end
+
+	if yawChange then
+		context.yawIterations = context.yawIterations + 1
+		if context.yawIterations > 15 then
+			context.yawIterations = 0
+		else
+			yawChange = nil
+		end
+	else
+		context.yawIterations = 0
+	end
+
 	local otherObjectPositions = {}
 
-	local frontWall = false
-	local backWall = false
-	local leftWall = false
-	local rightWall = false
-
-	if (areWallDistances(leftDist, frontDist, backDist) or areWallDistances(rightDist, frontDist, backDist)) then
-		frontWall = true
-		backWall = true
+	if(frontDistance and frontEnabled) then
+		table.insert(otherObjectPositions, {-frontDistance, 0, 0})
 	end
 
-	if (areWallDistances(frontDist, leftDist, rightDist) or areWallDistances(backDist, leftDist, rightDist)) then
-		leftWall = true
-		rightWall = true
+	if(backDistance and backEnabled) then
+		table.insert(otherObjectPositions, {backDistance, 0, 0})
 	end
 
-	if(frontDist and not frontWall) then
-		table.insert(otherObjectPositions, {-frontDist, 0, 0})
-	end
-	
-	if(backDist and not backWall) then
-		table.insert(otherObjectPositions, {backDist, 0, 0})
-	end
-	
-	if(leftDist and not leftWall) then
-		table.insert(otherObjectPositions, {0, -leftDist, 0})
-	end
-	
-	if(rightDist and not rightWall) then
-		table.insert(otherObjectPositions, {0, rightDist, 0})
+	if(leftDistance and leftEnabled) then
+		table.insert(otherObjectPositions, {0, -leftDistance, 0})
 	end
 
-	if(context.iterationCount % config.sens_rel.random_iterations == 0) then
-		local change = config.sens_rel.random_change
-		if (context.iterationCount > 0 and not frontDist and not backDist and not leftDist and not rightDist) then
+	if(rightDistance and rightEnabled) then
+		table.insert(otherObjectPositions, {0, rightDistance, 0})
+	end
+
+	if(context.iterations % 10 == 0) then
+		local change = 1
+		
+		if (context.iterations > 0 and not (frontDistance or backDistance or leftDistance or rightDistance)) then
 			change = 4 * change
 		end
 
@@ -198,26 +196,24 @@ function getNextPositionAttrRepSensRel(object, sensors, context, config)
 		}
 	end
 
-	if (bottomDist) then
-		objectPosition[3] = config.sens_rel.height - (bottomDist / math.sqrt(1 + math.tan(math.rad(context.pitch)) ^ 2 + math.tan(math.rad(context.roll)) ^ 2 ))
+	if yawChange then
+		otherObjectPositions = {}
+		context.randomDirection = {0, 0, 0}
 	end
 
-	return getAttractionRepulsionPosition(objectPosition, otherObjectPositions, context.randomDirection, config.attr_rep)
+	local nextPosition = getAttractionRepulsionPosition(objectPosition, otherObjectPositions, context.randomDirection, config.attr_rep)
+
+	return nextPosition, yawChange
 end
 
-function areWallDistances(h, a, b)
-	return h and a and b and (h - a * b / math.sqrt(a ^ 2 + b ^ 2)) < 0.05
-end
-
-function getNextPositionAttrRepDistAbs(object, otherObjects, config)
-	local currentPosition = simGetObjectPosition(object, -1)
-
-	local otherObjectPositions = {}
-	for _, otherObject in ipairs(otherObjects) do
-		table.insert(otherObjectPositions, simGetObjectPosition(otherObject, -1))
+function areDistancesToWall(left, middle, right)
+	if (left and middle and right) then
+		local possibleMiddle = left * right / math.sqrt(left ^ 2 + right ^ 2)
+		
+		return math.abs(middle - possibleMiddle) < 0.05
+	else
+		return false
 	end
-
-	return getAttractionRepulsionPosition(currentPosition, otherObjectPositions, config.target, config.attr_rep)
 end
 
 function getAttractionRepulsionPosition(currentPosition, otherObjectPositions, targetPosition, config)
@@ -276,14 +272,6 @@ function scalarProduct(vector1, vector2)
 	return vector1[1] * vector2[1] 
 		+ vector1[2] * vector2[2] 
 		+ vector1[3] * vector2[3]
-end
-
-function getNameWithSuffix(name, suffix)
-	if (suffix == nil or suffix == "") then
-		return name
-	else
-		return name .. "#" .. suffix
-	end
 end
 
 function ajustParameter(error, pidController, config, script)
