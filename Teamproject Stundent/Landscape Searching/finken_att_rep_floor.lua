@@ -12,7 +12,7 @@ function newFinken(object, suffix, otherObjects)
 	local minRoll = -30
 
 	local previousPosition = simGetObjectPosition(object, -1)
-	local oldGradient = 1
+	local oldGradient = 0
 	local oldDirection = {}
 	
 	iterationCount = 0
@@ -56,77 +56,82 @@ function newFinken(object, suffix, otherObjects)
 
 		previousPosition = currentPosition
 	end
-function getTargetPosition(object, suffix)
-	local front = simGetObjectHandle("SimFinken_sensor_front" .. suffix)
-	local back = simGetObjectHandle("SimFinken_sensor_back" .. suffix)
-	local left = simGetObjectHandle("SimFinken_sensor_left" .. suffix)
-	local right = simGetObjectHandle("SimFinken_sensor_right" .. suffix)
-	local finken_cam = simGetObjectHandle("Floor_camera" .. suffix)
-	
-	local _, frontDist = simReadProximitySensor(front)
-	local _, backDist = simReadProximitySensor(back)
-	local _, leftDist = simReadProximitySensor(left)
-	local _, rightDist = simReadProximitySensor(right)
-	local _, colors = simReadVisionSensor(finken_cam)
-	local gradient = 1 - colors[1]
-	local objectPosition = simGetObjectPosition(object, -1);
-	objectPosition[3] = 1.5
-	
-	local otherObjectPositions = {}
-	
-	local hasDetectedSomething = false
-	
-	if(frontDist) then
-		table.insert(otherObjectPositions, {objectPosition[1] - frontDist, objectPosition[2], objectPosition[3]})
-		hasDetectedSomething = true
-	end
-	
-	if(backDist) then
-		table.insert(otherObjectPositions, {objectPosition[1] + backDist, objectPosition[2], objectPosition[3]})
-		hasDetectedSomething = true
-	end
-	
-	if(leftDist) then
-		table.insert(otherObjectPositions, {objectPosition[1], objectPosition[2] - leftDist, objectPosition[3]})
-		hasDetectedSomething = true
-	end
-	
-	if(rightDist) then
-		table.insert(otherObjectPositions, {objectPosition[1], objectPosition[2] + rightDist, objectPosition[3]})
-		hasDetectedSomething = true
-	end
-	
-	if( (gradient - oldGradient) < 0 ) then
-		table.insert(otherObjectpositions, oldDirection)
-		hasDetectedSomething = true
-	end
-	
-	if(hasDetectedSomething == false) then
-		iterationCount = iterationCount + 1
-		if(iterationCount % 5 == 0) then
-			table.insert(otherObjectPositions, getRandomDirection(objectPosition))
-			--table.insert(otherObjectPositions, getRandomDirection(objectPosition, frontDist, backDist, leftDist, rightDist))
-			simAddStatusbarMessage("Finken" .. suffix .. " Random Mode")
+	function getTargetPosition(object, suffix)
+		local front = simGetObjectHandle("SimFinken_sensor_front" .. suffix)
+		local back = simGetObjectHandle("SimFinken_sensor_back" .. suffix)
+		local left = simGetObjectHandle("SimFinken_sensor_left" .. suffix)
+		local right = simGetObjectHandle("SimFinken_sensor_right" .. suffix)
+		local finken_cam = simGetObjectHandle("Floor_camera" .. suffix)
+		
+		local _, frontDist = simReadProximitySensor(front)
+		local _, backDist = simReadProximitySensor(back)
+		local _, leftDist = simReadProximitySensor(left)
+		local _, rightDist = simReadProximitySensor(right)
+		local _, colors = simReadVisionSensor(finken_cam)
+		local gradient = 1 - colors[1]
+		if(colors == nil) then
+			gradient = 1
 		end
-	end
+		local objectPosition = simGetObjectPosition(object, -1);
+		objectPosition[3] = 1.5
 		
-	-- b > a
-	local a = 0.4
-	local b = 0.5
-	local c = 4
-
-	local sum = {0, 0, 0}
+		local otherObjectPositions = {}
+		
+		local hasDetectedSomething = false
+		
+		if(frontDist) then
+			table.insert(otherObjectPositions, {objectPosition[1] - frontDist, objectPosition[2], objectPosition[3]})
+			hasDetectedSomething = true
+		end
+		
+		if(backDist) then
+			table.insert(otherObjectPositions, {objectPosition[1] + backDist, objectPosition[2], objectPosition[3]})
+			hasDetectedSomething = true
+		end
+		
+		if(leftDist) then
+			table.insert(otherObjectPositions, {objectPosition[1], objectPosition[2] - leftDist, objectPosition[3]})
+			hasDetectedSomething = true
+		end
+		
+		if(rightDist) then
+			table.insert(otherObjectPositions, {objectPosition[1], objectPosition[2] + rightDist, objectPosition[3]})
+			hasDetectedSomething = true
+		end
+		
+		if( oldDirection ~= nil and (gradient - oldGradient) < 0 ) then
+			otherObjectpositions = oldDirection
+			hasDetectedSomething = true
+		end
+		
+		if(hasDetectedSomething == false) then
+			iterationCount = iterationCount + 1
+			if(iterationCount % 5 == 0) then
+				table.insert(otherObjectPositions, getRandomDirection(objectPosition))
+				--table.insert(otherObjectPositions, getRandomDirection(objectPosition, frontDist, backDist, leftDist, rightDist))
+				simAddStatusbarMessage("Finken" .. suffix .. " Random Mode")
+			end
+		end
+			
+		-- b > a
+		local a = 0.4
+		local b = 0.5
+		local c = 4
 	
-	for _, otherObjectPosition in ipairs(otherObjectPositions) do
-		local repultion = b * math.exp(- euclideanDistance(objectPosition, otherObjectPosition, 2) / c)
+		local sum = {0, 0, 0}
 		
-		local vector = substractVectors(objectPosition, otherObjectPosition)
-		sum = addVectors(sum, multiplyVectorByScalar(vector, repultion - a))
+		for _, otherObjectPosition in ipairs(otherObjectPositions) do
+			local repultion = b * math.exp(- euclideanDistance(objectPosition, otherObjectPosition, 2) / c)
+			
+			local vector = substractVectors(objectPosition, otherObjectPosition)
+			sum = addVectors(sum, multiplyVectorByScalar(vector, repultion - a))
+		end
+		
+		oldGradient = gradient
+		oldDirection = otherObjectPositions
+		return addVectors(objectPosition, sum)
 	end
-	oldGradient = gradient
-	oldDirection = otherObjectPositions
-	return addVectors(objectPosition, sum)
-end
+	
 	return {
 		move = move
 	}
