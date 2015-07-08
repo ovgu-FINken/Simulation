@@ -68,9 +68,11 @@ function newFinken(object, suffix, otherObjects)
 		local _, leftDist = simReadProximitySensor(left)
 		local _, rightDist = simReadProximitySensor(right)
 		local _, colors = simReadVisionSensor(finken_cam)
-		local gradient = 1 - colors[1]
+		local gradient = nil
 		if(colors == nil) then
 			gradient = 1
+		else
+			gradient = 1 - colors[1]
 		end
 		local objectPosition = simGetObjectPosition(object, -1);
 		objectPosition[3] = 1.5
