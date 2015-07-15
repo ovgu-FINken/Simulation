@@ -41,9 +41,14 @@ function newFinken(config)
 
 		context.iterations.global = context.iterations.global + 1
 	end
+	
+	function getConfig()
+		return config
+	end
 
 	return {
-		actuate = actuate
+		actuate = actuate,
+		getConfig = getConfig
 	}
 end
 
