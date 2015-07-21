@@ -3,11 +3,11 @@ local finken = {}
 --local finken system variable definitions
 local this_ID_Suffix = nil
 
-local sensor_dist_front = 7.5
-local sensor_dist_left = 7.5
-local sensor_dist_back = 7.5
-local sensor_dist_right = 7.5
-local sensor_distances = {sensor_dist_front, sensor_dist_left, sensor_dist_back,sensor_dist_left}	
+local sensor_dist_front = nil
+local sensor_dist_left = nil
+local sensor_dist_back = nil
+local sensor_dist_right = nil
+local sensor_distances = {7.5,7.5,7.5,7.5}	
 local sensor_dist_packed = simPackFloats(sensor_distances)
 local pitch_target = 0
 local roll_target = 0
@@ -187,7 +187,7 @@ function finken.sense()
 	if (this_ID_Suffix ~= -1) then
 		simSetStringSignal('sensor_dist'..this_ID_Suffix,sensor_dist_packed)
 	else
-		simSetStringSignal('sensot_dist',sensor_dist_packed)
+		simSetStringSignal('sensor_dist',sensor_dist_packed)
 	end
 	return sensor_distances
 end
