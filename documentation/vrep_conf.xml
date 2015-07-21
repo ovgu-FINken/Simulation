@@ -6,7 +6,7 @@
 			<signal name="roll" default=0 min=-90 max=90 type=float unit="degree"-/>
 			<signal name="yaw" default=0 min=-180 max=180 type=float unit="degree"/>
 			<signal name="height" default=0 min=0 max=500 type=float unit="cm"/>
-			<signal name="sensor_dist" default=-1 min=-1 max=2 type=float[4] />
+			<signal name="sensor_dist" default=7.5 min=0 max=7.5 type=float[4] unit="m"/>
 		</signals>
 		<components>
 			<sensors>
