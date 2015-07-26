@@ -1,0 +1,3 @@
+#!/bin/sh
+ln -f $GIT_DIR/vrep/scripts/finken.lua /Applications/vrep/vrep.app/Contents/MacOS/finken.lua
+#ln -f $GIT_DIR/vrep/scripts/finkenPid.lua /Applications/vrep/vrep.app/Contents/MacOS/finkenPid.lua

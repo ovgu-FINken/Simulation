@@ -107,7 +107,11 @@ local function tuneThrottle(throttle, curveParamNeg, curveParamPos)
 	end
 	return throttle_target
 end
-
+--[[
+--step() is called for each simulation step and controls the model. First, all target values are read,
+--then, the pid-controller are updated and the target speed for each rotor is computed
+--@return(float velocity, float velocity, float velocity, float velocity)
+--]]
 function finken.step()
 	--[[local execution_current_time = simGetSimulationTime()
 	simAddStatusbarMessage(execution_last_time + execution_step_size)
@@ -171,7 +175,10 @@ function finken.step()
 	--end
 	return particlesTargetVelocities
 end
-
+--[[
+--sense() reads all sensors of the finken, and updates the signals
+--@return {float dist_front, float dist_left, float dist_back, float dist_right}
+--]]
 function finken.sense()
 	status= simHandleProximitySensor(sim_handle_all)
 	status, sensor_distances[1], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensor_dist_front)
