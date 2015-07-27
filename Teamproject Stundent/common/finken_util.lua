@@ -330,7 +330,7 @@ function ajustParameter(error, pidController, config, script)
 		value = config.min
 	end
 
-	simSetScriptSimulationParameter(script, config.name,  value)
+	simSetScriptSimulationParameter(script, config.name, value)
 
 	return value
 end
@@ -362,7 +362,7 @@ function newPIDController(config)
 			integral = integral + (error * timeStep)
 			local derivative = (error - previousError) / timeStep
 			
-			-- Prevent unexpected behaviour on the first iteration, because previousError has no valid value.
+			-- Prevent unexpected behavior on the first iteration, because previousError has no valid value.
 			if (previousError == 0) then
 				derivative = 0
 			end
