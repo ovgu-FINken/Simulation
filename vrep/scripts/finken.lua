@@ -13,6 +13,7 @@ local pitch_target = 0
 local roll_target = 0
 local yaw_target = 0
 local throttle_target = 0
+local height_target = 0
 
 local finken_base_handle = nil
 local finken_handle = nil
@@ -65,6 +66,7 @@ function finken.init()
 		simSetFloatSignal('pitch'..this_ID_Suffix,0)
 		simSetFloatSignal('roll'..this_ID_Suffix,0)
 		simSetFloatSignal('yaw'..this_ID_Suffix,0)
+		simSetFloatSignal('height'..this_ID_Suffix,0)
 		sensor_dist_front = simGetObjectHandle('SimFinken_sensor_front#'..this_ID_Suffix)
 		sensor_dist_left = simGetObjectHandle('SimFinken_sensor_left#'..this_ID_Suffix)
 		sensor_dist_back = simGetObjectHandle('SimFinken_sensor_back#'..this_ID_Suffix)
@@ -75,6 +77,7 @@ function finken.init()
 		simSetFloatSignal('pitch',0)
 		simSetFloatSignal('roll',0)
 		simSetFloatSignal('yaw',0)
+		simSetFloatSignal('height',0)
 		sensor_dist_front = simGetObjectHandle('SimFinken_sensor_front')
 		sensor_dist_left = simGetObjectHandle('SimFinken_sensor_left')
 		sensor_dist_back = simGetObjectHandle('SimFinken_sensor_back')
@@ -88,6 +91,7 @@ function finken.printCmds()
 	simAddStatusbarMessage('pitch: '..pitch_target)
 	simAddStatusbarMessage('roll: '..roll_target)
 	simAddStatusbarMessage('yaw: '..yaw_target)
+	simAddStatusbarMessage('height: '..height_target)
 end
 
 
@@ -123,11 +127,13 @@ function finken.step()
 			pitch_target=simGetFloatSignal('pitch'..this_ID_Suffix)
 			roll_target=simGetFloatSignal('roll'..this_ID_Suffix)
 			yaw_target=simGetFloatSignal('yaw'..this_ID_Suffix)
+			height_target=simGetFloatSignal('height'..this_ID_Suffix)
 		else
 			throttle_target=simGetFloatSignal('throttle')
 			pitch_target=simGetFloatSignal('pitch')
 			roll_target=simGetFloatSignal('roll')
 			yaw_target=simGetFloatSignal('yaw')
+			height_target=simGetFloatSignal('height')
 		end
 		--invert roll axis to match real finken
 		roll_target = -roll_target
