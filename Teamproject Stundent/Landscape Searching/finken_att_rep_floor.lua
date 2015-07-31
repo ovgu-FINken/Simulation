@@ -139,8 +139,8 @@ function newFinken(object, suffix, otherObjects)
 		end
 			
 		-- b > a
-		local a = 0.4 -- constant attraction
-		local b = 0.5 -- magnitude of bounded repulsion
+		local a = 0.4 -- linear attraction
+		local b = 0.5 -- magnitude of unbounded repulsion
 		local c = 4   -- repulsion smoothness factor 
 	
 		local sum = {0, 0, 0}
