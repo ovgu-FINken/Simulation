@@ -173,9 +173,9 @@ function getErrors(orientation, sensors, context, config)
 		local wallDetectedRight, yawChangeRequiredRight = areDistancesToWall(rightDistance, frontDistance, backDistance, context.counters.wallDetectedRight, config.wall_detection)
 
 		if yawChangeRequiredFront or yawChangeRequiredBack then
-			errors.yaw = getYawError(rightDistance, leftDistance)
+			errors.yaw = getYawError(leftDistance, rightDistance)
 		elseif yawChangeRequiredLeft or yawChangeRequiredRight then
-			errors.yaw = getYawError(backDistance, frontDistance)
+			errors.yaw = getYawError(frontDistance, backDistance)
 		end
 
 		local otherObjectPositions = {}
@@ -257,8 +257,9 @@ function areDistancesToWall(middleDistance, leftDistance, rightDistance, counter
 	return wallDetected, yawChangeRequired
 end
 
-function getYawError(distance1, distance2)
-	return math.deg(math.atan2(distance1, distance2))
+-- The parameters have the same semantic as in areDistancesToWall(...)
+function getYawError(leftDistance, rightDistance)
+	return math.deg(math.atan2(leftDistance, rightDistance))
 end
 
 -- Side effect: The parameter context.randomPosition is updated!
@@ -303,14 +304,14 @@ function getAttractionRepulsionPosition(otherObjectPositions, targetPosition, co
 	local positionChange = {0, 0, 0}
 	
 	for _, otherObjectPosition in ipairs(otherObjectPositions) do
-		local norm = getEuclideanNorm(otherObjectPosition)
-		local repulsion = config.b * math.exp(-(norm ^ 2) / config.c)
+		local euclideanNorm = getEuclideanNorm(otherObjectPosition)
+		local repulsion = config.b * math.exp(-(euclideanNorm ^ 2) / config.c)
 		
 		positionChange = addVectors(positionChange, multiplyVectorByScalar(otherObjectPosition, config.a - repulsion))
 	end
 
 	positionChange = multiplyVectorByScalar(positionChange, config.wCohesion)
-	local targetChange = multiplyVectorByScalar(targetPosition, config.a * config.wTarget)
+	local targetChange = multiplyVectorByScalar(targetPosition, config.wTarget * config.a)
 
 	return addVectors(positionChange, targetChange)
 end
@@ -357,13 +358,13 @@ function adjustParameter(parameter, error, pidController, config, script)
 	return value
 end
 
-function adjustYaw(adjustment, orientation, script)
-	if adjustment then
-		if adjustment < 0 then
-			simAddStatusbarMessage("ERROR: adjustment < 0. It should be positive!")
+function adjustYaw(error, orientation, script)
+	if error then
+		if error < 0 then
+			simAddStatusbarMessage("ERROR: The parameter error < 0 for adjustYaw(...). It should be positive!")
 		end
 
-		local yaw = orientation.yaw + adjustment
+		local yaw = orientation.yaw + error
 
 		if yaw > 90 then
 			yaw = yaw - 90
