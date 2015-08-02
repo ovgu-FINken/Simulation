@@ -1,3 +1,4 @@
+
 function newFinken(config)
 	config = prepareConfig(config)
 
@@ -406,4 +407,52 @@ function newPIDController(config)
 	return {
 		adjust = adjust
 	}
+end
+
+function AddNewFinkenToScene()
+	-- Get position of all finken
+	local FinkenPositionList = {}
+	local index = -1
+	repeat
+		if index == -1 then
+			finkenHandle = simGetObjectHandle('SimFinken#')
+		else
+			finkenHandle = simGetObjectHandle("SimFinken#" .. index)
+		end
+		
+		if finkenHandle ~= -1 then
+			table.insert(FinkenPositionList, simGetObjectPosition(finkenHandle, -1))
+		end
+		index = index + 1
+    until finkenHandle == -1 
+
+	-- Find random free position
+	local randomX 
+	local randomY
+	repeat
+		local isPositionFree = true
+		randomX = math.random(-4, 4)
+		randomY = math.random(-4, 4)
+		
+		for _, position in ipairs(FinkenPositionList) do
+			local distanceVector = {position[1]-randomX, position[2]-randomY, 0}
+			local distance = getEuclideanNorm(distanceVector)
+			if distance < 0.4 then 
+				isPositionFree = false
+			end
+		end
+	until isPositionFree == true
+	simAddStatusbarMessage("New finken added "..randomX.." "..randomY)
+
+	-- Add new finken object
+	local finkenHandle = simGetObjectHandle("SimFinken")
+	local newObject = simCopyPasteObjects({finkenHandle}, 1)
+	simSetObjectPosition(newObject[1], -1, {randomX,randomY,2.5})
+	local name = simGetObjectName(newObject[1])
+	simAddStatusbarMessage(name .. " Object name")
+	local suffix = simGetNameSuffix(name)
+	simAddStatusbarMessage(suffix .. " suffix")
+	local newScript = newFinken{suffix = suffix}
+	
+	return newScript
 end

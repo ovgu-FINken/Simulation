@@ -1,39 +1,20 @@
 
-function GetSSE(a, b, c)
-	-- Get all object handles
-	local SSE_FinkenList = {}
-	local SSE_SensorList = {}
-	local index = -1
-	repeat
-		local finkenHandle
-		local front
-		local back
-		local left
-		local right
-		if index == -1 then
-			finkenHandle = simGetObjectHandle('SimFinken#')
-			front = simGetObjectHandle("SimFinken_sensor_front#")
-			back = simGetObjectHandle("SimFinken_sensor_back#")
-			left = simGetObjectHandle("SimFinken_sensor_left#")
-			right = simGetObjectHandle("SimFinken_sensor_right#")
-		else
-			finkenHandle = simGetObjectHandle("SimFinken#" .. index)
-			front = simGetObjectHandle("SimFinken_sensor_front#" .. index)
-			back = simGetObjectHandle("SimFinken_sensor_back#" .. index)
-			left = simGetObjectHandle("SimFinken_sensor_left#" .. index)
-			right = simGetObjectHandle("SimFinken_sensor_right#" .. index)
-		end
-		
-		if finkenHandle ~= -1 then
-			table.insert(SSE_FinkenList, finkenHandle)
-			table.insert(SSE_SensorList, front)
-			table.insert(SSE_SensorList, back)
-			table.insert(SSE_SensorList, left)
-			table.insert(SSE_SensorList, right)
-		end
-		index = index + 1
-    until finkenHandle == -1 
+-- List of all finken scripts of the scene
+SSE_AllFinkens = {}
 
+function GetSSE(a, b, c)
+	-- Get all sensor data
+	local SSE_DistanceList = {}
+	for _, finkenScript in ipairs(SSE_AllFinkens) do
+		-- Get the distances from the sensor of the finken
+		local detectedDistances = finkenScript.getDetectedDistances()
+		
+		if detectedDistances.front then table.insert(SSE_DistanceList, detectedDistances.front) end
+		if detectedDistances.back then table.insert(SSE_DistanceList, detectedDistances.back) end
+		if detectedDistances.left then table.insert(SSE_DistanceList, detectedDistances.left) end
+		if detectedDistances.right then table.insert(SSE_DistanceList, detectedDistances.right) end
+	end
+	
 	-- Calculate the SSE
 	local SSE = 0
 	local n = 0
@@ -41,12 +22,9 @@ function GetSSE(a, b, c)
 	delta = math.sqrt(c * math.log(b/a))
 
 	-- Calculate the sum of the squared error for each sensor
-	for _, sensor in ipairs(SSE_SensorList) do
-		local _, senorDistance = simReadProximitySensor(sensor)
-		if (senorDistance) then
-			SSE = SSE + (senorDistance - delta)*(senorDistance - delta)
+	for _, sensorDistance in ipairs(SSE_DistanceList) do
+			SSE = SSE + (sensorDistance - delta)*(sensorDistance - delta)
 			n = n + 1
-		end
 	end
 
 	local MSE = SSE / n
@@ -54,6 +32,7 @@ function GetSSE(a, b, c)
 	simAddStatusbarMessage(" Delta: " .. delta)
 	simAddStatusbarMessage(" SSE: " .. SSE)
 	simAddStatusbarMessage(" MSE: " .. MSE)
+	simAddStatusbarMessage(table.getn(SSE_AllFinkens))
 	simAddStatusbarMessage("---------------------")
 
 	return SSE
