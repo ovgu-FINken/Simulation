@@ -61,7 +61,7 @@ function newFinken(config)
 	return {
 		actuate = actuate,
 		getConfig = getConfig,
-		getDistances = getDistances
+		getDetectedDistances = getDetectedDistances
 	}
 end
 
