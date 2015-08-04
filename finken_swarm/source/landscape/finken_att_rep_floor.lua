@@ -12,11 +12,11 @@ function newFinken(object, suffix, otherObjects)
 	local yPIDController = newPIDController(6, 0, 8)
 	local velocityPIDController = newPIDController(1, 0, 1)
 
-	local maxPitch = 30
-	local minPitch = -30
+	local maxPitch = 10
+	local minPitch = -10
 
-	local maxRoll = 30
-	local minRoll = -30
+	local maxRoll = 10
+	local minRoll = -10
 	-- used to store state of the finken for the next iteration
 	local previousPosition = simGetObjectPosition(object, -1)
 	local oldGradient = 0
