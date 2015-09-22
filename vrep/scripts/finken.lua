@@ -3,28 +3,30 @@ local finken = {}
 --local finken system variable definitions
 local this_ID_Suffix = nil
 
+--vrep handles
+local finken_base_handle = nil
+local finken_handle = nil
 local sensor_dist_front = nil
 local sensor_dist_left = nil
 local sensor_dist_back = nil
 local sensor_dist_right = nil
+
 local sensor_distances = {7.5,7.5,7.5,7.5}	
 local sensor_dist_packed = simPackFloats(sensor_distances)
+
+--finken external parameters
 local pitch_target = 0
 local roll_target = 0
 local yaw_target = 0
 local throttle_target = 0
 local height_target = 0
 
-local finken_base_handle = nil
-local finken_handle = nil
-
+-- simulation time parameters
 local execution_last_time = 0
 local execution_step_size = 0.050  
-local pPthrottle=2
-local iPthrottle=0
-local dPthrottle=0
-local vPthrottle=-2
 
+
+--old height controller parameters
 local cumul=0
 local lastE=0
 local pAlphaE=0
@@ -32,10 +34,12 @@ local pBetaE=0
 local psp2=0
 local psp1=0
 
+
+
 local prevEYaw=0
 local prevEPitch=0
 local prevERoll=0
-
+local prevEHeight=0
 													
 local pPpitch = 0.2
 local iPpitch = 0.01
@@ -49,9 +53,18 @@ local pPyaw = 0.4 --0.1
 local iPyaw = 0.001
 local dPyaw = 1.91
 
+local pPHeight = 1.5
+local iPHeight = 0.01
+local dPHeight = 2.0
+local pPthrottle=2
+local iPthrottle=0
+local dPthrottle=0
+local vPthrottle=-2
+
 local cumulYaw = 0
 local cumulPitch = 0
 local cumulRoll = 0
+local cumulHeight = 0
 
 local particlesTargetVelocities = {-1,-1,-1,-1}
 
@@ -77,7 +90,7 @@ function finken.init()
 		simSetFloatSignal('pitch',0)
 		simSetFloatSignal('roll',0)
 		simSetFloatSignal('yaw',0)
-		simSetFloatSignal('height',0)
+		simSetFloatSignal('height',1)
 		sensor_dist_front = simGetObjectHandle('SimFinken_sensor_front')
 		sensor_dist_left = simGetObjectHandle('SimFinken_sensor_left')
 		sensor_dist_back = simGetObjectHandle('SimFinken_sensor_back')
@@ -121,7 +134,6 @@ function finken.step()
 	simAddStatusbarMessage(execution_last_time + execution_step_size)
 	simAddStatusbarMessage(execution_current_time)
 	if (execution_last_time + execution_step_size <= execution_current_time) then]]
-		execution_last_time = execution_current_time
 		if (this_ID_Suffix ~= -1) then
 			throttle_target=simGetFloatSignal('throttle'..this_ID_Suffix)
 			pitch_target=simGetFloatSignal('pitch'..this_ID_Suffix)
@@ -140,7 +152,12 @@ function finken.step()
 		--logit-like function to fine tune throttle response
 		throttle_target =  tuneThrottle(throttle_target, 1, 1)
 		--hovers at approx. 50% throttle
-		throttle=5.843*throttle_target/100
+		position_sim = simGetObjectPosition(finken_base_handle,-1)
+		errorHeight = height_target - position_sim[3] 
+		simAddStatusbarMessage('pos_sim: ' ..position_sim[3])
+		cumulHeight = cumulHeight + errorHeight
+		throttle=5.843*throttle_target/100 + pPHeight*errorHeight + dPHeight*(errorHeight-prevEHeight) + iPHeight*cumulHeight
+		prevEHeight = errorHeight
 
 		euler=simGetObjectOrientation(finken_base_handle,-1)
 		ins_matrix=simGetObjectMatrix(finken_base_handle,-1)
@@ -178,6 +195,7 @@ function finken.step()
 		particlesTargetVelocities[2]=throttle*(1-yawCorr-rollCorr-pitchCorr)
 		particlesTargetVelocities[3]=throttle*(1+yawCorr+rollCorr-pitchCorr)
 		particlesTargetVelocities[4]=throttle*(1-yawCorr+rollCorr+pitchCorr)
+		execution_last_time = execution_current_time
 	--end
 	return particlesTargetVelocities
 end
