@@ -1,7 +1,7 @@
-<map version="docear 1.1" project="14FD099F8F985QT959J90Z53U5ZUFPVWENJ2" project_last_home="file:/Users/Nanoq/Documents/Uni/OvGU/DigiEng/Semester3/DigiEngProjekt/projectReport/docear/" dcr_id="1377253696629_575mr2xhasgzy80oz8d2cqhjn">
+<map version="docear 1.1" project="14FD099F8F985QT959J90Z53U5ZUFPVWENJ2" project_last_home="file:/Users/Nanoq/Documents/Uni/OvGU/DigiEng/Semester3/DigiEngProjekt/Simulation/documentation/projectReport/docear/" dcr_id="1377253696629_575mr2xhasgzy80oz8d2cqhjn">
 <!--To view this file, download Docear - The Academic Literature Suite from http://www.docear.org -->
 <attribute_registry SHOW_ATTRIBUTES="hide"/>
-<node TEXT="Mixed-reality Simulation of Quadcopter-Swarms" FOLDED="false" ID="ID_1723255651" CREATED="1283093380553" MODIFIED="1442910059313" DCR_PRIVACY_LEVEL="DEMO"><hook NAME="MapStyle">
+<node TEXT="Mixed-reality Simulation of Quadcopter-Swarms" FOLDED="false" ID="ID_1723255651" CREATED="1283093380553" MODIFIED="1442915679020" DCR_PRIVACY_LEVEL="DEMO"><hook NAME="MapStyle">
     <properties show_icon_for_attributes="true" show_note_icons="true"/>
 
 <map_styles>
@@ -52,15 +52,15 @@
 </map_styles>
 </hook>
 <hook NAME="AutomaticEdgeColor" COUNTER="3"/>
-<node TEXT="Introduction" POSITION="right" ID="ID_1693751078" CREATED="1344508137611" MODIFIED="1442910059317" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Introduction" POSITION="right" ID="ID_1693751078" CREATED="1344508137611" MODIFIED="1442915679086" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#ff0000" WIDTH="3"/>
 <hook NAME="FirstGroupNode"/>
-<node TEXT="Motivation" ID="ID_1380533534" CREATED="1344510886390" MODIFIED="1442910432248" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Google Scholar" ID="ID_199412342" CREATED="1344510907159" MODIFIED="1442910059318" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Google Scholar Website" ID="ID_1123671529" CREATED="1344508702545" MODIFIED="1442910059318" LINK="http://scholar.google.com/" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Motivation" ID="ID_1380533534" CREATED="1344510886390" MODIFIED="1442915679086" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Google Scholar" ID="ID_199412342" CREATED="1344510907159" MODIFIED="1442915679086" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Google Scholar Website" ID="ID_1123671529" CREATED="1344508702545" MODIFIED="1442915679087" LINK="http://scholar.google.com/" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
-<node TEXT="Mr. DLib" ID="ID_1314800443" CREATED="1344510910275" MODIFIED="1442910059318" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Original paper of Mr. DLib" ID="ID_1013913135" CREATED="1344508031837" MODIFIED="1442910059318" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Mr.%20DLib%20--%20A%20Machine%20Readable%20Digital%20Library.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Mr. DLib" ID="ID_1314800443" CREATED="1344510910275" MODIFIED="1442915679087" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Original paper of Mr. DLib" ID="ID_1013913135" CREATED="1344508031837" MODIFIED="1442915679087" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Mr.%20DLib%20--%20A%20Machine%20Readable%20Digital%20Library.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="COMMENT" page="1" object_number="228" document_hash="C89BE08F76C6699010B345C2DE33E21942F5B5F9E75CBC4EA2DED3A7894C36A">
     <pdf_title>Mr. DLib</pdf_title>
 </pdf_annotation>
@@ -71,8 +71,8 @@
 </node>
 </node>
 </node>
-<node TEXT="Problem Statement" ID="ID_577115243" CREATED="1344510985951" MODIFIED="1442910453221" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="ASEO, original paper" ID="ID_797443631" CREATED="1344508031885" MODIFIED="1442910059357" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20Search%20Engine%20Optimization%20(ASEO)%20--%20Optimizing%20Scholarly%20Literature%20for%20Google%20Scholar%20and%20Co.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Problem Statement" ID="ID_577115243" CREATED="1344510985951" MODIFIED="1442915679093" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="ASEO, original paper" ID="ID_797443631" CREATED="1344508031885" MODIFIED="1442915679093" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20Search%20Engine%20Optimization%20(ASEO)%20--%20Optimizing%20Scholarly%20Literature%20for%20Google%20Scholar%20and%20Co.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="COMMENT" page="1" object_number="523" document_hash="A54AEBAC3934EFCB5864365F2FE7AA665BB98504D8F19FAEE6C47F75FA7">
     <pdf_title>Academic Search Engine Optimization (ASEO): Optimizing Scholarly Literature for Google Scholar &amp; Co.</pdf_title>
 </pdf_annotation>
@@ -83,8 +83,8 @@
 <attribute NAME="key" VALUE="Beel10"/>
 </node>
 </node>
-<node TEXT="Outline" ID="ID_1481327252" CREATED="1344511159033" MODIFIED="1442910458371" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="(First?) paper about spam on&#xa;Google Scholar (authors did&#xa;various experiments)" ID="ID_422948839" CREATED="1344508032008" MODIFIED="1442910059359" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Outline" ID="ID_1481327252" CREATED="1344511159033" MODIFIED="1442915679096" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="(First?) paper about spam on&#xa;Google Scholar (authors did&#xa;various experiments)" ID="ID_422948839" CREATED="1344508032008" MODIFIED="1442915679096" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="COMMENT" page="1" object_number="656" document_hash="3C641461C926D2C38E6F53D2C479A2E5C9943E3947752A6915088CEFD64D">
     <pdf_title>Academic search engine spam and Google Scholar resilience against it</pdf_title>
 </pdf_annotation>
@@ -96,10 +96,10 @@
 </node>
 </node>
 </node>
-<node TEXT="Theory" POSITION="right" ID="ID_1098134891" CREATED="1344508140609" MODIFIED="1442910300439" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Theory" POSITION="right" ID="ID_1098134891" CREATED="1344508140609" MODIFIED="1442915679097" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#0000ff" WIDTH="3"/>
-<node TEXT="Quadcopter Modelling" ID="ID_512165507" CREATED="1344511282609" MODIFIED="1442910492053" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="ASEO, original paper" ID="ID_1200714877" CREATED="1344508031885" MODIFIED="1442910059361" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20Search%20Engine%20Optimization%20(ASEO)%20--%20Optimizing%20Scholarly%20Literature%20for%20Google%20Scholar%20and%20Co.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Quadcopter Modelling" ID="ID_512165507" CREATED="1344511282609" MODIFIED="1442915679097" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="ASEO, original paper" ID="ID_1200714877" CREATED="1344508031885" MODIFIED="1442915679098" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20Search%20Engine%20Optimization%20(ASEO)%20--%20Optimizing%20Scholarly%20Literature%20for%20Google%20Scholar%20and%20Co.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="COMMENT" page="1" object_number="523" document_hash="A54AEBAC3934EFCB5864365F2FE7AA665BB98504D8F19FAEE6C47F75FA7">
     <pdf_title>Academic Search Engine Optimization (ASEO): Optimizing Scholarly Literature for Google Scholar &amp; Co.</pdf_title>
 </pdf_annotation>
@@ -110,8 +110,8 @@
 <attribute NAME="key" VALUE="Beel10"/>
 </node>
 </node>
-<node TEXT="Vrep" ID="ID_972169939" CREATED="1344511369742" MODIFIED="1442910508868" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Pro" ID="ID_1392476056" CREATED="1344509155557" MODIFIED="1442910059363" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Vrep" ID="ID_972169939" CREATED="1344511369742" MODIFIED="1442915679099" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Pro" ID="ID_1392476056" CREATED="1344509155557" MODIFIED="1442915679099" DCR_PRIVACY_LEVEL="DEMO">
 <node TEXT="&#x201c;In my opinion, being interested in how (academic) &#xd;&#xa;search engines function and how scientific papers are &#xd;&#xa;indexed and, of course, responding to these&#x2026; well&#x2026; &#xd;&#xa;circumstances of the scientific citing business is just &#xd;&#xa;natural.&#x201d;" ID="ID_414399340" CREATED="1344508403924" MODIFIED="1344508403924" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="3" object_number="746" document_hash="3C641461C926D2C38E6F53D2C479A2E5C9943E3947752A6915088CEFD64D">
     <pdf_title>Academic search engine spam and Google Scholar resilience against it</pdf_title>
@@ -143,8 +143,8 @@
 <attribute NAME="key" VALUE="Beel2010"/>
 </node>
 </node>
-<node TEXT="Con" ID="ID_1940856338" CREATED="1344509156803" MODIFIED="1442910059367" DCR_PRIVACY_LEVEL="DEMO" VSHIFT="10">
-<node TEXT="&#x201c;I&#x2019;m not a big fan of this area of research [&#x2026;]. I know &#xd;&#xa;it&#x2019;s in the call for papers, but I think that&#x2019;s a mistake.&#x201d; " ID="ID_56949802" CREATED="1344508032014" MODIFIED="1442910059367" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Con" ID="ID_1940856338" CREATED="1344509156803" MODIFIED="1442915679104" DCR_PRIVACY_LEVEL="DEMO" VSHIFT="10">
+<node TEXT="&#x201c;I&#x2019;m not a big fan of this area of research [&#x2026;]. I know &#xd;&#xa;it&#x2019;s in the call for papers, but I think that&#x2019;s a mistake.&#x201d; " ID="ID_56949802" CREATED="1344508032014" MODIFIED="1442915679104" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="3" object_number="662" document_hash="3C641461C926D2C38E6F53D2C479A2E5C9943E3947752A6915088CEFD64D">
     <pdf_title>Academic search engine spam and Google Scholar resilience against it</pdf_title>
 </pdf_annotation>
@@ -154,7 +154,7 @@
 <attribute NAME="journal" VALUE="Journal of Electronic Publishing"/>
 <attribute NAME="key" VALUE="Beel2010"/>
 </node>
-<node TEXT="Motivation why researchers might do academic search engine spam" ID="ID_40512105" CREATED="1344508032022" MODIFIED="1442910059369" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Motivation why researchers might do academic search engine spam" ID="ID_40512105" CREATED="1344508032022" MODIFIED="1442915679105" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="3" object_id="1334231183826421543" object_number="666" document_hash="3C641461C926D2C38E6F53D2C479A2E5C9943E3947752A6915088CEFD64D">
     <pdf_title>Academic search engine spam and Google Scholar resilience against it</pdf_title>
 </pdf_annotation>
@@ -164,7 +164,7 @@
 <attribute NAME="journal" VALUE="Journal of Electronic Publishing"/>
 <attribute NAME="key" VALUE="Beel2010"/>
 </node>
-<node TEXT="&#x201c;In my opinion, being interested in how (academic) &#xd;&#xa;search engines function and how scientific papers are &#xd;&#xa;indexed and, of course, responding to these&#x2026; well&#x2026; &#xd;&#xa;circumstances of the scientific citing business is just &#xd;&#xa;natural.&#x201d;" ID="ID_1773171427" CREATED="1344508032030" MODIFIED="1442910059370" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="&#x201c;In my opinion, being interested in how (academic) &#xd;&#xa;search engines function and how scientific papers are &#xd;&#xa;indexed and, of course, responding to these&#x2026; well&#x2026; &#xd;&#xa;circumstances of the scientific citing business is just &#xd;&#xa;natural.&#x201d;" ID="ID_1773171427" CREATED="1344508032030" MODIFIED="1442915679106" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="4" object_id="4694565655893184301" object_number="670" document_hash="3C641461C926D2C38E6F53D2C479A2E5C9943E3947752A6915088CEFD64D">
     <pdf_title>Academic search engine spam and Google Scholar resilience against it</pdf_title>
 </pdf_annotation>
@@ -176,13 +176,13 @@
 </node>
 </node>
 </node>
-<node TEXT="Communication/Ivy-Bus" ID="ID_591738915" CREATED="1344511414252" MODIFIED="1442910523574" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Communication/Ivy-Bus" ID="ID_591738915" CREATED="1344511414252" MODIFIED="1442915679113" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
-<node TEXT="All of the PDFs and annotations&#xa;were copied from the Literature&#xa;&amp; Annotations Map. The &quot;normal&quot;&#xa;text nodes were individually created" POSITION="right" ID="ID_227074519" CREATED="1344511498251" MODIFIED="1442910059371" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="All of the PDFs and annotations&#xa;were copied from the Literature&#xa;&amp; Annotations Map. The &quot;normal&quot;&#xa;text nodes were individually created" POSITION="right" ID="ID_227074519" CREATED="1344511498251" MODIFIED="1442915679114" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#7c7c00" WIDTH="3"/>
 <hook NAME="SummaryNode"/>
 </node>
-<node TEXT="Implementation" POSITION="right" ID="ID_837868971" CREATED="1344508144956" MODIFIED="1442910305763" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Implementation" POSITION="right" ID="ID_837868971" CREATED="1344508144956" MODIFIED="1442915679114" DCR_PRIVACY_LEVEL="DEMO">
 <hook NAME="FirstGroupNode"/>
 <edge COLOR="#00ff00" WIDTH="3"/>
 <node TEXT="Simulation Environment" ID="ID_1595771395" CREATED="1344508164522" MODIFIED="1442910547077"/>
@@ -190,15 +190,18 @@
 <node TEXT="Interface Software" ID="ID_44434277" CREATED="1442910555281" MODIFIED="1442910777299"/>
 <node TEXT="Quadcopter" ID="ID_1766749105" CREATED="1442910778096" MODIFIED="1442911501552"/>
 </node>
-<node TEXT="Evaluation" POSITION="right" ID="ID_220604319" CREATED="1344508149448" MODIFIED="1442910324941" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Evaluation" POSITION="right" ID="ID_220604319" CREATED="1344508149448" MODIFIED="1442915679115" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#ff00ff" WIDTH="3"/>
-<node TEXT="todo" ID="ID_1262024868" CREATED="1344508161499" MODIFIED="1377255181561"/>
+<node TEXT="Speed" ID="ID_1262024868" CREATED="1344508161499" MODIFIED="1442915822138"/>
+<node TEXT="Accuracy" ID="ID_344219835" CREATED="1442915822667" MODIFIED="1442915826509"/>
+<node TEXT="Stability" ID="ID_879661257" CREATED="1442915827002" MODIFIED="1442915862483"/>
 </node>
-<node TEXT="Conclusion" POSITION="right" ID="ID_335508516" CREATED="1344508153289" MODIFIED="1442910059372" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Conclusion" POSITION="right" ID="ID_335508516" CREATED="1344508153289" MODIFIED="1442915679115" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#00ffff" WIDTH="3"/>
 <node TEXT="todo" ID="ID_183681093" CREATED="1344508158399" MODIFIED="1344508159274"/>
+<node TEXT="Future Work" ID="ID_820680482" CREATED="1442915878153" MODIFIED="1442915885133"/>
 </node>
-<node LOCALIZED_STYLE_REF="defaultstyle.floating" POSITION="left" ID="ID_989309610" CREATED="1344498811808" MODIFIED="1442910059372" HGAP="-47" VSHIFT="-167" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
+<node LOCALIZED_STYLE_REF="defaultstyle.floating" POSITION="left" ID="ID_989309610" CREATED="1344498811808" MODIFIED="1442915679115" HGAP="-47" VSHIFT="-167" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
 
 <html>
   <head>
@@ -218,23 +221,20 @@
 </html>
 </richcontent>
 </node>
-<node TEXT="Potential Conferences to&#xa;publish the paper" POSITION="left" ID="ID_916121753" CREATED="1344511928953" MODIFIED="1442910059373" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Potential Conferences to&#xa;publish the paper" POSITION="left" ID="ID_916121753" CREATED="1344511928953" MODIFIED="1442915679116" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#ff0000" WIDTH="3"/>
-<node TEXT="WWW 2013" ID="ID_1266382435" CREATED="1344511967357" MODIFIED="1442910059373" LINK="http://www2013.org/" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="SIGIR 2013" ID="ID_196579720" CREATED="1344511986050" MODIFIED="1442910059373" LINK="http://sigir2013.ie/" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="WWW 2013" ID="ID_1266382435" CREATED="1344511967357" MODIFIED="1442915679116" LINK="http://www2013.org/" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="SIGIR 2013" ID="ID_196579720" CREATED="1344511986050" MODIFIED="1442915679116" LINK="http://sigir2013.ie/" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
-<node TEXT="todo" POSITION="left" ID="ID_156430450" CREATED="1344512008068" MODIFIED="1442910059373" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="todo" POSITION="left" ID="ID_156430450" CREATED="1344512008068" MODIFIED="1442915679116" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#0000ff" WIDTH="3"/>
-<node TEXT="talk with supervisor" ID="ID_1086499639" CREATED="1344512010740" MODIFIED="1442910059373" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="ask John to proof-read" ID="ID_624499378" CREATED="1344512015939" MODIFIED="1442910059373" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="talk with supervisor" ID="ID_1086499639" CREATED="1344512010740" MODIFIED="1442915679116" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="ask John to proof-read" ID="ID_624499378" CREATED="1344512015939" MODIFIED="1442915679116" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
-<node TEXT="Implementation" POSITION="right" ID="ID_696849727" CREATED="1442910133165" MODIFIED="1442910175665" HGAP="-320" VSHIFT="250" MOVED="1442910181017">
-<edge COLOR="#00ff00"/>
-</node>
-<node TEXT="Related Work" POSITION="left" ID="ID_1699562627" CREATED="1344508140609" MODIFIED="1442910250031" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Related Work" POSITION="left" ID="ID_1699562627" CREATED="1344508140609" MODIFIED="1442915679117" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#0000ff" WIDTH="3"/>
-<node TEXT="The idea of &quot;optimizing&quot; papers&#xa;for academic search engines&#xa;evolved in 2010" ID="ID_1404643820" CREATED="1344511282609" MODIFIED="1442910250031" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="ASEO, original paper" ID="ID_1636806351" CREATED="1344508031885" MODIFIED="1442910250032" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20Search%20Engine%20Optimization%20(ASEO)%20--%20Optimizing%20Scholarly%20Literature%20for%20Google%20Scholar%20and%20Co.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="The idea of &quot;optimizing&quot; papers&#xa;for academic search engines&#xa;evolved in 2010" ID="ID_1404643820" CREATED="1344511282609" MODIFIED="1442915679117" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="ASEO, original paper" ID="ID_1636806351" CREATED="1344508031885" MODIFIED="1442915679117" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20Search%20Engine%20Optimization%20(ASEO)%20--%20Optimizing%20Scholarly%20Literature%20for%20Google%20Scholar%20and%20Co.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="COMMENT" page="1" object_number="523" document_hash="A54AEBAC3934EFCB5864365F2FE7AA665BB98504D8F19FAEE6C47F75FA7">
     <pdf_title>Academic Search Engine Optimization (ASEO): Optimizing Scholarly Literature for Google Scholar &amp; Co.</pdf_title>
 </pdf_annotation>
@@ -245,8 +245,8 @@
 <attribute NAME="key" VALUE="Beel10"/>
 </node>
 </node>
-<node TEXT="Feedback in the academic&#xa;community was diverse" ID="ID_1102967923" CREATED="1344511369742" MODIFIED="1442910250034" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Pro" ID="ID_499059823" CREATED="1344509155557" MODIFIED="1442910250034" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Feedback in the academic&#xa;community was diverse" ID="ID_1102967923" CREATED="1344511369742" MODIFIED="1442915679126" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Pro" ID="ID_499059823" CREATED="1344509155557" MODIFIED="1442915679126" DCR_PRIVACY_LEVEL="DEMO">
 <node TEXT="&#x201c;In my opinion, being interested in how (academic) &#xd;&#xa;search engines function and how scientific papers are &#xd;&#xa;indexed and, of course, responding to these&#x2026; well&#x2026; &#xd;&#xa;circumstances of the scientific citing business is just &#xd;&#xa;natural.&#x201d;" ID="ID_802523095" CREATED="1344508403924" MODIFIED="1344508403924" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="3" object_number="746" document_hash="3C641461C926D2C38E6F53D2C479A2E5C9943E3947752A6915088CEFD64D">
     <pdf_title>Academic search engine spam and Google Scholar resilience against it</pdf_title>
@@ -278,8 +278,8 @@
 <attribute NAME="key" VALUE="Beel2010"/>
 </node>
 </node>
-<node TEXT="Con" ID="ID_715816383" CREATED="1344509156803" MODIFIED="1442910250037" DCR_PRIVACY_LEVEL="DEMO" VSHIFT="10">
-<node TEXT="&#x201c;I&#x2019;m not a big fan of this area of research [&#x2026;]. I know &#xd;&#xa;it&#x2019;s in the call for papers, but I think that&#x2019;s a mistake.&#x201d; " ID="ID_1002287656" CREATED="1344508032014" MODIFIED="1442910250038" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Con" ID="ID_715816383" CREATED="1344509156803" MODIFIED="1442915679140" DCR_PRIVACY_LEVEL="DEMO" VSHIFT="10">
+<node TEXT="&#x201c;I&#x2019;m not a big fan of this area of research [&#x2026;]. I know &#xd;&#xa;it&#x2019;s in the call for papers, but I think that&#x2019;s a mistake.&#x201d; " ID="ID_1002287656" CREATED="1344508032014" MODIFIED="1442915679140" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="3" object_number="662" document_hash="3C641461C926D2C38E6F53D2C479A2E5C9943E3947752A6915088CEFD64D">
     <pdf_title>Academic search engine spam and Google Scholar resilience against it</pdf_title>
 </pdf_annotation>
@@ -289,7 +289,7 @@
 <attribute NAME="journal" VALUE="Journal of Electronic Publishing"/>
 <attribute NAME="key" VALUE="Beel2010"/>
 </node>
-<node TEXT="Motivation why researchers might do academic search engine spam" ID="ID_83902833" CREATED="1344508032022" MODIFIED="1442910250039" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Motivation why researchers might do academic search engine spam" ID="ID_83902833" CREATED="1344508032022" MODIFIED="1442915679142" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="3" object_id="1334231183826421543" object_number="666" document_hash="3C641461C926D2C38E6F53D2C479A2E5C9943E3947752A6915088CEFD64D">
     <pdf_title>Academic search engine spam and Google Scholar resilience against it</pdf_title>
 </pdf_annotation>
@@ -299,7 +299,7 @@
 <attribute NAME="journal" VALUE="Journal of Electronic Publishing"/>
 <attribute NAME="key" VALUE="Beel2010"/>
 </node>
-<node TEXT="&#x201c;In my opinion, being interested in how (academic) &#xd;&#xa;search engines function and how scientific papers are &#xd;&#xa;indexed and, of course, responding to these&#x2026; well&#x2026; &#xd;&#xa;circumstances of the scientific citing business is just &#xd;&#xa;natural.&#x201d;" ID="ID_1563404825" CREATED="1344508032030" MODIFIED="1442910250040" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="&#x201c;In my opinion, being interested in how (academic) &#xd;&#xa;search engines function and how scientific papers are &#xd;&#xa;indexed and, of course, responding to these&#x2026; well&#x2026; &#xd;&#xa;circumstances of the scientific citing business is just &#xd;&#xa;natural.&#x201d;" ID="ID_1563404825" CREATED="1344508032030" MODIFIED="1442915679143" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="4" object_id="4694565655893184301" object_number="670" document_hash="3C641461C926D2C38E6F53D2C479A2E5C9943E3947752A6915088CEFD64D">
     <pdf_title>Academic search engine spam and Google Scholar resilience against it</pdf_title>
 </pdf_annotation>
@@ -311,7 +311,7 @@
 </node>
 </node>
 </node>
-<node TEXT="{and so on...}" ID="ID_825000868" CREATED="1344511414252" MODIFIED="1442910250042" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="{and so on...}" ID="ID_825000868" CREATED="1344511414252" MODIFIED="1442915679144" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
 </node>
 </map>
