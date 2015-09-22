@@ -1,0 +1,81 @@
+\chapter{Evaluation}
+\label{sec:eval}
+
+\todo{how realisitc is the simulation?}
+\todo{which properties can be modelled well, which can't?}
+\section{Speed}
+
+\todo{communication delay}
+\todo{vrep simulation speed}
+
+
+\section{Accuracy}
+\todo{error }
+
+
+\section|{Stability}
+
+\section{usability}
+
+% example for including picture
+%\begin{figure}
+%\begin{center}
+%\includegraphics[width=\textheight,angle=90]{SimulinkLibArchitect}
+%\caption{Aufbau der Conqat Simulink Library}
+%\label{slLibArch}
+%\end{center}
+%\end{figure}
+%\begin{figure}
+%\begin{center}
+%\includegraphics[width=\textwidth]{archDoc}
+%\caption{Aufbau des Software-Prototypen}
+%\label{pic:saProto}
+%\end{center}
+%\end{figure}
+
+
+
+% example for code listing
+%\begin{lstlisting}[caption=Metric-Interface]
+%interface Metric {
+%/**
+% * @return the  value of the metric as it is defined 
+% * for the block/architecture and all its subblocks
+% */
+%    public double getGlobalValue();
+%/**
+% * @return the worst value of the metric among the 
+% * block/architecture and all its subblocks
+% */
+%    public double getWorstValue();
+%/**
+% * @return the block with the worst value of the 
+% * metric among the block/architecture and all its subblocks
+% */
+%    public ArchitectureBlock getMaxBlock();
+%/**
+% * @return a list of all values of the metric for the 
+% * block/architecture and its subblocks
+% */
+%    public double[] getAllBlockValues();
+%}
+%\end{lstlisting}
+%
+%
+%\begin{lstlisting}[caption=Metric-Interface, label=lst:filter]
+%/**
+%* disables all subBlocks that are masked in the simulink 
+%* Model and have no input
+%* @param currentBlock
+%*/
+%void maskedZeroInDisable(ArchitectureBlock currentBlock){
+%   for (ArchitectureBlock subBlock :
+%  currentBlock.getSubBlocks()){
+%      if (subBlock.getInPorts().isEmpty() && 
+%     subBlock.hasAttribute("MaskEnableString")){
+%         subBlock.disable();
+%      }
+%      maskedZeroInDisable(subBlock);
+%   }
+%}
+%\end{lstlisting}

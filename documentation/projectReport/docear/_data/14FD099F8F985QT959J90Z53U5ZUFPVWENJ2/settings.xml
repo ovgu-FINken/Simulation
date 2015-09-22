@@ -1,0 +1,12 @@
+<project name="MixedRealityReport" version="docear 1.0" ID="14FD099F8F985QT959J90Z53U5ZUFPVWENJ2">
+<folder type="library" name="Library">
+<link type="literature_annotations" name="Literature &amp; Annotations" path="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/_data/14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/default_files/literature_and_annotations.mm"/>
+<link type="file" name="Temp" path="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/_data/14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/default_files/temp.mm" system="true"/>
+<link type="file" name="Trash" path="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/_data/14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/default_files/trash.mm" system="true"/>
+</folder>
+<folder type="physical" name="My drafts" path="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/_data/14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/My%20Drafts/"/>
+<folder type="literature_repository" name="Literature repository" system="true">
+<folder type="repository_path" name="default" path="file:/Users/Nanoq/Documents/Uni/OvGU/DigiEng/Semester3/DigiEngProjekt/docear/literature_repository"/>
+</folder>
+<link type="references" name="References" path="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/_data/14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/default_files/MixedRealityReport.bib" system="true"/>
+</project>

@@ -1,0 +1,195 @@
+\documentclass[ %final, print %,german
+  %draft,    % omit title page, listings, and particular chapters selected below using include only
+	%german,   % titles for a thesis in German, A4 paper
+	%print,    % the printed version does not use colored links
+	%final,    % removes all TODOs
+]{tex/ttthesis}
+
+\input{tex/colorscheme}
+\input{tex/lststyles}
+\input{tex/tikzstyles}
+\input{tex/macros}
+
+\renewcommand{\lstlistingname}{Quelltext}
+
+%*********************************************************************%
+% META                                                                %
+%*********************************************************************%
+\ifgerman{
+  \newcommand{\university}{Otto-von-Guericke-Universität Magdeburg}
+  \newcommand{\school}{Fakultät für Informatik}
+}{
+  \newcommand{\university}{University of Magdeburg}
+  \newcommand{\school}{School of Computer Science}
+}
+\newcommand{\logo}{\includegraphics[trim=0mm 0mm 50mm 0mm,clip,height=3cm]{INF_SIGN_druck}}
+
+\newcommand{\advisorone}{Prof. {Sanaz Mostaghim}}
+\newcommand{\departmentone}{\ifgerman{Institut für Intelligente Systeme}{Department of Intelligent Systems} }
+
+\newcommand{\advisortwo}{Christoph Steup}
+\newcommand{\departmenttwo}{\ifgerman{Institut für Intelligente Systeme}{Department of Intelligent Systems} }
+
+% Thesis kind
+%\ifgerman{\newcommand{\thesiskind}{Masterarbeit}}{\newcommand{\thesiskind}{Master's Thesis}}
+\ifgerman{\newcommand{\thesiskind}{Bachelorarbeit}}{\newcommand{\thesiskind}{Bachelor Thesis}}
+%\newcommand{\thesiskind}{Diplomarbeit} %do not translate
+%\ifgerman{\newcommand{\thesiskind}{Doktorarbeit}}{\newcommand{\thesiskind}{Dissertation}}
+
+\ifgerman{
+	\newcommand{\theforename}{Lukas}
+	\newcommand{\thesurname}{Mäurer}
+	\newcommand{\thetitle}{Kenngrößenbasiertes Verfahren zur Bewertung von modellbasierten Softwarearchitekturen nach ISO 26262}
+	\newcommand{\thedate}{29. November}
+}{
+	\newcommand{\theforename}{\todo{Lukas}}
+	\newcommand{\thesurname}{\todo{Mäurer}}
+	\newcommand{\thetitle}{Mixed-reality Simulation of Quadcopter-Swarms}
+	\newcommand{\thedate}{September 30}
+}
+\newcommand{\theyear}{2015}
+
+%*********************************************************************%
+% SETUP                                                               %
+%*********************************************************************%
+
+% meta informations of the document
+\hypersetup{
+ pdfauthor={\theforename\ \thesurname},
+ pdftitle={\thetitle}
+}
+
+
+
+% open index file
+\ifnotdraft{\makeindex}
+
+%*********************************************************************%
+% THE DOCUMENT                                                        %
+%*********************************************************************%
+
+\begin{document}
+
+%*********************************************************************%
+% ACRONYMS                                                            %
+%*********************************************************************%
+
+% HOWTO: \gls{IDE} for singular or \glspl{IDE} for plural with 's
+\makeglossaries
+
+
+\newacronym{SysML}{SysML}{Systems Modeling Language}
+\newacronym{MDA}{MDA}{Model Driven Architecture}
+
+%\newacronym{}{}{}
+%\glsaddall % use only if you have acronyms that occur only in graphics
+
+% set the path where graphics are located
+\graphicspath{{pics/}}
+
+\ifnotdraft{
+	\frontmatter
+	\pagenumbering{roman}
+	\include{tex/titlepage}
+
+%Sperrvermerk
+\ifnotdraft{
+	\cleardoublepage
+	\phantomsection
+	\printindex
+	\include{tex/sperrvermerk}
+}
+
+	\include{chapters/danksagung}
+	\blankpage
+
+	%\chapter*{Acknowledgements}
+	%\ldots
+	%\blankpage
+}
+
+
+
+%*********************************************************************%
+% LISTINGS                                                            %
+%*********************************************************************%
+
+\ifnotdraft{
+	{\parskip 0pt\tableofcontents} % toc bitte einzeilig
+	\blankpage
+
+	\ifgerman{
+		%\listoffigures
+		%\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+
+		%\listoftables
+		%\addcontentsline{toc}{chapter}{Tabellenverzeichnis}
+
+		%\renewcommand{\lstlistlistingname}{Quelltextverzeichnis}
+		%\lstlistoflistings
+		%\addcontentsline{toc}{chapter}{Quelltextverzeichnis}
+
+		\renewcommand*{\firstacronymfont}[1]{\emph{#1}}
+		\printglossary[type=acronym,title=Abkürzungsverzeichnis,toctitle=Abkürzungsverzeichnis]
+	}{
+		\listoffigures
+		\addcontentsline{toc}{chapter}{List of Figures}
+
+		\listoftables
+		\addcontentsline{toc}{chapter}{List of Tables}
+
+		\renewcommand{\lstlistlistingname}{List of Code Listings}
+		\lstlistoflistings
+		\addcontentsline{toc}{chapter}{List of Code Listings}
+
+		\renewcommand*{\firstacronymfont}[1]{\emph{#1}}
+		\printglossary[type=acronym,title=List of Acronyms,toctitle=List of Acronyms]
+	}
+}
+
+%*********************************************************************%
+% CHAPTERS                                                            %
+%*********************************************************************%
+
+\mainmatter
+\pagenumbering{arabic}
+
+\include{chapters/01introduction}
+%\include{chapters/02background}
+\include{chapters/02theory}
+\include{chapters/03implementation}
+\include{chapters/04evaluation}
+\include{chapters/05conclusion}
+
+%*********************************************************************%
+% APPENDIX                                                            %
+%*********************************************************************%
+
+%\appendix
+%\include{chapters/appendix}
+
+%*********************************************************************%
+% LITERATURE                                                          %
+%*********************************************************************%
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{\bibname} % 
+\bibliographystyle{alphadin} % plain gerplain abbrvnat unsrtnat alphag alpha
+% in a thesis you have space... use full names
+\bibliography{literature/finkenLiterature}
+% in a paper, space is limited. use abreviations
+%\bibliography{../literature/IEEEabrv,../literature/MYabrv,../literature/literature}
+
+%*********************************************************************%
+% ERKLÄRUNG                                                           %
+%*********************************************************************%
+
+\ifnotdraft{
+	\cleardoublepage
+	\phantomsection
+	\printindex
+	\include{tex/erklaerung}
+}
+
+\end{document}
