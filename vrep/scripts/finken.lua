@@ -129,8 +129,9 @@ function finken.step()
 			roll_target=simGetFloatSignal('roll')
 			yaw_target=simGetFloatSignal('yaw')
 		end
-		--invert roll axis to match real finken
+		--invert roll and yaw axis to match real finken
 		roll_target = -roll_target
+		yaw_target = -yaw_target
 		--logit-like function to fine tune throttle response
 		throttle_target =  tuneThrottle(throttle_target, 1, 1)
 		--hovers at approx. 50% throttle
