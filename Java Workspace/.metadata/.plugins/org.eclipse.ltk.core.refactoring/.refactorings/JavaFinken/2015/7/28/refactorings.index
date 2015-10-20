@@ -1,7 +1,0 @@
-1436259545220	Rename field 'updater'
-1436304694684	Rename field 'drones'
-1436304717170	Rename method 'addObject'
-1436304731794	Rename method 'addObjects'
-1436362197721	Rename type 'UltrasonicSensor'
-1436362306594	Rename type 'FinkenProxSensorType'
-1436369544262	Rename local variable '_nameIndex'

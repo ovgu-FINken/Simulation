@@ -1,8 +1,0 @@
-package velinov.java.finken.app.ui.tabs;
-
-import javax.swing.JPanel;
-
-
-public class AbsTab extends JPanel {
-
-}

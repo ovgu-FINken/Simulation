@@ -1,8 +1,0 @@
-package velinov.java.finken.app.ui.tabs.settings;
-
-import velinov.java.finken.app.ui.AbsFileChooserPanel;
-
-
-public class AircraftFileChooserPanel extends AbsFileChooserPanel {
-
-}

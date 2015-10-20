@@ -1,8 +1,0 @@
-1431203961742	Rename type 'Command'
-1431204576761	Rename local variable '_identificator'
-1431205990676	Delete element
-1431206227695	Rename field 'run'
-1431206911025	Rename field 'threads'
-1431206920016	Rename type 'ThreadPool'
-1431207026506	Delete element
-1431207234994	Rename method 'executeCommands'
