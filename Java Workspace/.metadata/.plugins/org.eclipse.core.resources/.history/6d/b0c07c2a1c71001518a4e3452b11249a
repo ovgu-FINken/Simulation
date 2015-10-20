@@ -1,0 +1,8 @@
+package velinov.java.finken.app;
+
+
+public class FilePathSaverUtils {
+  
+  private static FilePathSaverUtils instance;
+
+}

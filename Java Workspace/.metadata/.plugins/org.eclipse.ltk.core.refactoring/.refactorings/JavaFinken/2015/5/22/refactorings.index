@@ -1,0 +1,32 @@
+1432468294788	Rename field 'STEP_RATE_MILLISECONDS'
+1432468300929	Rename field 'STEP_RATE_SECONDS'
+1432472959109	Move compilation unit
+1432473548400	Move compilation unit
+1432473556185	Move compilation unit
+1432473561110	Move compilation unit
+1432473577782	Move compilation unit
+1432474106819	Rename type 'VirtualDroneMessage'
+1432474119719	Rename type 'StandardMessage'
+1432474147734	Rename type 'MessageBulder'
+1432474601223	Move compilation unit
+1432474616085	Move compilation unit
+1432474623614	Move compilation unit
+1432474651719	Rename type 'VirtualMessageBulder'
+1432475321309	Rename method '_initFieldAttributes'
+1432475331195	Rename method '_initMessageAttributes'
+1432481443564	Rename type 'VirtualDroneMessage'
+1432481467003	Move compilation unit
+1432484184168	Move compilation units
+1432484230982	Move compilation unit
+1432484597775	Move compilation unit
+1432485385296	Rename field 'aircrafts'
+1432485404647	Rename field 'realaircrafts'
+1432485444799	Rename method 'getAircrafts'
+1432486018455	Rename local variable 'drones'
+1432585551555	Delete element
+1432585561917	Delete element
+1432589053133	Delete element
+1432589057627	Delete element
+1432590283422	Rename local variable 'vm'
+1432590598364	Delete element
+1432631619700	Rename local variable 'field'

@@ -1,0 +1,38 @@
+package velinov.java.finken.app.ui.tabs.settings;
+
+import java.awt.FlowLayout;
+
+import javax.swing.JPanel;
+
+
+/**
+ * represents a panel for choosing the telemetry mode by a combo box.
+ * 
+ * @author Vladimir Velinov
+ * @since Oct 19, 2015
+ *
+ */
+public class TelemetryModeChooserPanel {
+  
+  private final JPanel mainPanel;
+  private final JPanel leftPanel;
+  private final JPanel rightPanel;
+  
+  
+  /**
+   * default constructor.
+   */
+  public TelemetryModeChooserPanel() {
+    this.mainPanel  = new JPanel();
+    this.leftPanel  = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+    this.rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
+  }
+  
+  /**
+   * @return the <code>JPanel</code> defining the view.
+   */
+  public JPanel getPanel() {
+    return this.mainPanel;
+  }
+
+}

@@ -1,0 +1,30 @@
+package velinov.java.jinput;
+
+import net.java.games.input.Controller;
+import net.java.games.input.ControllerEnvironment;
+import net.java.games.input.test.ControllerReadTest;
+
+public class JInputTest {
+  
+  ControllerEnvironment envvironment;
+  ControllerReadTest    teset;
+  
+  
+  
+  public JInputTest() {
+    this.envvironment = ControllerEnvironment.getDefaultEnvironment();
+    
+    System.out.println(this.envvironment.getControllers().length);
+    
+    for (Controller controller : this.envvironment.getControllers()) {
+      System.out.println(controller.getName() + " type " + controller.getType());
+    }
+    
+    this.teset = new ControllerReadTest();
+  }
+
+  public static void main(String[] args) {
+    new JInputTest();
+  }
+
+}

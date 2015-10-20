@@ -1,0 +1,55 @@
+package velinov.java.bean;
+
+import java.beans.PropertyChangeListener;
+
+
+/**
+ * Defines the basic {@code Bean} capabilities.
+ * See JavaBeans Specification.
+ * 
+ * @author Vladimir Velinov
+ * @since 18.03.2015
+ *
+ */
+public interface Bean {
+  
+  /**
+   * Add a {@link PropertyChangeListener} which will be asynchronously
+   * notified when a property has changed it's value.
+   * 
+   * @param _listener a listener implementing the {@link PropertyChangeListener}
+   *     interface.
+   */
+  public void addPropertyChangeListener(PropertyChangeListener _listener);
+  
+  /**
+   * Add a {@link PropertyChangeListener} which will be asynchronously
+   * notified when the specified property has changed it's value.
+   * 
+   * @param _property the property to observe.
+   * @param _listener a listener implementing the {@link PropertyChangeListener}
+   *     interface.
+   */
+  public void addPropertyChangeListener(String _property, 
+      PropertyChangeListener _listener);
+  
+  /**
+   * Removes the specified {@link PropertyChangeListener} from the list of
+   * observers.
+   * @param _listener a listener implementing the {@link PropertyChangeListener}
+   *     interface.
+   */
+  public void removePropertyChangeListener(PropertyChangeListener _listener);
+  
+  /**
+   * Removes the specified {@link PropertyChangeListener}, observing the
+   * specified property, from the list of observers.
+   * 
+   * @param _property the property which the listener is observing.
+   * @param _listener a listener implementing the {@link PropertyChangeListener}
+   *     interface.
+   */
+  public void removePropertyChangeListener(String _property, 
+      PropertyChangeListener _listener);
+
+}

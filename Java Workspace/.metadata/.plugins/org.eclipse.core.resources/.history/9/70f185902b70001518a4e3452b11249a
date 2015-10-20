@@ -1,0 +1,6 @@
+package velinov.java.finken.app.ui.tabs;
+
+
+public class SettingsTab extends JPanel {
+
+}

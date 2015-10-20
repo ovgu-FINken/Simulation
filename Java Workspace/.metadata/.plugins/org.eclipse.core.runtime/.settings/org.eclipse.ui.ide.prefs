@@ -1,0 +1,12 @@
+IMPORT_FILES_AND_FOLDERS_MODE=prompt
+IMPORT_FILES_AND_FOLDERS_RELATIVE=true
+IMPORT_FILES_AND_FOLDERS_TYPE=23,1
+IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE=prompt
+PROBLEMS_FILTERS=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<filters>\r\n<filter IMemento.internal.id\="Default" contains\="true" description\="" enabled\="true" onResource\="3" selectBySeverity\="false" selectionStatus\="org.eclipse.core.resources.problemmarker\:true\:org.eclipse.jdt.core.buildpath_problem\:true\:eclipse_tools.unusedfieldmarker\:true\:org.eclipse.jdt.apt.core.configproblem\:true\:org.eclipse.xsd.diagnostic\:true\:org.eclipse.wst.common.project.facet.core.validation.marker\:true\:org.eclipse.jdt.apt.core.buildproblem\:true\:eclipse_tools.linelengthmarker\:true\:org.eclipse.ant.ui.buildFileProblem\:true\:org.eclipse.wst.validation.problemmarker\:true\:org.eclipse.wst.common.modulecore.ModuleCoreValidatorMarker\:true\:org.eclipse.emf.ecore.diagnostic\:true\:org.eclipse.jdt.launching.jreContainerMarker\:true\:org.eclipse.jdt.apt.core.compile.problem\:true\:org.eclipse.jdt.core.problem\:true\:org.eclipse.jdt.apt.pluggable.core.compileProblem\:true\:" severity\="0"/>\r\n</filters>
+PROBLEMS_FILTERS_MIGRATE=true
+TASKS_FILTERS_MIGRATE=true
+eclipse.preferences.version=1
+org.eclipse.ui.internal.views.markers.CachedMarkerBuilderorg.eclipse.ui.views.ProblemView=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<filterGroups andFilters\="false">\r\n<filterGroup IMemento.internal.id\="All Errors" enabled\="true" scope\="3" workingSet\="Aggregate for window 1208785196006">\r\n<fieldFilter IMemento.internal.id\="org.eclipse.ui.ide.severityAndDescriptionField" containsModifier\="CONTAINS" containsText\="" selectedSeverities\="4"/>\r\n<fieldFilter IMemento.internal.id\="org.eclipse.ui.ide.markerType"/>\r\n</filterGroup>\r\n<filterGroup IMemento.internal.id\="Warnings on Selection" enabled\="true" scope\="2" workingSet\="Aggregate for window 1208785196006">\r\n<fieldFilter IMemento.internal.id\="org.eclipse.ui.ide.severityAndDescriptionField" containsModifier\="CONTAINS" containsText\="" selectedSeverities\="2"/>\r\n<fieldFilter IMemento.internal.id\="org.eclipse.ui.ide.markerType"/>\r\n</filterGroup>\r\n</filterGroups>
+platformState=1412692856513
+quickStart=false
+tipsAndTricks=true

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;IOUtilities.java&apos; to &apos;JavaFinken/src/velinov.java.finken&apos;&#x0A;- Original project: &apos;JavaBasics&apos;&#x0A;- Destination element: &apos;JavaFinken/src/velinov.java.finken&apos;&#x0A;- Original element: &apos;velinov.java.basics.io.IOUtilities.java&apos;" description="Copy compilation unit" destination="=JavaFinken/src&lt;velinov.java.finken" element1="/src&lt;velinov.java.basics.io{IOUtilities.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1444633786884" units="1" version="1.0"/>
+</session>

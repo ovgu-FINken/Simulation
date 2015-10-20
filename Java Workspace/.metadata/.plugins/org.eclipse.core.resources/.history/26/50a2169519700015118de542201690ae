@@ -1,0 +1,28 @@
+package velinov.java.finken.app.ui;
+
+import javax.swing.JTabbedPane;
+
+import velinov.java.finken.app.ui.tabs.ConnectionTab;
+
+
+/**
+ * defines the central view of the app.
+ * 
+ * @author Vladimir Velinov
+ * @since Oct 11, 2015
+ *
+ */
+public class FinkenSimBridgeView extends JTabbedPane {
+
+  private final ConnectionTab         connectionTab;
+  private final EventDispatchDelegate eventDelegate;
+  /**
+   * default constructor.
+   */
+  public FinkenSimBridgeView() {
+    this.eventDelegate = new EventDispatchDelegate();
+    this.connectionTab = new ConnectionTab();
+    
+    this.addTab(this.connectionTab.getLabel(), this.connectionTab);
+  }
+}

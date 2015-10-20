@@ -1,0 +1,52 @@
+package velinov.java.lut;
+
+
+/**
+ * @author vladimirvelinov
+ * @since May 27, 2015
+ */
+public class SpineLookUpTable {
+  
+  private float[] posAngles;
+  private long[]  posAnglesCount;
+  
+  private int     posTableSize;
+  private float   posMaxAngle;
+  
+  /**
+   * @param _minAngle
+   * @param _maxAngle
+   * @param _offset
+   */
+  public SpineLookUpTable(int _minAngle, int _maxAngle, int _offset) {
+
+    this.posTableSize   = ((_maxAngle - 0) / _offset) + 1;
+    this.posAngles      = new float[this.posTableSize];
+    this.posAnglesCount = new long[this.posTableSize];
+    this.posMaxAngle    = _maxAngle;
+    
+    for (int i = 0; i < this.posTableSize; i ++) {
+      this.posAngles[i] = _minAngle + (i * _offset);
+    }
+    
+  }
+  
+  /**
+   * @param _angle
+   */
+  public void setAngle(float _angle) {
+    int index;
+    float f;
+    
+    if (_angle >= 0) {
+      f = (_angle * ((this.posTableSize - 1)/ this.posMaxAngle));
+      
+      index = (int) Math.floor(f);
+      
+      this.posAnglesCount[index] ++;
+    }
+    
+    
+    System.out.println(_angle + " " + index);
+  }
+}

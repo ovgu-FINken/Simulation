@@ -1,0 +1,72 @@
+package velinov.java.finken.app.ui.tabs.settings;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import velinov.java.finken.app.filesaver.FilePathSaverUtils;
+
+
+/**
+ * represents a panel for choosing the telemetry mode by a combo box.
+ * 
+ * @author Vladimir Velinov
+ * @since Oct 19, 2015
+ *
+ */
+public class TelemetryModeChooserPanel {
+  
+  @SuppressWarnings("nls")
+  private static final String TITLE = "Telemetry mode:";
+  
+  private final JPanel    mainPanel;
+  private final JPanel    leftPanel;
+  private final JPanel    rightPanel;
+  private final JLabel    label;
+  private final JComboBox combo;
+  
+  
+  /**
+   * default constructor.
+   */
+  @SuppressWarnings("nls")
+  public TelemetryModeChooserPanel() {
+    this.mainPanel  = new JPanel();
+    this.leftPanel  = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+    this.rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
+    this.label      = new JLabel("Telemetry mode:");
+    this.combo      = new JComboBox();
+    
+    this.mainPanel.setLayout(new BorderLayout());
+    this.mainPanel.setPreferredSize(new Dimension(1, 50));
+    this.mainPanel.setBorder(BorderFactory.createTitledBorder(TITLE));
+    
+    this.leftPanel.add(this.label);
+    this.rightPanel.add(this.combo);
+    
+    this.mainPanel.add(this.leftPanel, BorderLayout.WEST);
+    this.mainPanel.add(this.rightPanel, BorderLayout.EAST);
+    
+    this._init();
+  }
+  
+  private void _init() {
+    FilePathSaverUtils fileSaverUtils;
+    FilePathSaver      fileSaver;
+    
+    fileSaverUtils = FilePathSaverUtils.getInstance();
+  }
+  
+  /**
+   * @return the <code>JPanel</code> defining the view.
+   */
+  public JPanel getPanel() {
+    return this.mainPanel;
+  }
+
+}

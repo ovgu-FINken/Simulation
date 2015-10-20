@@ -1,0 +1,35 @@
+package velinov.java.finken.app.ui.tabs.settings;
+
+import javax.swing.BoxLayout;
+
+import velinov.java.finken.app.ui.tabs.AbsTab;
+
+/**
+ * a <code>JPanel</code> defining the view for the setting tab 
+ * in the <code>FinkenSimBridgeView</code>. 
+ *
+ * @author Vladimir Velinov
+ * @since Oct 11, 2015
+ *
+ */
+public class SettingsTab extends AbsTab {
+
+  @SuppressWarnings("nls")
+  private static final String TAB_LABEL = "Settings";
+  
+  private AbsFileChooserTab telemetryPanel;
+  
+  /**
+   * default constructor.
+   */
+  public SettingsTab() {
+    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    
+  }
+  
+  @Override
+  public String getTabLabel() {
+    return SettingsTab.TAB_LABEL;
+  }
+
+}

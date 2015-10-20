@@ -1,0 +1,78 @@
+package velinov.java.finken.app.ui.tabs.settings;
+
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+
+import velinov.java.finken.app.FilePathSaver;
+import velinov.java.finken.app.ui.AbsFileChooserPanel;
+import velinov.java.finken.app.ui.UIConstants;
+
+
+/**
+ * an <code>AbsFileChooserPanel</code> that chooses the telemetry file.
+ * 
+ * @author Vladimir Velinov
+ * @since Oct 11, 2015
+ *
+ */
+public class TelemetryFileChooserPanel extends AbsFileChooserPanel {
+  
+  private JLabel               label;
+  private JLabel               fileLabel;
+  private final  FilePathSaver fileSaver;
+  
+  /**
+   * default constructor.
+   */
+  public TelemetryFileChooserPanel() {
+    this.fileLabel = FilePathSaver.getInstance();
+  }
+  
+  private void _initComponents() {
+    this.label     = new JLabel(UIConstants.LBL_TELEMETRY_FILE);
+    this.fileLabel = new JLabel();
+  }
+
+  @Override
+  protected Dimension getPanelSize() {
+    return new Dimension(1, 50);
+  }
+
+  @Override
+  protected Dimension getFileBtnSize() {
+    return new Dimension(120, 25);
+  }
+
+  @Override
+  protected String getBorderTitle() {
+    return UIConstants.BORDER_TELEMETRY;
+  }
+
+  @Override
+  protected String getFileBtnLabel() {
+    return UIConstants.LBL_FILE_CHOOSE_BTN;
+  }
+
+  @Override
+  protected List<JComponent> getLeftPanelComponents() {
+    List<JComponent> components;
+    
+    this._initComponents();
+    components = new ArrayList<JComponent>();
+
+    components.add(this.label);
+    components.add(this.fileLabel);
+    
+    return components;
+  }
+
+  @Override
+  protected void onFileChosen(String _filePath) {
+    this.fileLabel.setText(_filePath);
+  }
+
+}

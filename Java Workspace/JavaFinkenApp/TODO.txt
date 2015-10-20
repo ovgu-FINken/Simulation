@@ -1,0 +1,3 @@
+
+* check if swing elements need to extend the EventDispatchable or they already 
+can fire property changes.

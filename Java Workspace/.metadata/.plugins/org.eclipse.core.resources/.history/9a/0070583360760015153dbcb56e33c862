@@ -1,0 +1,6 @@
+package velinov.java.finken.telemetry;
+
+
+public class AuxiliaryModeXmlReader extends AbsXmlSaxReader {
+
+}

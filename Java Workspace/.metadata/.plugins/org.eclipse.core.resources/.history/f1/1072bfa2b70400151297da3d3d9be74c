@@ -1,0 +1,12 @@
+package velinov.java.lut;
+
+
+public class LUT {
+
+  public static void main(String[] args) {
+    SpineLookUpTable lut = new SpineLookUpTable(-30 , 100, 10);
+    
+    lut.setAngle(15);
+  }
+
+}

@@ -1,0 +1,21 @@
+package velinov.java.finken.app.ui.tabs;
+
+/**
+ * a <code>JPanel</code> defining the view for the setting tab 
+ * in the <code>FinkenSimBridgeView</code>. 
+ *
+ * @author Vladimir Velinov
+ * @since Oct 11, 2015
+ *
+ */
+public class SettingsTab extends AbsTab {
+
+  @SuppressWarnings("nls")
+  private static final String TAB_LABEL = "Settings";
+  
+  @Override
+  public String getTabLabel() {
+    return SettingsTab.TAB_LABEL;
+  }
+
+}
