@@ -1,0 +1,60 @@
+\ifglsentryexists{SysML}{}%
+{%
+\gls@defglossaryentry{SysML}%
+{%
+name={SysML},%
+sort={SysML},%
+type={acronym},%
+first={Systems Modeling Language (SysML)},%
+firstplural={Systems Modeling Languages(SysMLs)},%
+text={SysML},%
+plural={SysMLs},%
+description={Systems Modeling Language},%
+descriptionplural={Systems Modeling Language\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Systems Modeling Language},%
+longplural={Systems Modeling Languages},%
+short={SysML},%
+shortplural={SysMLs},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{MDA}{}%
+{%
+\gls@defglossaryentry{MDA}%
+{%
+name={MDA},%
+sort={MDA},%
+type={acronym},%
+first={Model Driven Architecture (MDA)},%
+firstplural={Model Driven Architectures(MDAs)},%
+text={MDA},%
+plural={MDAs},%
+description={Model Driven Architecture},%
+descriptionplural={Model Driven Architecture\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Model Driven Architecture},%
+longplural={Model Driven Architectures},%
+short={MDA},%
+shortplural={MDAs},%
+counter={page},%
+parent={},%
+%
+}%
+}%
