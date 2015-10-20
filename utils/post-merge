@@ -1,3 +1,8 @@
 #!/bin/sh
+#copy this script to .git/hooks and change the second path to the directory of your vrep application
+#it links the finken lua scripts in this repository so vrep can find them
+#on OS X, the path should be correct for default installations
+#does not work for Windows!
+
 ln -f $GIT_DIR/vrep/scripts/finken.lua /Applications/vrep/vrep.app/Contents/MacOS/finken.lua
 ln -f $GIT_DIR/vrep/scripts/finkenPid.lua /Applications/vrep/vrep.app/Contents/MacOS/finkenPid.lua
