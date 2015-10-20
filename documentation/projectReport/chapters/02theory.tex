@@ -26,9 +26,9 @@
 \textbf{\textit{Goal}:} our mixed reality simulation needs a dependable link of communication between the V-REP simulation environment and the flying quadrocopters. The Quadcopter needs to stream its telemetry data in real-time to the V-REP, and the reverse communication is needed as well.\\
 The simulated quadrocopters that we have in the V-REP are divided into two categories: real and virtual representations.\\ 
 The real are replicating the physical flying quadrocopters. They should perform the same flying manoeuvres as those flying in the real environment. In order to make the model replicate this behaviour, the flying quadrocopter must send its linear and angular velocity, its pitch yaw and row and other parameters in real time to its representation model in V-REP. The simulation model should also send the readings from its proximity sensors to the flying quadcopter thus providing it with information from a virtual sensor. \\
-The virtual quadrocopters are purely simulation quadcopter objects, that exist only in the V-REP simulation environment. Their purpose is to interact with the real quadrocopters for example to avoid collisions and thus making the first steps in the swarm research.
+The virtual quadrocopters are purely simulation quadcopter objects, that exist only in the V-REP simulation environment. Their purpose is to interact with the real quadrocopters for example to avoid collisions and thus making the first steps in the swarm research. The virtual quadrocopters have to be seen in the Paparazzi ground station as if they are real physical quadrocopters. It means that all the ground station agents like message logger, the signal plotting, attitude indicator, artificial horizon and other displays have to be updated with adequate information coming from the virtual quadrocopters in the V-REP.
 
-The communication between the V-REP and the quadrocopters passes through several software components, which are depicted on figure \ref{fig:communication}. 
+The communication between the V-REP quadrocopter models and the physical quadrocopters passes through several software components, which are depicted on figure \ref{fig:communication} and discussed in the next chapters.
 
 \begin{figure}[h!]
  \begin{center}
@@ -76,6 +76,14 @@ The Ivy Bus is a content-based publisher-subscriber and uses regular expressions
     \caption{Content-based publisher-subscriber \label{fig:pubsubsc_topic_based}}
   \end{minipage}
 \end{figure}
+
+\subsection{Communication}
+
+The communication between V-REP and the quadrocopters passes through the Java API, which serves as a bridge between them. In fact the Java API does not communicate directly with the quadrocopter, but connects to the Ivy-Bus in the Paparazzi GS and can thus subscribe to the messages caring the telemetry data and also publish messages which will eventually be send to the quadrocopter by the link agent.
+Since we wanted to create a modular and reusable API, that can be used for other mixed-reality scenarios, the Java API was created with the idea in mind to be distributed, modular and rely on many abstraction layers. The API development has followed the specification-driven principles and its main tasks are described as follows:
+
+\subsubsection{V-REP connection through Remote API}
+
 
 % example for definition    
 % \begin{definitionnonum}[Softwarearchitektur ]

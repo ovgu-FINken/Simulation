@@ -1,0 +1,76 @@
+package velinov.java.finken.drone;
+
+import velinov.java.finken.ivybus.VirtualDroneBusNode;
+import velinov.java.ivybus.IvyBusNode;
+import velinov.java.vrep.VrepClient;
+import velinov.java.vrep.data.EulerAngles;
+import velinov.java.vrep.data.Position;
+import velinov.java.vrep.objects.Shape;
+
+/**
+ * Represent a virtual {@link AbsFinkenDrone}.
+ * 
+ * @author Vladimir Velinov
+ * @since 27.04.2015
+ */
+public class VirtualFinkenDrone extends AbsFinkenDrone {
+  
+  /**
+   * Represents the base name of all virtual FINKEN drones.
+   */
+  @SuppressWarnings("nls")
+  public static final String VIRTUAL_FINKEN_DRONE_NAME = "VirtualFinkenDrone";
+  
+  private final IvyBusNode busNode;
+  
+  /**
+   * construct a vistual {@link FinkenDrone}.
+   * @param _name
+   * @param _id 
+   * @param _handle
+   * @param _client
+   */
+  @SuppressWarnings("nls")
+  public VirtualFinkenDrone(String _name, int _id, int _handle,
+      VrepClient _client) 
+  {
+    super(_name, _id,_handle, _client);
+    
+    this.busNode = new VirtualDroneBusNode(this.getName(),
+        this.getName() + " is ready");
+  }
+  
+  /**
+   * @param _shape
+   * @param _id
+   */
+  @SuppressWarnings("nls")
+  public VirtualFinkenDrone(Shape _shape, int _id) {
+    super(_shape, _id);
+    
+    this.busNode = new VirtualDroneBusNode(this.getName(),
+        this.getName() + "joined the bus");
+  }
+
+  @Override
+  public void joinIvyBus() {
+    this.busNode.connect();
+  }
+
+  @Override
+  public void leaveIvyBus() {
+    this.busNode.disconnect();
+  }
+
+  @Override
+  public boolean isConnectedToBus() {
+    return this.busNode.isConnected();
+  }
+  
+  @Override
+  public void publischStatus() {
+    ((VirtualDroneBusNode) this.busNode).publischFlightParamMsg(
+        this.getPosition(), this.getOrientation());
+  }
+
+}

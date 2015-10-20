@@ -1,0 +1,30 @@
+package velinov.java.finken.app;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class FilePathSaverUtils {
+  
+  private static FilePathSaverUtils instance;
+  
+  private final Map<String, FilePathSaver> map;
+  
+  private FilePathSaverUtils() {
+    this.map = new HashMap<String, FilePathSaver>();
+  }
+  
+  public static FilePathSaverUtils getInstance() {
+    if (instance == null) {
+      instance = new FilePathSaverUtils();
+    }
+    return instance;
+  }
+  
+  public addFilePathSaver(String _key, FilePathSaver _pathSaver) {
+    if (_key == null || _pathSaver == null) {
+      throw new NullPointerException("null arguments");
+    }
+  }
+
+}

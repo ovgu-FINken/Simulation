@@ -1,0 +1,95 @@
+package velinov.java.finken.app.ui.tabs.settings;
+
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+
+import velinov.java.finken.app.ui.AbsFileChooserPanel;
+import velinov.java.finken.app.ui.UIConstants;
+
+
+/**
+ * an <code>AbsFileChooserPanel</code> that chooses the telemetry file.
+ * 
+ * @author Vladimir Velinov
+ * @since Oct 11, 2015
+ *
+ */
+public class TelemetryFileChooserPanel extends AbsFileChooserPanel {
+  
+  private JLabel label;
+  private JLabel fileLabel;
+  
+  /**
+   * default constructor.
+   */
+  public TelemetryFileChooserPanel() {
+    
+  }
+  
+  private void _initComponents() {
+    this.label     = new JLabel(UIConstants.LBL_TELEMETRY_FILE);
+    this.fileLabel = new JLabel();
+  }
+
+  @Override
+  protected Dimension getPanelSize() {
+    return new Dimension(1, 50);
+  }
+
+  @Override
+  protected Dimension getFileBtnSize() {
+    return new Dimension(120, 25);
+  }
+
+  @Override
+  protected String getBorderTitle() {
+    return UIConstants.BORDER_TELEMETRY;
+  }
+
+  @Override
+  protected String getBtnConnectedLabel() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected String getBtnDisconnectedLabel() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected Object getConnectObject() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected String getPropertyConnected() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected String getPropertyDisconnected() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected List<JComponent> getLeftPanelComponents() {
+    List<JComponent> components;
+    
+    components = new ArrayList<JComponent>();
+
+    components.add(this.label);
+    components.add(this.fileLabel);
+    
+    return components;
+  }
+
+}

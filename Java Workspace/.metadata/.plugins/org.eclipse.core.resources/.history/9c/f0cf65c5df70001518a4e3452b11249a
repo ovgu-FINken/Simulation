@@ -1,0 +1,113 @@
+package velinov.java.finken.app;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import velinov.java.finken.IOUtilities;
+
+/**
+ * 
+ * an utility class, that saves the default paths to xml files in a text file
+ * in the default working directory.
+ * 
+ * @author Vladimir Velinov
+ * @since Oct 11, 2015
+ *
+ */
+public class FilePathSaver {
+  
+  private final String directory;
+  private final String fileName;
+  private String       filePath;
+  
+  /**
+   * default constructor.
+   * 
+   * @param _fileName
+   *          the name of the file where the paths will be saved.
+   */
+  @SuppressWarnings("nls")
+  public FilePathSaver(String _fileName) {
+    if (_fileName == null) {
+      throw new NullPointerException("null filename");
+    }
+    
+    this.directory = System.getProperty("user.dir");
+    this.fileName  = _fileName;
+    
+    if ((this.filePath = this.getFilePathFromFile()) == null) {
+      this.filePath = "not specified";
+    }
+  }
+  
+  /**
+   * @return the saved absolute file path.
+   */
+  public String getFilePath() {
+    return this.filePath;
+  }
+  
+  /**
+   * saves the specified <code>File</code> absolute path to the file.
+   *  
+   * @param _file the file absolute path
+   * 
+   * @return <code>true</code> if operation is successfull.
+   */
+  @SuppressWarnings("nls")
+  public boolean saveFilePathToFile(File _file) {
+    File           file;
+    FileWriter     fileWriter;
+    BufferedWriter bufferedWriter = null;
+    
+    file = new File(this.directory + "/" + this.fileName);
+    
+    if (!file.exists()) {
+      try {
+        file.createNewFile();
+      }
+      catch (IOException _e) {
+        _e.printStackTrace();
+        return false;
+      }
+    }
+    
+    try {
+      fileWriter     = new FileWriter(file);
+      bufferedWriter = new BufferedWriter(fileWriter);
+      
+      bufferedWriter.write(_file.getAbsolutePath());
+      
+      return true;
+    }
+    catch (IOException _e) {
+      _e.printStackTrace();
+      return false;
+    }
+    finally {
+      IOUtilities.closeSilently(bufferedWriter);
+    }
+    
+  }
+  
+  public boolean loadFilePathFromFile() {
+    File       file;
+    FileReader fileReader;
+    
+    file = new File(this.directory + "/" + this.fileName);
+    
+    if (!file.exists()) {
+      return false;
+    }
+    
+    fileReader = new FileReader(file);
+    
+    
+    return null;
+  }
+  
+ 
+}

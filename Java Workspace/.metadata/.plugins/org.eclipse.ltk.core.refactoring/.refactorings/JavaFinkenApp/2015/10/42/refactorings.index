@@ -1,0 +1,22 @@
+1444568099691	Rename type 'FinkenSimBridgeView'
+1444568107971	Move compilation unit
+1444568135767	Rename type 'CentralView'
+1444578805167	Move compilation unit
+1444578831433	Move compilation unit
+1444578868882	Move compilation unit
+1444578918657	Move compilation unit
+1444578933363	Move compilation unit
+1444578947464	Move compilation unit
+1444578959360	Move compilation unit
+1444578979603	Move compilation unit
+1444580349319	Rename field 'connectButton'
+1444580411974	Rename method 'getConnectBtnSize'
+1444595742390	Rename type 'FilePatchSaver'
+1444647044906	Rename field 'FILE_NAME'
+1444648441190	Rename local variable '_telemetryFile'
+1444650324213	Rename method 'saveTelemetryFile'
+1444683078355	Rename local variable '_file'
+1444683767420	Move compilation unit
+1444683772573	Move compilation unit
+1444729124617	Rename resource 'hs_err_pid11393.log'
+1444819600390	Rename method '_stopNodes'

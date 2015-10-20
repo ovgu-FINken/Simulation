@@ -1,0 +1,30 @@
+package velinov.java.lut;
+
+
+/**
+ * @author vladimirvelinov
+ * @since May 27, 2015
+ */
+public class SpineLookUpTable {
+  
+  private float[] inValue;
+  private long[]  outValue;
+  
+  /**
+   * @param _minAngle
+   * @param _maxAngle
+   * @param _offset
+   */
+  public SpineLookUpTable(int _minAngle, int _maxAngle, int _offset) {
+    int tableSize;
+    
+    tableSize     = ((_maxAngle - _minAngle) / _offset) + 1;
+    this.inValue  = new float[tableSize];
+    this.outValue = new long[tableSize];
+    
+    for (int i = 0; i < tableSize; i ++) {
+      this.inValue[i] = _minAngle + (i * _offset);
+    }
+    
+  }
+}

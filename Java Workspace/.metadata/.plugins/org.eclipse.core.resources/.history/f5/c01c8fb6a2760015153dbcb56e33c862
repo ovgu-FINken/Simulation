@@ -1,0 +1,6 @@
+package velinov.java.xml.sax;
+
+
+public class StopParsingException extends SAXException {
+
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename method &apos;velinov.java.ivybus.message.MessageField.setCoeffitient(...)&apos; to &apos;setCoeff&apos;&#x0A;- Original project: &apos;JavaIvyBus&apos;&#x0A;- Original element: &apos;velinov.java.ivybus.message.MessageField.setCoeffitient(...)&apos;&#x0A;- Renamed element: &apos;velinov.java.ivybus.message.MessageField.setCoeff(...)&apos;&#x0A;- Update references to refactored element" delegate="false" deprecate="false" description="Rename method &apos;setCoeffitient&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.method" input="/src&lt;velinov.java.ivybus.message{MessageField.java[MessageField~setCoeffitient~QString;" name="setCoeff" references="true" stamp="1433931205554" version="1.0"/>
+</session>

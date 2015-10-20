@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete element from project &apos;JavaIvyBus&apos;&#x0A;- Original project: &apos;JavaIvyBus&apos;&#x0A;- Original element: &apos;velinov.java.ivybus.message.FieldValueType.java&apos;" description="Delete element" element1="/src&lt;velinov.java.ivybus.message{FieldValueType.java" elements="1" flags="589830" id="org.eclipse.jdt.ui.delete" resources="0" stamp="1432394004817" subPackages="false" version="1.0"/>
+</session>

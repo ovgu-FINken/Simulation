@@ -1,0 +1,33 @@
+package velinov.java.jinput;
+
+import net.java.games.input.Controller;
+import net.java.games.input.ControllerEnvironment;
+import net.java.games.input.Controller.Type;
+import net.java.games.input.test.ControllerReadTest;
+
+public class JInputTest {
+  
+  private final ControllerEnvironment environment;
+
+  private Controller                  joystick;
+  
+  
+  public JInputTest() {
+    Controller[] controllers;
+    
+    this.environment = ControllerEnvironment.getDefaultEnvironment();
+    controllers      = this.environment.getControllers();
+    
+    for (Controller controller : controllers) {
+      if (controller.getType() == Type.STICK) {
+        System.out.println(controller.getName());
+      }
+    }
+    
+  }
+
+  public static void main(String[] args) {
+    new JInputTest();
+  }
+
+}

@@ -1,0 +1,65 @@
+package velinov.java.finken.app.ui.tabs.settings;
+
+import java.awt.Dimension;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+
+import velinov.java.finken.app.ui.AbsFileChooserPanel;
+import velinov.java.finken.app.ui.UIConstants;
+
+
+public class AircraftFileChooserPanel extends AbsFileChooserPanel {
+
+  private JLabel label;
+  private JLabel fileLabel;
+  
+  private void _initComponents() {
+    this.label     = new JLabel(UIConstants.LBL_TELEMETRY_FILE);
+    this.fileLabel = new JLabel();
+  }
+  
+  @Override
+  protected Dimension getPanelSize() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected Dimension getFileBtnSize() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected String getBorderTitle() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected String getFileBtnLabel() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected String getSavedFileName() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected List<JComponent> getLeftPanelComponents() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  protected void onFileChosen(String _filePath) {
+    // TODO Auto-generated method stub
+    
+  }
+
+}

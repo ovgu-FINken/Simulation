@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;velinov.java.ivybus.message.TelemetryMessage&apos; to &apos;StandardMessage&apos;&#x0A;- Original project: &apos;JavaIvyBus&apos;&#x0A;- Original element: &apos;velinov.java.ivybus.message.TelemetryMessage&apos;&#x0A;- Renamed element: &apos;velinov.java.ivybus.message.StandardMessage&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;TelemetryMessage&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;velinov.java.ivybus.message{TelemetryMessage.java[TelemetryMessage" matchStrategy="1" name="StandardMessage" qualified="false" references="true" similarDeclarations="false" stamp="1431444908350" textual="false" version="1.0"/>
+</session>

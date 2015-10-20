@@ -1,0 +1,56 @@
+package velinov.java.jinput;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import fr.dgac.ivy.IvyException;
+import velinov.java.ivybus.AbsIvyBusNode;
+import velinov.java.jinput.Joystick.Axes;
+
+
+public class JoystickBusNode extends AbsIvyBusNode 
+    implements PropertyChangeListener
+{
+
+  @SuppressWarnings("nls")
+  public JoystickBusNode() {
+    super("LINK", "Joystick joined the bus");
+    
+  }
+
+  @Override
+  public void propertyChange(PropertyChangeEvent _evt) {
+    String message;
+    Axes   axes;
+    float  xAxis;
+    float  yAxis;
+    float  throttle;
+    
+    if (!_evt.getPropertyName().equals(Joystick.JOYSTICK_DATA_UPDATED)) {
+      return;
+    }
+    
+    axes = (Axes) _evt.getNewValue();
+    
+    xAxis    = axes.xAxis * 60;
+    yAxis    = axes.yAxis * 60;
+    throttle = axes.throttle*60;
+    
+    int xAxisInt = (int) xAxis;
+    int yAxisInt = (int) yAxis;
+    
+    message = "1 ROTORCRAFT_FP" + " " + 0 + " " + 0 + " " + 0 + " " + 0 + " " + 0 
+        + " " + 0 + " " + xAxisInt + " " + yAxisInt + " " + 0 + " " + 0 + " " + 0 + " " + 0
+        + " " + 0 + " " + 0 + " " + 0;
+    
+    try {
+      this.ivyBus.sendMsg(message);
+    }
+    catch (IvyException _e) {
+      // TODO Auto-generated catch block
+      _e.printStackTrace();
+    }
+    
+  }
+
+}

@@ -1,0 +1,164 @@
+package velinov.java.finken.drone;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import coppelia.FloatWA;
+import coppelia.IntWA;
+import coppelia.StringWA;
+import velinov.java.bean.AbsBean;
+import velinov.java.vrep.data.EulerAngles;
+import velinov.java.vrep.data.Position;
+import velinov.java.vrep.objects.ObjectUpdater;
+import velinov.java.vrep.objects.Shape;
+import velinov.java.vrep.VrepClient;
+import velinov.java.vrep.VrepConnection;
+import velinov.java.vrep.VrepConnectionUtils;
+
+/**
+ * standard implementation of {@link ObjectUpdater}.
+ * 
+ * @author Vladimir Velinov
+ * @since 04.05.2015
+ */
+public class VirtualFinkenDroneUpdater extends AbsBean 
+    implements ObjectUpdater, Runnable 
+{
+  private Thread                   thread;
+  private final VrepConnection     vrepConnection;
+  private final VrepClient         vrepClient;
+  private List<AbsFinkenDrone>     drones;
+  private long                     simStep;
+  private volatile boolean         run;
+  
+  /**
+   * default constructor.
+   * @param _vrepClient 
+   */
+  public VirtualFinkenDroneUpdater(VrepClient _vrepClient) {
+    
+    this.vrepClient     = _vrepClient;
+    this.drones         = new ArrayList<AbsFinkenDrone>();
+    this.vrepConnection = VrepConnectionUtils.getConnection();
+    this.simStep        = 50;
+  }
+
+  @Override
+  public void start() {
+    if (this.thread == null) {
+      this.thread = new Thread(this, ObjectUpdater.NAME);
+      this.run    = true;
+      this.thread.start();
+      this.fireBooleanPropertyChanged(PROPERTY_STARTED, this.run);
+    }
+  }
+
+  @Override
+  public void stop() {
+    this.run    = false;
+    this.thread = null;
+    this.fireBooleanPropertyChanged(PROPERTY_STARTED, this.run);
+  }
+  
+  @Override
+  public boolean isRunning() {
+    return this.run;
+  }
+
+  /**
+   * add a {@link VirtualFinkenDrone} to the update list.
+   * @param _object
+   */
+  public void addObject(VirtualFinkenDrone _object) {
+    this.drones.add(_object);
+  }
+
+  /**
+   * @param _objects
+   */
+  public void addObjects(List<AbsFinkenDrone> _objects) {
+    this.drones.addAll(_objects);
+  }
+  
+  @Override
+  public void run() {
+    while (this.run) {
+      
+      this.updateVirtualDrones();
+      
+      try {
+        Thread.sleep(this.simStep);
+      }
+      catch (InterruptedException _e) {
+        // ignored.
+      }
+    }
+  }
+  
+  private void updateVirtualDrones() {
+    boolean success = true;
+    boolean updated = false;
+    
+    updated = this.updateParameters(VrepConnection.GET_ABSOLUTE_POSITION);
+    success = success && updated;
+    updated = this.updateParameters(VrepConnection.GET_ABSOLUTE_ORIENTATION);
+    success = success && updated;
+    
+    if (success) {
+      this.fireBooleanPropertyChanged(PROPERTY_OBJECTS_UPDATED, true);
+    }
+  }
+  
+  private boolean updateParameters(int _paramType) {
+    IntWA    handles;
+    IntWA    intData;
+    FloatWA  floatData;
+    StringWA stringData;
+    int      ret;
+    
+    handles    = new IntWA(1);
+    intData    = new IntWA(1);
+    floatData  = new FloatWA(1);
+    stringData = new StringWA(1);
+    
+    ret = this.vrepConnection.simxGetObjectGroupData(
+        this.vrepClient.getClientId(), Shape.getObjectType(),
+        _paramType, handles, intData, floatData, 
+        stringData, VrepConnection.simx_opmode_oneshot_wait);
+    
+    if (ret != VrepConnection.simx_return_ok) {
+      return false;
+    }
+    
+    for (AbsFinkenDrone drone : this.drones) {
+      Position    pos;
+      EulerAngles orientation;
+      int         inx;
+      
+      inx = drone.getSceneIndex();
+      inx = inx * 3;
+      
+      float x = floatData.getArray()[inx];
+      float y = floatData.getArray()[inx + 1];
+      float z = floatData.getArray()[inx + 2];
+      
+      switch (_paramType) {
+      case VrepConnection.GET_ABSOLUTE_POSITION:
+        pos = new Position(x, y, z);
+        drone.setPosition(pos);
+        break;
+        
+      case VrepConnection.GET_ABSOLUTE_ORIENTATION:
+        orientation = new EulerAngles(x, y, z);
+        drone.setOrientation(orientation);
+        break;
+      
+      }
+      
+      drone.publischStatus();
+    }
+    
+    return true;
+  }
+
+}
