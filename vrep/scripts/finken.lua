@@ -167,17 +167,18 @@ function finken.step()
 end
 
 function finken.setTarget(targetObject)
-	local xyz = simGetObjectPosition(targetObject,-1) 
+	local targetPosition = simGetObjectPosition(targetObject,-1) 
 	local basePosition = simGetObjectPosition(handle_finken_base,-1)
-	local errorX = basePosition[1] - xyz[1]
-	local errorY = basePosition[2] - xyz[2]
-	local errorZ =  xyz[3]-basePosition[3]
+	local errorX = targetPosition[1] - basePosition[1]
+	local errorY = targetPosition[2] - basePosition[2]
+	local errorZ =  targetPosition[3]-basePosition[3]
 	local corrX = targetXcontroller.step(errorX, 1)
 	local corrY = targetYcontroller.step(errorY, 1)
 	local corrZ = targetZcontroller.step(errorZ, 1)
-	simSetFloatSignal(fixSignalName('pitch'),-corrX)
-	simSetFloatSignal(fixSignalName('roll'), -corrY)
+	simSetFloatSignal(fixSignalName('pitch'), corrX)
+	simSetFloatSignal(fixSignalName('roll'), corrY)
 	simSetFloatSignal(fixSignalName('throttle'), corrZ)
+	simSetFloatSignal(fixSignalName('height'),targetPosition[3])
 end
 --[[
 --sense() reads all sensors of the finken, and updates the signals
@@ -195,13 +196,15 @@ function finken.sense()
 		end
 	end
 	sensor_dist_packed = simPackFloats(sensor_distances)
-	if (this_ID_Suffix ~= -1) then
-		simSetStringSignal('sensor_dist'..this_ID_Suffix,sensor_dist_packed)
-	else
-		simSetStringSignal('sensor_dist',sensor_dist_packed)
-	end
+	simSetStringSignal(fixSignalName('sensor_dist'),sensor_dist_packed)
 	return sensor_distances
 end
 
+function copyFinken(sourceFinken)
+	local newFinken = simCopyPasteObjects({sourceFinken},1)
+	simSetObjectPosition(newFinken[1], -1, {2,2,2})
+
+	return newFinkenScript
+end
 
 return finken
