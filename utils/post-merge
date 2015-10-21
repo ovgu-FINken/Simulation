@@ -6,3 +6,6 @@
 
 ln -f $GIT_DIR/../vrep/scripts/finken.lua /Applications/vrep/vrep.app/Contents/MacOS/finken.lua
 ln -f $GIT_DIR/../vrep/scripts/finkenPid.lua /Applications/vrep/vrep.app/Contents/MacOS/finkenPid.lua
+ln -f $GIT_DIR/../vrep/scripts/finkenCore.lua /Applications/vrep/vrep.app/Contents/MacOS/finkenCore.lua
+ln -f $GIT_DIR/../vrep/scripts/finkenMeta.lua /Applications/vrep/vrep.app/Contents/MacOS/finkenMeta.lua
+
