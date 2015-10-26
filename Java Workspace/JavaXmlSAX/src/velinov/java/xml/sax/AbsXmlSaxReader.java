@@ -16,7 +16,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 
 /**
- * An abstract SAX Xml reader.
+ * represents an abstract SAX Xml reader.
  * 
  * @author Vladimir Velinov
  * @since 11.05.2015
