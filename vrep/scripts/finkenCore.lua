@@ -63,7 +63,7 @@ function finkenCore.init()
 	local _, apiInfo = simExtRemoteApiStatus(19999) or simExtRemoteApiStart(19999)
 	pitchController.init(0.2, 0.1, 1.5)
 	rollController.init(0.2, 0.1, 1.5)
-	yawController.init(0.4, 0.001, 1.91) --(0.1, , )
+	yawController.init(0.04, 0.001, 1.1) --(0.1, , )
 	targetXcontroller.init(2, 0, 4)
 	targetYcontroller.init(2, 0, 4)
 	targetZcontroller.init(6, 0, 8)
@@ -145,7 +145,7 @@ function finkenCore.step()
 		if errorYaw < -math.pi then
 			errorYaw = 2*math.pi+errorYaw
 		else if errorYaw > math.pi then
-			errorYaw=yawTarget*(math.pi/180)-euler[3]
+			errorYaw=errorYaw-2*math.pi--yawTarget*(math.pi/180)-euler[3]
 			end
 		end
 		local yawCorr=yawController.step(errorYaw, execution_step_size / defaultStepSize)
