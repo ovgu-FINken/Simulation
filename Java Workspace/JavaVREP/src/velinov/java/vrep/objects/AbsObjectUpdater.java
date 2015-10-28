@@ -1,6 +1,6 @@
 package velinov.java.vrep.objects;
 
-import velinov.java.bean.AbsEventDispatchable;
+import velinov.java.event.AbsEventDispatchable;
 import velinov.java.vrep.VrepClient;
 import velinov.java.vrep.VrepConnection;
 import velinov.java.vrep.VrepConnectionUtils;

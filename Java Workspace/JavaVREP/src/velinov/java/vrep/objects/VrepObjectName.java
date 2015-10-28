@@ -108,5 +108,20 @@ public class VrepObjectName {
       this.nameIndex  = _name.substring(inx + 1, _name.length());
     }
   }
+  
+  @Override
+  public boolean equals(Object _other) {
+    VrepObjectName name;
+    String         fullName;
+    
+    if (!(_other instanceof VrepObjectName)) {
+      return false;
+    }
+    
+    name     = (VrepObjectName) _other;
+    fullName = name.getFullName();
+    
+    return fullName.equals(this.fullName);
+  }
 
 }

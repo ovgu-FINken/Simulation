@@ -3,7 +3,7 @@ package velinov.java.ivybus;
 import java.util.List;
 
 import fr.dgac.ivy.IvyException;
-import velinov.java.bean.EventDispatchable;
+import velinov.java.event.EventDispatchable;
 import velinov.java.ivybus.message.Message;
 
 /**

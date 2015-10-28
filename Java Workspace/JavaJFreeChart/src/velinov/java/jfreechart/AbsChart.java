@@ -1,6 +1,7 @@
 package velinov.java.jfreechart;
 
 import java.awt.Color;
+
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartPanel;
@@ -8,7 +9,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.Plot;
 import org.jfree.data.general.Dataset;
 
-import velinov.java.bean.AbsEventDispatchable;
+import velinov.java.event.AbsEventDispatchable;
 
 
 /**
@@ -24,8 +25,6 @@ public abstract class AbsChart extends AbsEventDispatchable implements Chart {
   protected Dataset    dataSet;
   protected Plot       plot;
   private   ChartPanel panel;
-  
-  
 
   @Override
   public JPanel getPanel() {

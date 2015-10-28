@@ -1,6 +1,6 @@
 package velinov.java.vrep;
 
-import velinov.java.bean.AbsEventDispatchable;
+import velinov.java.event.AbsEventDispatchable;
 
 /**
  * Standard implementation of {@link VrepClient}.

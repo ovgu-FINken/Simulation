@@ -1,6 +1,6 @@
 package velinov.java.vrep.objects;
 
-import velinov.java.bean.AbsEventDispatchable;
+import velinov.java.event.AbsEventDispatchable;
 import velinov.java.vrep.VrepClient;
 import velinov.java.vrep.VrepConnection;
 import velinov.java.vrep.VrepConnectionUtils;
@@ -173,6 +173,21 @@ public abstract class AbsVrepObject extends AbsEventDispatchable implements Vrep
     else {
       throw new IllegalArgumentException("Object not found");
     }
+  }
+  
+  @Override
+  public boolean equals(Object _other) {
+    VrepObject     object;
+    VrepObjectName objectName;
+    
+    if (!(_other instanceof VrepObject)) {
+      return false;
+    }
+    
+    object     = (VrepObject) _other;
+    objectName = object.getObjectName();
+    
+    return this.objectName.equals(objectName);
   }
 
 }

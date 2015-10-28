@@ -14,7 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import velinov.java.bean.AbsEventDispatchable;
+import velinov.java.event.AbsEventDispatchable;
 
 /**
  * An abstract implementation of {@link ConnectPanel}.

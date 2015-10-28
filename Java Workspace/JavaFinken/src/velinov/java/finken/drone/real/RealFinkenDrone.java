@@ -3,7 +3,9 @@ package velinov.java.finken.drone.real;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import org.xml.sax.SAXException;
+
 import fr.dgac.ivy.IvyException;
 import velinov.java.finken.drone.FinkenDrone;
 import velinov.java.ivybus.message.Message;
@@ -22,6 +24,8 @@ import velinov.java.ivybus.message.Message;
  * @since May 24, 2015
  */
 public interface RealFinkenDrone extends FinkenDrone, Runnable {
+  
+  public static final String PROPERTY_SIGNALS_UPDATED = "updated";
   
   /**
    * start to publish data on the Ivy-bus.

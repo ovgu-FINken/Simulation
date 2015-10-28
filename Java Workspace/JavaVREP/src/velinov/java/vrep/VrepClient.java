@@ -1,6 +1,6 @@
 package velinov.java.vrep;
 
-import velinov.java.bean.EventDispatchable;
+import velinov.java.event.EventDispatchable;
 
 /**
  * Describes a VREP-Client which connects to a VREP-Server.

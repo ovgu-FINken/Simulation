@@ -113,7 +113,7 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     reader.parseXmlDocument();
     this.telemetry = reader.getTelemetry();
     rotorMessage   = this.telemetry.getMessage("ROTORCRAFT_FP");
-    systModelMsg   = this.telemetry.getMessage("FINKEN_SYSTEM_MODEL");
+    systModelMsg   = this.telemetry.getMessage("FINKEN_SENSOR_MODEL");
     
     if (rotorMessage == null) {
       throw new NullPointerException("subscribe message not found in "
@@ -215,6 +215,8 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     System.out.println("alpha " + alphaValue + " beta " + betaValue 
         + " theta " + thetaValue + " thrust " + throttleValue);
         */
+    
+    this.fireBooleanPropertyChanged(PROPERTY_SIGNALS_UPDATED, true);
   }
 
   @Override

@@ -4,7 +4,7 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
 
-import velinov.java.bean.EventDispatchable;
+import velinov.java.event.EventDispatchable;
 
 
 /**

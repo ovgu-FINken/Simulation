@@ -1,6 +1,6 @@
 package velinov.java.finken.calibration;
 
-import velinov.java.bean.EventDispatchable;
+import velinov.java.event.EventDispatchable;
 import velinov.java.ivybus.message.Message;
 
 

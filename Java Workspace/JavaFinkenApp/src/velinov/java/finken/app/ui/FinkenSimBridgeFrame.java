@@ -15,7 +15,7 @@ import velinov.java.finken.app.FinkenSimBridge;
  */
 public class FinkenSimBridgeFrame extends JFrame {
   
-  private static final Dimension FRAME_SIZE  = new Dimension(800, 700);
+  private static final Dimension FRAME_SIZE  = new Dimension(800, 500);
   
   /**
    * default constructor.

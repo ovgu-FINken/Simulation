@@ -1,6 +1,6 @@
 package velinov.java.vrep.objects;
 
-import velinov.java.bean.EventDispatchable;
+import velinov.java.event.EventDispatchable;
 import velinov.java.vrep.VrepClient;
 import velinov.java.vrep.data.AngularVelocity;
 import velinov.java.vrep.data.LinearVelocity;

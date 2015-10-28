@@ -25,6 +25,10 @@ import velinov.java.vrep.scene.VrepScene;
  */
 public class FinkenDroneScanner {
   
+  private FinkenDroneScanner() {
+    // no instances
+  }
+  
   /**
    * @param _scene
    * @param _client

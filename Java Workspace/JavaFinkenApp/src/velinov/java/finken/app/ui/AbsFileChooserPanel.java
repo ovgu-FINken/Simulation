@@ -14,7 +14,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
-import velinov.java.bean.AbsEventDispatchable;
+import velinov.java.event.AbsEventDispatchable;
 import velinov.java.finken.app.filesaver.FilePathSaver;
 import velinov.java.finken.app.filesaver.FilePathSaverUtils;
 

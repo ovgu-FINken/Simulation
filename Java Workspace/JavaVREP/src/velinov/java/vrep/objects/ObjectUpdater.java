@@ -1,5 +1,5 @@
 package velinov.java.vrep.objects;
-import velinov.java.bean.EventDispatchable;
+import velinov.java.event.EventDispatchable;
 
 /**
  * Defines an {@link VrepObject} updater, that updates the objects

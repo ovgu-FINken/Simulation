@@ -9,10 +9,11 @@ import java.util.List;
 
 import org.xml.sax.SAXException;
 
+import velinov.java.event.AbsEventDispatchable;
 import velinov.java.finken.app.ui.FinkenSimBridgeView;
 import velinov.java.finken.app.ui.ConnectPanel;
 import velinov.java.finken.app.ui.FinkenSimBridgeFrame;
-import velinov.java.finken.drone.FinkenDroneScanner;
+import velinov.java.finken.drone.DronePool;
 import velinov.java.finken.drone.real.RealFinkenDrone;
 import velinov.java.finken.drone.real.RealFinkenDroneUpdater;
 import velinov.java.finken.drone.virtual.VirtualFinkenDrone;
@@ -20,10 +21,12 @@ import velinov.java.finken.drone.virtual.VirtualFinkenDroneUpdater;
 import velinov.java.finken.ivybus.BusNodesDispatcher;
 import velinov.java.vrep.StandardVrepClient;
 import velinov.java.vrep.VrepClient;
+import velinov.java.vrep.VrepClientUtils;
 import velinov.java.vrep.VrepConnection;
 import velinov.java.vrep.VrepConnectionUtils;
 import velinov.java.vrep.VrepServer;
 import velinov.java.vrep.scene.VrepScene;
+import velinov.java.vrep.scene.VrepSceneUtils;
 import fr.dgac.ivy.IvyException;
 
 /**
@@ -34,7 +37,7 @@ import fr.dgac.ivy.IvyException;
  * @since 12.04.2015
  *
  */
-public final class FinkenSimBridgeController {
+public final class FinkenSimBridgeController extends AbsEventDispatchable {
   
   @SuppressWarnings("nls")
   private static final String TELEMETRY_FILE = 
@@ -62,8 +65,8 @@ public final class FinkenSimBridgeController {
    */
   public FinkenSimBridgeController() {
     this.vrepConnection       = VrepConnectionUtils.getConnection();
-    this.vrepClient           = new StandardVrepClient(this.vrepConnection);
-    this.vrepScene            = new VrepScene(this.vrepClient);
+    this.vrepClient           = VrepClientUtils.getVrepClient();
+    this.vrepScene            = VrepSceneUtils.getVrepScene(this.vrepClient);
     
     this.busDispatcher        = new BusNodesDispatcher();
     this.vrepConnectRequestor = new VrepConnectRequest();
@@ -140,8 +143,10 @@ public final class FinkenSimBridgeController {
   }
   
   private void _retrieveVirtualDrones() throws SAXException, IOException {
-    this.virtualDrones = FinkenDroneScanner.retrieveVirtualDrones(
-        this.vrepScene, this.vrepClient);
+    DronePool dronePool;
+    
+    dronePool          = DronePool.getInstance(this.vrepScene, this.vrepClient);
+    this.virtualDrones = dronePool.retrieveVirtualDrones();
     
     if (!this.virtualDrones.isEmpty()) {
       this.virtualUpdater = new VirtualFinkenDroneUpdater(this.vrepClient);
@@ -151,8 +156,10 @@ public final class FinkenSimBridgeController {
   }
   
   private void _retrieveRealDrones() throws SAXException, IOException {
-    this.realDrones = FinkenDroneScanner.retrieveRealDrones(
-        this.vrepScene, this.vrepClient);
+    DronePool dronePool;
+    
+    dronePool       = DronePool.getInstance(this.vrepScene, this.vrepClient);
+    this.realDrones = dronePool.retrieveRealDrones();
     
     if (!this.virtualDrones.isEmpty()) {
       this.realUpdater = new RealFinkenDroneUpdater(this.vrepClient);

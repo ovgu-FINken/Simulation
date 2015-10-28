@@ -23,15 +23,13 @@ public class ConnectionTab extends AbsTab {
   private final ConnectPanel          vrepPanel;
   private final ConnectPanel          ivyBusPanel;
   private final VirtualDronePanel     virtualPanel;
-  private final RealTimePlot          plot;
-
+ 
   /**
    * defualt constructor.
    */
   public ConnectionTab() {
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-    this.plot         = new VREPRealTimePlot();
     this.vrepPanel    = new VrepConnectPanel();
     this.ivyBusPanel  = new IvyBusConnectPanel();
     this.virtualPanel = new VirtualDronePanel();
@@ -41,7 +39,6 @@ public class ConnectionTab extends AbsTab {
     this.add(this.ivyBusPanel.getPanel());
     this.add(Box.createVerticalStrut(200));
     this.add(this.virtualPanel.getPanel());
-    this.add(this.plot.getPanel());
   }
   
   @Override
