@@ -54,13 +54,20 @@ local function fixName(name)
 	end
 end
 
+function finkenCore.getHandle()
+	return handle_finken
+end
+
 
 function finkenCore.init()
 	thisIDsuffix = simGetNameSuffix(nil)
 	handle_FinkenBase = simGetObjectHandle(fixName('SimFinken_base'))
 	handle_finken = simGetObjectAssociatedWithScript(sim_handle_self)
 	execution_step_size = simGetSimulationTimeStep()
-	local _, apiInfo = simExtRemoteApiStatus(19999) or simExtRemoteApiStart(19999)
+	--local apiStatus, apiInfo, _ = simExtRemoteApiStatus(19999)
+	local apiInfo = apiInfo or simExtRemoteApiStart(19999)
+	--if not apiStatus then apiStatus = simExtRemoteApiStart(19999) end
+	simAddStatusbarMessage("apiStatus "..apiInfo )
 	pitchController.init(0.2, 0.1, 1.5)
 	rollController.init(0.2, 0.1, 1.5)
 	yawController.init(0.4, 0.001, 1.91) --(0.1, , )
