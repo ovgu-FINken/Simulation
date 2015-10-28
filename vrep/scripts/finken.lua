@@ -8,6 +8,13 @@ function finken.init(self)
 		simAddStatusbarMessage(textToSay)
 	end
 
+	function self.getArenaPosition()
+		local handle_myReference = simGetObjectHandle("Master#")
+		local handle_mySelf = self.getHandle()
+		local myPosition = simGetObjectPosition(handle_mySelf, handle_myReference) 
+		return myPosition
+	end
+
 	function self.helloWorld()
 		helperSay("Hello World. Tschieep!")
 	end
