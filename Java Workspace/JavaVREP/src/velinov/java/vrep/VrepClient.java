@@ -18,21 +18,21 @@ public interface VrepClient extends EventDispatchable {
   
   /**
    * A property, that is fired when the client has connected successfully
-   * to a server.
+   * to the V-REP server.
    */
   @SuppressWarnings("nls")
   public final static String PROPERTY_CONNECTED       = "connected";
   
   /**
    * A property, that is fired when the client has disconnected 
-   * from the server.
+   * from the V-REP server.
    */
   @SuppressWarnings("nls")
   public final static String PROPERTY_DISCONNECTED    = "disconnected";
   
   /**
    * @return the id of the client, created when connected 
-   * to a particular server.
+   *     to a particular server.
    */
   int getClientId();
   

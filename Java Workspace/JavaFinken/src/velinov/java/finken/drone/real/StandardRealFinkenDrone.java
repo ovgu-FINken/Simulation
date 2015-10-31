@@ -194,6 +194,10 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     throttleValue = Float.valueOf(throttle.getValue());
     throttleValue = ((Float.valueOf(throttle.getValue()) + 1350)) / 100;
     
+    /*
+     * umbau
+     */
+    thetaValue = 0.0f;
     
     this.vrepConnection.simxSetFloatSignal(this.client.getClientId(), "roll",
         alphaValue, VrepConnection.simx_opmode_oneshot);

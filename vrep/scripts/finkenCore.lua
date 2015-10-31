@@ -128,7 +128,7 @@ function finkenCore.step()
 		local errorHeight = heightTarget - basePosition[3]
 		cumulThrottle = cumulThrottle + errorHeight
 		local l = simGetVelocity(handle_finken)
-		local throttle=5.843*throttleTarget/100 --+ pPthrottle * errorHeight + iPthrottle * cumulThrottle + dPthrottle * (errorHeight - prevEThrottle) + l[3] * (-2) 
+		local throttle=5.843*throttleTarget/100 + pPthrottle * errorHeight + iPthrottle * cumulThrottle + dPthrottle * (errorHeight - prevEThrottle) + l[3] * (-2) 
 		prevEThrottle = errorHeight
 
 		local euler=simGetObjectOrientation(handle_FinkenBase,-1)
@@ -178,7 +178,7 @@ function finkenCore.setTarget(targetObject)
 	simSetFloatSignal(fixSignalName('pitch'), corrX)
 	simSetFloatSignal(fixSignalName('roll'), corrY)
 	simSetFloatSignal(fixSignalName('throttle'), 50+corrZ)
-	--simSetFloatSignal(fixSignalName('height'),targetPosition[3])
+	simSetFloatSignal(fixSignalName('height'),targetPosition[3])
 end
 --[[
 --sense() reads all sensors of the finken, and updates the signals

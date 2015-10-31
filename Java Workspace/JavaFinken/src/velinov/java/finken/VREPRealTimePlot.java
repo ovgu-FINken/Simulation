@@ -16,9 +16,9 @@ import velinov.java.jfreechart.realtime.RealTimePlot;
  */
 public class VREPRealTimePlot extends AbsRealTimePlot {
   
-  private static final float MAX_RANGE = 100;
+  private static final float MAX_RANGE = 1000;
   
-  private static final float MIN_RANGE = -MAX_RANGE;
+  private static final float MIN_RANGE = 0;
 
   /**
    * default constructor.
