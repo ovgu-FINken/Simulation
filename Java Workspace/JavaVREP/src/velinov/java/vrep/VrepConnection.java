@@ -5,7 +5,7 @@ import coppelia.remoteApi;
 
 /**
  * 
- * Extension of {@link remoteApi}.
+ * A wrapper class of {@link remoteApi}.
  * 
  * @author Vladimir Velinov
  * @since 19.04.2015

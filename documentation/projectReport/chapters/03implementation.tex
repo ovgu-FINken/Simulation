@@ -12,9 +12,66 @@
 \todo{script structure}
 
 
-\section{Communication Link}
+\section{Communication V-REP - Quadrocopters}
+\label{sec:commImplementation}
 
-\todo{link in Vrep (signals}
+This chapter describes the implementation of the requirements on the Java-API, which ware discussed in \ref{sec:communication} of \ref{chap:theo}. It includes explanation of the created projects, classes and their use. It helps understanding how the communication between the V-REP and the quadrocopters is implemented and how to use the API or extend it in order to implement other mixed-reality scenarios.
+
+\subsection{V-REP RemoteAPI requirements implementation}
+\label{sec:vrepImplementation}
+
+All the functionality, that deals with the V-REP and was discussed in \ref{sec:requirementsVREP} of \ref{chap:theo} is implemented as a single Java project called \textit{JavaVREP}.\\
+ It uses the V-REP Remote-API Java binding - package \textit{coppelia} (containing 12 Java classes) and the \textit{libremoteApiJava.so} or \textit{libremoteApiJava.dll} (depending if the platform is Linux or Windows). The \textit{libremoteApiJava.so} should be placed in the Java home directory, e.g \textit{/usr/lib/jvm/java-8-oracle/jre/lib/amd64}, in order for the project to be compiled.\\
+The main class is the \textit{VrepConnection.java}, which is a wrapper of the \textit{remoteApi.java} class provided by the V-REP remote API. Its singleton instance can be retrieved by calling:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small]
+VrepConnection connection = VrepConnectionUtils.getConnection();
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+The above expression loads the remote API library and returns the instance of \textit{VrepConnection} on which the Remote API functions are called. For example to retrieve all objects in a scene the following function have to be called on the \textit{VrepConnection} instance:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small]
+
+connection.simxGetObjects();
+
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+The interfaces \textit{VrepServer} and \textit{VrepClient} and their implementations \textit{StandardVrepServer} and \textit{StandardVrepClient} describe the two end-points of the communication. The \textit{VrepServer} describes the IP address and the port number of the machine on which the V-REP is running. In order to connect to a V-REP server we have to create in instance of the \textit{VrepServer} and open the client:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small]
+VrepConnection connection;
+VrepClient     client;
+VrepServer     server;
+
+connection = VrepConnectionUtils.getConnection();
+client     = VrepClientUtils.getInstance();
+server     = new StandardVrepServer("127.0.0.1", "19999");
+
+if (server.isFree()) {
+// already opened a server on this IP and port.
+}
+
+client.connectToServer(server);
+
+if (!client.isConnected()) {
+// error in connection
+} 
+
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+
 
 
 \section{\todo{fancy name }}

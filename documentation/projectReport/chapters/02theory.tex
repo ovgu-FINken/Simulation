@@ -1,4 +1,5 @@
 \chapter{Theory}
+\label{chap:theo}
 \label{sec:theo}
 
 %In diesem Kapitel beschreiben Sie Ihren eigenen Beitrag
@@ -22,7 +23,7 @@
 
 \todo{external interface (signals)}
 
-\section{Communication V-REP-Quadrocopter}
+\section{Communication V-REP-Quadrocopters}
 \label{sec:comm}
 \textbf{\textit{Goal}:} our mixed reality simulation needs a dependable link of communication between the V-REP simulation environment and the flying quadrocopters. The Quadcopter needs to stream its telemetry data in real-time to the V-REP, and the reverse communication is needed as well.\\
 The simulated quadrocopters that we have in the V-REP are divided into two categories: real and virtual representations.\\ 
@@ -80,11 +81,16 @@ The Ivy Bus is a content-based publisher-subscriber and uses regular expressions
 \end{figure}
 
 \subsection{Communication}
+\label{sec:communication}
 
-The communication between V-REP and the quadrocopters passes through the Java API, which serves as a bridge between them. In fact the Java API does not communicate directly with the quadrocopter, but connects to the Ivy-Bus in the Paparazzi GS and can thus subscribe to the messages caring the telemetry data and also publish messages which will eventually be send to the quadrocopter by the link agent.
-Since we wanted to create a modular and reusable API, that can be used for other mixed-reality scenarios, the Java API was created with the idea in mind to be distributed, modular and rely on many abstraction layers. The API development has followed the specification-driven principles and its main tasks are described as follows:
+The communication between V-REP and the quadrocopters passes through the Java API, which serves as a bridge between them. In fact the Java API does not communicate directly with the quadrocopter, but connects to the Ivy-Bus in the Paparazzi GS and can thus subscribe to the messages caring the telemetry data and also publish messages which will eventually be send to the quadrocopter by the link agent. On the other hand it uses the V-REP Remote-API to exchange information and provide the V-REP quadrocopter models with the data retrieved from the Ivy-Bus messages.\\ 
+Since we wanted to create a modular and reusable API, that can be used for other mixed-reality scenarios, the Java API was created with the idea in mind to be distributed, modular and rely on many abstraction layers.\\ 
+The API development has followed the requirement-driven principles and its main tasks are described in the following paragraphs. The implementation of the described bellow requirements in described in \ref{sec:commImplementation} of \ref{sec:implementation}.
 
 \subsubsection{V-REP-Remote API specific requirements}
+\label{sec:requirementsVREP}
+
+Below is a description of the requirements for the Java API which is responsible for the connection and communication with the V-REP environment. Its implementation is described in \ref{sec:vrepImplementation} of \ref{sec:implementation}.
 
 \paragraph{Connection to V-REP through the Remote API}
 
@@ -102,7 +108,41 @@ As mentioned at the beginning of \ref{sec:comm} we divide our quadrocopters in v
 The real quadrocopter representation get provided with velocity, orientation and height from the physical flying quadrocopter and this data have to be provided to the V-REP quadrocopter object in order to fly like the physical one. This is the inverse communication from quadrocopter to V-REP and is realized with V-REP signaling mechanism. The update is done each time a new message has been received by the physical drone and its frequency depends on how often the messages are streamed from the copter and the communication latency. In order to achieve a realistic flying manuevers and have minimum drift the update should not exceed 20 ms.
 
 \subsubsection{Ivy Bus specific requirements}
+\paragraph{Ivy Bus connection}
+Each participant which wants to exchange information on the Ivy-Bus is described as a singular and independent bus node. In our program the participants that want to exchange data on the Ivy-Bus are the virtual and real representations of the quadrocopters. There should be designed a class, which allows the connecting on the bus, publishing and subscribing to messages. The quadrocopter representations have to inherit from it or composite it and thus become independent bus nodes.
 
+\paragraph{Message retrieval and subscription}
+
+All the messages that the paparazzi software uses are described in a xml file called \textit{messages.xml}, residing in the \textit{/paparazzi/conf/} directory. The following listing is an example of the messages file containing two messages.
+
+\begin{lstlisting}[basicstyle=\tiny]
+<msg_class name="telemetry">
+ <message name="AIRSPEED" id="54">
+    <field name="airspeed" type="float" unit="m/s"/>
+    <field name="airspeed_sp" type="float" unit="m/s"/>
+    <field name="airspeed_cnt" type="float" unit="m/s"/>
+    <field name="groundspeed_sp" type="float" unit="m/s"/>
+  </message>
+  
+  <message name="SONAR_ARRAY" id="216">
+	<field name="sonar_front" type="uint16" alt_unit="cm"/>
+	<field name="sonar_right" type="uint16" alt_unit="cm"/>
+	<field name="sonar_back" type="uint16" alt_unit="cm"/>
+	<field name="sonar_left" type="uint16" alt_unit="cm"/>
+  </message>
+	
+	  . . . . 
+	  
+</msg_class>
+\end{lstlisting}
+
+In order to make the subscription and publishing of messages on the bus easier, each message should be represented as a corresponding class containing the message fields with its type and units.
+
+There should be implemented a class, which reads the \textit{messages.xml} file and creates an instance of the message class for each message. \\
+Once the messages are retrieved, the Ivy-Bus node should be capable of subscribing and publishing of any of the retrieved messages. The subscription should by dynamic and allow to subscribe to a new messages even at runtime. \\
+Once a message has been received, the Ivy-Bus node should provide the instance of the received message and its fields should contain the actual sensor values.\\
+Since our mixed reality scenario can involve many flying quadrocopters, there will be published the same messages but from different copters. In this case the messages are identified with the drone id number.
+Another requirement is that the Ivy-Bus node have to subscribe just to the messages published from the copter that it was assigned to and not receive the same messages from the other copters.
 
 
 
