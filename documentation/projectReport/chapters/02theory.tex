@@ -14,6 +14,32 @@
 
 
 \section{Vrep}
+V-REP is a versatile, highly customisable simulation environment, mainly developed for robots. It provides a rich set of functionolaties which we use only a part off.  We make use of it's integration of the bullet physics engine, including a particle simulation, it's external Java API, the communication structure via signals, the possibility of Lua scripting inside the simulation, it's provided sensor-simulation and the scene visualisation.
+
+
+
+
+\par vrep is a versatile , highly customisable simulation environment for robots
+\par we use only a small part of its features, namely external API, (external) signal communication, particle simulation, internal lua programming, distance sensor simulation, scene visualisation
+\par V-REP main client application provides the the basis for the simulation
+\par a simulation scene is built by adding objects to the scene
+\par objects can be simple shapes or enriched with physical properties
+\par shapes can be imported (stl-files) or created in V-Rep
+\par V-Rep has a library of components like force-sensors, which can model reactive forces between elements, or different distance sensors
+\par physical simulation and visual representation can be based on different models, therefore a complex shape can be used for visualisation while the physical simulation is based on similar, but simple rectangular shapes
+\par V-REP provides several possibilities to extend the simulation programmatically. the easiest way are lua scripts, that are handled inside the simulation environment. those scripts are also stored inside the V-REP scene, but the LUA module import can be used to execute externally stored scripts in the simulation context
+\par an other performant way is the internal API of V-REP providing an API for C++
+\par the most versatile way is the remote API that can be coupled with Java, Matlab, Python and Urbi. However, it is less performant and has reduced funcionality compared to the internal API
+\par for the default non-threaded child scripts in lua, for every simulation step, each script is executed. The child scripts are attached to simulation scene objects
+\par the simulation has different states, which can be used to execute parts of the script only in certain situations, e.g. the start of the simulation
+\par inside V-REP, variables can be added to scene object, eather private or public. the latter can be accessed by other scene object and thereby used as a communication link
+\par The external communication for custom data is handled by signals. Signal have to be created once and then can be read and written by internal and external programs
+\par http://www.coppeliarobotics.com/helpFiles/en/images/writingCode1.jpg 13.10.2015
+
+
+
+
+\todo{picture of V-REP structure}
 
 \todo{connecting visual representation and physical model}
 
