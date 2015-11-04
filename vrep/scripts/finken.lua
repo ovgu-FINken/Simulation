@@ -7,9 +7,16 @@ local function saveLog(newLog,newDirectoryPath)
 	local myTimeString = os.date("%Y%m%d%H%M%S")
 	newDirectoryPath = newDirectoryPath or ""
 	local myLogFile = assert(io.open(newDirectoryPath.."simulation" .. myTimeString .. ".log", "w"))
-	local timestamp, positionLogValue 
-	for timestamp, positionLogValue in pairs(newLog) do
-		myLogFile:write(timestamp, ": ", positionLogValue[1], " ", positionLogValue[2]," ", positionLogValue[3], "\n")
+	local timestamp, logValue 
+	local sortedLogKeys = {}
+	for timestamp, logValue in pairs(newLog) do
+		table.insert(sortedLogKeys,timestamp)
+	end
+	table.sort(sortedLogKeys)
+
+	for  _, timestamp in ipairs(sortedLogKeys) do
+		logValue = newLog[timestamp]
+		myLogFile:write(timestamp, ": ", logValue[1], " ", logValue[2]," ", logValue[3], "\n")
 		myLogFile:flush()
 	end
 	return myLogFile:close()
