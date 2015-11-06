@@ -2,8 +2,7 @@
 \label{chap:theo}
 \label{sec:theo}
 
-%In diesem Kapitel beschreiben Sie Ihren eigenen Beitrag
-%- Es muss klar sein, worin die eigentliche Innovation besteht#
+
 
 \section{Quadcopter Modelling}
 
@@ -15,18 +14,20 @@
 
 \section{Vrep}
 V-REP is a versatile, highly customisable simulation environment, mainly developed for robots. It provides a rich set of functionolaties which we use only a part off.  We make use of it's integration of the bullet physics engine, including a particle simulation, it's external Java API, the communication structure via signals, the possibility of Lua scripting inside the simulation, it's provided sensor-simulation and the scene visualisation.
+\begin{figure}[h!]
+ \begin{center}
+  \includegraphics[scale=0.15]{vrepStruct.jpg}
+ \end{center}
+  \caption{Structure of the VREP-framework \url{http://www.coppeliarobotics.com/helpFiles/en/images/writingCode1.jpg} 13.10.2015 \label{fig:vrepStruct}}
+\end{figure}
+
+The V-REP main client application provides the basis vor the simulation. V-REP bases on scenes in which the simulation settings and scenes are saved. To run a simulation, the necessary objects need to be added to the scene. An object can be a dummy object with no physical properties, a 3-D shape either imported via an .stl-file or created directly in V-REP. V-REP already provides a library of objects, starting with sensors and continuing with whole robots. An example are force sensors which can be used to connect object. Then, the force sensor transmits the resulting forces and torques during the simulation and can be set to break when exceeding a certain threshold. Connecting objects without force sensors can be used to separate physical simulation and visual representation. The connection becomes static, so a complex, but visually appealing mesh shape can be attached to a simpler shape with appropriate physical parameters. Thereby, physical simulation calculation are performantly done on the simple, and as V-REP provides several visibility layers, the user sees only the complex shape.
+
+V-REP provides several possibilities to extend the simulation programmatically. The easiest and best integrated way are Lua-scripts. Lua scripts can be attached to simulation objects and are handles within the simulation environment. When choosing non-threaded child scripts, they get executed every simulation step and can influence scene objects via a comprehensive API. Inside
 
 
 
 
-\par vrep is a versatile , highly customisable simulation environment for robots
-\par we use only a small part of its features, namely external API, (external) signal communication, particle simulation, internal lua programming, distance sensor simulation, scene visualisation
-\par V-REP main client application provides the the basis for the simulation
-\par a simulation scene is built by adding objects to the scene
-\par objects can be simple shapes or enriched with physical properties
-\par shapes can be imported (stl-files) or created in V-Rep
-\par V-Rep has a library of components like force-sensors, which can model reactive forces between elements, or different distance sensors
-\par physical simulation and visual representation can be based on different models, therefore a complex shape can be used for visualisation while the physical simulation is based on similar, but simple rectangular shapes
 \par V-REP provides several possibilities to extend the simulation programmatically. the easiest way are lua scripts, that are handled inside the simulation environment. those scripts are also stored inside the V-REP scene, but the LUA module import can be used to execute externally stored scripts in the simulation context
 \par an other performant way is the internal API of V-REP providing an API for C++
 \par the most versatile way is the remote API that can be coupled with Java, Matlab, Python and Urbi. However, it is less performant and has reduced funcionality compared to the internal API
