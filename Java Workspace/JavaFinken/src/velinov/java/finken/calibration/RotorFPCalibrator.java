@@ -18,6 +18,7 @@ public class RotorFPCalibrator extends AbsMessageCalibrator {
    */
   public RotorFPCalibrator(int _msgNumber) {
     super(_msgNumber);
+    
   }
 
   @SuppressWarnings("nls")

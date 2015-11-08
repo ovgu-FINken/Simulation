@@ -145,6 +145,7 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
         this.calibrator.addMessage(msg);
         return;
       }
+
       this._handleActuatorsModel(msg);
       break;
       
@@ -197,7 +198,7 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     /*
      * umbau
      */
-    thetaValue = 0.0f;
+    //thetaValue = 0.0f;
     
     this.vrepConnection.simxSetFloatSignal(this.client.getClientId(), "roll",
         alphaValue, VrepConnection.simx_opmode_oneshot);

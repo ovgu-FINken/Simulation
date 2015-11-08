@@ -17,8 +17,9 @@ import velinov.java.ivybus.message.Message;
  * @author Vladimir Velinov
  * @since 07.04.2015
  */
-public abstract class AbsIvyBusNode extends AbsEventDispatchable implements IvyBusNode {
-  
+public abstract class AbsIvyBusNode extends AbsEventDispatchable 
+    implements IvyBusNode 
+{  
   protected final Ivy           ivyBus;
   protected final List<Message> subscribedMessages;
   private volatile boolean      isConnected;
