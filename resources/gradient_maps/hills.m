@@ -15,7 +15,7 @@ max_height = 255;
 min_sigma = 10000;
 max_sigma = 50000;
 
-
+%create some mountains
 [coords1, coords2] = meshgrid(1:size, 1:size);
 terrain = zeros(size);
 for i = 1:num_hills
@@ -34,6 +34,17 @@ axis([1 size 1 size 0 max(max(terrain))*1.1]);
 y_grad = diff(terrain);
 x_grad = diff(terrain')';
 
+%gradient visualization with arrows
+gradient_pos_x = 1:30:size;
+gradient_pos_x = repmat(gradient_pos_x, length(gradient_pos_x), 1);
+gradient_pos_y = gradient_pos_x' * -1;
+selected_gradients_x = x_grad(1:30:end, 1:30:end);
+selected_gradients_y = y_grad(1:30:end, 1:30:end) * -1;
+figure()
+quiver(gradient_pos_x, gradient_pos_y, selected_gradients_x, selected_gradients_y);
+xlim([1 size]);
+ylim([-size -1]);
+
 %normalization for encoding in RGB
 total_min = min(min(x_grad(:)), min(y_grad(:)));
 total_max = max(max(x_grad(:)), max(y_grad(:)));
@@ -48,5 +59,6 @@ img(:, :, 1) = terrain;
 img(:, :, 2) = x_grad;
 img(:, :, 3) = y_grad;
 imshow(img);
-imwrite('hills.png');
+%imwrite(img, 'hills.png');
+
 
