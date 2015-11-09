@@ -1,0 +1,10 @@
+vrep documentation:
+	http://www.coppeliarobotics.com/helpFiles/en/externalControllerTutorial.htm
+	http://www.coppeliarobotics.com/helpFiles/en/writingCode.htm
+	
+	
+to open the scripts: menu tools>scripts
+
+
+change texture of an object: double-click lowest object in scene hierarchy
+	in scene object properties: Adjust texture --> load new texture --> adjust u/v scaling (5, 5 for landscape.ttt scene)
