@@ -4,8 +4,16 @@
 #on OS X, the path should be correct for default installations
 #does not work for Windows!
 
-ln -sf finken.lua /Applications/vrep/vrep.app/Contents/MacOS/finken.lua
-ln -sf finkenPid.lua /Applications/vrep/vrep.app/Contents/MacOS/finkenPid.lua
-ln -sf finkenCore.lua /Applications/vrep/vrep.app/Contents/MacOS/finkenCore.lua
-ln -sf finkenMeta.lua /Applications/vrep/vrep.app/Contents/MacOS/finkenMeta.lua
-
+if [[ "$OSTYPE" = darwin* ]]; then 
+	ln -sf "$PWD/finken.lua" /Applications/vrep/vrep.app/Contents/MacOS/finken.lua;
+	ln -sf "$PWD/finkenPid.lua" /Applications/vrep/vrep.app/Contents/MacOS/finkenPid.lua;
+	ln -sf "$PWD/finkenCore.lua" /Applications/vrep/vrep.app/Contents/MacOS/finkenCore.lua;
+	ln -sf "$PWD/finkenMeta.lua" /Applications/vrep/vrep.app/Contents/MacOS/finkenMeta.lua;
+	echo "Your machine runs OS X. Scripts were linked to /Applications/vrep/vrep.app/Contents/MacOS"
+else
+	ln -sf "$PWD/finken.lua" $1;
+	ln -sf "$PWD/finkenPid.lua" $1;
+	ln -sf "$PWD/finkenCore.lua" $1;
+	ln -sf "$PWD/finkenMeta.lua" $1;
+	echo "your scripts were linked to $1"
+fi	
