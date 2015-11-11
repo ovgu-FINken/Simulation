@@ -50,6 +50,7 @@ public abstract class AbsMessageCalibrator extends AbsEventDispatchable
       this.finished = true;
       this.fireBooleanPropertyChanged(
           PROPERTY_CALIBRATION_FINISHED, this.finished);
+      System.out.println("calibration done");
     }
   }
   

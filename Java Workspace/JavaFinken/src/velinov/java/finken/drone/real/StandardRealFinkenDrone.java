@@ -57,7 +57,7 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     
     this.aircraft   = _aircraft;
     this.busNode    = new RealDroneBusNode(this.aircraft);
-    this.calibrator = new RotorFPCalibrator(10);
+    this.calibrator = new RotorFPCalibrator(100);
     this.busNode.addPropertyChangeListener(this);
   }
 
@@ -189,16 +189,13 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
         - this.calibrator.getCalibratedValue("phi");
     betaValue     = (Float.valueOf(beta.getValue()) * 0.0139882f) 
         - this.calibrator.getCalibratedValue("theta");
+    
     thetaValue    = (Float.valueOf(theta.getValue()) * 0.0139882f) 
         - this.calibrator.getCalibratedValue("psi");
     
     throttleValue = Float.valueOf(throttle.getValue());
     throttleValue = ((Float.valueOf(throttle.getValue()) + 1350)) / 100;
     
-    /*
-     * umbau
-     */
-    //thetaValue = 0.0f;
     
     this.vrepConnection.simxSetFloatSignal(this.client.getClientId(), "roll",
         alphaValue, VrepConnection.simx_opmode_oneshot);

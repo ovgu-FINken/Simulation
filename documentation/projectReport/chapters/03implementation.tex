@@ -15,8 +15,18 @@
 \section{Communication V-REP - Quadrocopters}
 \label{sec:commImplementation}
 
-This chapter describes the implementation of the requirements on the Java-API, which ware discussed in \ref{sec:communication} of \ref{chap:theo}. It includes explanation of the created projects, classes and their use. It helps understanding how the communication between the V-REP and the quadrocopters is implemented and how to use the API or extend it in order to implement other mixed-reality scenarios.\\
+This chapter describes the implementation of the requirements on the Java-API, which ware discussed in \ref{sec:communication} of \ref{chap:theo}. It begins with an overview of the software architecture and continues with the explanation of the created projects, classes and their use. It helps understanding how the communication between the V-REP and the quadrocopters is implemented and how to use the API or extend it in order to implement other mixed-reality scenarios.\\
 Note that this is just a brief explanation of the Java-API implementation. If you want to go in details refer to the Javadoc which is also provided as an attachment to this paper.
+
+\subsection{Software architecture}
+
+
+\begin{figure}[h!]
+ \begin{center}
+  \includegraphics[scale=0.6]{apiArchitecture.png}
+ \end{center}
+  \caption{Java-API architecture\label{fig:apiArchitecture}}
+\end{figure}
 
 \subsection{V-REP RemoteAPI requirements implementation}
 \label{sec:vrepImplementation}

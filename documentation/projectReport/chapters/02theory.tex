@@ -1,53 +1,50 @@
 \chapter{Theory}
 \label{chap:theo}
-\label{sec:theo}
 
-%In diesem Kapitel beschreiben Sie Ihren eigenen Beitrag
-%- Es muss klar sein, worin die eigentliche Innovation besteht#
+
+
 
 \section{Quadcopter Modelling}
 
+\par{test}
+
 \todo{fundamental physics}
+
+
 
 \todo{particle simulation}
 
 
 
 \section{Vrep}
+\label{sec:theoryVrep}
 V-REP is a versatile, highly customisable simulation environment, mainly developed for robots. It provides a rich set of functionolaties which we use only a part off.  We make use of it's integration of the bullet physics engine, including a particle simulation, it's external Java API, the communication structure via signals, the possibility of Lua scripting inside the simulation, it's provided sensor-simulation and the scene visualisation.
+\begin{figure}[h!]
+ \begin{center}
+  \includegraphics[scale=0.45]{vrepStruct.jpg}
+ \end{center}
+  \caption{Structure of the VREP-framework \url{http://www.coppeliarobotics.com/helpFiles/en/images/writingCode1.jpg} 13.10.2015 \label{fig:vrepStruct}}
+\end{figure}
+
+The V-REP main client application provides the basis vor the simulation. V-REP bases on scenes in which the simulation settings and scenes are saved. To run a simulation, the necessary objects need to be added to the scene. An object can be a dummy object with no physical properties, a 3-D shape either imported via an .stl-file or created directly in V-REP. V-REP already provides a library of objects, starting with sensors and continuing with whole robots. An example are force sensors which can be used to connect object. Then, the force sensor transmits the resulting forces and torques during the simulation and can be set to break when exceeding a certain threshold. Connecting objects without force sensors can be used to separate physical simulation and visual representation. The connection becomes static, so a complex, but visually appealing mesh shape can be attached to a simpler shape with appropriate physical parameters. Thereby, physical simulation calculation are performantly done on the simple, and as V-REP provides several visibility layers, the user sees only the complex shape.
+
+V-REP provides several possibilities to extend the simulation programmatically. The easiest and best integrated way are Lua-scripts. Lua scripts can be attached to simulation objects and are handles within the simulation environment. When choosing non-threaded child scripts, they get executed every simulation step and can influence scene objects via a comprehensive API. A V-REP simulation step consists of several sections. To execute parts of the script only at certain points, the current simulation status can be checked before executing code.  The downside of these Lua-scripts is, that they are stored inside the binary scene file. Thus, it's difficult to put them under version control or do collaborative work. As the Lua-Engine inside V-REP provides full Lua support, this can be avoided by using the internal scripts only to import and call the actual scripts that are stored outside the scene. In section \ref{sec:implSoftware} is described how we handled this problem in detail.
+
+If Lua doesn't offer the needed performance or functionalities, the second way to build deeply integrated software is the internal C++ API for plugins.  The most flexible, but least performant way is the remote API of V-REP. Providing an API for Java, Matlab, Python and Urbi, it interacts with many programming languages. However, the functionality provided by the remote API is limited compared to the internal API for Lua or C++. For the remote API, V-REP needs to start a server that the client connects to. This is also possible over network, so the computation load can be distributed between different machines.
+
+For communication inside V-REP, global custom variables can be used. As the access to those is not supported by the remote API, a more flexible way are \emph{Signals}. \emph{Signals} can be of String, Integer or Float type and are globally accessible  in the current scene. 
 
 
 
-
-\par vrep is a versatile , highly customisable simulation environment for robots
-\par we use only a small part of its features, namely external API, (external) signal communication, particle simulation, internal lua programming, distance sensor simulation, scene visualisation
-\par V-REP main client application provides the the basis for the simulation
-\par a simulation scene is built by adding objects to the scene
-\par objects can be simple shapes or enriched with physical properties
-\par shapes can be imported (stl-files) or created in V-Rep
-\par V-Rep has a library of components like force-sensors, which can model reactive forces between elements, or different distance sensors
-\par physical simulation and visual representation can be based on different models, therefore a complex shape can be used for visualisation while the physical simulation is based on similar, but simple rectangular shapes
-\par V-REP provides several possibilities to extend the simulation programmatically. the easiest way are lua scripts, that are handled inside the simulation environment. those scripts are also stored inside the V-REP scene, but the LUA module import can be used to execute externally stored scripts in the simulation context
-\par an other performant way is the internal API of V-REP providing an API for C++
-\par the most versatile way is the remote API that can be coupled with Java, Matlab, Python and Urbi. However, it is less performant and has reduced funcionality compared to the internal API
-\par for the default non-threaded child scripts in lua, for every simulation step, each script is executed. The child scripts are attached to simulation scene objects
-\par the simulation has different states, which can be used to execute parts of the script only in certain situations, e.g. the start of the simulation
-\par inside V-REP, variables can be added to scene object, eather private or public. the latter can be accessed by other scene object and thereby used as a communication link
-\par The external communication for custom data is handled by signals. Signal have to be created once and then can be read and written by internal and external programs
-\par http://www.coppeliarobotics.com/helpFiles/en/images/writingCode1.jpg 13.10.2015
 
 
 
 
 \todo{picture of V-REP structure}
 
-\todo{connecting visual representation and physical model}
 
-\todo{simulation structure (lua scripts, scene structure}
 
-\todo{lua module structure}
 
-\todo{external interface (signals)}
 
 \section{Communication V-REP-Quadrocopters}
 \label{sec:comm}
