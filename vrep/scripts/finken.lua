@@ -8,8 +8,21 @@ function finken.init(self)
 		simAddStatusbarMessage(textToSay)
 	end
 
-	function self.helloWorld()
-		helperSay("Hello World. Tschieep!")
+
+	function customRun()
+		--targetObject is retrieved in the simulation script. 
+		--remove if control via pitch/roll/yaw is wanted
+		self.setTarget(targetObj)
+
+		helperSay("Hello World! Tschiep!")
+	end
+
+	function customSense()
+
+	end
+
+	function customClean()
+
 	end
 
 	return self
