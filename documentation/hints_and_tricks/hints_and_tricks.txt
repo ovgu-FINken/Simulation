@@ -4,7 +4,16 @@ vrep documentation:
 	
 	
 to open the scripts: menu tools>scripts
+or click page/script icon next to associated object in scene hierarchy
 
 
 change texture of an object: double-click lowest object in scene hierarchy
 	in scene object properties: Adjust texture --> load new texture --> adjust u/v scaling (5, 5 for landscape.ttt scene)
+	
+to get VREP to find the script file in Windows:
+	Option 1: move file into lua folder in vrep installation folder
+	Option 2: create environment variable LUA_PATH and add path to script file (include actual script filename)
+		OPTIONS 1 AND 2 ARE MUTUALLY EXCLUSIVE!! (unless maybe there is a way to change the LUA_PATH to make it work --> possibly declare LUA_PATH as LUA_PATH;C:\new\path\?.lua)
+	Option 3: create hard link with administrator command line: mklink /H C:\Path\to\vrep\installation\folder\lua\scriptname.lua C:\Path\to\actual\script\location\scriptname.lua
+	
+	note: often need to restart VREP to apply changes you made in the file system
