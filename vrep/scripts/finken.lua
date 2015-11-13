@@ -9,19 +9,23 @@ function finken.init(self)
 	end
 
 
-	function customRun()
+	function self.customInit()
+		helperSay("Hello World! Tschiep!")
+
+	end
+
+
+	function self.customRun()
 		--targetObject is retrieved in the simulation script. 
 		--remove if control via pitch/roll/yaw is wanted
 		self.setTarget(targetObj)
-
-		helperSay("Hello World! Tschiep!")
 	end
 
-	function customSense()
+	function self.customSense()
 
 	end
 
-	function customClean()
+	function self.customClean()
 
 	end
 
