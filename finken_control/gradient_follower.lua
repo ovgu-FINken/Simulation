@@ -13,10 +13,6 @@ function finken.init(self)
 		helperSay("Hello World. Tschieep!")
 	end
 
-	function self.testStep()
-		
-	end
-
 	function finken.sense()
 		return self.sense()
 	end
@@ -24,10 +20,11 @@ function finken.init(self)
 	function finken.step()
 		simAddStatusbarMessage('test hello')
 		targetHandle = simGetObjectHandle('SimFinken_target')
-		simSetObjectPosition(targetHandle, -1, {1, 1, 1})
-		self.setTarget(targetHandle)
+		finkenPosition = simGetObjectPosition(simGetObjectHandle('MyFinken'), -1)
+		--simSetObjectPosition(targetHandle, -1, {1, 1, 1})
+		--self.setTarget(targetHandle)
 		--self.printControlValues()
-		simAddStatusbarMessage(simGetObjectPosition(simGetObjectHandle('MyFinken'), -1)[3])
+		simAddStatusbarMessage(finkenPosition[3])
 		return self.step()
 	end
 
