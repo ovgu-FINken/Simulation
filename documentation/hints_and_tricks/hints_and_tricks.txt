@@ -12,8 +12,16 @@ change texture of an object: double-click lowest object in scene hierarchy
 	
 to get VREP to find the script file in Windows:
 	Option 1: move file into lua folder in vrep installation folder
-	Option 2: create environment variable LUA_PATH and add path to script file (include actual script filename)
-		OPTIONS 1 AND 2 ARE MUTUALLY EXCLUSIVE!! (unless maybe there is a way to change the LUA_PATH to make it work --> possibly declare LUA_PATH as LUA_PATH;C:\new\path\?.lua)
+	Option 2: create environment variable LUA_PATH and add path to script file. LUA_PATH should be: LUA_PATH;C:\Path\to\new\folder\?.lua;C:\another\path\to\a\folder\?.lua
 	Option 3: create hard link with administrator command line: mklink /H C:\Path\to\vrep\installation\folder\lua\scriptname.lua C:\Path\to\actual\script\location\scriptname.lua
 	
-	note: often need to restart VREP to apply changes you made in the file system
+	Option 2 probably best.
+	Option 1 is annoying.
+	Option 3 breaks when switching branches.
+	
+Using the finkenMaster.ttt scene in vrep/scenes from the master branch should work as intended, as long as vrep/lua can find the script files. Behavior should be changed in the finken.lua file in the customX functions.
+	Probably best, to copy finkenMaster and then modify that scene as needed.
+	
+When creating a vision sensor:
+	right click in 3d view --> add --> floating view
+	then select vision sensor, right click in floating window --> view --> associate view with selected vision sensor

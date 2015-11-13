@@ -1,0 +1,3 @@
+gradient_maps contains images, where the gradient is encoded in the G and B color values, as well as MATLAB scripts to create these kinds of images.
+
+reference contains the landscape scene and the associated script from the ss15 branch so we can look at how the color sensor was implemented.
