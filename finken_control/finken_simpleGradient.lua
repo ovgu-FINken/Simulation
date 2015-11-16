@@ -31,12 +31,12 @@ function finken.init(self)
 
         textureId = simGetShapeTextureId(simGetObjectHandle('Landscape')) --simGetTextureId
 
-      ---[[
+    --  ---[[
         if (textureId~=-1) then
             --simAddStatusbarMessage(textureId)
         end
 
-        if(textureId == 'hills') then
+        --if(textureId == 'hills') then
 
             --For hill.png gradient
             -- passing colors[3] Green to xGrad.
@@ -47,7 +47,7 @@ function finken.init(self)
             yGrad = ((colors[4] - 0.5) * -1) * speedFactor
 
             --height is represented by Red which shows hills
-            zGrad = ((colors[2] - 0.5) * -1) * speedFactor
+            zGrad = ((colors[2] + 0.5)) * speedFactor
             --simAddStatusbarMessage(xGrad..' '..yGrad)
 
             currentTargetPosition = simGetObjectPosition(targetObj, -1)
@@ -55,14 +55,15 @@ function finken.init(self)
 
             xTarget = currentFinkenPosition[1] + xGrad
             yTarget = currentFinkenPosition[2] + yGrad
-            zTarget = currentFinkenPosition[3] + zGrad
-
+            --zTarget = currentFinkenPosition[3] + zGrad
+            zTarget =  zGrad
             --keeping the Z value same as current target position, for hill.png gradient
             simSetObjectPosition(targetObj, -1, {xTarget, yTarget,zTarget})
 
-         end
-        --]]
+         --end
+        -- --]]
 
+    ---[[
         --if(textureId =='ring') then
 
             -- This works fine for ring.png gradient.
@@ -83,7 +84,7 @@ function finken.init(self)
             simSetObjectPosition(targetObj, -1, {xTarget, yTarget,currentTargetPosition[3]})
 
         --end
-
+            --]]
 
 		--targetObject is retrieved in the simulation script. 
 		--remove if control via pitch/roll/yaw is wanted
