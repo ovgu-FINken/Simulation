@@ -29,15 +29,6 @@ function finken.init(self)
 		--simAddStatusbarMessage(colors[1]..' '..colors[2]..' '..colors[3]..' '..colors[4])
 		speedFactor = 1.5
 
-        textureId = simGetShapeTextureId(simGetObjectHandle('Landscape')) --simGetTextureId
-
-    --  ---[[
-        if (textureId~=-1) then
-            --simAddStatusbarMessage(textureId)
-        end
-
-        --if(textureId == 'hills') then
-
             --For hill.png gradient
             -- passing colors[3] Green to xGrad.
             xGrad = (colors[3] - 0.5) * speedFactor
@@ -48,43 +39,16 @@ function finken.init(self)
 
             --height is represented by Red which shows hills
             zGrad = ((colors[2] + 0.5)) * speedFactor
-            --simAddStatusbarMessage(xGrad..' '..yGrad)
 
             currentTargetPosition = simGetObjectPosition(targetObj, -1)
             currentFinkenPosition = simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
 
             xTarget = currentFinkenPosition[1] + xGrad
             yTarget = currentFinkenPosition[2] + yGrad
-            --zTarget = currentFinkenPosition[3] + zGrad
             zTarget =  zGrad
+
             --keeping the Z value same as current target position, for hill.png gradient
             simSetObjectPosition(targetObj, -1, {xTarget, yTarget,zTarget})
-
-         --end
-        -- --]]
-
-    ---[[
-        --if(textureId =='ring') then
-
-            -- This works fine for ring.png gradient.
-            --passing colors[3] Green to xGrad.
-            xGrad = (colors[3] - 0.5) * speedFactor
-            -- passing colors[4] Blue to yGrad.
-            --multiply with -1 because image coordinates start in top right
-            yGrad = ((colors[4] - 0.5) * -1) * speedFactor
-            --simAddStatusbarMessage(xGrad..' '..yGrad)
-
-            currentTargetPosition = simGetObjectPosition(targetObj, -1)
-            currentFinkenPosition = simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
-
-            xTarget = currentFinkenPosition[1] + xGrad
-            yTarget = currentFinkenPosition[2] + yGrad
-
-            --keeping the Z value same as current target position, for ring.png gradient
-            simSetObjectPosition(targetObj, -1, {xTarget, yTarget,currentTargetPosition[3]})
-
-        --end
-            --]]
 
 		--targetObject is retrieved in the simulation script. 
 		--remove if control via pitch/roll/yaw is wanted
