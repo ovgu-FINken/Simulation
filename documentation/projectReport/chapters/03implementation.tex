@@ -22,7 +22,9 @@ Note that this is just a brief explanation of the Java-API implementation. If yo
 
 The software architecture of the Java-API, which serves as a communication bridge between the Paparazzi software and the V-REP simulation, is designed to be as modular as possible in order to facilitate the further development of the project. Its reusable components should also serve as a building blocks for the students that want to develop future mixed-reality projects. \\
 
-On \ref{fig:apiArchitecture} is depicted an raw overview of the Java-API software architecture. The first layer contains the projects \textit{JavaV-REP}, \textit{JavaIvyBus} and \textit{JavaXmlSax}.\\
+On \ref{fig:apiArchitecture} is depicted an raw overview of the Java-API software architecture.
+The final program is assembled from independently developed components. Each part is independent and provide well-defined exported interfaces so that the other parts can use them.
+The first layer contains the projects \textit{JavaV-REP}, \textit{JavaIvyBus} and \textit{JavaXmlSax}.\\
 The \textit{JavaV-REP} is the implementation of the requirements concerning V-REP, that ware discussed in \ref{sec:requirementsVREP} of \ref{chap:theo}. At the heart of this project is the V-REP Remote-API binding for Java provided by Coppelia. The \textit{JavaVrep} project extends this library and provides further utility methods for establishing connection to remote V-REP servers as well as retrieving and manipulating scene objects. The \textit{JavaV-REP} project is described in more details in \ref{sec:vrepImplementation}.\\
 
 \begin{figure}[h!]
@@ -49,7 +51,7 @@ On the top of the hierarchy is situated the actual application of our project ca
 \subsection{JavaV-REP}
 \label{sec:vrepImplementation}
 
-All the functionality, that deals with the V-REP and was discussed in \ref{sec:requirementsVREP} of \ref{chap:theo} is implemented as a single Java project called \textit{JavaVREP}.\\
+All the functionality, that concerns V-REP and was discussed in \ref{sec:requirementsVREP} of \ref{chap:theo} is implemented as a single Java project called \textit{JavaVREP}.\\
  The project uses the V-REP Remote-API Java binding - package \textit{coppelia} (containing 12 Java classes) and the \textit{libremoteApiJava.so} or \textit{libremoteApiJava.dll} (depending if the platform is Linux or Windows). The \textit{libremoteApiJava.so} should be placed in the Java home directory, e.g \textit{/usr/lib/jvm/java-8-oracle/jre/lib/amd64}, in order for the project to be compiled.\\
 The main class is the \textit{VrepConnection.java}, which is a wrapper of the \textit{remoteApi.java} class provided by the V-REP remote API. Its singleton instance can be retrieved by calling:
 
@@ -77,7 +79,7 @@ The interfaces \textit{VrepServer} and \textit{VrepClient} and their implementat
 
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\small]
+\begin{lstlisting}[basicstyle=\small, language=Java]
 VrepConnection connection;
 VrepClient     client;
 VrepServer     server;
@@ -85,10 +87,6 @@ VrepServer     server;
 connection = VrepConnectionUtils.getConnection();
 client     = VrepClientUtils.getClient();
 server     = new StandardVrepServer("127.0.0.1", "19999");
-
-if (server.isFree()) {
-// already opened a server on this IP and port.
-}
 
 client.connectToServer(server);
 
@@ -99,10 +97,75 @@ if (!client.isConnected()) {
 \end{tabular}
 \end{center}
 
-The above example shows how to connect to a V-REP server 
+The above example shows how to connect to a V-REP server. The IP \textit{127.0.0.1} specifies that the server is running on the same machine. The port number can be chosen arbitrary, but have to match on both client and server site.\\
+In order to close the connection just the method \textit{client.close()} has to be called. \\
+
+The \textit{VrepClient} conforms to the Java Beans specification and can thus fire events when the connection has been established or disconnected. Any class who is interested in catching these events asynchronously, for example GUI, will have to implement \textit{PropertyChangeListener} and register. See
+\url{https://docs.oracle.com/javase/tutorial/javabeans/writing/events.html} for more information. \\
+
+Each V-REP scene object is represented by the interface \textit{VrepObject} and the \textit{AbsVrepObject} represents an abstract scene object from which all types of object derive. The abstract scene object has private properties like \textit{Position}, \textit{Orientation}, \textit{LinearVelocity} and \textit{AngularVelocity}, which represent its inertial parameters taken from the V-REP.
+\textit{VrepObjectType} is an Enum, that specifies the scene object type like Shape, Path, Proximity sensor etc. The name of the scene object is represented by the class \textit{VrepObjectName}, which consists of a base name and an index. If an object is copy-pasted (multiple instances of an object), then
+each instance of the object receives the following name, according to V-REP naming scheme: \textit{\texttt{base\_name\#index}}. For example if we want to have three quadrocopters, their names in V-REP will be represented as follows: \textit{\texttt{Quad\_Lia\_ovgu\_01}}, \textit{\texttt{Quad\_Lia\_ovgu\_02\#0}} and \textit{\texttt{Quad\_Lia\_ovgu\_03\#1}}. \\
+
+The V-REP scene is represented by the class \textit{VrepScene}, which retrieves all objects and hold a collection of them for further use. Since we always have one V-REP scene the class is designed as a Singleton pattern. The following example shows how this class is used for loading the scene and retrieving all shape objects.
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small, language=Java]
+VrepScene   scene;
+List<Shape> shapeObjects;
+
+scene = VrepSceneUtils.getVrepScene();
+scene.loadScene();
+shapeObjects = scene.getAllShapeObjects();
+
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+The project \textit{JavaVrep} also defines the interface \textit{ObjectUpdator} and its abstract implementation \textit{AbsObjectUpdator}, which is used to update the \textit{VrepObject}s with real-time parameters from V-REP, like their \textit{Position}, \textit{Orientation}, \textit{LinearVelocity} and \textit{AngularVelovity}.
+
 
 \subsection{JavaIvyBus}
 \label{sec:ivyBusImplementation}
+
+The requirements regarding the Ivy-Bus that ware stated in \ref{sec:requirementsIVYBus} of \ref{chap:theo} are implemented in a stand-alone Java project called \textit{JavaIvyBus}. \\
+The project contains class definitions of the Paparazzi messages that are defined in a Xml file. See listing \ref{lst:MessageXml} of \ref{chap:theo}. The interface \textit{Message} and its abstract implementation \textit{AbsMessage} describe such a message with its name, period at which the message is sent, identifier and \textit{MessageField}s. \\
+The interface \textit{IvyBusNode} represents a single independent node communicating on the common bus. By inheriting from its abstract implementation \textit{AbsIvyBusNode}, one can create a custom bus-node. The methods \textit{IvyBusNode.connect()} and \textit{IvyBusNode.disconnect()} are used to attach the particular node to the bus and disconnect it. The \textit{IvyBusNode} also conforms to the Java Beans specification and and fires asynchronous notifications each time the node joins or leaves the bus.
+After obtaining an instance of a \textit{Message}, parsed from the Xml file or a custom-created, the bus-node can subscribe to this \textit{Message} by invoking the method \textit{IvyBusNode.subscribeToMessage(Message msg)} and thus receive all the messages of this kind or use the method \textit{IvyBusNode.subscribeToIdMessage(Message msg, int id)}, which subscribes to the messages published just by this quadrocopter ehich has the same id. \\
+Once a \textit{Message} to which the bus node has subscribed has been received, the bus node fires an notification and gives the instance of the received \textit{Message}, with all of its \textit{MessageField}s initialized with the actual message values.
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small, language=Java]
+
+class TestBusNode implements PropertyChangeListener {
+  
+  private IvyBusNode node; 
+  private Message    message;
+  
+  public TestBusNode(IvyBusNode node, Message msg) {
+    this.node    = node;
+    this.message = msg;
+    
+    this.node.addPropertyChangeListener(this);
+    this.node.subscribeToMessage(this.message);
+  }
+  
+  @override
+  public void propertyChange(PropertyChangeEvent event) {
+    Message receivedMessage;
+    
+    // the message has been received
+        
+    receivedMessage = (Message)event.getNewValue();    
+  }
+
+}
+
+\end{lstlisting}
+\end{tabular}
+\end{center}
 
 
 \subsection{JavaXmlSax}
