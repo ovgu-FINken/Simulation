@@ -67,7 +67,8 @@ V-REP provides several means of communication with an external application. One 
 
 \subsection{Java API}
 Java API is the external program, that we have implemented to communicate with V-REP through the Remote API.
-We have chosen to implement our external program, communicating with the V-REP, in the Java programming language regarding the following advantages: Java's platform independence allows to run the external program even on different machine with different operating system than the one used for running the V-REP environment.  Java is object-orientated which favours the use of design patterns and highly abstraction layers, which allows us to write an API that is modular, reusable and can later be easily extended to support other mixed-reality scenarious. The implementation and architecture of the Java API is duscussed in details in \ref{sec:implementation}. The purpose of the Java application is to serve as a communicating bridge between the Paparazzi Ground Station and the V-REP. It detects all quadrocopters in the V-REP simulation, builds their virtual representations and feeds the models with real-time data.
+We have chosen to implement our external program, communicating with the V-REP, in the Java programming language regarding the following advantages: Java's platform independence allows to run the external program even on different machine with different operating system than the one used for running the V-REP environment.  Java is object-orientated which favours the use of design patterns and highly abstraction layers, which allows us to write an API that is modular, reusable and can later be easily extended to support other mixed-reality scenarious. Java also associates documentation with the actual code. The JavaDoc produces browsable documentation from the comments written in the code, which will be useful for anybody who wants to extend the project\\
+The implementation and architecture of the Java API is duscussed in details in \ref{sec:implementation}. The purpose of the Java application is to serve as a communicating bridge between the Paparazzi Ground Station and the V-REP. It detects all quadrocopters in the V-REP simulation, builds their virtual representations and feeds the models with real-time data.
 
 \subsection{Ivy Bus}
 Ivy Bus is a simple protocol and a set of open-source (LGPL) libraries and programs that allows applications to broadcast information through text messages, with a subscription mechanism based on regular expressions. Ivy libraries are available in C, C++, Java, Python and Perl, on Windows and Unix boxes and on Macs. \\
@@ -139,7 +140,7 @@ Each participant which wants to exchange information on the Ivy-Bus is described
 
 All the messages that the paparazzi software uses are described in a xml file called \textit{messages.xml}, residing in the \textit{/paparazzi/conf/} directory. The following listing is an example of the messages file containing two messages.
 
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}[basicstyle=\tiny, caption={Message Xml definition}, label={lst:MessageXml}, language = Xml]
 <msg_class name="telemetry">
  <message name="AIRSPEED" id="54">
     <field name="airspeed" type="float" unit="m/s"/>

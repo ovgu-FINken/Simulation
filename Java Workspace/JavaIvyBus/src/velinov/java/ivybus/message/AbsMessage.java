@@ -15,11 +15,11 @@ import java.util.Map;
  */
 public class AbsMessage implements Message {
   
-  private String                    name;
-  private int                       id;
-  private double                    period;
-  private List<MessageField>        fields;
-  private Map<String, MessageField> fieldsMap;
+  private String                          name;
+  private int                             id;
+  private double                          period;
+  private final List<MessageField>        fields;
+  private final Map<String, MessageField> fieldsMap;
   
   /**
    * default constructor.
