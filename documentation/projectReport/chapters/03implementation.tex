@@ -129,11 +129,12 @@ The project \textit{JavaVrep} also defines the interface \textit{ObjectUpdator} 
 \subsection{JavaIvyBus}
 \label{sec:ivyBusImplementation}
 
-The requirements regarding the Ivy-Bus that ware stated in \ref{sec:requirementsIVYBus} of \ref{chap:theo} are implemented in a stand-alone Java project called \textit{JavaIvyBus}. \\
+The requirements regarding the Ivy-Bus, that ware stated in \ref{sec:requirementsIVYBus} of \ref{chap:theo} are implemented in a stand-alone Java project called \textit{JavaIvyBus}. \\
+The project requires the \textit{ivy-java.jar} library to be on its class path in order to be compiled.\\
 The project contains class definitions of the Paparazzi messages that are defined in a Xml file. See listing \ref{lst:MessageXml} of \ref{chap:theo}. The interface \textit{Message} and its abstract implementation \textit{AbsMessage} describe such a message with its name, period at which the message is sent, identifier and \textit{MessageField}s. \\
 The interface \textit{IvyBusNode} represents a single independent node communicating on the common bus. By inheriting from its abstract implementation \textit{AbsIvyBusNode}, one can create a custom bus-node. The methods \textit{IvyBusNode.connect()} and \textit{IvyBusNode.disconnect()} are used to attach the particular node to the bus and disconnect it. The \textit{IvyBusNode} also conforms to the Java Beans specification and and fires asynchronous notifications each time the node joins or leaves the bus.
 After obtaining an instance of a \textit{Message}, parsed from the Xml file or a custom-created, the bus-node can subscribe to this \textit{Message} by invoking the method \textit{IvyBusNode.subscribeToMessage(Message msg)} and thus receive all the messages of this kind or use the method \textit{IvyBusNode.subscribeToIdMessage(Message msg, int id)}, which subscribes to the messages published just by this quadrocopter ehich has the same id. \\
-Once a \textit{Message} to which the bus node has subscribed has been received, the bus node fires an notification and gives the instance of the received \textit{Message}, with all of its \textit{MessageField}s initialized with the actual message values.
+Once a \textit{Message} to which the bus node has subscribed has been received, the bus node fires an notification and gives the instance of the received \textit{Message}, with all of its \textit{MessageField}s initialized with the actual message values. The following listing shows an example hot to subscribe to a message and get asynchronous notification when the message is received.
 
 \begin{center}
 \begin{tabular}{c}
@@ -173,6 +174,8 @@ class TestBusNode implements PropertyChangeListener {
 
 \subsection{JavaFinken}
 \label{sec:javaFinkenImplementation}
+
+The \textit{JavaFinken} API is a project that relies on the previously introduces projects \textit{JavaV-REP}, \textit{JavaIvyBus} and \textit{JavaXmlSax}. It provides the basic classes and utilities upon which our application can be built.
 
 \section{\todo{fancy name }}
 

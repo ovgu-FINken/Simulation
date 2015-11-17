@@ -169,7 +169,36 @@ Once a message has been received, the Ivy-Bus node should provide the instance o
 Since our mixed reality scenario can involve many flying quadrocopters, there will be published the same messages but from different copters. In this case the messages are identified with the drone id number.
 Another requirement is that the Ivy-Bus node have to subscribe just to the messages published from the copter that it was assigned to and not receive the same messages from the other copters.
 
+\subsubsection{Application specific requirements}
+\label{sec:requirementsApplication}
 
+\paragraph{Aircraft retrieval}
+The paparazzi software stores important information about the quadrocopters in an Xml file stored in \textit{/paparazzi/conf/conf.xml}
+
+\begin{lstlisting}[basicstyle=\tiny, label={lst:AircraftXml}, language = Xml]
+  <conf>
+    <aircraft
+      name="Quad_Lia_ovgu_01"
+      ac_id="1"
+      airframe="airframes/ovgu/free_flight.xml"
+      radio="radios/spektrum.xml"
+      telemetry="telemetry/ovgu/tmp_christoph.xml"
+      gui_color="white"
+    />
+    
+    <aircraft
+      name="Quad_Lia_ovgu_02"
+      ac_id="2"
+      airframe="airframes/ovgu/free_flight_flow.xml"
+      radio="radios/spektrum.xml"
+      telemetry="telemetry/ovgu/free_flight.xml"
+      gui_color="#b34c14805f44"
+    />
+  
+  </conf>
+\end{lstlisting}
+
+Each quadrocopter is described as an aircraft, which has its name, id and other attributes. The parameter that is of specific importance for us is the id number, which is added to each message sent by the quadrocopter in order to.
 
 % example for definition    
 % \begin{definitionnonum}[Softwarearchitektur ]
