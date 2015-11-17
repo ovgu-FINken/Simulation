@@ -19,13 +19,14 @@
 
 \section{Motivation}
 
-The work presented in this document was carried out at the Swarm Lab at the Otto-von-Guericke-University Magdeburg. The research focus of the working group lies on implementing and investing swarm algorithms in practice by using small indoor quadcopter. The used FINken quadcopter were developed in association with the working group and are small, but powerfull and are highly extensible. As the research focus on swarm intelligence puts an interest on autonomous behaviour, the copter fly without any external reference and rely solely on onboard sensors.
+The work presented in this document was carried out at the Swarm Lab at the Otto-von-Guericke-University Magdeburg. The research focus of the working group lies on implementing and investing swarm algorithms in practice by using small indoor quadcopter. The used FINken quadcopter were developed in association with the working group and are small, but powerful and are highly extensible. As the research focus on swarm intelligence puts an interest on autonomous behaviour, the copter fly without any external reference and rely solely on onboard sensors.
 
-As the copter were developed in the working group and were designed with a focus on modularity, they are under constant change. Testing new changes of the copter, e.g. new control or behavioural algorithms alway poses a certain risk to the hardware due to crashs caused by bugs. Thus, a simulation tool for the quadcopters to test new software is desirable to be able to do a safe first evaluation of newly implemented ideas. A less abstract solution than a pure simulation could be a mixed reality simulation, where the behaviour of real and simulated quadcopter could be directly compared.
+As the copter were developed in the working group and were designed with a focus on modularity, they are under constant change. Testing new changes of the copter, e.g. new control or behavioural algorithms alway poses a certain risk to the hardware due to crashes caused by bugs. Thus, a simulation tool for the quadcopter to test new software is desirable to be able to do a safe first evaluation of newly implemented ideas. A less abstract solution than a pure simulation could be a mixed reality simulation, where the behaviour of real and simulated quadcopter could be directly compared.
 
-\todo{who needs the results}
+The idea is to build a mixed reality simulation environment where one or multiple real copter can fly together with one or multiple virtual ones. This would provide a testing possibility for new behaviour and enhancements like inter-copter communication models as well as making upscaling of swarms more easy. Simulated quadcopter can be added arbitrarily (enough computation power assumed) without increasing cost and damaging risk as with additional real quadcopter. 
 
-\todo{what are the problems to be solved?}
+In contrast to existing approaches for the use of mixed reality simulation as in \cite{Chen2011}, our focus lies not on hardware development, but on increasing situation complexity by computation power instead of more cost intensive real hardware.
+
 
 \todo{what are existing solutions, what's different in this approach, what is the improvement}
 
@@ -35,8 +36,11 @@ As the copter were developed in the working group and were designed with a focus
 
   
 \section{Problem Statement}
-    
-    \todo{what are the goals}
+    The goal of the project is to provide a realistic, fast and scalable simulation. The second part is to establish a communication link between the simulated and real quadcopter to link at least one virtual to a real one.
+
+The physical quadcopter simulation is going to be done in the robotic simulation framework V-REP. The FINken Copter run Paparazzi software, which already includes a communication link between a PC and the copter. A dedicated Java program will be handling the communication between the Ivy-Bus of Paparazzi an V-REP. 
+
+
     \todo{how are we going to reach this goals}
     \todo{what is to be done}
  
