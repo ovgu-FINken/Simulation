@@ -3,10 +3,11 @@ local finken = {}
 finkenCore = require('finkenCore')
 
 
-local function saveLog(newLog,newDirectoryPath)
+local function saveLog(newLog, newLogName, newSuffix, newDirectoryPath)
 	local myTimeString = os.date("%Y%m%d%H%M%S")
 	newDirectoryPath = newDirectoryPath or ""
-	local myLogFile = assert(io.open(newDirectoryPath.."simulation" .. myTimeString .. ".log", "w"))
+	newSuffix = newSuffix or ""
+	local myLogFile = assert(io.open(newDirectoryPath.."simulation" .. newSuffix .. newLogName .. myTimeString .. ".log", "w"))
 	local timestamp, logValue 
 	local sortedLogKeys = {}
 	for timestamp, logValue in pairs(newLog) do
@@ -24,7 +25,7 @@ end
 
 function finken.init(self)
 	local positionLog = {}
-	
+	local orientationLog = {}	
 	local function helperSay(textToSay)
 		simAddStatusbarMessage(textToSay)
 	end
@@ -46,12 +47,14 @@ function finken.init(self)
 	function self.customRun()
 		local timestamp = math.floor(simGetSimulationTime()*1000)
 		positionLog[timestamp] = self.getArenaPosition()
+		orientationLog[timestamp] = simGetObjectOrientation(self.getHandle(), -1);
 	end
 	
 	--function customClean should be called in the vrep child scrip in the cleanup part
 	--put here any custom function that should be called at the end of the simulation
 	function self.customClean()
-		saveLog(positionLog)
+		saveLog(positionLog, "Position", self.thisIDsuffix)
+		saveLog(orientationLog, "Orientation", self.thisIDsuffix)
 	end
 	return self
 end
