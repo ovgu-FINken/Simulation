@@ -38,7 +38,7 @@ local function tuneThrottle(throttle, curveParamNeg, curveParamPos)
 	return throttleTarget
 end
 
-local function fixSignalName(signalName)
+function finkenCore.fixSignalName(signalName)
 	if (thisIDsuffix ~= -1) then
 		return (signalName..thisIDsuffix)
 	else
@@ -46,7 +46,7 @@ local function fixSignalName(signalName)
 	end
 end
 
-local function fixName(name)
+function finkenCore.fixName(name)
 	if (thisIDsuffix ~= -1) then
 		return (name..'#'..thisIDsuffix)
 	else
@@ -57,7 +57,7 @@ end
 
 function finkenCore.init()
 	thisIDsuffix = simGetNameSuffix(nil)
-	handle_FinkenBase = simGetObjectHandle(fixName('SimFinken_base'))
+	handle_FinkenBase = simGetObjectHandle(finkenCore.fixName('SimFinken_base'))
 	handle_finken = simGetObjectAssociatedWithScript(sim_handle_self)
 	execution_step_size = simGetSimulationTimeStep()
 	local _, apiInfo = simExtRemoteApiStatus(19999) or simExtRemoteApiStart(19999)
@@ -67,16 +67,16 @@ function finkenCore.init()
 	targetXcontroller.init(2, 0, 4)
 	targetYcontroller.init(2, 0, 4)
 	targetZcontroller.init(6, 0, 8)
-	simSetFloatSignal(fixSignalName('throttle'),50)
-	simSetFloatSignal(fixSignalName('pitch'),0)
-	simSetFloatSignal(fixSignalName('roll'),0)
-	simSetFloatSignal(fixSignalName('yaw'),0)
-	simSetFloatSignal(fixSignalName('height'),1)
-	sensorHandles.distFront = simGetObjectHandle(fixName('SimFinken_sensor_front'))
-	sensorHandles.distLeft = simGetObjectHandle(fixName('SimFinken_sensor_left'))
-	sensorHandles.distBack = simGetObjectHandle(fixName('SimFinken_sensor_back'))
-	sensorHandles.distRight = simGetObjectHandle(fixName('SimFinken_sensor_right'))
-	simSetStringSignal(fixSignalName('sensor_dist'),simPackFloats(sensorDistances))
+	simSetFloatSignal(finkenCore.fixSignalName('throttle'),50)
+	simSetFloatSignal(finkenCore.fixSignalName('pitch'),0)
+	simSetFloatSignal(finkenCore.fixSignalName('roll'),0)
+	simSetFloatSignal(finkenCore.fixSignalName('yaw'),0)
+	simSetFloatSignal(finkenCore.fixSignalName('height'),1)
+	sensorHandles.distFront = simGetObjectHandle(finkenCore.fixName('SimFinken_sensor_front'))
+	sensorHandles.distLeft = simGetObjectHandle(finkenCore.fixName('SimFinken_sensor_left'))
+	sensorHandles.distBack = simGetObjectHandle(finkenCore.fixName('SimFinken_sensor_back'))
+	sensorHandles.distRight = simGetObjectHandle(finkenCore.fixName('SimFinken_sensor_right'))
+	simSetStringSignal(finkenCore.fixSignalName('sensor_dist'),simPackFloats(sensorDistances))
 end
 
 function finkenCore.printControlValues()
@@ -106,11 +106,11 @@ function finkenCore.step()
 	simAddStatusbarMessage(execution_current_time)
 	if (execution_last_time + execution_step_size <= execution_current_time) then
 		execution_last_time = execution_current_time]]
-		local throttleTarget=simGetFloatSignal(fixSignalName('throttle'))
-		local pitchTarget=simGetFloatSignal(fixSignalName('pitch'))
-		local rollTarget=simGetFloatSignal(fixSignalName('roll'))
-		local yawTarget=simGetFloatSignal(fixSignalName('yaw'))
-		local heightTarget=simGetFloatSignal(fixSignalName('height'))
+		local throttleTarget=simGetFloatSignal(finkenCore.fixSignalName('throttle'))
+		local pitchTarget=simGetFloatSignal(finkenCore.fixSignalName('pitch'))
+		local rollTarget=simGetFloatSignal(finkenCore.fixSignalName('roll'))
+		local yawTarget=simGetFloatSignal(finkenCore.fixSignalName('yaw'))
+		local heightTarget=simGetFloatSignal(finkenCore.fixSignalName('height'))
 		--invert roll and yaw axis to match real finken
 		rollTarget = -rollTarget
 		yawTarget = -yawTarget
@@ -168,11 +168,16 @@ function finkenCore.setTarget(targetObject)
 	local corrX = targetXcontroller.step(errorX, execution_step_size / defaultStepSize)
 	local corrY = targetYcontroller.step(errorY, execution_step_size / defaultStepSize)
 	local corrZ = targetZcontroller.step(errorZ, execution_step_size / defaultStepSize)
-	simSetFloatSignal(fixSignalName('pitch'), corrX)
-	simSetFloatSignal(fixSignalName('roll'), corrY)
-	simSetFloatSignal(fixSignalName('throttle'), 50+corrZ)
-	--simSetFloatSignal(fixSignalName('height'),targetPosition[3])
+	simSetFloatSignal(finkenCore.fixSignalName('pitch'), corrX)
+	simSetFloatSignal(finkenCore.fixSignalName('roll'), corrY)
+	simSetFloatSignal(finkenCore.fixSignalName('throttle'), 50+corrZ)
+	--simSetFloatSignal(finkenCore.fixSignalName('height'),targetPosition[3])
 end
+
+function finkenCore.getSensorHandles()
+	return sensorHandles
+end
+
 --[[
 --sense() reads all sensors of the finken, and updates the signals
 --@return {float dist_front, float dist_left, float dist_back, float dist_right}
@@ -188,7 +193,7 @@ function finkenCore.sense()
 			sensorDistances[i] = 7.5
 		end
 	end
-	simSetStringSignal(fixSignalName('sensor_dist'),simPackFloats(sensorDistances))
+	simSetStringSignal(finkenCore.fixSignalName('sensor_dist'),simPackFloats(sensorDistances))
 	return sensorDistances
 end
 
