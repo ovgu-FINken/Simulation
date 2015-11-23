@@ -195,7 +195,23 @@ The paparazzi software stores important information about the quadrocopters in a
   </conf>
 \end{lstlisting}
 
-Each quadrocopter is described as an aircraft, which has its name, id and other attributes. The parameter that is of specific importance for us is the id number, which is added to each message sent by the quadrocopter in order to.
+Each quadrocopter is described as an aircraft, which has its name, id and other attributes. The parameter that is of specific importance for us is the id number, which is added to each message sent by the quadrocopter. The content based filtering of the messages is based on this aircraft id number. It is required to create a XML reader that parses the XML document and returns an instance of each aircraft class for each aircraft entry in the XML file.
+
+\paragraph{Virtual and Real Quadrocopters representation}
+
+The virtual and real quadrocopters have to be described by an appropriate class. \\
+Since they contain shared data and properties, an abstract parent class representing the quadrocopter will be an appropriate solution. The abstract quadrocopter should contain the aircraft it belongs to, so the name of the quadrocopter will coincide with the name of the aircraft. Since the id of the aircraft it represents is also contained, the quadrocopter will be able to send and receive the messages that only belong to the quadrocopter it represents. \\
+Since the abstract quadrocopter represents also a V-REP scene object itself, it should contain the \textit{Shape} object it represents. Thus the orientation, rotation and velocity of the quadrocopter will be retrieved directly from the \textit{Shape} object.\\
+The proximity sensors of the quadrocopters should also be modelled and the abstract quadrocopter should provide methods to retrieve the distances measured by the sensors.\\
+The abstract class should also contain an IvyBus node, discussed in \ref{sec:requirementsIVYBus}, which will allow to connect/disconnect the quadrocopter from the IvyBus and to send and subscribe to messages filtered by the aircraft id it has. \\
+In general the abstract quadrocopter should be a highly polymorphic class, being a scene object, aircraft and IvyBus node at the same time. It should have an interface allowing to connect/disconnect from the IvyBus, return object name, position, orientation, velocities and proximity sensor values. \\
+The real and virtual quadrocopters have to be subclasses of the virtual one, implementing their specific behaviour. For example the real quadrocopter subscribes to the messages coming from the quadrocopter it represents and on message arrival retrieves the relevant parameters like pitch, yaw, row, thrust and updates the V-REP model using the signals mechanism. The virtual quadrocopter on the other hand takes the parameters from the scene object, that is represents, packs them in messages with the id of the aircraft it represents and publishes them on the IvyBus.
+
+\paragraph{Real and Virtual Quadrocopter retrieval}
+
+There should be implemented an automatic mechanism, that retrieved the instances of the real and virtual quadrocopters. The retrieval should be based on the scene objects retrieval and the aircraft parsing introduces in the previous paragraph. \\
+After getting a list of all V-REP scene shape objects and all Aircrafts, it could be iterated in both lists and checked if any of the shape object's names matches the name of an aircraft. If the names match there should be created an instance of virtual or real quadrocopter with the corresponding Shape and Aircraft objects.
+The decision if it is a real quadrocopter or a virtual one depends on the object name. The real quadrocopters have the standard FINKEN drone names like \textit{\texttt{Quad\_Lia\_ovgu\_01}}, \textit{\texttt{Quad\_Lia\_ovgu\_02}} and the virtual have an arbitrary name with s prefix \textit{Virtual}.
 
 % example for definition    
 % \begin{definitionnonum}[Softwarearchitektur ]
