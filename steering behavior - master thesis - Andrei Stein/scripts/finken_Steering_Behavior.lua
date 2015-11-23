@@ -1,9 +1,22 @@
+require('vectorMath')
+
 local finken = {}
 
 finkenCore = require('finkenCore')
+seekSteeringBehavior = require('seekSteeringBehavior')
+contextData = require('contextData')
 
 local sensorHandles = {}
 local sensorDistances = {7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5}
+
+-- list of all steering behaviors
+local steeringBehaviors = {}
+
+local maxVelocity = 2
+local velocity = 0
+
+-- data about the current context
+local context = {}
 
 function finken.init(self)
 
@@ -21,14 +34,34 @@ function finken.init(self)
 
 	function self.customInit()
 		helperSay("Hello World! Tschiep!")
-		
-		
+		local seekBehavior = seekSteeringBehavior.new()
+		self.addSteeringBehavior("seek", seekBehavior)
+		context = contextData.new()
+		context.targets['goal1'] = {4,4,2}
 	end
 
 
 	function self.customRun()
-		--targetObject is retrieved in the simulation script. 
-		--remove if control via pitch/roll/yaw is wanted
+		-- targetObject is retrieved in the simulation script.
+		
+		-- init starting values
+		velocity = {0,0,0}
+		local steering ={0,0,0}
+		context.currentPosition = self.getPosition()
+		
+		-- get steering from all bahaviors and combine them
+		for k, behavior in pairs(steeringBehaviors) do
+			steering = behavior.getSteering(context)
+			velocity = addVectors(velocity, steering)
+		end
+		
+		-- calculate the final velocity for this step
+		velocity = getNormalizedVector(velocity)
+		velocity = multiplyVectorByScalar(velocity, maxVelocity)
+		
+		-- set the controll target to the new steering position
+		local newPosition = addVectors(context.currentPosition, velocity)
+		simSetObjectPosition(targetObj, -1, newPosition)
 		self.setTarget(targetObj)
 	end
 
@@ -52,13 +85,18 @@ function finken.init(self)
 				sensorDistances[i] = 7.5
 			end
 		end
-		helperSay(sensorDistances[1])
-		--simSetStringSignal(self.fixSignalName('sensor_dist'),simPackFloats(sensorDistances))
+		
+		context.sensorDistances = sensorDistances
 		return sensorDistances
 	end
 
 	function self.customClean()
 
+	end
+	
+	-- adds a steering behavior to the steeringBehaviors-list
+	function self.addSteeringBehavior(name, behavior)
+		steeringBehaviors[name] = behavior
 	end
 
 	return self
