@@ -2,7 +2,9 @@ local finken = {}
 
 finkenCore = require('finkenCore')
 
-
+--save a timestamped log array to a file
+--currently only works for data arrays with 3 columns
+--@newSuffix and @newDirectoryPath are optional
 local function saveLog(newLog, newLogName, newSuffix, newDirectoryPath)
 	local myTimeString = os.date("%Y%m%d%H%M%S")
 	newDirectoryPath = newDirectoryPath or ""
@@ -23,13 +25,22 @@ local function saveLog(newLog, newLogName, newSuffix, newDirectoryPath)
 	return myLogFile:close()
 end
 
+--implement the FINken main class
 function finken.init(self)
 	local positionLog = {}
-	local orientationLog = {}	
+	local orientationLog = {}
+
+	--example of a local helper function only for the FINken class
 	local function helperSay(textToSay)
 		simAddStatusbarMessage(textToSay)
 	end
 
+	--example of a new function for the FINken
+	--use with care, better write a local function and call it e.g. in self.customRun() 
+	function self.helloWorld()
+		helperSay("Hello World. Tschieep!")
+	end
+	
 	function self.getArenaPosition()
 		local handle_myReference = simGetObjectHandle("Master#")
 		local handle_mySelf = self.getHandle()
@@ -37,12 +48,10 @@ function finken.init(self)
 		return myPosition
 	end
 
-	function self.helloWorld()
-		helperSay("Hello World. Tschieep!")
-	end
 
 
-	--function customRun should be called in the vrep child script in the actuation part
+
+	--function customdRun should be called in the vrep child script in the actuation part
 	--put here any custom function that should be called each simulation time step
 	function self.customRun()
 		local timestamp = math.floor(simGetSimulationTime()*1000)

@@ -3,6 +3,14 @@
 
 \section{Simulation Environment}
 
+The FINken consists of the body, the rotors and the sensors. The body contains the behavioural and flight control, the thrust simulation is handled by scripts connected to the rotor structure.
+\todo{add screenshots of the finken parts}
+
+The body consists of multiple objects, while visual representation and the physical behaviour are split. For visual representation, a *.stl file from the CAD-Model of the original FINken was imported. This shape is rather complex, which makes the simulation time consuming. To speed up the simulation, the shape of the finken was remodelled in VREP, using only simple rectangular shapes. Making the complex shape static, establishing a fixed connection and hiding the simple shape, the result is a a visual appealing simulation object with good simulation performance.
+
+
+
+
 \todo{finken parameter estimation}
 
 \todo{controller tuning}
