@@ -1,7 +1,7 @@
 <map version="docear 1.1" dcr_id="1377253696629_575mr2xhasgzy80oz8d2cqhjn" project="14FD099F8F985QT959J90Z53U5ZUFPVWENJ2" project_last_home="file:/Users/Nanoq/Documents/Uni/OvGU/DigiEng/Semester3/DigiEngProjekt/Simulation/documentation/projectReport/docear/">
 <!--To view this file, download Docear - The Academic Literature Suite from http://www.docear.org -->
 <attribute_registry SHOW_ATTRIBUTES="hide"/>
-<node TEXT="Mixed-reality Simulation of Quadcopter-Swarms" FOLDED="false" ID="ID_1723255651" CREATED="1283093380553" MODIFIED="1446025376160" DCR_PRIVACY_LEVEL="DEMO"><hook NAME="MapStyle">
+<node TEXT="Mixed-reality Simulation of Quadcopter-Swarms" FOLDED="false" ID="ID_1723255651" CREATED="1283093380553" MODIFIED="1448572631660" DCR_PRIVACY_LEVEL="DEMO"><hook NAME="MapStyle">
     <properties show_icon_for_attributes="true" show_note_icons="true"/>
 
 <map_styles>
@@ -52,10 +52,10 @@
 </map_styles>
 </hook>
 <hook NAME="AutomaticEdgeColor" COUNTER="3"/>
-<node TEXT="Introduction" POSITION="right" ID="ID_1693751078" CREATED="1344508137611" MODIFIED="1446025376226" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Introduction" POSITION="right" ID="ID_1693751078" CREATED="1344508137611" MODIFIED="1448572631668" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#ff0000" WIDTH="3"/>
 <hook NAME="FirstGroupNode"/>
-<node TEXT="Motivation" ID="ID_1380533534" CREATED="1344510886390" MODIFIED="1446025376227" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Motivation" ID="ID_1380533534" CREATED="1344510886390" MODIFIED="1448572631668" DCR_PRIVACY_LEVEL="DEMO">
 <node TEXT="project context" ID="ID_1307261470" CREATED="1442919279390" MODIFIED="1442919344967">
 <node TEXT="carried out at the swarm lab at the Otto-von-Guericke University Magdeburg" ID="ID_812286036" CREATED="1442919403434" MODIFIED="1442919636509"/>
 <node TEXT="research focus on implementing swarm algorithms with quadcopter" ID="ID_518959680" CREATED="1442919636945" MODIFIED="1442920683282"/>
@@ -80,16 +80,16 @@
 <node TEXT="in contrast to exisiting approaches \cite{Chen2011}, our focus lies not on hardware development, but on increasing situation complexity by computation power instead of more cost intensive real hardware" ID="ID_717402559" CREATED="1443466339393" MODIFIED="1443509346107"/>
 </node>
 </node>
-<node TEXT="Problem Statement" ID="ID_577115243" CREATED="1344510985951" MODIFIED="1446025376229" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Problem Statement" ID="ID_577115243" CREATED="1344510985951" MODIFIED="1448572631682" DCR_PRIVACY_LEVEL="DEMO">
 <node TEXT="simulation that is realisitic, fast and scaleable" ID="ID_1292574069" CREATED="1442926286786" MODIFIED="1442944401667"/>
 <node TEXT="communication between real quadcopter and instances in the simulation" ID="ID_553962508" CREATED="1442944402829" MODIFIED="1442944457961"/>
 <node TEXT="how are we going to reach these goals?" ID="ID_690565019" CREATED="1442946171244" MODIFIED="1442947670086"/>
 </node>
-<node TEXT="Outline" ID="ID_1481327252" CREATED="1344511159033" MODIFIED="1446025376230" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Outline" ID="ID_1481327252" CREATED="1344511159033" MODIFIED="1448572631683" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
-<node TEXT="Theory" POSITION="right" ID="ID_1098134891" CREATED="1344508140609" MODIFIED="1446025376230" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Theory" POSITION="right" ID="ID_1098134891" CREATED="1344508140609" MODIFIED="1448572631683" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#0000ff" WIDTH="3"/>
-<node TEXT="Quadcopter Modelling" ID="ID_512165507" CREATED="1344511282609" MODIFIED="1446025376230" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Quadcopter Modelling" ID="ID_512165507" CREATED="1344511282609" MODIFIED="1448572631683" DCR_PRIVACY_LEVEL="DEMO">
 <node TEXT="Quadcopter physical model" ID="ID_1047626896" CREATED="1442946037461" MODIFIED="1442946047998">
 <node TEXT="quadcopter as one object in 3D space" ID="ID_1575036961" CREATED="1443510297122" MODIFIED="1443510406614">
 <node TEXT="position (vector), velocity (vector)" ID="ID_1288946187" CREATED="1443510408610" MODIFIED="1443510438089"/>
@@ -110,7 +110,7 @@
 </node>
 </node>
 </node>
-<node TEXT="Vrep" ID="ID_972169939" CREATED="1344511369742" MODIFIED="1446025376235" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Vrep" ID="ID_972169939" CREATED="1344511369742" MODIFIED="1448572631704" DCR_PRIVACY_LEVEL="DEMO">
 <node TEXT="vrep is a versatile , highly customisable simulation environment for robots" ID="ID_1665593498" CREATED="1442946057787" MODIFIED="1443522032522"/>
 <node TEXT="we use only a small part of its features, namely external API, (external) signal communication, particle simulation, internal lua programming, distance sensor simulation, scene visualisation" ID="ID_111565108" CREATED="1443520695240" MODIFIED="1443521838724"/>
 <node TEXT="V-REP main client application provides the the basis for the simulation" ID="ID_1095800275" CREATED="1443520559043" MODIFIED="1443522088635"/>
@@ -134,9 +134,9 @@
 <node TEXT="Ground Station" ID="ID_73461531" CREATED="1443438429274" MODIFIED="1443438439036" MOVED="1443438432358"/>
 <node TEXT="Quadcopter" ID="ID_739922912" CREATED="1443438439185" MODIFIED="1443438472333"/>
 </node>
-<node TEXT="Communication/Ivy-Bus" ID="ID_591738915" CREATED="1344511414252" MODIFIED="1446025376239" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Communication/Ivy-Bus" ID="ID_591738915" CREATED="1344511414252" MODIFIED="1448572631719" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
-<node TEXT="Implementation" POSITION="right" ID="ID_837868971" CREATED="1344508144956" MODIFIED="1446025376239" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Implementation" POSITION="right" ID="ID_837868971" CREATED="1344508144956" MODIFIED="1448572631719" DCR_PRIVACY_LEVEL="DEMO">
 <hook NAME="FirstGroupNode"/>
 <edge COLOR="#00ff00" WIDTH="3"/>
 <node TEXT="Simulation Environment" ID="ID_1595771395" CREATED="1344508164522" MODIFIED="1442910547077">
@@ -163,6 +163,10 @@
 <node TEXT="sensor configuration parameter (screenshot or data)" ID="ID_1026533259" CREATED="1446033703763" MODIFIED="1446033798504"/>
 </node>
 <node TEXT="for reference, the finken has a base dummy, which is used for the finken position calculations. By using a virtual point in the middle of the finken, there is no need for taking the shape of the Finken into account" ID="ID_1948067455" CREATED="1446033699884" MODIFIED="1446539428431"/>
+<node TEXT="Finken target" ID="ID_443284926" CREATED="1448575115507" MODIFIED="1448575120713">
+<node TEXT="detached at simulation start" ID="ID_392414681" CREATED="1448575128411" MODIFIED="1448575139970" MOVED="1448575131397"/>
+<node TEXT="" ID="ID_1617615238" CREATED="1448575140302" MODIFIED="1448575140302"/>
+</node>
 </node>
 <node TEXT="implementation of quadcopter physics" ID="ID_811795507" CREATED="1443510986742" MODIFIED="1443515650422" MOVED="1443523220229">
 <node TEXT="vrep-model" ID="ID_1749641690" CREATED="1443515652029" MODIFIED="1443515663448"/>
@@ -174,7 +178,15 @@
 </node>
 <node TEXT="" ID="ID_1043851741" CREATED="1443523208068" MODIFIED="1443523208068"/>
 </node>
-<node TEXT="Finken Software structure" ID="ID_457029986" CREATED="1446539347183" MODIFIED="1446539364367" MOVED="1446539355827"/>
+<node TEXT="Finken Software structure" ID="ID_457029986" CREATED="1446539347183" MODIFIED="1446539364367" MOVED="1446539355827">
+<node TEXT="FINken Simulation software is written in Lua" ID="ID_1671006788" CREATED="1447778964946" MODIFIED="1447838528827"/>
+<node TEXT="physics simulation: bullet in vrep" ID="ID_1177946903" CREATED="1447838501354" MODIFIED="1447838578210"/>
+<node TEXT="Motor simulation: vrep, child scripts, attached to rotors" ID="ID_1526437275" CREATED="1447838579248" MODIFIED="1447838599740"/>
+<node TEXT="Controller implementation: lua, finkenCore, finkenPID" ID="ID_833572135" CREATED="1447838600168" MODIFIED="1447838657313"/>
+<node TEXT="behaviour/extended functionality: lua, finken" ID="ID_1210244866" CREATED="1447838612127" MODIFIED="1447838630220"/>
+<node TEXT="Swarm functionalities: lua, finkenMeta" ID="ID_782954321" CREATED="1447838630465" MODIFIED="1447838669767"/>
+</node>
+<node TEXT="" ID="ID_1044595681" CREATED="1447778960983" MODIFIED="1447778960983"/>
 <node TEXT="Communication Link" ID="ID_163595282" CREATED="1442910548433" MODIFIED="1442910554748"/>
 <node TEXT="Interface Software" ID="ID_44434277" CREATED="1442910555281" MODIFIED="1442910777299"/>
 <node TEXT="Quadcopter" ID="ID_1766749105" CREATED="1442910778096" MODIFIED="1442911501552">
@@ -187,18 +199,18 @@
 <node TEXT="," ID="ID_1269527033" CREATED="1446544317740" MODIFIED="1446544417319"/>
 </node>
 </node>
-<node TEXT="Evaluation" POSITION="right" ID="ID_220604319" CREATED="1344508149448" MODIFIED="1446025376240" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Evaluation" POSITION="right" ID="ID_220604319" CREATED="1344508149448" MODIFIED="1448572631724" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#ff00ff" WIDTH="3"/>
 <node TEXT="Speed" ID="ID_1262024868" CREATED="1344508161499" MODIFIED="1442915822138"/>
 <node TEXT="Accuracy" ID="ID_344219835" CREATED="1442915822667" MODIFIED="1442915826509"/>
 <node TEXT="Stability" ID="ID_879661257" CREATED="1442915827002" MODIFIED="1442915862483"/>
 </node>
-<node TEXT="Conclusion" POSITION="right" ID="ID_335508516" CREATED="1344508153289" MODIFIED="1446025376241" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Conclusion" POSITION="right" ID="ID_335508516" CREATED="1344508153289" MODIFIED="1448572631724" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#00ffff" WIDTH="3"/>
 <node TEXT="todo" ID="ID_183681093" CREATED="1344508158399" MODIFIED="1344508159274"/>
 <node TEXT="Future Work" ID="ID_820680482" CREATED="1442915878153" MODIFIED="1442915885133"/>
 </node>
-<node LOCALIZED_STYLE_REF="defaultstyle.floating" POSITION="left" ID="ID_989309610" CREATED="1344498811808" MODIFIED="1446025376241" HGAP="-47" VSHIFT="-167" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
+<node LOCALIZED_STYLE_REF="defaultstyle.floating" POSITION="left" ID="ID_989309610" CREATED="1344498811808" MODIFIED="1448572631724" HGAP="-47" VSHIFT="-167" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
 
 <html>
   <head>
@@ -218,20 +230,20 @@
 </html>
 </richcontent>
 </node>
-<node TEXT="Potential Conferences to&#xa;publish the paper" POSITION="left" ID="ID_916121753" CREATED="1344511928953" MODIFIED="1446025376241" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Potential Conferences to&#xa;publish the paper" POSITION="left" ID="ID_916121753" CREATED="1344511928953" MODIFIED="1448572631724" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#ff0000" WIDTH="3"/>
-<node TEXT="WWW 2013" ID="ID_1266382435" CREATED="1344511967357" MODIFIED="1446025376241" LINK="http://www2013.org/" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="SIGIR 2013" ID="ID_196579720" CREATED="1344511986050" MODIFIED="1446025376241" LINK="http://sigir2013.ie/" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="WWW 2013" ID="ID_1266382435" CREATED="1344511967357" MODIFIED="1448572631775" LINK="http://www2013.org/" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="SIGIR 2013" ID="ID_196579720" CREATED="1344511986050" MODIFIED="1448572631775" LINK="http://sigir2013.ie/" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
-<node TEXT="todo" POSITION="left" ID="ID_156430450" CREATED="1344512008068" MODIFIED="1446025376242" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="todo" POSITION="left" ID="ID_156430450" CREATED="1344512008068" MODIFIED="1448572631780" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#0000ff" WIDTH="3"/>
-<node TEXT="talk with supervisor" ID="ID_1086499639" CREATED="1344512010740" MODIFIED="1446025376242" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="ask John to proof-read" ID="ID_624499378" CREATED="1344512015939" MODIFIED="1446025376242" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="talk with supervisor" ID="ID_1086499639" CREATED="1344512010740" MODIFIED="1448572631780" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="ask John to proof-read" ID="ID_624499378" CREATED="1344512015939" MODIFIED="1448572631781" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
-<node TEXT="Related Work" POSITION="left" ID="ID_1699562627" CREATED="1344508140609" MODIFIED="1446025376242" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Related Work" POSITION="left" ID="ID_1699562627" CREATED="1344508140609" MODIFIED="1448572631781" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#0000ff" WIDTH="3"/>
-<node TEXT="The idea of &quot;optimizing&quot; papers&#xa;for academic search engines&#xa;evolved in 2010" ID="ID_1404643820" CREATED="1344511282609" MODIFIED="1446025376242" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="ASEO, original paper" ID="ID_1636806351" CREATED="1344508031885" MODIFIED="1446025376242" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20Search%20Engine%20Optimization%20(ASEO)%20--%20Optimizing%20Scholarly%20Literature%20for%20Google%20Scholar%20and%20Co.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="The idea of &quot;optimizing&quot; papers&#xa;for academic search engines&#xa;evolved in 2010" ID="ID_1404643820" CREATED="1344511282609" MODIFIED="1448572631781" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="ASEO, original paper" ID="ID_1636806351" CREATED="1344508031885" MODIFIED="1448572631781" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20Search%20Engine%20Optimization%20(ASEO)%20--%20Optimizing%20Scholarly%20Literature%20for%20Google%20Scholar%20and%20Co.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="COMMENT" page="1" object_number="523"/>
 <attribute NAME="year" VALUE="2010"/>
 <attribute NAME="title" VALUE="{A}cademic {S}earch {E}ngine {O}ptimization ({ASEO}): {O}ptimizing {S}cholarly {L}iterature for {G}oogle {S}cholar and {C}o."/>
@@ -240,8 +252,8 @@
 <attribute NAME="key" VALUE="Beel10"/>
 </node>
 </node>
-<node TEXT="Feedback in the academic&#xa;community was diverse" ID="ID_1102967923" CREATED="1344511369742" MODIFIED="1446025376243" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Pro" ID="ID_499059823" CREATED="1344509155557" MODIFIED="1446025376243" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Feedback in the academic&#xa;community was diverse" ID="ID_1102967923" CREATED="1344511369742" MODIFIED="1448572631783" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Pro" ID="ID_499059823" CREATED="1344509155557" MODIFIED="1448572631783" DCR_PRIVACY_LEVEL="DEMO">
 <node TEXT="&#x201c;In my opinion, being interested in how (academic) &#xd;&#xa;search engines function and how scientific papers are &#xd;&#xa;indexed and, of course, responding to these&#x2026; well&#x2026; &#xd;&#xa;circumstances of the scientific citing business is just &#xd;&#xa;natural.&#x201d;" ID="ID_802523095" CREATED="1344508403924" MODIFIED="1344508403924" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="3" object_number="746"/>
 <attribute NAME="year" VALUE="2010"/>
@@ -267,8 +279,8 @@
 <attribute NAME="key" VALUE="Beel2010"/>
 </node>
 </node>
-<node TEXT="Con" ID="ID_715816383" CREATED="1344509156803" MODIFIED="1446025376246" DCR_PRIVACY_LEVEL="DEMO" VSHIFT="10">
-<node TEXT="&#x201c;I&#x2019;m not a big fan of this area of research [&#x2026;]. I know &#xd;&#xa;it&#x2019;s in the call for papers, but I think that&#x2019;s a mistake.&#x201d; " ID="ID_1002287656" CREATED="1344508032014" MODIFIED="1446025376246" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Con" ID="ID_715816383" CREATED="1344509156803" MODIFIED="1448572631786" DCR_PRIVACY_LEVEL="DEMO" VSHIFT="10">
+<node TEXT="&#x201c;I&#x2019;m not a big fan of this area of research [&#x2026;]. I know &#xd;&#xa;it&#x2019;s in the call for papers, but I think that&#x2019;s a mistake.&#x201d; " ID="ID_1002287656" CREATED="1344508032014" MODIFIED="1448572631786" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="3" object_number="662"/>
 <attribute NAME="year" VALUE="2010"/>
 <attribute NAME="title" VALUE="{A}cademic search engine spam and {G}oogle {S}cholar&apos;s resilience against it"/>
@@ -276,7 +288,7 @@
 <attribute NAME="journal" VALUE="Journal of Electronic Publishing"/>
 <attribute NAME="key" VALUE="Beel2010"/>
 </node>
-<node TEXT="Motivation why researchers might do academic search engine spam" ID="ID_83902833" CREATED="1344508032022" MODIFIED="1446025376247" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Motivation why researchers might do academic search engine spam" ID="ID_83902833" CREATED="1344508032022" MODIFIED="1448572631787" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="3" object_id="1334231183826421543" object_number="666"/>
 <attribute NAME="year" VALUE="2010"/>
 <attribute NAME="title" VALUE="{A}cademic search engine spam and {G}oogle {S}cholar&apos;s resilience against it"/>
@@ -284,7 +296,7 @@
 <attribute NAME="journal" VALUE="Journal of Electronic Publishing"/>
 <attribute NAME="key" VALUE="Beel2010"/>
 </node>
-<node TEXT="&#x201c;In my opinion, being interested in how (academic) &#xd;&#xa;search engines function and how scientific papers are &#xd;&#xa;indexed and, of course, responding to these&#x2026; well&#x2026; &#xd;&#xa;circumstances of the scientific citing business is just &#xd;&#xa;natural.&#x201d;" ID="ID_1563404825" CREATED="1344508032030" MODIFIED="1446025376248" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="&#x201c;In my opinion, being interested in how (academic) &#xd;&#xa;search engines function and how scientific papers are &#xd;&#xa;indexed and, of course, responding to these&#x2026; well&#x2026; &#xd;&#xa;circumstances of the scientific citing business is just &#xd;&#xa;natural.&#x201d;" ID="ID_1563404825" CREATED="1344508032030" MODIFIED="1448572631792" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/Example%20PDFs/Academic%20search%20engine%20spam%20and%20Google%20Scholars%20resilience%20against%20it.pdf" DCR_PRIVACY_LEVEL="DEMO">
 <pdf_annotation type="HIGHLIGHTED_TEXT" page="4" object_id="4694565655893184301" object_number="670"/>
 <attribute NAME="year" VALUE="2010"/>
 <attribute NAME="title" VALUE="{A}cademic search engine spam and {G}oogle {S}cholar&apos;s resilience against it"/>
@@ -294,7 +306,7 @@
 </node>
 </node>
 </node>
-<node TEXT="{and so on...}" ID="ID_825000868" CREATED="1344511414252" MODIFIED="1446025376248" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="{and so on...}" ID="ID_825000868" CREATED="1344511414252" MODIFIED="1448572631792" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
 </node>
 </map>
