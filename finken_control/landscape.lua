@@ -38,10 +38,6 @@ function landscape.init(self)
     function self.RunSteps()
 
         step = (step + 1)
-        if step == 99 then
-            imgIter = (imgIter) % 5 + 1
-        end
-
 
         --third parameter (options) set to 12, for repeat along u and v direction
         if (shapeHandle~=-1) then
