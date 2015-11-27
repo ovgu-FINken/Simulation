@@ -3,7 +3,7 @@ local handle = simGetObjectHandle('Landscape')
 local imgIter = 1
 local step = 0
 local xSpeed, ySpeed, xScale, yScale, filePath
-local shapeHandle
+local shapeHandle =-1
 
 function landscape.init(self)
 
@@ -18,6 +18,11 @@ function landscape.init(self)
         simAddStatusbarMessage("Old step method")
     end
 
+
+    function self.CreateTexture()
+        shapeHandle = simCreateTexture(filePath, 12, nil, {xScale, yScale}, nil, 0, nil)
+    end
+
     function self.UpdateData()
 
         xSpeed=simGetFloatSignal('_xSpeed')
@@ -27,10 +32,6 @@ function landscape.init(self)
         yScale=simGetFloatSignal('_yScale')
 
         filePath=simGetStringSignal('_filePath')
-        imgIter = 1
-        step = 0
-
-       shapeHandle = simCreateTexture(filePath, 12, nil, {xScale, yScale}, nil, 0, nil)
 
         simAddStatusbarMessage("Updated Data")
     end
@@ -45,11 +46,10 @@ function landscape.init(self)
         if (textureId~=-1) then
             handle=simGetObjectHandle("Landscape")
         if (handle~=-1) then
-                simSetShapeTexture(handle, textureId, 0, 12, {xScale/2,yScale/2}, {step/xSpeed, step/ySpeed, 0}, nil)
+                simSetShapeTexture(handle, textureId, 0, 12, {xScale/2,yScale/2}, {step*xSpeed/100, step*ySpeed/100, 0}, nil)
                 end
             end
         end
-
     end
     simAddStatusbarMessage("Landscape self call")
 	return self
