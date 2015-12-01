@@ -4,17 +4,26 @@
 \section{Simulation Environment}
 
 The FINken consists of the body, the rotors and the sensors. The body contains the behavioural and flight control, the thrust simulation is handled by scripts connected to the rotor structure.
-\todo{add screenshots of the finken parts}
 
-The body consists of multiple objects, while visual representation and the physical behaviour are split. For visual representation, a *.stl file from the CAD-Model of the original FINken was imported. This shape is rather complex, which makes the simulation time consuming. To speed up the simulation, the shape of the finken was remodelled in VREP, using only simple rectangular shapes. Making the complex shape static, establishing a fixed connection and hiding the simple shape, the result is a a visual appealing simulation object with good simulation performance.
+\subsection{Scene Modeling}
 
-The measured weight of the real FINken was applied to the simulation object. As no advanced modelling like calculating moments of inertia was done, the weight of the motor was applied separately to the rotor model in VREP.  The motor assembly adds significant weight outside the FINkens center of gravitiy and therefore has a rather large influence on its behaviour
+The body consists of multiple objects, while visual representation and the physical behaviour are split. For visual representation, a *.stl file from the CAD-Model of the original FINken was imported. This shape is rather complex, which makes the simulation time consuming. To speed up the simulation, the shape of the finken was remodelled in VREP, using only simple rectangular shapes. Making the complex shape static, establishing a fixed connection and hiding the simple shape, the result is a a visual appealing simulation object with good simulation performance. A dummy-object is used as a singular measurement reference point in the middle of the FINken. This has to be taken into account when targeting physical objects, as the FINken will not be able to reach the target completely without colliding with the object.
+\begin{figure}[h!]
+ \begin{center}
+  \includegraphics[width=\linewidth]{vrepDisassemlbyFull.png}
+ \end{center}
+  \caption{Parts of the simulation object \label{fig:vrepParts}}
+\end{figure}
+The measured weight of the real FINken was applied to the simulation object. As no advanced modelling like calculating moments of inertia was done, the weight of the motor was applied separately to the rotor model in VREP.  The motor assembly adds significant weight outside the FINkens center of gravity and therefore has a rather large influence on its behaviour. 
 \todo{weight table for finken2 and finken3}
+The linear damping factor of the FINken body material was set to 0.3, to decrease drift and to model the air resistance of the real FINken, which is minimal but still existent.
 
-The rotor model in VREP handles the thrust simulation and thus a huge part of the physical behaviour of the quadcopter model.  Again, visual representation and physical simulation are separated. The visualisation is done with a static shape of a rotor, that is connected to a joint and rotates with a fixed speed. During flight, the rotation speed does not really change visually noticable, a dynamic adaption of the rotation would only increase computation time without much benefit. Of course, the rotor shape could be made non-static and rotate in a particle stream, and apply the thrust force according to the parcticle collisions, but again, this would mean a massive increase of computation power and is not needed for our purposes.
+
+The rotor model in VREP handles the thrust simulation and thus a huge part of the physical behaviour of the quadcopter model.  Again, visual representation and physical simulation are separated. The visualisation is done with a static shape of a rotor, that is connected to a joint and rotates with a fixed speed. During flight, the rotation speed does not really change visually noticeable, a dynamic adaption of the rotation would only increase computation time without much benefit. Of course, the rotor shape could be made non-static and rotate in a particle stream, and apply the thrust force according to the particle collisions, but again, this would mean a massive increase of computation power and is not needed for our purposes.
 \todo{picture of rotor simulation and rotor visualisation}
 The rotor model is attached to the FINken body via a force sensor which applies the forces and torques calculated in the physical rotor model FINken body. The rotor uses a particle simulation to emulate the airstream caused by a real rotor.
 
+\subsection{Simulation Software Structure}
 
 
 
