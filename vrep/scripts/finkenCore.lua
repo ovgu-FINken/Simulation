@@ -54,11 +54,6 @@ local function fixName(name)
 	end
 end
 
-function finkenCore.getHandle()
-	return handle_finken
-end
-
-
 function finkenCore.init()
 	thisIDsuffix = simGetNameSuffix(nil)
 	handle_FinkenBase = simGetObjectHandle(fixName('SimFinken_base'))
@@ -85,6 +80,15 @@ function finkenCore.init()
 	sensorHandles.distRight = simGetObjectHandle(fixName('SimFinken_sensor_right'))
 	simSetStringSignal(fixSignalName('sensor_dist'),simPackFloats(sensorDistances))
 end
+
+function finkenCore.getHandle()
+	return handle_finken
+end
+
+function finkenCore.getBaseHandle()
+	return handle_FinkenBase
+end
+
 
 function finkenCore.printControlValues()
 	simAddStatusbarMessage('throttle: '..throttleTarget)

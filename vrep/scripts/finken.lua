@@ -43,8 +43,8 @@ function finken.init(self)
 	
 	function self.getArenaPosition()
 		local handle_myReference = simGetObjectHandle("Master#")
-		local handle_mySelf = self.getHandle()
-		local myPosition = simGetObjectPosition(handle_mySelf, handle_myReference) 
+		local handle_mySelfBase = self.getBaseHandle()
+		local myPosition = simGetObjectPosition(handle_mySelfBase, handle_myReference) 
 		return myPosition
 	end
 
@@ -56,7 +56,11 @@ function finken.init(self)
 	function self.customRun()
 		local timestamp = math.floor(simGetSimulationTime()*1000)
 		positionLog[timestamp] = self.getArenaPosition()
-		orientationLog[timestamp] = simGetObjectOrientation(self.getHandle(), -1);
+		local baseOrientation = simGetObjectOrientation(self.getBaseHandle(), -1)
+		baseOrientation[1] = baseOrientation[1] * (180/math.pi)
+		baseOrientation[2] = -1 * baseOrientation[2] * (180/math.pi)
+		baseOrientation[3] = -1 * baseOrientation[3] * (180/math.pi)
+		orientationLog[timestamp] = baseOrientation
 	end
 	
 	--function customClean should be called in the vrep child scrip in the cleanup part
