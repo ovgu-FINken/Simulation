@@ -4,15 +4,26 @@ local finken = {}
 
 finkenCore = require('finkenCore')
 seekSteeringBehavior = require('seekSteeringBehavior')
+fleeSteeringBehavior = require('fleeSteeringBehavior')
+contextSteeringBehavior = require('contextSteeringBehavior')
 contextData = require('contextData')
 
 local sensorHandles = {}
 local sensorDistances = {7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5}
 
+local sensorFilter = {{lastValue = 7.5, count = 0},
+					  {lastValue = 7.5, count = 0},
+					  {lastValue = 7.5, count = 0},
+					  {lastValue = 7.5, count = 0},
+					  {lastValue = 7.5, count = 0},
+					  {lastValue = 7.5, count = 0},
+					  {lastValue = 7.5, count = 0},
+					  {lastValue = 7.5, count = 0}}
+
 -- list of all steering behaviors
 local steeringBehaviors = {}
 
-local maxVelocity = 2
+local maxVelocity = 0.5
 local velocity = 0
 
 -- data about the current context
@@ -34,9 +45,18 @@ function finken.init(self)
 
 	function self.customInit()
 		helperSay("Hello World! Tschiep!")
+		-- create beahviors and add them to the behaviors list
 		local seekBehavior = seekSteeringBehavior.new()
-		self.addSteeringBehavior("seek", seekBehavior)
+		--self.addSteeringBehavior('seek', seekBehavior)
+		local fleeBehavior = fleeSteeringBehavior.new()
+		--self.addSteeringBehavior('flee', fleeBehavior)
+		local contextBehavior = contextSteeringBehavior.new()
+		self.addSteeringBehavior('context', contextBehavior)
+		
+		-- create context data
 		context = contextData.new()
+		context.sensorDistances = {7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5}
+		-- set first target
 		context.targets['goal1'] = {4,4,2}
 	end
 
@@ -53,6 +73,12 @@ function finken.init(self)
 		for k, behavior in pairs(steeringBehaviors) do
 			steering = behavior.getSteering(context)
 			velocity = addVectors(velocity, steering)
+			-- if(k == 'flee') then 
+				-- helperSay('flee ' .. 
+											-- velocity[1]..' '..
+											-- velocity[2]..' '..
+											-- velocity[3])
+			-- end
 		end
 		
 		-- calculate the final velocity for this step
@@ -79,14 +105,23 @@ function finken.init(self)
 		status, sensorDistances[6], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distFrontRight)
 		status, sensorDistances[7], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distBackLeft)
 		status, sensorDistances[8], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distBackRight)
-	
+		
 		for i=1,8,1 do
+			if sensorDistances[i] then
+				context.sensorDistances[i]= sensorDistances[i]
+			end
 			if not sensorDistances[i] then
 				sensorDistances[i] = 7.5
+				
+				sensorFilter[i].count  = sensorFilter[i].count + 1
+				if sensorFilter[i].count > 20 then 
+					context.sensorDistances[i] = sensorDistances[i]
+					sensorFilter[i].count = 0
+				end
 			end
 		end
 		
-		context.sensorDistances = sensorDistances
+		--context.sensorDistances = sensorDistances
 		return sensorDistances
 	end
 

@@ -4,14 +4,19 @@ local seekSteeringBehavior = {}
 
 steeringBehaviorCore = require('steeringBehaviorCore')
 
+local MAX_SEEK = 7.5 
+
 function seekSteeringBehavior.init(self)
 	
 	function self.getSteering(contextData)
 		local steering = {0,0,0}
-		-- get steering from all bahaviors and combine them
+		-- process all targets
 		for k, target in pairs(contextData.targets) do
-			steering = subtractVectors(target, contextData.currentPosition)
+			local vectorToTarget = subtractVectors(target, contextData.currentPosition)
+			steering = addVectors(steering, vectorToTarget)
 		end
+		
+		steering = truncateVector(steering, MAX_SEEK)
 		return steering
 	end
 	
@@ -19,7 +24,8 @@ function seekSteeringBehavior.init(self)
 end
 
 function seekSteeringBehavior.new()
-	return seekSteeringBehavior.init(steeringBehaviorCore)
+	local coreBehavior = steeringBehaviorCore.new()
+	return seekSteeringBehavior.init(coreBehavior)
 end
 
 return seekSteeringBehavior
