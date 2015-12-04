@@ -1,26 +1,57 @@
 local landscape = {}
-local step = 0
 local handle = simGetObjectHandle('Landscape')
-local imgPath = "C:/0/uni/SwaInTeP/resources/gradient_maps/hills.png"
-local _, textureId = simCreateTexture(imgPath, 12, nil, {50, 50}, nil, 0, nil)
 local imgIter = 1
-
+local step = 0
+local xSpeed, ySpeed, xScale, yScale, filePath
+local shapeHandle =-1
 
 function landscape.init(self)
 
 	function self.step()
-		step = (step + 1)
-		-- if step == 99 then
-		-- 	imgIter = (imgIter) % 5 + 1
-		-- end
-		--if step == 100 then
-			--third parameter (options) set to 12, for repeat along u and v direction
-		simSetShapeTexture(handle, textureId, 0, 12, {20, 20}, {step/200, step/100, 0}, nil)
-		--end
-		--simAddStatusbarMessage(textureId)
-	end
-	simAddStatusbarMessage(textureId)
+        step = (step + 1)
+        if step == 99 then
+            imgIter = (imgIter) % 5 + 1
+        end
+        --if step == 100 then
+            simSetShapeTexture(handle, textureId, 0, 12, {20, 20}, {step/100, step/100, 0}, nil)
+        --end
+        simAddStatusbarMessage("Old step method")
+    end
 
+
+    function self.CreateTexture()
+        shapeHandle = simCreateTexture(filePath, 12, nil, {xScale, yScale}, nil, 0, nil)
+    end
+
+    function self.UpdateData()
+
+        xSpeed=simGetFloatSignal('_xSpeed')
+        ySpeed=simGetFloatSignal('_ySpeed')
+
+        xScale=simGetFloatSignal('_xScale')
+        yScale=simGetFloatSignal('_yScale')
+
+        filePath=simGetStringSignal('_filePath')
+
+        simAddStatusbarMessage("Updated Data")
+    end
+
+    function self.RunSteps()
+
+        step = (step + 1)
+
+        --third parameter (options) set to 12, for repeat along u and v direction
+        if (shapeHandle~=-1) then
+            textureId = simGetShapeTextureId(shapeHandle)
+        if (textureId~=-1) then
+            handle=simGetObjectHandle("Landscape")
+        if (handle~=-1) then
+                simSetShapeTexture(handle, textureId, 0, 12, {xScale/2,yScale/2}, {step*xSpeed/100, step*ySpeed/100, 0}, nil)
+                end
+            end
+        end
+    end
+    simAddStatusbarMessage("Landscape self call")
 	return self
 end
 
