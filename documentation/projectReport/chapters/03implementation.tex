@@ -175,9 +175,27 @@ class TestBusNode implements PropertyChangeListener {
 \subsection{JavaFinken}
 \label{sec:javaFinkenImplementation}
 
-The \textit{JavaFinken} API is a project that relies on the previously introduces projects \textit{JavaV-REP}, \textit{JavaIvyBus} and \textit{JavaXmlSax}. It provides the basic classes and utilities upon which our application can be built.
+The \textit{JavaFinken} API is a project that relies on the previously introduced projects \textit{JavaV-REP}, \textit{JavaIvyBus} and \textit{JavaXmlSax}. It represents the implementation of the application requirements introduced in \ref{sec:requirementsApplication} and provides the basic classes and utilities upon which our application can be built.\\
 
-\section{\todo{fancy name }}
+The class of a special importance is the \textit{AbsFinkenDrone}, which represents the abstract quadrocopter and is described by the interface \textit{FinkenDrone}, which on itself extends the \textit{VrepObject} interface.\\
+The virtual and real quadrocopters are represented by the classes \textit{StandardRealFinkenDrone} and \textit{StandardVirtualFinkenDrone}, which extend the abstract \textit{AbsFinkenDrone}.\\
+The class \textit{FinkenDroneScanner} is used to retrieve the instances of the quadrocopters and can be used as follows:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small, language=Java]
+
+List<StandardRealFinkenDrone>    realDrones;
+List<StandardVirtualFinkenDrone> virtualDrones;
+FinkenDroneScanner               droneScanner;
+
+droneScanner  = new FinkenDroneScanner();
+realDrones    = droneScanner.retrieveRealDrones(this.scene, this.client);
+virtualDrones = droneScanner.retrieveVirtualDrones(this.scene, this.client);
+
+\end{lstlisting}
+\end{tabular}
+\end{center}
 
 \section{Quadcopter}
 
