@@ -23,7 +23,7 @@ local sensorFilter = {{lastValue = 7.5, count = 0},
 -- list of all steering behaviors
 local steeringBehaviors = {}
 
-local maxVelocity = 0.5
+local maxVelocity = 1--0.5
 local velocity = 0
 
 -- data about the current context
@@ -84,6 +84,9 @@ function finken.init(self)
 		-- calculate the final velocity for this step
 		velocity = getNormalizedVector(velocity)
 		velocity = multiplyVectorByScalar(velocity, maxVelocity)
+		
+		-- save the chosen velocity as last direction in the context data
+		contextData.lastDirection = velocity
 		
 		-- set the controll target to the new steering position
 		local newPosition = addVectors(context.currentPosition, velocity)
