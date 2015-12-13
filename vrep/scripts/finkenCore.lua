@@ -38,6 +38,8 @@ local function tuneThrottle(throttle, curveParamNeg, curveParamPos)
 	return throttleTarget
 end
 
+--converts a signal to the signal matching the current instance by appending the corresponding index
+--@return signalName
 local function fixSignalName(signalName)
 	if (thisIDsuffix ~= -1) then
 		return (signalName..thisIDsuffix)
@@ -46,9 +48,14 @@ local function fixSignalName(signalName)
 	end
 end
 
-local function fixName(name)
-	if (thisIDsuffix ~= -1) then
-		return (name..'#'..thisIDsuffix)
+
+--convert a name to a name with suffix according to the vrep naming scheme
+--if no suffix is provided, the suffix of the current instance is used
+--@return name with suffix 
+local function fixName(name,suffix)
+	local mySuffix = suffix or thisIDsuffix
+	if (mySuffix ~= -1) then
+		return (name..'#'..mySuffix)
 	else
 		return name
 	end
@@ -129,12 +136,18 @@ function finkenCore.step()
 		throttleTarget =  tuneThrottle(throttleTarget, 1, 1)
 		--hovers at approx. 50% throttle
 		local basePosition = simGetObjectPosition(handle_FinkenBase,-1)
-		local errorHeight = heightTarget - basePosition[3]
-		cumulThrottle = cumulThrottle + errorHeight
-		local l = simGetVelocity(handle_finken)
-		local throttle=5.843*throttleTarget/100 + pPthrottle * errorHeight + iPthrottle * cumulThrottle + dPthrottle * (errorHeight - prevEThrottle) + l[3] * (-2) 
-		prevEThrottle = errorHeight
-
+		
+		local thrust = 0
+		if (heightTarget >= 0) then 
+			local errorHeight = heightTarget - basePosition[3]
+			cumulThrottle = cumulThrottle + errorHeight
+			local l = simGetVelocity(handle_finken)
+			thrust = 5.843*throttleTarget/100 + pPthrottle * errorHeight + iPthrottle * cumulThrottle + dPthrottle * (errorHeight - prevEThrottle) + l[3] * (-2) 
+			prevEThrottle = errorHeight
+		else
+			thrust = 5.843*throttleTarget/100
+		end
+		
 		local euler=simGetObjectOrientation(handle_FinkenBase,-1)
 		local ins_matrix=simGetObjectMatrix(handle_FinkenBase,-1)
 		local vx={1,0,0}
@@ -162,10 +175,10 @@ function finkenCore.step()
 		local yawCorr=yawController.step(errorYaw, execution_step_size / defaultStepSize)
 		-- Decide of the motor velocities:
 		local particlesTargetVelocities = {-1,-1,-1,-1}
-		particlesTargetVelocities[1]=throttle*(1+yawCorr-rollCorr+pitchCorr)
-		particlesTargetVelocities[2]=throttle*(1-yawCorr-rollCorr-pitchCorr)
-		particlesTargetVelocities[3]=throttle*(1+yawCorr+rollCorr-pitchCorr)
-		particlesTargetVelocities[4]=throttle*(1-yawCorr+rollCorr+pitchCorr)
+		particlesTargetVelocities[1]=thrust*(1+yawCorr-rollCorr+pitchCorr)
+		particlesTargetVelocities[2]=thrust*(1-yawCorr-rollCorr-pitchCorr)
+		particlesTargetVelocities[3]=thrust*(1+yawCorr+rollCorr-pitchCorr)
+		particlesTargetVelocities[4]=thrust*(1-yawCorr+rollCorr+pitchCorr)
 	--end
 	return particlesTargetVelocities
 end
