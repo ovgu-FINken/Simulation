@@ -37,6 +37,14 @@ The simulation software is written in Lua and runs inside a non-threaded child s
 The base class is the finkenCore, which contains the main flight control algorithm and a steering interface as well as an interface to the FINkens sensors.
 The input commands for controlling the FINken are set via the signal communication of VREP. Signals inside VREP are the most versatile communication possibility which can be accessed from anywhere inside VREP and any remote API, they can be seen as a kind of global variable. Signals can be of integer, float or string type, where custom data types can be sent in text form as string signals. 
 
+The finkenCore needs to be initialized at simulation start the for each simulated FINken. It starts the VREP remote API server and creates the API signals. Also, the PID controllers for flight control are initialized. 
+During simulation, calling the FINkenCore.step() method handles the flight control. The input values are read from the signals \textit{pitch}, \textit{roll}, \textit{yaw} and \textit{throttle}. When the signal \textit{height} has a positive value, the FINkenCore will control the thrust so that the simulated FINken will keep the height provided by the signal, otherweise only the \textit{throttle} signal is used directly. The previously initialized PID controllers are used to compute the target air stream velocity for each rotor to move the simulated FINken to the target orientation.
+
+To keep a quadcopter at a certain height without an external reference requires an exact equilibrium between gravity and thrust. The current real FINkens do not compensate the battery voltage, so the same throttle corresponds to different thrust forces during flight. Also, each FINken unit has slightly different base thrust. Therefore, the thrust in the simulation is tuned with a logisitc curve to decrease the influence of the throttle close to the hover thrust. 
+\todo{logistiv curve throttle tuning}
+
+\todo{sense functionality}
+\todo{set target option}
 
 \todo{diagram of finken software}
 
