@@ -24,21 +24,8 @@ The rotor model in VREP handles the thrust simulation and thus a huge part of th
 The visualisation is done with a static shape of a rotor, that is connected to a joint and rotates with a fixed speed. During flight, the rotation speed does not really change visually noticeable, a dynamic adaption of the rotation would only increase computation time without much benefit. Of course, the rotor shape could be made non-static and rotate in a particle stream, and apply the thrust force according to the particle collisions, but again, this would mean a massive increase of computation power and is not needed for our purposes.
 \todo{picture of rotor simulation and rotor visualisation}
 he rotor model is attached to the FINken body via a force sensor which applies the forces and torques calculated in the physical rotor model to the FINken body. The rotor is represented by a cylindrical shape which resembles the area swept by a real rotor and uses a particle simulation to emulate the airstream. The handling of the particle simulation is done inside a lua child script attached to the rotor model. The script has several parameters for the particle simulation, \todo{add complete param list}.
-During simulation, the particle velocity is the parameter used to control the finken. 
-\todo{add formula to show linearity between thrust and airstream velocity} 
-
-
-Vrep provides several physics engines, we use the default bullet engine for our simulation.
-
-\subsection{Simulation Software Structure}
-
-The simulation software is written in Lua and runs inside a non-threaded child script of each FINken quadrocopter in VREP.  
-
-The base class is the finkenCore, which contains the main flight control algorithm and a steering interface as well as an interface to the FINkens sensors.
-The input commands for controlling the FINken are set via the signal communication of VREP. Signals inside VREP are the most versatile communication possibility which can be accessed from anywhere inside VREP and any remote API, they can be seen as a kind of global variable. Signals can be of integer, float or string type, where custom data types can be sent in text form as string signals. 
-
-
-\todo{diagram of finken software}
+During simulation, the particle velocity is the parameter used to control the finken. This rotor model was already included in VREP as an example and was used without further modifications.
+\todo{add formula to show linearity between power and airstream velocity} 
 
 \todo{finken parameter estimation}
 
@@ -46,7 +33,41 @@ The input commands for controlling the FINken are set via the signal communicati
 
 \todo{simulation parameters}
 
-\todo{script structure}
+
+
+Vrep provides several physics engines, we use the default bullet engine for our simulation.
+
+\subsection{Simulation Software Structure}
+\todo{diagram of finken software}
+The simulation software is written in Lua and runs inside a non-threaded child script of each FINken quadrocopter in VREP.  
+
+The base class is the finkenCore, which contains the main flight control algorithm and a steering interface as well as an interface to the FINkens sensors.
+The input commands for controlling the FINken are set via the signal communication of VREP. Signals inside VREP are the most versatile communication possibility which can be accessed from anywhere inside VREP and any remote API, they can be seen as a kind of global variable. Signals can be of integer, float or string type, where custom data types can be sent in text form as string signals. 
+
+The finkenCore needs to be initialized at simulation start the for each simulated FINken. It starts the VREP remote API server and creates the API signals. Also, the PID controllers for flight control are initialized. 
+During simulation, calling the FINkenCore.step() method handles the flight control. The input values are read from the signals \textit{pitch}, \textit{roll}, \textit{yaw} and \textit{throttle}. When the signal \textit{height} has a positive value, the FINkenCore will control the thrust so that the simulated FINken will keep the height provided by the signal, otherweise only the \textit{throttle} signal is used directly. The previously initialized PID controllers are used to compute the target air stream velocity for each rotor to move the simulated FINken to the target orientation.
+
+To keep a quadcopter at a certain height without an external reference requires an exact equilibrium between gravity and thrust. The current real FINkens do not compensate the battery voltage, so the same throttle corresponds to different thrust forces during flight. Also, each FINken unit has slightly different base thrust. Therefore, the thrust in the simulation is tuned with a logisitc curve \ref{equ:logistic} to decrease the influence of the throttle close to the hover thrust. 
+\begin{equation}
+throttle_{tuned} = \begin{cases}
+-\frac{a * |throttle|}{a - |throttle| + 50} + 50 & throttle < 0 \\
+\frac{b * throttle}{b - throttle + 50} + 50 & throttle >= 0\\
+\end{cases}
+\label{equ:logistic}
+\end{equation}
+The default values for the throttle tuning function are  $a = 1$ and $b = 1$. 
+\todo{insert plot of function?}
+
+
+The simulated FINken is equipped with 4 distance sensors which resemble the 4 ultrasound sensors of the real FINken. The FINkenCore module contains a \textit{sense()} function that reads the 4 distance sensors and writes the values to the signal \textit{sensor_dist}. As signals only support limited data types, \textit{sensor_dist} is a string signal containing a packed float array. The array contains the distances in the order \textit{front}, \textit{left}, \textit{back}, \textit{right}.  If the FINken gets more sensors in the future, their evaluation has to be added to this method.
+By writing the distance values to a signal, they can be propagated to the Ivy-Bus and thus to the real FINken by our Java communication app, which enables the real FINken to detect virtual objects, as simulated FINken or walls that only exist in the Simulation.
+
+
+While the FINken is normally controlled by setting the pitch, roll, yaw and throttle directly, an alternative is to specify a target object. This method was originally used by the example quadcopter model of V-REP, though the function works differently in the FINkenCore now. When calling  \textit{setTarget(targetObject)}, the differences in x, y and z coordinates of the FINken base to the target objects are given to three PID controllers which calculate the pitch, roll and throttle to move the FINken to the target objects position. Those values are then published via the control signals for the FINken and regularly processed by it's internal controls. Therefore, \textit{setTarget(tragetObject)} needs to be called every time before \textit{step()}, when a target object should be approached.
+
+In the previous sections, only the signal names for the first simulated FINken were used for better readability. As the simulation is scalable, more than one FINken can be added, therefore a naming scheme for signals is needed to prevent collisions of the globally visible signals. The signals corresponding to the first FINken are \textit{pitch}, \textit{roll}, \textit{yaw}, \textit{throttle}, \textit{height} and \textit{sensor_dist}. For the second FINken, when the first one is copied, VREP automatically adds "#0" to it's name. Following this convention, but leaving the '#' to prevent problems with special characters when forwarding the signals through our interface, we add '0' to the signal names for the second FINken and consecutively enumerate following FINkens.
+
+
 
 
 \section{Communication V-REP - Quadrocopters}

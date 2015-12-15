@@ -41,7 +41,7 @@
   volume = {2},
   pages = {40--54},
   number = {1},
-  file = {:/Users/Nanoq/Documents/Uni/OvGU/DigiEng/Semester3/DigiEngProjekt/Simulation/documentation/projectReport/docear/literature_repository/MixedReality/Chen2011FlexibleMixedRealityFramework.pdf:PDF},
+  file = {},
   publisher = {Citeseer}
 }
 
@@ -60,7 +60,12 @@
   journal = {NASA Marshall Space Flight Center, Huntsville, AL, Technical Report},
   year = {2011},
   number = {M11-0980},
-  file = {:/Users/Nanoq/Documents/Uni/OvGU/DigiEng/Semester3/DigiEngProjekt/Simulation/documentation/projectReport/docear/literature_repository/quadcopterControl/Karwoski2011QuadcopterControl.pdf:PDF}
+  file = {}
+}
+
+@ELECTRONIC{pprz,
+  owner = {Nanoq},
+  timestamp = {2015.12.13}
 }
 
 @ELECTRONIC{vrep,

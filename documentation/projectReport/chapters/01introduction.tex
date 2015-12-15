@@ -36,17 +36,15 @@ In contrast to existing approaches for the use of mixed reality simulation as in
 
   
 \section{Problem Statement}
-    The goal of the project is to provide a realistic, fast and scalable simulation. The second part is to establish a communication link between the simulated and real quadcopter to link at least one virtual to a real one.
+    The goal of the project is to provide a realistic, fast and scalable simulation in which single quadcopters can be linked to a real flying FINken and behave like it's physical counterpart. The communication should work in both ways, so that the real FINken can react to simulated objects.
 
-The physical quadcopter simulation is going to be done in the robotic simulation framework V-REP. The FINken Copter run Paparazzi software, which already includes a communication link between a PC and the copter. A dedicated Java program will be handling the communication between the Ivy-Bus of Paparazzi an V-REP. 
+The physical quadcopter simulation is going to be done in the robotic simulation framework V-REP\cite{vrep}. The FINken Copter run the Paparazzi\cite{pprz} software, which already includes a communication link between a PC and the copter. Paparazzi uses an Ivy-Bus as a communication link, so the missing part between the Ivy-Bus of Paparazzi and V-REP will be handled by a dedicated Java program.
 
-
-    \todo{how are we going to reach this goals}
-    \todo{what is to be done}
+During this project, the FINken needs to be modelled in V-REP, a communication between V-REP and Paparazzi needs to be established and the FINken firmware needs to be extended with a possibility to send data from the simulation to the real Quadcopter.
  
          
 \section{Outline}
     
   \todo{short description of the sections}
-   % use " in \ref{} to reference "\labels{}" in the document
+   % use " in \ref{} to reference "\label{}" in the document
    
