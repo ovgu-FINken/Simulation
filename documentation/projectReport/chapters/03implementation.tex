@@ -74,10 +74,13 @@ Vrep provides several physics engines, we use the default bullet engine for our 
            },
 }
 \begin{figure}[h]
+\centering
+
 \begin{tikzpicture}[scale=2, node distance = 1cm, auto]
 \node[vrepEnv](vrep){};
 \node[below=0.3cm of vrep.north]{\underline{V-REP}};
-\node[vrepObject, above = of vrep.270](fink1){finken1};
+\node[vrepObject, below =1.1cm of vrep.north](fink1){finken1};
+\node[vrepObject, below =0.4cm of fink1.south](fink2){finken2};
 
 \node[swScript, right=of vrep.45](finkenMeta){finkenMeta};
 \node[swScript, below=of finkenMeta](finken){finken};
@@ -85,16 +88,19 @@ Vrep provides several physics engines, we use the default bullet engine for our 
 \nodepart{second}
 public:
 \nodepart{third}
-public:
+public: \\
 step() \\
-sense()
+sense() 
 }; 
 \node[swScript, above=of finkenCore](finkenPID){finkenPID};
 
 \draw[-{open triangle 60}] (finken) to (finkenCore); 
 \draw[-{angle 60}](finkenCore) to (finkenPID);
-
+\draw[-{open triangle 60}, dashed](fink1) to (finken);
+\draw[-{open triangle 60}, dashed](fink2) to (finken);
 \end{tikzpicture}
+\caption{Software structure of the FINken Simulation}
+\label{fig:finkenSoftStruct}
 \end{figure}
 The simulation software is written in Lua and runs inside a non-threaded child script of each FINken quadrocopter in VREP.  
 
