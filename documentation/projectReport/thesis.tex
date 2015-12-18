@@ -5,13 +5,11 @@
 	%final,    % removes all TODOs
 ]{tex/ttthesis}
 
-\usepackage{hyperref}
-
 \input{tex/colorscheme}
 \input{tex/lststyles}
 \input{tex/tikzstyles}
-\input{tex/macros}
 
+\input{tex/macros}
 \renewcommand{\lstlistingname}{Quelltext}
 
 %*********************************************************************%
@@ -35,7 +33,7 @@
 
 % Thesis kind
 %\ifgerman{\newcommand{\thesiskind}{Masterarbeit}}{\newcommand{\thesiskind}{Master's Thesis}}
-\ifgerman{\newcommand{\thesiskind}{Bachelorarbeit}}{\newcommand{\thesiskind}{Bachelor Thesis}}
+\ifgerman{\newcommand{\thesiskind}{Projektbericht}}{\newcommand{\thesiskind}{Digital Engineering Project}}
 %\newcommand{\thesiskind}{Diplomarbeit} %do not translate
 %\ifgerman{\newcommand{\thesiskind}{Doktorarbeit}}{\newcommand{\thesiskind}{Dissertation}}
 
@@ -45,10 +43,12 @@
 	\newcommand{\thetitle}{Kenngrößenbasiertes Verfahren zur Bewertung von modellbasierten Softwarearchitekturen nach ISO 26262}
 	\newcommand{\thedate}{29. November}
 }{
-	\newcommand{\theforename}{\todo{Lukas}}
-	\newcommand{\thesurname}{\todo{Mäurer}}
+	\newcommand{\theforename}{Lukas}
+	\newcommand{\thesurname}{Mäurer}
+	\newcommand{\thesecondforename}{Vladimir}
+	\newcommand{\thesecondsurname}{Velinov}
 	\newcommand{\thetitle}{Mixed-reality Simulation of Quadcopter-Swarms}
-	\newcommand{\thedate}{September 30}
+	\newcommand{\thedate}{Dezember 15}
 }
 \newcommand{\theyear}{2015}
 
