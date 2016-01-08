@@ -1,6 +1,6 @@
 local finken = {}
 
-local boxContainer, sizeOfContainer,sizeOfField, resolutionOfMap,localMapDataTable = {n=1000}, row, col, xRes, yRes,midIndex
+local boxContainer, sizeOfContainer,sizeOfField, resolutionOfMap,localMapDataTable = {n=1000}, row, col, xRes, yRes,midIndex, midIndexCol
 
 finkenCore = require('finkenCore')
 
@@ -41,7 +41,6 @@ function finken.init(self)
         --(6 values per item (x;y;z;Nx;Ny;Nz) (N=normal vector)) + auxiliary values)
         -- itemData = {position (x,y,z), normal(x,y,z), sizeOfContainer}
         -- sizeOfContainer (0.05 to 1.0) meters, but if user enters in centimeters (5,100) then sizeOfContainer/100
-
         itemData={finkenCurrentPos[1],finkenCurrentPos[2],finkenCurrentPos[3],0,0,1,sizeOfContainer/100}
         simAddDrawingObjectItem(boxContainer,itemData)
     end
@@ -54,15 +53,15 @@ function finken.init(self)
 
 
     function self.CalculateResolutionFromUserData()
--- User specifies the size of container and field size (each block in cm's)
+        -- User specifies the size of container and field size (each block in cm's)
         -- Calculate how many fields can fit into the size of container, which will define the resolution of local map
 
-        resolutionOfMap = (sizeOfContainer*sizeOfField)/100 --resolution in meters, math.floor()
+        resolutionOfMap = (sizeOfContainer*sizeOfField) --resolution as array size, how many fields in an 2D array
         simAddStatusbarMessage('ResolutionMap:  '..resolutionOfMap)
 
         --to get array size
-        xRes = resolutionOfMap*100
-        yRes = resolutionOfMap*100
+        xRes = resolutionOfMap
+        yRes = resolutionOfMap
 
         simAddStatusbarMessage('SizeOfMap X: '..xRes..' Y: '..yRes)
 
@@ -72,7 +71,9 @@ function finken.init(self)
     end
 
     function self.CreateLocalMapDataTable()
-        --Set the default value at midSize of array to be the current position of Finken
+        -- Calculating table index as : CurrentRow * MaxColumns + CurrentColumn
+
+        -- Set the default value at midSize of array to be the current position of Finken
         -- Lets say, localMapDataTable[(xRes/2) * yRes + (yRes/2)] = {0,0}
         for r=1,xRes do
             for c=1,yRes do
@@ -81,7 +82,8 @@ function finken.init(self)
             end
 
         --Set center value of array to be, where copter is initially positioned, sample value {1,1}
-        midIndex =((xRes/2) * yRes + (yRes/2))
+        midIndexCol =(yRes/2)
+        midIndex =((xRes/2) * yRes + midIndexCol)
         localMapDataTable[midIndex] = {1,1}
     end
 
@@ -105,24 +107,45 @@ function finken.init(self)
         colorValue = {g,b}
 
         --get xSpeed of map and shift index of localMap data accoridng to that.
-        xSpeed=simGetFloatSignal('_xSpeed')
+        xSpeed= simGetFloatSignal('_xSpeed')
 
-        if(xSpeed > 0) then
-            --shift array index to +1 and save prev. value to the new Index
-            midIndex = midIndex+1
-            localMapDataTable[midIndex] = colorValue
-        end
+            if(xSpeed > 0) then
+                
+                 if(midIndex > (yRes)) then
+                    --shift array index to +1 and save prev. value to the new Index
+                    prevValue = {}
+                    prevValue[1] = localMapDataTable[midIndex][1]
+                    prevValue[2] = localMapDataTable[midIndex][2]
+                    
+                    localMapDataTable[midIndex]  = colorValue
 
-        if(xSpeed < 0) then
-            --shift array index to -1 and save prev. value to the new Index
-            midIndex = midIndex-1
-              localMapDataTable[midIndex] = colorValue
-        end
+                        if(midIndexCol > 0) then
+                            midIndexCol = midIndexCol - 1
+                            midIndex =((xRes/2) * yRes + midIndexCol)
+                            localMapDataTable[midIndex] = prevValue
+                        end
+                 end
+            end
 
-        if(xSpeed==0) then
-            self.PrintLocalMapDataTable()
-        end
-    end
+            if(xSpeed < 0) then
+                
+                if(midIndex < ((xRes*yRes) + yRes)) then
+
+                --shift array index to -1 and save prev. value to the new Index
+                prevValue = {}
+                prevValue[1] = localMapDataTable[midIndex][1]
+                prevValue[2] = localMapDataTable[midIndex][2]
+                
+                localMapDataTable[midIndex]  = colorValue
+
+                    if(midIndexCol < yRes) then
+                        midIndexCol = midIndexCol + 1
+                        midIndex =((xRes/2) * yRes + midIndexCol)
+                        localMapDataTable[midIndex] = prevValue
+                    end
+                end
+            end
+    end --end of function
 
     -- end of new methods region
 
