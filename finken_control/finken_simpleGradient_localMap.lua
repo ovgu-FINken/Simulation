@@ -1,6 +1,8 @@
 local finken = {}
 
-local boxContainer, sizeOfContainer,sizeOfField, resolutionOfMap,localMapDataTable = {n=1000}, row, col, xRes, yRes,midIndex, midIndexCol
+local boxContainer, sizeOfContainer,sizeOfField, resolutionOfMap,localMapDataTable = {n=1000}, xRes, yRes,currentIndex, currentIndexCol
+
+local localOffset = {n=2}
 
 finkenCore = require('finkenCore')
 
@@ -56,7 +58,7 @@ function finken.init(self)
         -- User specifies the size of container and field size (each block in cm's)
         -- Calculate how many fields can fit into the size of container, which will define the resolution of local map
 
-        resolutionOfMap = (sizeOfContainer*sizeOfField) --resolution as array size, how many fields in an 2D array
+        resolutionOfMap = (sizeOfContainer/sizeOfField) --resolution as array size, how many fields in an 2D array e-g if SC = 15 and SF = 0.5 , resolution is 30
         simAddStatusbarMessage('ResolutionMap:  '..resolutionOfMap)
 
         --to get array size
@@ -66,13 +68,12 @@ function finken.init(self)
         simAddStatusbarMessage('SizeOfMap X: '..xRes..' Y: '..yRes)
 
         localMapDataTable = {n=yRes}
-        row =1
-        col =1
+        localOffset = {n=2}
+
     end
 
     function self.CreateLocalMapDataTable()
         -- Calculating table index as : CurrentRow * MaxColumns + CurrentColumn
-
         -- Set the default value at midSize of array to be the current position of Finken
         -- Lets say, localMapDataTable[(xRes/2) * yRes + (yRes/2)] = {0,0}
         for r=1,xRes do
@@ -82,9 +83,11 @@ function finken.init(self)
             end
 
         --Set center value of array to be, where copter is initially positioned, sample value {1,1}
-        midIndexCol =(yRes/2)
-        midIndex =((xRes/2) * yRes + midIndexCol)
-        localMapDataTable[midIndex] = {1,1}
+        currentIndexCol =(yRes/2)
+        currentIndex =((xRes/2) * yRes + currentIndexCol)
+        localMapDataTable[currentIndex] = {1,1}
+        localOffset[1] = 0.5
+        localOffset[2] = 0.5
     end
 
 
@@ -96,55 +99,92 @@ function finken.init(self)
         end
     end
 
-    function self.UpdateLocalMapWithColorSensorValue()
+    function self.ShiftLocalMap(xOffset, yOffset)
 
-        local _, colors = simReadVisionSensor(simGetObjectHandle('Floor_camera'))
-        --colors[2] is Red, colors[3] is Green, colors[4] is Blue
-        r = colors[2]
-        g = colors[3]
-        b = colors[4]
-
-        colorValue = {g,b}
-
-        --get xSpeed of map and shift index of localMap data accoridng to that.
-        xSpeed= simGetFloatSignal('_xSpeed')
-
-            if(xSpeed > 0) then
-                
-                 if(midIndex > (yRes)) then
-                    --shift array index to +1 and save prev. value to the new Index
-                    prevValue = {}
-                    prevValue[1] = localMapDataTable[midIndex][1]
-                    prevValue[2] = localMapDataTable[midIndex][2]
-                    
-                    localMapDataTable[midIndex]  = colorValue
-
-                        if(midIndexCol > 0) then
-                            midIndexCol = midIndexCol - 1
-                            midIndex =((xRes/2) * yRes + midIndexCol)
-                            localMapDataTable[midIndex] = prevValue
-                        end
-                 end
-            end
-
-            if(xSpeed < 0) then
-                
-                if(midIndex < ((xRes*yRes) + yRes)) then
-
-                --shift array index to -1 and save prev. value to the new Index
-                prevValue = {}
-                prevValue[1] = localMapDataTable[midIndex][1]
-                prevValue[2] = localMapDataTable[midIndex][2]
-                
-                localMapDataTable[midIndex]  = colorValue
-
-                    if(midIndexCol < yRes) then
-                        midIndexCol = midIndexCol + 1
-                        midIndex =((xRes/2) * yRes + midIndexCol)
-                        localMapDataTable[midIndex] = prevValue
+        if(xOffset >0) then
+            for y=1,yRes do
+                for x=1,xRes do
+                    if(x+ xOffset > xRes ) then -- if new column or edge of the LOCAL MAP
+                            localMapDataTable[x*yRes + y] = {0,0}
+                  
+                    else
+                        localMapDataTable[x*yRes + y] = localMapDataTable[(x + xOffset) * yRes + y]
                     end
-                end
-            end
+                end -- xloop
+            end -- yloop
+        end -- xoffset check
+
+
+        if(xOffset <0) then
+            for y=1,yRes do
+                for x=xRes,1 do
+                    if(x+ xOffset < 1 ) then -- if new column or edge of the LOCAL MAP
+                            localMapDataTable[x*yRes + y] = {0,0}
+                    else
+                        localMapDataTable[x*yRes + y] = localMapDataTable[(x + xOffset) * yRes + y]
+                    end
+                end -- xloop
+            end -- yloop
+        end -- xoffset check
+
+
+        if(yOffset >0) then
+            for y=1,yRes do
+            for x=1,xRes do
+                if(y+ yOffset > yRes ) then -- if new row or edge of the LOCAL MAP
+                    localMapDataTable[x*yRes + y] = {0,0}
+                
+                else
+                    localMapDataTable[x*yRes + y] = localMapDataTable[x*yRes + (y + yOffset)]
+                    end
+                end -- xloop
+            end -- yloop
+        end -- yoffset check
+
+
+
+        if(yOffset <0) then
+            for y=yRes,1 do
+            for x=1,xRes do
+                if(y+ yOffset < 1 ) then -- if new row or edge of the LOCAL MAP
+                    localMapDataTable[x*yRes + y] = {0,0}
+                else
+                    localMapDataTable[x*yRes + y] =  localMapDataTable[x*yRes + (y + yOffset)]
+                    end
+                end -- xloop
+            end -- yloop
+        end -- yoffset check
+
+    end
+
+    function self.UpdateLocalMapWithColorSensorValue()
+            local _, colors = simReadVisionSensor(simGetObjectHandle('Floor_camera'))
+            --colors[2] is Red, colors[3] is Green, colors[4] is Blue
+            r = colors[2]
+            g = colors[3]
+            b = colors[4]
+
+            colorValue = {g,b}
+
+            --get xSpeed of map and shift index of localMap data accoridng to that.
+            xSpeed= simGetFloatSignal('_xSpeed')
+            ySpeed= simGetFloatSignal('_ySpeed')
+
+            -- calculate offset to check if the finken has covered one field area, then shift to next field according to speed direction
+            shiftOffset = {}
+            shiftOffset[1] = localOffset[1] + xSpeed
+            shiftOffset[2] = localOffset[2] + ySpeed
+
+
+            shiftOffsetX = math.floor((localOffset[1] + xSpeed)/sizeOfField)
+            shiftOffsetY = math.floor((localOffset[2] + ySpeed)/sizeOfField)
+
+            localOffset[1] = shiftOffset[1] - shiftOffsetX
+            localOffset[2] = shiftOffset[2] - shiftOffsetY
+
+            self.ShiftLocalMap(shiftOffsetX,shiftOffsetY)
+
+            localMapDataTable[currentIndex]  = colorValue
     end --end of function
 
     -- end of new methods region
@@ -197,8 +237,6 @@ function finken.init(self)
 
 	return self
 end
-
-
 
 function finken.new()
 	finkenCore.init()
