@@ -23,7 +23,7 @@ The rotor model in VREP handles the thrust simulation and thus a huge part of th
 \todo{add picture of rotor}
 The visualisation is done with a static shape of a rotor, that is connected to a joint and rotates with a fixed speed. During flight, the rotation speed does not really change visually noticeable, a dynamic adaption of the rotation would only increase computation time without much benefit. Of course, the rotor shape could be made non-static and rotate in a particle stream, and apply the thrust force according to the particle collisions, but again, this would mean a massive increase of computation power and is not needed for our purposes.
 \todo{picture of rotor simulation and rotor visualisation}
-he rotor model is attached to the FINken body via a force sensor which applies the forces and torques calculated in the physical rotor model to the FINken body. The rotor is represented by a cylindrical shape which resembles the area swept by a real rotor and uses a particle simulation to emulate the airstream. The handling of the particle simulation is done inside a lua child script attached to the rotor model. The script has several parameters for the particle simulation, \todo{add complete param list}.
+The rotor model is attached to the FINken body via a force sensor which applies the forces and torques calculated in the physical rotor model to the FINken body. The rotor is represented by a cylindrical shape which resembles the area swept by a real rotor and uses a particle simulation to emulate the airstream. The handling of the particle simulation is done inside a lua child script attached to the rotor model. The script has several parameters for the particle simulation, \todo{add complete param list}.
 During simulation, the particle velocity is the parameter used to control the finken. This rotor model was already included in VREP as an example and was used without further modifications.
 \todo{add formula to show linearity between power and airstream velocity} 
 
@@ -38,7 +38,91 @@ During simulation, the particle velocity is the parameter used to control the fi
 Vrep provides several physics engines, we use the default bullet engine for our simulation.
 
 \subsection{Simulation Software Structure}
-\todo{diagram of finken software}
+
+\todo{finish diagram of finken software}
+\tikzset{
+    group/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           minimum height=2em,
+           inner sep=2pt,
+           text centered,
+           },
+           swScript/.style={
+           rectangle,
+           draw=black, very thick,
+           minimum height=2em,
+           inner sep=2pt,
+           align = left,
+           },
+           vrepObject/.style={
+           circle,
+           draw=black, very thick,
+           minimum height=2em,
+           inner sep=2pt,
+           text centered,
+           },
+           vrepEnv/.style={
+           ellipse,
+           draw=black, very thick,
+           minimum height = 5cm,
+           minimum width = 3cm,
+           },
+            implements/.style={
+            -{open triangle 60}, dashed
+           },
+           inherits/.style={
+           -{open triangle 60},
+           }
+}
+\begin{figure}[h]
+\centering
+
+\begin{tikzpicture}[scale=2, node distance = 1cm, auto]
+%vrep part
+\node[vrepEnv](vrep){};
+\node[below=0.3cm of vrep.north]{\underline{V-REP}};
+\node[vrepObject, below =1.1cm of vrep.north](fink1){finken1};
+\node[vrepObject, below =0.4cm of fink1.south](fink2){finken2};
+%lua script part
+\node[swScript, rectangle split, rectangle split,rectangle split parts=3, right=of vrep.45](finkenMeta){finkenMeta\nodepart{second}
+public:
+\nodepart{third}
+public: \\
+step() \\
+sense() };
+\node[swScript, rectangle split, rectangle split,rectangle split parts=3, below=of finkenMeta](finken){finken\nodepart{second}
+public:
+\nodepart{third}
+public: \\
+step() \\
+sense() };
+\node[swScript][rectangle split, rectangle split,rectangle split parts=3, right=of finken](finkenCore){finkenCore 
+\nodepart{second}
+public:
+\nodepart{third}
+public: \\
+step() \\
+sense() 
+}; 
+\node[swScript, rectangle split, rectangle split,rectangle split parts=3, above=of finkenCore](finkenPID){finkenPID\nodepart{second}
+public:
+\nodepart{third}
+public: \\
+init(P,I,D) \\
+step(error, $\delta$t) };
+%connections
+\draw[inherits] (finken) to (finkenCore); 
+\draw[-{angle 60}](finkenCore) to (finkenPID);
+\draw[implements](fink1) to (finken);
+\draw[implements](fink2) to (finken);
+\draw[implements](vrep.45) to (finkenMeta);
+\end{tikzpicture}
+\caption{Software structure of the FINken Simulation}
+\label{fig:finkenSoftStruct}
+\end{figure}
+
 The simulation software is written in Lua and runs inside a non-threaded child script of each FINken quadrocopter in VREP.  
 
 The base class is the finkenCore, which contains the main flight control algorithm and a steering interface as well as an interface to the FINkens sensors.
@@ -59,16 +143,15 @@ The default values for the throttle tuning function are  $a = 1$ and $b = 1$.
 \todo{insert plot of function?}
 
 
-The simulated FINken is equipped with 4 distance sensors which resemble the 4 ultrasound sensors of the real FINken. The FINkenCore module contains a \textit{sense()} function that reads the 4 distance sensors and writes the values to the signal \textit{sensor_dist}. As signals only support limited data types, \textit{sensor_dist} is a string signal containing a packed float array. The array contains the distances in the order \textit{front}, \textit{left}, \textit{back}, \textit{right}.  If the FINken gets more sensors in the future, their evaluation has to be added to this method.
+The simulated FINken is equipped with 4 distance sensors which resemble the 4 ultrasound sensors of the real FINken. The FINkenCore module contains a \textit{sense()} function that reads the 4 distance sensors and writes the values to the signal \textit{sensor\_dist}. As signals only support limited data types, \textit{sensor\_dist} is a string signal containing a packed float array. The array contains the distances in the order \textit{front}, \textit{left}, \textit{back}, \textit{right}.  If the FINken gets more sensors in the future, their evaluation has to be added to this method.
 By writing the distance values to a signal, they can be propagated to the Ivy-Bus and thus to the real FINken by our Java communication app, which enables the real FINken to detect virtual objects, as simulated FINken or walls that only exist in the Simulation.
 
 
 While the FINken is normally controlled by setting the pitch, roll, yaw and throttle directly, an alternative is to specify a target object. This method was originally used by the example quadcopter model of V-REP, though the function works differently in the FINkenCore now. When calling  \textit{setTarget(targetObject)}, the differences in x, y and z coordinates of the FINken base to the target objects are given to three PID controllers which calculate the pitch, roll and throttle to move the FINken to the target objects position. Those values are then published via the control signals for the FINken and regularly processed by it's internal controls. Therefore, \textit{setTarget(tragetObject)} needs to be called every time before \textit{step()}, when a target object should be approached.
 
-In the previous sections, only the signal names for the first simulated FINken were used for better readability. As the simulation is scalable, more than one FINken can be added, therefore a naming scheme for signals is needed to prevent collisions of the globally visible signals. The signals corresponding to the first FINken are \textit{pitch}, \textit{roll}, \textit{yaw}, \textit{throttle}, \textit{height} and \textit{sensor_dist}. For the second FINken, when the first one is copied, VREP automatically adds "#0" to it's name. Following this convention, but leaving the '#' to prevent problems with special characters when forwarding the signals through our interface, we add '0' to the signal names for the second FINken and consecutively enumerate following FINkens.
+In the previous sections, only the signal names for the first simulated FINken were used for better readability. As the simulation is scalable, more than one FINken can be added, therefore a naming scheme for signals is needed to prevent collisions of the globally visible signals. The signals corresponding to the first FINken are \textit{pitch}, \textit{roll}, \textit{yaw}, \textit{throttle}, \textit{height} and \textit{sensor\_dist}. For the second FINken, when the first one is copied, VREP automatically adds "\#0" to it's name. Following this convention, but leaving the '\#' to prevent problems with special characters when forwarding the signals through our interface, we add '0' to the signal names for the second FINken and consecutively enumerate following FINkens.
 
-
-
+The finken.lua module provides an basic structure for further enhancements. It's contained functions like \textit{step()} and \textit{sense()} are called called inside V-REP during the appropriate simulation step sections. By calling custom functions inside those functions, the behaviour of the FINkens can be customised without any need to change the lua scripts inside V-REP. If a heterogenous swarm of FINkens with different functionalities should be implemented, the different finken-scripts have to be imported by the different FINkens in the simulation, which needs to be done in the lua scripts inside V-REP.
 
 \section{Communication V-REP - Quadrocopters}
 \label{sec:commImplementation}
@@ -257,8 +340,36 @@ virtualDrones = droneScanner.retrieveVirtualDrones(this.scene, this.client);
 
 \section{Quadcopter}
 
-
-
+This project was about to build a mixed reality simulation around the FINken quadcopter, so there weren't made many changes to the quadcopter and the firmare itself. A few changes were needed, regarding calibration, the message link and the communication from VREP to the FINken. At the start of the project, the FINken II was used, but when the FINken III was released, it could directly be use as all our needed functions were compatible. In fact, the new telemetry link of the FINken III made a much faster communication possible, which helped some delay issues with V-REP as put in \ref{sec:messLink}
+\subsection{FINken calibration}
+\begin{itemize}
+\item{The FINken has no external positioning system like GPS, so internal sensor errors will heavily affect the FINkens flight movements}
+\item{During the first experiments, a strong drift could be obeserved}
+\item{this drift could be traced back to an offset of the IMU of the copter }
+\item{The paparazzi software already provides functionalities to calibrate sensor \todo{find and link website}}
+\item{After calibration, the aircraft still moves due to noise, but the strong drifts could be eliminated}
+\todo{add calibrated values?}
+\end{itemize}
+\subsection{FINken message link}
+\label{sec:messLink}
+\begin{itemize}
+\item{FINkenII: Bluetooth Link, max. message frequency?}
+\item{The Bluetooth Link limited the datarate, so getting new INS-Data from the real FINken for each simulation step was not possible}
+\item{FINkenIII: 802.15.4 based communication}
+\item{New communication allows messages to be sent every 21ms}
+\item{VREP simulation runs with 50ms}
+\item{even if packets are dropped, in general there is always new data for each simulation step}
+\end{itemize}
+\subsection{VREP to FINken communication}
+\begin{itemize}
+\item{to make virtual objects visible to the real FINken, they need to be send somehow from the virtual scene to the real hardware}
+\item{FINken only perceives with ultrasound sensors}
+\item{only the distances to virtual objects detected by the virtual FINken need to be sent}
+\item{paparazzi allows to send messages via the telemetry link}
+\item{in the FINkens firmware, when the distance values for the real ultrasound sensors are checked, the message with the virtual distances needs to be evaluated}
+\item{because right now only collision avoidance is interesting, the minimum of the two values is used as the final distance}
+\item{\todo{look at sensorModel code and add more details}}
+\end{itemize}
 % example for bar plots
 %\begin{tikzpicture}
 %  \centering
