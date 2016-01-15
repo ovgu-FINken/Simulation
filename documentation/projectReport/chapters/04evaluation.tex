@@ -3,19 +3,53 @@
 
 \todo{how realisitc is the simulation?}
 \todo{which properties can be modelled well, which can't?}
+\section{Testing with Joystick}
+ \begin{itemize}
+\item{to initially test the vrep simulation and the JAVA communication, a setup was build to control the virtual copter with a gaming joystick}
+\item{the JAVA programm was extended to send the commands for pitch, roll, yaw and thrust as the real copter would have sent them}
+\item{this was to show that communication between JAVA and VREP via the ivy bus was possible and that the simulation was running stable enough for external control}
+\item{flying with the joystick was really easy, only keeping the copter at the same height posed a litter bigger challenge. when detecting this probleme, the tuning of the throttle with the logistic curve was implemented, making it easier to hover the quadcopter}
+\end{itemize}
+
 \section{Speed}
 
+
 \todo{communication delay}
+\begin{itemize}
+
+\item{mean delta t between sent messages, compare with the configured message frequency}
+\item{ run this with two or multiple quadrocopter}
+\item{latency of JAVA link}
+\end{itemize}
+
+
 \todo{vrep simulation speed}
+\todo{run vrep on the 10core computer in the lab, look at mean execution time}
+\todo{add multiple copter}
 
 
 \section{Accuracy}
-\todo{error }
+\todo{angular movement response }
+\begin{itemize}
+\item{plot graph of euler angles}
+\item{highlight start of drift, other interesting elements?}
+\end{itemize}
+\todo{path of quadcopter}
+\begin{itemize}
 
+\item{using Medusa positioning system}
+\item{shortly explain limitations/problems with the system}
+\item{results are not perfect, but it is what is available}
+\item{compare scatter plots of real and virtual quadcopter positions}
+\end{itemize}
 
-\section|{Stability}
+\begin{itemize}
+\item{stability}
+\item{time that both copter stay inside the arena}
+\item{what happens when copter start to drift away?}
+\item{maybe show angular movement plot at this time to find explanation there}
+\end{itemize}
 
-\section{usability}
 
 % example for including picture
 %\begin{figure}
