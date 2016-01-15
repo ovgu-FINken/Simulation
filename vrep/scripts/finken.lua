@@ -51,7 +51,7 @@ function finken.init(self)
 
 
 
-	--function customdRun should be called in the vrep child script in the actuation part
+	--function customRun should be called in the vrep child script in the actuation part
 	--put here any custom function that should be called each simulation time step
 	function self.customRun()
 		local timestamp = math.floor(simGetSimulationTime()*1000)
@@ -66,8 +66,8 @@ function finken.init(self)
 	--function customClean should be called in the vrep child scrip in the cleanup part
 	--put here any custom function that should be called at the end of the simulation
 	function self.customClean()
-		saveLog(positionLog, "Position", self.thisIDsuffix)
-		saveLog(orientationLog, "Orientation", self.thisIDsuffix)
+		saveLog(positionLog, "Position", simGetNameSuffix(nil))
+		saveLog(orientationLog, "Orientation", simGetNameSuffix(nil))
 	end
 	return self
 end
