@@ -17,7 +17,6 @@ function finken.init(self)
     end
 
     -- Region # New methods for local map
-
     function self.CopterPositionSetToCenterOfMap()
         -- Set copter initial position in the center of map
         simSetObjectPosition(simGetObjectHandle('FINken2'), -1, {0,0,0.5})
@@ -117,7 +116,7 @@ function finken.init(self)
 
         if(xOffset <0) then
             for y=1,yRes do
-                for x=xRes,1 do
+                for x=xRes,1,-1 do
                     if(x+ xOffset < 1 ) then -- if new column or edge of the LOCAL MAP
                             localMapDataTable[x*yRes + y] = {0,0}
                     else
@@ -144,7 +143,7 @@ function finken.init(self)
 
 
         if(yOffset <0) then
-            for y=yRes,1 do
+            for y=yRes,1,-1 do
             for x=1,xRes do
                 if(y+ yOffset < 1 ) then -- if new row or edge of the LOCAL MAP
                     localMapDataTable[x*yRes + y] = {0,0}
@@ -170,6 +169,7 @@ function finken.init(self)
             xSpeed= simGetFloatSignal('_xSpeed')
             ySpeed= simGetFloatSignal('_ySpeed')
 
+           -- simAddStatusbarMessage('X:'..xSpeed..'Y:'..ySpeed)
             -- calculate offset to check if the finken has covered one field area, then shift to next field according to speed direction
             shiftOffset = {}
             shiftOffset[1] = localOffset[1] + xSpeed
@@ -219,8 +219,9 @@ function finken.init(self)
             zTarget =  zGrad
 
             --keeping the Z value same as current target position, for hill.png gradient
-            simSetObjectPosition(targetObj, -1, {xTarget, yTarget,zTarget})
+           -- simSetObjectPosition(targetObj, -1, {xTarget, yTarget,zTarget})
 
+            simSetObjectPosition(targetObj, -1, {0, 0,0})
             --targetObject is retrieved in the simulation script.
             --remove if control via pitch/roll/yaw is wanted
 
