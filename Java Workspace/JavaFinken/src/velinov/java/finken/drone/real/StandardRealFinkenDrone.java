@@ -57,7 +57,7 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     
     this.aircraft   = _aircraft;
     this.busNode    = new RealDroneBusNode(this.aircraft);
-    this.calibrator = new RotorFPCalibrator(100);
+    this.calibrator = new RotorFPCalibrator(10);
     this.busNode.addPropertyChangeListener(this);
   }
 
@@ -108,12 +108,14 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     TelemetryXmlReader reader;
     Message            rotorMessage;
     Message            systModelMsg;
+    Message            eulerMessage;
     
     reader         = new TelemetryXmlReader(_telemetryXml, "vrep");
     reader.parseXmlDocument();
     this.telemetry = reader.getTelemetry();
     rotorMessage   = this.telemetry.getMessage("ROTORCRAFT_FP");
     systModelMsg   = this.telemetry.getMessage("FINKEN_SENSOR_MODEL");
+    eulerMessage   = this.telemetry.getMessage("AHRS_EULER_INT");
     
     if (rotorMessage == null) {
       throw new NullPointerException("subscribe message not found in "
@@ -122,9 +124,13 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     if (systModelMsg == null) {
       throw new NullPointerException("the subscribed message not found");
     }
+    if (eulerMessage == null) {
+      throw new NullPointerException("message not found");
+    }
     
     this.busNode.subscribeToIdMessage(this.aircraft.getStrId(), rotorMessage);
     this.busNode.subscribeToIdMessage(this.aircraft.getStrId(), systModelMsg);
+    this.busNode.subscribeToIdMessage(this.aircraft.getStrId(), eulerMessage);
   }
 
   @SuppressWarnings("nls")
@@ -140,24 +146,38 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     
     switch (msg.getName()) {
     
+    case "PROPERTY_CALIBRATION_FINISHED":
+      System.out.println("calibration ready");
+      break;
+    
+      /*
     case "ROTORCRAFT_FP":
       if (!this.calibrator.finished()) {
         this.calibrator.addMessage(msg);
         return;
       }
-
+      
       this._handleActuatorsModel(msg);
       break;
-      
+      */
     case "FINKEN_SYSTEM_MODEL":
       this._handleSensorModel(msg);
+      break;
+      
+    case "AHRS_EULER_INT":
+      if (!this.calibrator.finished()) {
+        this.calibrator.addMessage(msg);
+        return;
+      }
+      //this._handleEulerMessage(msg);
+      this._handleActuatorsModel(msg);
       break;
       
       default:
         return;
     }
   }
-  
+
   @SuppressWarnings("nls")
   private void _handleSensorModel(Message _msg) {
     MessageField distField;
@@ -168,12 +188,48 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     
     //System.out.println("height" + distance);
     
+    
     this.vrepConnection.simxSetFloatSignal(this.client.getClientId(), "height",
         distance, VrepConnection.simx_opmode_oneshot);
+        
   }
   
   @SuppressWarnings("nls")
   private void _handleActuatorsModel(Message _msg) {
+    MessageField alpha, beta, theta;
+    float        alphaValue;
+    float        betaValue;
+    float        thetaValue;
+    
+    alpha      = _msg.getMessageField("imu_phi"); // roll
+    beta       = _msg.getMessageField("imu_theta"); // pitch
+    theta      = _msg.getMessageField("imu_psi"); // yaw
+                                                       
+    alphaValue    = (Float.valueOf(alpha.getValue()) * 0.0139882f) 
+        - this.calibrator.getCalibratedValue("imu_phi");
+    
+    betaValue     = (Float.valueOf(beta.getValue()) * 0.0139882f) 
+        - this.calibrator.getCalibratedValue("imu_theta");
+    
+    thetaValue    = (Float.valueOf(theta.getValue()) * 0.0139882f) 
+        - this.calibrator.getCalibratedValue("imu_psi");
+    
+    this.vrepConnection.simxSetFloatSignal(this.client.getClientId(), "roll",
+        alphaValue, VrepConnection.simx_opmode_oneshot);
+    
+    this.vrepConnection.simxSetFloatSignal(this.client.getClientId(), "pitch",
+        betaValue, VrepConnection.simx_opmode_oneshot);
+    
+    this.vrepConnection.simxSetFloatSignal(this.client.getClientId(), "yaw",
+        thetaValue, VrepConnection.simx_opmode_oneshot);
+    
+    this.fireBooleanPropertyChanged(PROPERTY_SIGNALS_UPDATED, true);
+    
+    //System.out.println(alphaValue + " " + betaValue + " " + thetaValue);
+  }
+  
+  
+  private void _handleEulerMessage(Message _msg) {
     MessageField alpha, beta, theta, throttle;
     float        alphaValue;
     float        betaValue;
@@ -196,6 +252,7 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     throttleValue = Float.valueOf(throttle.getValue());
     throttleValue = ((Float.valueOf(throttle.getValue()) + 1350)) / 100;
     
+    //betaValue = betaValue - 1.56f;
     
     this.vrepConnection.simxSetFloatSignal(this.client.getClientId(), "roll",
         alphaValue, VrepConnection.simx_opmode_oneshot);
@@ -206,17 +263,8 @@ public class StandardRealFinkenDrone extends AbsFinkenDrone
     this.vrepConnection.simxSetFloatSignal(this.client.getClientId(), "yaw",
         thetaValue, VrepConnection.simx_opmode_oneshot);
 
-    /*
-     * TODO to support multiple real quadrocopters manage the names of the 
-     * signals throttle, throttle0, throttle1 .. throttlen
-     */
     this.vrepConnection.simxSetFloatSignal(this.client.getClientId(), "throttle",
         throttleValue, VrepConnection.simx_opmode_oneshot);
-    
-    /*
-    System.out.println("alpha " + alphaValue + " beta " + betaValue 
-        + " theta " + thetaValue + " thrust " + throttleValue);
-        */
     
     this.fireBooleanPropertyChanged(PROPERTY_SIGNALS_UPDATED, true);
   }

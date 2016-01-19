@@ -7,6 +7,10 @@ import net.java.games.input.Controller.Type;
 import net.java.games.input.Controller;
 
 
+/**
+ * @author Vladimir Velinov
+ * @since Jan 18, 2016
+ */
 public class Joystick extends AbsEventDispatchable implements Runnable {
   
   public final static String JOYSTICK_DATA_UPDATED = "dataUpdated";
