@@ -8,10 +8,17 @@ import velinov.java.ivybus.AbsIvyBusNode;
 import velinov.java.jinput.Joystick.Axes;
 
 
+/**
+ * @author Vladimir Velinov
+ * @since Jan 18, 2016
+ */
 public class JoystickBusNode extends AbsIvyBusNode 
     implements PropertyChangeListener
 {
 
+  /**
+   * default constructor.
+   */
   @SuppressWarnings("nls")
   public JoystickBusNode() {
     super("LINK", "Joystick joined the bus");

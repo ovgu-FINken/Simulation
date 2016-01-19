@@ -4,11 +4,33 @@
 \todo{how realisitc is the simulation?}
 \todo{which properties can be modelled well, which can't?}
 \section{Testing with Joystick}
- \begin{itemize}
-\item{to initially test the vrep simulation and the JAVA communication, a setup was build to control the virtual copter with a gaming joystick}
-\item{the JAVA programm was extended to send the commands for pitch, roll, yaw and thrust as the real copter would have sent them}
-\item{this was to show that communication between JAVA and VREP via the ivy bus was possible and that the simulation was running stable enough for external control}
-\item{flying with the joystick was really easy, only keeping the copter at the same height posed a litter bigger challenge. when detecting this probleme, the tuning of the throttle with the logistic curve was implemented, making it easier to hover the quadcopter}
+
+
+In order to evaluate, at an early stage, how flyable and responsible to external commands the VREP Quadcopter was, and how reliable the communication link between the V-REP and the Ivy-Bus system is, a Hardware-in-the-loop (HIL) set-up was build. \ref{fig:finkenHIL} shows the HIL set-up, consisting of a joystick, which is attached on the Ivy-Bus and controls the V-REP Quadcopter.
+
+
+\begin{figure}[h!]
+ \begin{center}
+  \includegraphics[scale=0.5]{FinkenHIL.png}
+ \end{center}
+  \caption{Finken Hardware-in-the-loop\label{fig:finkenHIL}}
+\end{figure}
+
+The HIL evaluation was implemented as a separate project - \textit{JavaFinkenSimHil}. It uses the Java external library \href{https://java.net/projects/jinput}{JInput} for reading the inputs from the joystick. The already created \textit{JavaIvyBus} module, which was discussed in \ref{sec:ivyBusImplementation}, is used to connect the Joystick to the Ivy-Bus. \\
+The \textit{Joystick} class has as a local variable the class \textit{JoystickBusNode}, which extends the abstract \textit{AbsIvyBusNode}, thus being able to communicate on the common Ivy-Bus network. \\
+The \textit{Joystick} class polls the data from the Joystick device at 50 Mhz and sends them to the \textit{JoystickBusNode}, which on the other hand encapsulates the data in 
+a FINKEN\_ROTORCRAFT\_FP message and publishes it on the bus. \\ 
+The FINKEN\_ROTORCRAFT\_FP is the message that the real Qadcopter uses to publish its pitch, yaw and roll angles. Since the Joystick fakes the real Quadcopter, the JavaFinkenApp receives the message as if coming from the real one, thus even a single line of code did not have to be changed in the JavaFinkenApp, in order to use the HIL evaluation. \\
+
+As a result of the evaluation we came to the following conclusions:
+
+\begin{itemize}
+\item{The controlling of the Quadcopter was very precise and accurate. We ware able to make any manoeuvre and flight path as desired. \\ When flying with the Joystick, one can get a real feeling
+of the Quadcopter flight dynamics and behaviour}.
+
+\item{We experienced problems with keeping the Quadcopter at a level height, using the throttle levers of the Joystick. It turned out, that keeping a level height was a matter of eye-hand coordination. \\
+As a result we decided to tune-up the thrust handling of the Quadcopter model \ref{equ:logistic}}.
+
 \end{itemize}
 
 \section{Speed}
@@ -73,25 +95,25 @@
 %\begin{lstlisting}[caption=Metric-Interface]
 %interface Metric {
 %/**
-% * @return the  value of the metric as it is defined 
+% * @return the  value of the metric as it is defined 
 % * for the block/architecture and all its subblocks
-% */
-%    public double getGlobalValue();
+% */
+%    public double getGlobalValue();
 %/**
-% * @return the worst value of the metric among the 
+% * @return the worst value of the metric among the 
 % * block/architecture and all its subblocks
-% */
-%    public double getWorstValue();
+% */
+%    public double getWorstValue();
 %/**
-% * @return the block with the worst value of the 
+% * @return the block with the worst value of the 
 % * metric among the block/architecture and all its subblocks
-% */
-%    public ArchitectureBlock getMaxBlock();
+% */
+%    public ArchitectureBlock getMaxBlock();
 %/**
-% * @return a list of all values of the metric for the 
+% * @return a list of all values of the metric for the 
 % * block/architecture and its subblocks
-% */
-%    public double[] getAllBlockValues();
+% */
+%    public double[] getAllBlockValues();
 %}
 %\end{lstlisting}
 %

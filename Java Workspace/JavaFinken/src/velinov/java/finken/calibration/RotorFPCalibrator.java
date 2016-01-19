@@ -28,9 +28,9 @@ public class RotorFPCalibrator extends AbsMessageCalibrator {
     
     fields = new ArrayList<String>();
     
-    fields.add("phi");
-    fields.add("theta");
-    fields.add("psi");
+    fields.add("imu_phi");
+    fields.add("imu_theta");
+    fields.add("imu_psi");
     
     return fields;
   }
