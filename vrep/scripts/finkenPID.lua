@@ -23,7 +23,7 @@ function finkenPID.new()
 		e_sum = 0
 	end
 	
- 	function self.step(newE, deltat)
+ 	function self.stepResetIonTarget(newE, deltat)
 		e_prev = e
 		e = newE
 		if sign(newE) == sign(e_prev) then
@@ -31,6 +31,13 @@ function finkenPID.new()
 		else
 			e_sum = 0
 		end
+		return (p*e + d*((e-e_prev)/deltat) + i*e_sum)
+	end
+
+	function self.step(newE, deltat)
+		e_prev = e
+		e = newE
+		e_sum = e_sum + newE * deltat
 		return (p*e + d*((e-e_prev)/deltat) + i*e_sum)
 	end
 

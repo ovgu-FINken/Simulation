@@ -158,11 +158,11 @@ function finkenCore.step()
 		local pitchAngleError=-(vx[3]-ins_matrix[12])
 		-- pitch control:
 		local errorPitch=pitchAngleError-(pitchTarget*(math.pi/180))
-		local pitchCorr = pitchController.step(errorPitch, execution_step_size / defaultStepSize)
+		local pitchCorr = pitchController.stepResetIonTarget(errorPitch, execution_step_size / defaultStepSize)
 	
 		-- roll control:
 		local errorRoll=rollAngleError-(rollTarget*(math.pi/180))
-		local rollCorr=rollController.step(errorRoll, execution_step_size / defaultStepSize)
+		local rollCorr=rollController.stepResetIonTarget(errorRoll, execution_step_size / defaultStepSize)
 
 		-- yaw control:
 		local errorYaw=euler[3]-yawTarget*(math.pi/180)
@@ -172,7 +172,7 @@ function finkenCore.step()
 			errorYaw=yawTarget*(math.pi/180)-euler[3]
 			end
 		end
-		local yawCorr=yawController.step(errorYaw, execution_step_size / defaultStepSize)
+		local yawCorr=yawController.stepResetIonTarget(errorYaw, execution_step_size / defaultStepSize)
 		-- Decide of the motor velocities:
 		local particlesTargetVelocities = {-1,-1,-1,-1}
 		particlesTargetVelocities[1]=thrust*(1+yawCorr-rollCorr+pitchCorr)
@@ -189,9 +189,9 @@ function finkenCore.setTarget(targetObject)
 	local errorX = targetPosition[1] - basePosition[1]
 	local errorY = targetPosition[2] - basePosition[2]
 	local errorZ =  targetPosition[3]-basePosition[3]
-	local corrX = targetXcontroller.step(errorX, execution_step_size / defaultStepSize)
-	local corrY = targetYcontroller.step(errorY, execution_step_size / defaultStepSize)
-	local corrZ = targetZcontroller.step(errorZ, execution_step_size / defaultStepSize)
+	local corrX = targetXcontroller.stepResetIonTarget(errorX, execution_step_size / defaultStepSize)
+	local corrY = targetYcontroller.stepResetIonTarget(errorY, execution_step_size / defaultStepSize)
+	local corrZ = targetZcontroller.stepResetIonTarget(errorZ, execution_step_size / defaultStepSize)
 	simSetFloatSignal(fixSignalName('pitch'), corrX)
 	simSetFloatSignal(fixSignalName('roll'), corrY)
 	simSetFloatSignal(fixSignalName('throttle'), 50+corrZ)
