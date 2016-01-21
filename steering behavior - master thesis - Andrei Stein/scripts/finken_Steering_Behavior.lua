@@ -55,6 +55,7 @@ function finken.init(self)
 		
 		-- create context data
 		context = contextData.new()
+		context.objectHandle = self.getObjectHandle()
 		context.sensorDistances = {7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5}
 		-- set first target
 		context.targets['goal1'] = {4,4,2}

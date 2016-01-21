@@ -6,8 +6,8 @@ steeringBehaviorCore = require('steeringBehaviorCore')
 
 local COS_45 = 0.707--0,70710678
 local MAX_TARGET_DISTANCE = 7.5
-local MAX_DANGER = 0.2
-local MIN_SAME_DIRECTION = 0.4
+local MAX_DANGER = 0.6--0.2
+local MIN_SAME_DIRECTION = 0.2--0.4
 
 function contextSteeringBehavior.init(self)
 	
@@ -17,7 +17,6 @@ function contextSteeringBehavior.init(self)
 		local dangerMap = {0,0,0,0,0,0,0,0}
 		local sameDirectionMap = {1,1,1,1,1,1,1,1}
 		
-		
 		-- calculate danger values for each direction
 		for i=1,8,1 do
 			local danger = 1 - contextData.sensorDistances[i]/7.5
@@ -26,7 +25,7 @@ function contextSteeringBehavior.init(self)
 		
 		-- calculate interest values for each direction
 		for k, target in pairs(contextData.targets) do
-			local vectorToTarget = subtractVectors(target, contextData.currentPosition)
+			local vectorToTarget = TransformToLokalSystem(contextData.objectHandle, target)
 			vectorToTarget = truncateVector(vectorToTarget, MAX_TARGET_DISTANCE)
 			
 			local direction = {0,0,0}
@@ -40,22 +39,22 @@ function contextSteeringBehavior.init(self)
 				-- for more accurate direction you have to transform the direction into 
 				-- the local system of the finken (!!!Not done yet!!!)
 				if(i == 1) then -- front
-					direction = {-1, 0, 0}
+					direction = {0, -1, 0} --direction = {-1, 0, 0}
 					--simAddStatusbarMessage('d1')
 				elseif(i == 2) then -- left
-					direction = {0, -1, 0}
+					direction = {0, 0, -1} --direction = {0, -1, 0}
 				elseif(i == 3) then -- back
-					direction = {1, 0, 0}
+					direction = {0, 1, 0} --direction = {1, 0, 0}
 				elseif(i == 4) then -- right
-					direction = {0, 1, 0}
+					direction = {0, 0, 1} --direction = {0, 1, 0}
 				elseif(i == 5) then -- front_left
-					direction = {-1, -1, 0}
+					 direction = {0, -1, -1} --direction = {-1, -1, 0}
 				elseif(i == 6) then -- front_right
-					direction = {-1, 1, 0}
+					direction = {0, -1, 1} --direction = {-1, 1, 0}
 				elseif(i == 7) then -- back_left
-					direction = {1, -1, 0}
+					direction = {0, 1, -1} --direction = {1, -1, 0}
 				elseif(i == 8) then -- back_right
-					direction = {1, 1, 0}
+					direction = {0, 1, 1} --direction = {1, 1, 0}
 				end
 				
 				-- simAddStatusbarMessage(string.format('direction x: %.2f	     y: %.2f	z: %.2f',
@@ -76,7 +75,8 @@ function contextSteeringBehavior.init(self)
 		
 		-- create sameDirectionMap values
 		if not(isZeroVector(contextData.lastDirection)) then
-		
+			local lastDirectionTransfomed = TransformToLokalSystem(contextData.objectHandle, 
+				addVectors(contextData.lastDirection, contextData.currentPosition))
 			local direction = {0,0,0}
 			local angleCos = 0
 			
@@ -85,30 +85,30 @@ function contextSteeringBehavior.init(self)
 				-- for more accurate direction you have to transform the direction into 
 				-- the local system of the finken (!!!Not done yet!!!)
 				if(i == 1) then -- front
-					direction = {-1, 0, 0}
+					direction = {0, -1, 0} --direction = {-1, 0, 0}
 				elseif(i == 2) then -- left
-					direction = {0, -1, 0}
+					direction = {0, 0, -1} --direction = {0, -1, 0}
 				elseif(i == 3) then -- back
-					direction = {1, 0, 0}
+					direction = {0, 1, 0} --direction = {1, 0, 0}
 				elseif(i == 4) then -- right
-					direction = {0, 1, 0}
+					direction = {0, 0, 1} --direction = {0, 1, 0}
 				elseif(i == 5) then -- front_left
-					direction = {-1, -1, 0}
+					 direction = {0, -1, -1} --direction = {-1, -1, 0}
 				elseif(i == 6) then -- front_right
-					direction = {-1, 1, 0}
+					direction = {0, -1, 1} --direction = {-1, 1, 0}
 				elseif(i == 7) then -- back_left
-					direction = {1, -1, 0}
+					direction = {0, 1, -1} --direction = {1, -1, 0}
 				elseif(i == 8) then -- back_right
-					direction = {1, 1, 0}
+					direction = {0, 1, 1} --direction = {1, 1, 0}
 				end
 				
-				simAddStatusbarMessage(string.format('direction x: %.2f	     y: %.2f	z: %.2f',
-											contextData.lastDirection[1], contextData.lastDirection[2], contextData.lastDirection[3]))
+				--simAddStatusbarMessage(string.format('direction x: %.2f	     y: %.2f	z: %.2f',
+											--contextData.lastDirection[1], contextData.lastDirection[2], contextData.lastDirection[3]))
 											
 				-- simAddStatusbarMessage(string.format('vector to target x: %.2f	     y: %.2f	z: %.2f',
 											-- vectorToTarget[1], vectorToTarget[2], vectorToTarget[3]))
 				
-				angleCos = getCosBetweenVectors(contextData.lastDirection, direction)
+				angleCos = getCosBetweenVectors(lastDirectionTransfomed, direction)
 				sameDirectionMap[i] = angleCos 
 				-- simAddStatusbarMessage(string.format('cos:   %.2f',angleCos))
 			end
@@ -126,28 +126,28 @@ function contextSteeringBehavior.init(self)
 					simAddStatusbarMessage('I: '..interestMap[key]..'   D: '..dangerMap[key]..'		S: '..sameDirectionMap[key])
 					
 					if(key == 1) then -- front
-						steering = {-1, 0, 0}
+						steering = {0, -1, 0} --steering = {-1, 0, 0}
 						simAddStatusbarMessage('d1')
 					elseif(key == 2) then -- left
-						steering = {0, -1, 0}
+						steering = {0, 0, -1} --steering = {0, -1, 0}
 						simAddStatusbarMessage('d2')
 					elseif(key == 3) then -- back
-						steering = {1, 0, 0}
+						steering = {0, 1, 0} --steering = {1, 0, 0}
 						simAddStatusbarMessage('d3')
 					elseif(key == 4) then -- right
-						steering = {0, 1, 0}
+						steering = {0, 0, 1} --steering = {0, 1, 0}
 						simAddStatusbarMessage('d4')
 					elseif(key == 5) then -- front_left
-						steering = {-COS_45, -COS_45, 0}
+						steering = {0, -COS_45, -COS_45} --steering = {-COS_45, -COS_45, 0}
 						simAddStatusbarMessage('d5')
 					elseif(key == 6) then -- front_right
-						steering = {-COS_45, COS_45, 0}
+						steering = {0, -COS_45, COS_45} --steering = {-COS_45, COS_45, 0}
 						simAddStatusbarMessage('d6')
 					elseif(key == 7) then -- back_left
-						steering = {COS_45, -COS_45, 0}
+						steering = {0, COS_45, -COS_45} --steering = {COS_45, -COS_45, 0}
 						simAddStatusbarMessage('d7')
 					elseif(key == 8) then -- back_right
-						steering = {COS_45, COS_45, 0}
+						steering = {0, COS_45, COS_45} --steering = {COS_45, COS_45, 0}
 						simAddStatusbarMessage('d8')
 					end
 				end
@@ -196,9 +196,10 @@ function contextSteeringBehavior.init(self)
 											sameDirectionMap[8]))
 				
 		steering = steering or {0,0,0}
-		-- simAddStatusbarMessage(string.format('steering x: %.2f	     y: %.2f	z: %.2f',
-											-- steering[1], steering[2], steering[3]))
-		return steering
+		 simAddStatusbarMessage(string.format('steering x: %.2f	     y: %.2f	z: %.2f',
+											 steering[1], steering[2], steering[3]))
+		steering = TransformToWorldSystem(contextData.objectHandle, steering)
+		return subtractVectors(steering, contextData.currentPosition)--steering
 	end
 	
 	return self

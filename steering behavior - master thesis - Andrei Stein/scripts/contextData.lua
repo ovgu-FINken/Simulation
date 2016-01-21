@@ -1,6 +1,9 @@
 local contextData = {}
 
 function contextData.new()
+	-- object handle of a finken
+	contextData.objectHandle = nil
+		
 	-- current position of the finken as a vecotor {x,y,z}
 	contextData.currentPosition = {}
 	

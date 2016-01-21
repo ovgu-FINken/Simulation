@@ -91,3 +91,24 @@ function getKeysSortedByValue(tbl, sortFunction)
 
   return keys
 end
+
+-- this function transforms a postion into the local system of an object
+function TransformToLokalSystem(objectHandle, position)
+	local finkenMatrix = simGetObjectMatrix(objectHandle, -1)
+	local finkenMatrixInverse = simGetInvertedMatrix(finkenMatrix)
+	local transformedPosition = simMultiplyVector(finkenMatrixInverse, position)
+	--simAddStatusbarMessage('OutputX: ' .. tostring(transformedPosition[1]))
+	--simAddStatusbarMessage('OutputY: ' .. tostring(transformedPosition[2]))
+	--simAddStatusbarMessage('OutputZ: ' .. tostring(transformedPosition[3]))
+	return transformedPosition
+end
+
+-- this function transforms a postion into the world system of an object
+function TransformToWorldSystem(objectHandle, position)
+	local finkenMatrix = simGetObjectMatrix(objectHandle, -1)
+	local transformedPosition = simMultiplyVector(finkenMatrix, position)
+	--simAddStatusbarMessage('OutputX: ' .. tostring(transformedPosition[1]))
+	--simAddStatusbarMessage('OutputY: ' .. tostring(transformedPosition[2]))
+	--simAddStatusbarMessage('OutputZ: ' .. tostring(transformedPosition[3]))
+	return transformedPosition
+end
