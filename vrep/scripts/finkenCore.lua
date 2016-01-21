@@ -197,4 +197,12 @@ function finkenCore.sense()
 	return sensorDistances
 end
 
+function finkenCore.getPosition()
+	return simGetObjectPosition(handle_FinkenBase, -1)
+end
+
+function finkenCore.getObjectHandle()
+	return handle_finken
+end
+
 return finkenCore
