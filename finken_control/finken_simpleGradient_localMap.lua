@@ -14,8 +14,39 @@ function finken.init(self)
 		simAddStatusbarMessage(textToSay)
 	end
 
+    function self.initializeUI()
+        -- Following is the handle of FINken2's associated UI (user interface):
+        finkenLocalMapUI=simGetUIHandle("FinkenLocalMap")
+        printLocalMapData=simGetUIHandle("PrintLocalMapData")
+        -- Set the title of the user interface: 
+        simSetUIButtonLabel(finkenLocalMapUI,0,"Finken Local map:")
+        simSetUIButtonLabel(finkenLocalMapUI,3,"Size of Map (in CM):") 
+        simSetUIButtonLabel(finkenLocalMapUI,4,"Size of Field (in CM):") 
+        simSetUIButtonLabel(finkenLocalMapUI,7,"Update") 
+
+        -- Retrieve the desired data from the user interface:
+        sizeOfContainer = tonumber(simGetUIButtonLabel(finkenLocalMapUI,5))
+        sizeOfField = tonumber(simGetUIButtonLabel(finkenLocalMapUI,6))
+        
+        --Setup all signals to be called from outside this scene
+        simSetFloatSignal('_LM_SizeOfContainer',sizeOfContainer)
+        simSetFloatSignal('_LM_SizeOfField',sizeOfField)
+    end
+
 	function self.customInit()
 		helperSay("Building a local map...")
+        -- set some initializations
+        self.initializeUI()
+        self.CopterPositionSetToCenterOfMap()
+        self.setTargetToPosition(1, 0.5)
+
+        -- Update the local map data and then setup a map around finken
+        self.UpdateLocalMapDataFromUI()
+        self.CalculateResolutionFromUserData()
+        --Create a VirtualBoxAround the Finken
+        self.CreateAVirtualBoxAroundFinken()
+        --Create a local map data table, initialise with {0,0}
+        self.CreateLocalMapDataTable()
     end
 
     -- Region # New methods for local map
@@ -196,8 +227,18 @@ function finken.init(self)
 
     -- end of new methods region
 
-	function self.customRun()
+    function self.CheckUIButton()
+        --check if update button is pressed
+        startBtnValue = simGetUIEventButton(printLocalMapData)
+        boolValue = 3
+        if(startBtnValue == boolValue) then
+            myFinken.PrintLocalMapDataTable()
+        end
+    end
 
+
+	function self.customRun()
+        self.CheckUIButton()
         -- Gradient images from matlab
         -- R: height
         -- G: x gradient (0.5 intensity corresponds to 0 gradient)
@@ -256,11 +297,7 @@ function finken.init(self)
 	function self.customClean()
 
 	end
-    -- set some initializations
-    self.CopterPositionSetToCenterOfMap()
-    self.setTargetToPosition(1, 0.5)
-
-
+    
 	return self
 end
 
