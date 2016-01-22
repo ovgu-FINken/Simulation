@@ -1,3 +1,5 @@
+require('math')
+require('localMap')
 local finken = {}
 
 local boxContainer, sizeOfContainer,sizeOfField, resolutionOfMap,localMapDataTable = {n=1000}, xRes, yRes,currentIndex, currentIndexCol
@@ -13,19 +15,24 @@ function finken.init(self)
 	end
 
 	function self.customInit()
-		helperSay("First task, Create gradient follower copter behavior ")
+		helperSay("Building a local map...")
     end
 
     -- Region # New methods for local map
     function self.CopterPositionSetToCenterOfMap()
+        currentFinkenPosition = simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
         -- Set copter initial position in the center of map
-        simSetObjectPosition(simGetObjectHandle('FINken2'), -1, {0,0,0.5})
+        simSetObjectPosition(simGetObjectHandle('FINken2'), -1, {0,0,currentFinkenPosition[3]})
+    end
+
+    function self.setTargetToPosition( x, y )
+        simSetObjectPosition(targetObj, -1, {x, y, 1})
+        self.setTarget(targetObj)
     end
 
     function self.SetTargetPositionToCenterOfMap()
         --For testing of local map
-        simSetObjectPosition(targetObj, -1, {0, 0, 0})
-        self.setTarget(targetObj)
+        self.setTargetToPosition(0, 0)
     end
 
     function self.CreateAVirtualBoxAroundFinken()
@@ -212,8 +219,15 @@ function finken.init(self)
             zGrad = ((colors[2] + 0.5)) * speedFactor
 
             currentTargetPosition = simGetObjectPosition(targetObj, -1)
+            oldFinkenPosition = currentFinkenPosition or {0, 0, 0}
             currentFinkenPosition = simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
 
+            xSpeed = currentFinkenPosition[1] - oldFinkenPosition[1]
+            ySpeed = currentFinkenPosition[2] - oldFinkenPosition[2]
+
+            simSetFloatSignal('_xSpeed', -xSpeed*100)
+            simSetFloatSignal('_ySpeed', -ySpeed*100)
+            
             xTarget = currentFinkenPosition[1] + xGrad
             yTarget = currentFinkenPosition[2] + yGrad
             zTarget =  zGrad
@@ -221,11 +235,18 @@ function finken.init(self)
             --keeping the Z value same as current target position, for hill.png gradient
            -- simSetObjectPosition(targetObj, -1, {xTarget, yTarget,zTarget})
 
-            simSetObjectPosition(targetObj, -1, {0, 0,0})
-            --targetObject is retrieved in the simulation script.
-            --remove if control via pitch/roll/yaw is wanted
+            -- simSetObjectPosition(targetObj, -1, {0, 0,0})
+            -- --targetObject is retrieved in the simulation script.
+            -- --remove if control via pitch/roll/yaw is wanted
 
-            self.setTarget(targetObj)
+            -- self.setTarget(targetObj)
+            -- Force copter to stay at center of map
+            if math.random() < 0.05 then
+                -- self.CopterPositionSetToCenterOfMap()
+            end
+            --self.CopterPositionSetToCenterOfMap()
+            self.UpdateLocalMapWithColorSensorValue()
+            self.setTargetToPosition(1, 0.5)
 	end
 
 	function self.customSense()
@@ -235,6 +256,10 @@ function finken.init(self)
 	function self.customClean()
 
 	end
+    -- set some initializations
+    self.CopterPositionSetToCenterOfMap()
+    self.setTargetToPosition(1, 0.5)
+
 
 	return self
 end

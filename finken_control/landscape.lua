@@ -3,6 +3,8 @@ local handle = simGetObjectHandle('Landscape')
 local imgIter = 1
 local step = 0
 local xSpeed, ySpeed, xScale, yScale, filePath
+local xOffset = 0
+local yOffset = 0
 local shapeHandle =-1
 
 function landscape.init(self)
@@ -33,12 +35,11 @@ function landscape.init(self)
 
         filePath=simGetStringSignal('_filePath')
 
-        simAddStatusbarMessage("Updated Data")
+        --simAddStatusbarMessage("Updated Data")
     end
 
     function self.RunSteps()
-
-        step = (step + 1)
+        self.UpdateData()
 
         --third parameter (options) set to 12, for repeat along u and v direction
         if (shapeHandle~=-1) then
@@ -46,7 +47,13 @@ function landscape.init(self)
         if (textureId~=-1) then
             handle=simGetObjectHandle("Landscape")
         if (handle~=-1) then
-                simSetShapeTexture(handle, textureId, 0, 12, {xScale/2,yScale/2}, {step*xSpeed/100, step*ySpeed/100, 0}, nil)
+                xOffset = xOffset + xSpeed/100
+                yOffset = yOffset + ySpeed/100
+
+                finkenPos = simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
+                finkenPos[3] = 0
+                simSetShapeTexture(handle, textureId, 0, 12, {xScale/2,yScale/2}, {xOffset, yOffset, 0}, nil)
+                simSetObjectPosition(handle, -1, finkenPos)
                 end
             end
         end
