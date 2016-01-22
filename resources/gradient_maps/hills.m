@@ -5,20 +5,21 @@
 % B: y gradient
 
 %square size in pixels
-size = 1024;
+size = 4096;
 
 %you can change these to create different types of landscape
-num_hills = 8;
+num_hills = 5*16;
 
-min_height = 100;
+min_height = 150;
 max_height = 255;
-min_sigma = 10000;
-max_sigma = 50000;
+min_sigma = 20000;
+max_sigma = 100000;
 
 %create some mountains
 [coords1, coords2] = meshgrid(1:size, 1:size);
 terrain = zeros(size);
 for i = 1:num_hills
+    i
     mu = [randi(size) randi(size)];
     height = randi([min_height max_height]);
     sigma = randi([min_sigma, max_sigma]);
@@ -28,22 +29,22 @@ for i = 1:num_hills
 end
 
 %visualization
-surf(terrain, 'EdgeColor', 'none');
-
-axis([1 size 1 size 0 max(max(terrain))*1.1]);
+% surf(terrain, 'EdgeColor', 'none');
+% 
+% axis([1 size 1 size 0 max(max(terrain))*1.1]);
 y_grad = diff(terrain);
 x_grad = diff(terrain')';
 
 %gradient visualization with arrows
-gradient_pos_x = 1:30:size;
-gradient_pos_x = repmat(gradient_pos_x, length(gradient_pos_x), 1);
-gradient_pos_y = gradient_pos_x' * -1;
-selected_gradients_x = x_grad(1:30:end, 1:30:end);
-selected_gradients_y = y_grad(1:30:end, 1:30:end) * -1;
-figure()
-quiver(gradient_pos_x, gradient_pos_y, selected_gradients_x, selected_gradients_y);
-xlim([1 size]);
-ylim([-size -1]);
+% gradient_pos_x = 1:30:size;
+% gradient_pos_x = repmat(gradient_pos_x, length(gradient_pos_x), 1);
+% gradient_pos_y = gradient_pos_x' * -1;
+% selected_gradients_x = x_grad(1:30:end, 1:30:end);
+% selected_gradients_y = y_grad(1:30:end, 1:30:end) * -1;
+% figure()
+% quiver(gradient_pos_x, gradient_pos_y, selected_gradients_x, selected_gradients_y);
+% xlim([1 size]);
+% ylim([-size -1]);
 
 %normalization for encoding in RGB
 total_min = min(min(x_grad(:)), min(y_grad(:)));

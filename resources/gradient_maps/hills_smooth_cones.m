@@ -11,7 +11,7 @@ size = 1024;
 min_height = 80;
 max_height = 150;
 min_steep = 0.3;
-max_steep = 1.4;
+max_steep = 0.6;
 max_overlap = round(max_height / min_steep)+10;
 
 %create some mountains
@@ -27,9 +27,17 @@ while ~all(all(terrain))
     mu = [randi(size) randi(size)]+max_overlap;
     height = randi([min_height max_height]);
     steepness = (max_steep - min_steep) * rand() + min_steep;
-    hillx = subplus(height - steepness*abs(mu(1) - coords1));
-    hilly = subplus(height - steepness*abs(mu(2) - coords2));
-    hill_t = (hillx .* hilly).^0.65;
+    hillx = subplus((steepness*abs(mu(1) - coords1) - height) * -1)*-1;
+    hilly = subplus((steepness*abs(mu(2) - coords2) - height) * -1)*-1;
+    hillx = (hillx - min(hillx(:)));
+    hillx = hillx / max(hillx(:));
+    hilly = (hilly - min(hilly(:)));
+    hilly = hilly / max(hilly(:));
+    hill_d = sqrt(hillx.^2 + hilly.^2);
+    hill_d_ = hill_d >= 1;
+    hill_d(hill_d_) = 1;
+    surf(hill_d);
+    hill_t = (1 - hill_d.^2).^2;
     laps_x = [hill_t((1:size) + max_overlap, max_overlap + size + 1:end), zeros(size, size - 2*max_overlap), hill_t((1:size) + max_overlap, 1:max_overlap)];
     laps_y = [hill_t(max_overlap + size + 1:end, (1:size) + max_overlap); zeros(size - 2*max_overlap, size); hill_t(1:max_overlap, (1:size) + max_overlap)];
     laps_ct = [hill_t(max_overlap + size + 1:end, max_overlap + size + 1:end), zeros(max_overlap, size - 2*max_overlap), hill_t(max_overlap + size + 1:end, 1:max_overlap)];
@@ -65,6 +73,6 @@ img(:, :, 1) = terrain;
 img(:, :, 2) = x_grad;
 img(:, :, 3) = y_grad;
 imshow(img);
-%imwrite(img, 'hills_smooth.png');
+%imwrite(img, 'large_hills_smooth.png');
 
 
