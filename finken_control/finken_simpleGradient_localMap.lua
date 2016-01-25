@@ -274,20 +274,18 @@ function finken.init(self)
             zTarget =  zGrad
 
             --keeping the Z value same as current target position, for hill.png gradient
-           -- simSetObjectPosition(targetObj, -1, {xTarget, yTarget,zTarget})
+            simSetObjectPosition(targetObj, -1, {xTarget, yTarget,zTarget})
 
-            -- simSetObjectPosition(targetObj, -1, {0, 0,0})
             -- --targetObject is retrieved in the simulation script.
             -- --remove if control via pitch/roll/yaw is wanted
 
-            -- self.setTarget(targetObj)
+            self.setTarget(targetObj)
+            
             -- Force copter to stay at center of map
-            if math.random() < 0.05 then
-                -- self.CopterPositionSetToCenterOfMap()
-            end
+            
             --self.CopterPositionSetToCenterOfMap()
             self.UpdateLocalMapWithColorSensorValue()
-            self.setTargetToPosition(1, 0.5)
+            -- self.setTargetToPosition(1, 0.5)
 	end
 
 	function self.customSense()
