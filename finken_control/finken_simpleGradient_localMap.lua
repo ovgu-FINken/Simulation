@@ -1,5 +1,5 @@
 require('math')
-require('localMap')
+-- require('localMap')
 local finken = {}
 
 local boxContainer, sizeOfContainer,sizeOfField, resolutionOfMap,localMapDataTable = {n=1000}, xRes, yRes,currentIndex, currentIndexCol
@@ -250,42 +250,42 @@ function finken.init(self)
 		local _, colors = simReadVisionSensor(simGetObjectHandle('Floor_camera'))
 		--simAddStatusbarMessage(colors[1]..' '..colors[2]..' '..colors[3]..' '..colors[4])
 
-            speedFactor = 1.5
-            xGrad = (colors[3] - 0.5) * speedFactor
+        speedFactor = 1.5
+        xGrad = (colors[3] - 0.5) * speedFactor
 
-            --multiply with -1 because image coordinates start in top right
-            yGrad = ((colors[4] - 0.5) * -1) * speedFactor
+        --multiply with -1 because image coordinates start in top right
+        yGrad = ((colors[4] - 0.5) * -1) * speedFactor
 
-            --height is represented by Red which shows hills
-            zGrad = ((colors[2] + 0.5)) * speedFactor
+        --height is represented by Red which shows hills
+        zGrad = ((colors[2] + 0.5)) * speedFactor
 
-            currentTargetPosition = simGetObjectPosition(targetObj, -1)
-            oldFinkenPosition = currentFinkenPosition or {0, 0, 0}
-            currentFinkenPosition = simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
+        currentTargetPosition = simGetObjectPosition(targetObj, -1)
+        oldFinkenPosition = currentFinkenPosition or {0, 0, 0}
+        currentFinkenPosition = simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
 
-            xSpeed = currentFinkenPosition[1] - oldFinkenPosition[1]
-            ySpeed = currentFinkenPosition[2] - oldFinkenPosition[2]
+        xSpeed = currentFinkenPosition[1] - oldFinkenPosition[1]
+        ySpeed = currentFinkenPosition[2] - oldFinkenPosition[2]
 
-            simSetFloatSignal('_xSpeed', -xSpeed*100)
-            simSetFloatSignal('_ySpeed', -ySpeed*100)
-            
-            xTarget = currentFinkenPosition[1] + xGrad
-            yTarget = currentFinkenPosition[2] + yGrad
-            zTarget =  zGrad
+        simSetFloatSignal('_xSpeed', -xSpeed*100)
+        simSetFloatSignal('_ySpeed', -ySpeed*100)
+        
+        xTarget = currentFinkenPosition[1] + xGrad
+        yTarget = currentFinkenPosition[2] + yGrad
+        zTarget =  zGrad
 
-            --keeping the Z value same as current target position, for hill.png gradient
-            simSetObjectPosition(targetObj, -1, {xTarget, yTarget,zTarget})
+        --keeping the Z value same as current target position, for hill.png gradient
+        simSetObjectPosition(targetObj, -1, {xTarget, yTarget,zTarget})
 
-            -- --targetObject is retrieved in the simulation script.
-            -- --remove if control via pitch/roll/yaw is wanted
+        -- --targetObject is retrieved in the simulation script.
+        -- --remove if control via pitch/roll/yaw is wanted
 
-            self.setTarget(targetObj)
-            
-            -- Force copter to stay at center of map
-            
-            --self.CopterPositionSetToCenterOfMap()
-            self.UpdateLocalMapWithColorSensorValue()
-            -- self.setTargetToPosition(1, 0.5)
+        self.setTarget(targetObj)
+        
+        -- Force copter to stay at center of map
+        
+        --self.CopterPositionSetToCenterOfMap()
+        self.UpdateLocalMapWithColorSensorValue()
+        -- self.setTargetToPosition(1, 0.5)
 	end
 
 	function self.customSense()

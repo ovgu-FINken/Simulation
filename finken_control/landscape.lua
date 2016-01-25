@@ -112,9 +112,11 @@ function landscape.init(self)
                         simSetShapeTexture(handle, textureId, 0, 12, {xScale/2,yScale/2}, {xOffset, yOffset, 0}, nil)
                         simSetObjectPosition(handle, -1, finkenPos)
                         --
-                        end
-                    end
+                else
+                    simAddStatusbarMessage('There appears to be an error, could not find the texture or corresponding Object.')
+                end
             end
+        end
     end
     simAddStatusbarMessage("Landscape self call")
 	return self
