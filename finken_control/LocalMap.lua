@@ -124,4 +124,24 @@ function LocalMap:updateMap( xDistance, yDistance, value, average, alpha, replac
     end
 end
 
+function LocalMap:getEightNeighbors()
+    -- returns the immediate neighbors of the central field and the center itself as a 3x3 array, and the neighbors only as a 1x8 array, starting at top left corner
+    mat = {}
+    arr = {}
+    for x = 1,3 do
+        mat[x] = {}
+        arr[x] = self.map[self.centerIdx+(x-2)][self.centerIdx-1]
+        for y = 1,3 do
+            mat[x][y] = self.map[self.centerIdx+(x-2)][self.centerIdx+(y-2)]
+        end
+    end
+    arr[4] = self.map[self.centerIdx+1][self.centerIdx]
+    arr[8] = self.map[self.centerIdx-1][self.centerIdx]
+    for i = 5,7 do
+        arr[i] = self.map[self.centerIdx-(i-6)][self.centerIdx+1]
+    end
+
+    return mat, arr
+end
+
 return LocalMap

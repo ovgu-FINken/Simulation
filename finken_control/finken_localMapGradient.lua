@@ -42,7 +42,7 @@ function finken.init(self)
         self.CreateAVirtualBoxAroundFinken()
         --Create a local map data table, initialise with {0,0}
         targetReached = true
-        targetEpsilon = 0.25
+        targetEpsilon = 0.05
         for k, v in pairs(LocalMap) do
             simAddStatusbarMessage(k)
         end
@@ -131,34 +131,36 @@ function finken.init(self)
             return
         end
 
-        currentTargetPosition = simGetObjectPosition(targetObj, -1)
-        if targetReached then -- and can calculate gradient
-            -- calculate target from gradient information
-            speedFactor = 1.5
-            xGrad = (colors[3] - 0.5) * speedFactor
-            --multiply with -1 because image coordinates start in top left
-            yGrad = ((colors[4] - 0.5) * -1) * speedFactor
+        speedFactor = 50
+        -- calculate actual gradient from encoded information, so that we can compare with our estimates
+        xGrad_true = (colors[3] - 0.5) * speedFactor
+        --     --multiply with -1 because image coordinates start in top left
+        yGrad_true = ((colors[4] - 0.5) * -1) * speedFactor
 
-            --height is represented by Red which shows hills
-            zGrad = ((colors[2] + 0.5)) * speedFactor
-
-            xTarget = currentFinkenPosition[1] + xGrad
-            yTarget = currentFinkenPosition[2] + yGrad
-            zTarget =  zGrad
-
-            --keeping the Z value same as current target position, for hill.png gradient
-            simSetObjectPosition(targetObj, -1, {xTarget, yTarget,zTarget})
-
-            self.setTarget(targetObj)
-            targetReached = false
-        -- else if cannot calculate gradient
-        --     explore area
+        if targetReached then
+            neighborMat, neighborArr = myMap:getEightNeighbors()
+            gradientCalc, mapValues = canCalculateGradient(neighborArr)
+            if gradientCalc ~= -1 then
+                xGrad, yGrad = calculateGradient(gradientCalc, mapValues, neighborMat[2][2])
+                xGrad = xGrad * speedFactor
+                yGrad = yGrad * speedFactor
+                xTarget = currentFinkenPosition[1] + xGrad
+                yTarget = currentFinkenPosition[2] + yGrad
+                self.setTargetToPosition(xTarget, yTarget)
+                targetReached = false
+                simAddStatusbarMessage('estimate: '..xGrad..' '..yGrad)
+                simAddStatusbarMessage('actual: '..xGrad_true..' '..yGrad_true )
+            else
+                self.setTargetToPosition(currentFinkenPosition[1] + math.random()*0.1, currentFinkenPosition[2] + math.random()*0.1)
+            end
         else
             self.setTarget(targetObj)
+            currentTargetPosition = simGetObjectPosition(targetObj, -1)
             -- manhattan distance to target
             distToTarget = math.abs(currentTargetPosition[1]-currentFinkenPosition[1]) + math.abs(currentTargetPosition[2]-currentFinkenPosition[2])
             if distToTarget < targetEpsilon then
                 targetReached = true
+                -- simAddStatusbarMessage('target reached')
             end
         end
         -- self.setTargetToPosition(0, 1)
@@ -179,6 +181,100 @@ end
 function finken.new()
 	finkenCore.init()
 	return finken.init(finkenCore)
+end
+
+-- there are 12 potential ways to calculate the gradient
+-- the returned number indicates, that the three values as indicated are available:
+-- O -->---1   2--->-- O 
+-- |       |   |       |
+-- |       |   |       |
+-- |       |   |       |
+-- 8---<--       ---<--3
+--           C
+-- 7--->--       --->--4
+-- |       |   |       |
+-- |       |   |       |
+-- |       |   |       |
+-- O --<---6   5---<-- O
+
+-- O                   O 
+--         |   |       
+--         |   |       
+--         |   |       
+--  --->--12   9--->--
+--           C
+--  ---<--11   10--<---
+--         |   |       
+--         |   |       
+--         |   |       
+-- O                   O
+function canCalculateGradient( arr )
+    for i = 1,8 do
+        if arr[i] ~= nil and arr[(i%8)+1] ~= nil then
+            return i, {arr[i], arr[(i%8)+1]}
+        end
+    end
+    for i = 9,12 do
+        if arr[(i-8)*2] ~= nil and arr[((i-8)*2)%8+2] ~= nil then
+            return i, {arr[(i-8)*2], arr[((i-8)*2)%8+2]}
+        end
+    end
+    return -1
+end
+
+function calculateGradient( version, mapValues, centerValue)
+    local xGrad = 0
+    local yGrad = 0
+    
+    
+    if version == 1 then
+        xGrad = mapValues[2] - mapValues[1]
+        yGrad = centerValue - mapValues[2]
+    elseif version == 2 then
+        xGrad = mapValues[1] - mapValues[2]
+        yGrad = centerValue - mapValues[1]
+    elseif version == 5 then
+        xGrad = mapValues[1] - mapValues[2]
+        yGrad = mapValues[2] - centerValue
+    elseif version == 6 then
+        xGrad = mapValues[2] - mapValues[1]
+        yGrad = mapValues[2] - centerValue
+    elseif version == 3 then
+        xGrad = mapValues[2] - centerValue
+        yGrad = mapValues[2] - mapValues[1]
+    elseif version == 4 then
+        xGrad = mapValues[1] - centerValue
+        yGrad = mapValues[2] - mapValues[1]
+    elseif version == 7 then
+        xGrad = centerValue - mapValues[2]
+        yGrad = mapValues[1] - mapValues[2]
+    elseif version == 8 then
+        xGrad = centerValue - mapValues[1]
+        yGrad = mapValues[1] - mapValues[2]
+    elseif version == 9 then
+        xGrad = mapValues[2] - centerValue
+        yGrad = centerValue - mapValues[1]
+    elseif version == 10 then
+        xGrad = mapValues[1] - centerValue
+        yGrad = mapValues[2] - centerValue
+    elseif version == 11 then
+        xGrad = centerValue - mapValues[2]
+        yGrad = mapValues[1] - centerValue
+    else
+        xGrad = centerValue - mapValues[1]
+        yGrad = centerValue - mapValues[2]
+    end
+
+    return xGrad, yGrad
+end
+
+function numInTable( num, tab )
+    for _, v in pairs(tab) do
+        if num == v then
+            return true
+        end
+    end
+    return false
 end
 
 return finken
