@@ -131,7 +131,7 @@ function finken.init(self)
             return
         end
 
-        speedFactor = 50
+        speedFactor = 0.2
         -- calculate actual gradient from encoded information, so that we can compare with our estimates
         xGrad_true = (colors[3] - 0.5) * speedFactor
         --     --multiply with -1 because image coordinates start in top left
@@ -142,16 +142,34 @@ function finken.init(self)
             gradientCalc, mapValues = canCalculateGradient(neighborArr)
             if gradientCalc ~= -1 then
                 xGrad, yGrad = calculateGradient(gradientCalc, mapValues, neighborMat[2][2])
-                xGrad = xGrad * speedFactor
-                yGrad = yGrad * speedFactor
-                xTarget = currentFinkenPosition[1] + xGrad
-                yTarget = currentFinkenPosition[2] + yGrad
-                self.setTargetToPosition(xTarget, yTarget)
-                targetReached = false
-                simAddStatusbarMessage('estimate: '..xGrad..' '..yGrad)
-                simAddStatusbarMessage('actual: '..xGrad_true..' '..yGrad_true )
+                if xGrad ~= 0 or yGrad ~= 0 then
+                    gradientLength = math.sqrt(xGrad*xGrad + yGrad*yGrad)
+                    xGrad = xGrad/gradientLength * speedFactor
+                    yGrad = yGrad/gradientLength * speedFactor
+                    xTarget = currentFinkenPosition[1] + xGrad
+                    yTarget = currentFinkenPosition[2] + yGrad
+                    self.setTargetToPosition(xTarget, yTarget)
+                    targetReached = false
+                    esti_ang = math.acos(xGrad/speedFactor) *180 /math.pi
+                    true_ang = math.acos(xGrad_true/math.sqrt(xGrad_true*xGrad_true + yGrad_true*yGrad_true))/math.pi *180
+                    -- simAddStatusbarMessage('length:'..gradientLength..' x '..xGrad)
+                    simAddStatusbarMessage('estimate: '..esti_ang)
+                    simAddStatusbarMessage('actual: '..true_ang )
+                end
             else
-                self.setTargetToPosition(currentFinkenPosition[1] + math.random()*0.1, currentFinkenPosition[2] + math.random()*0.1)
+                -- self.setTargetToPosition(currentFinkenPosition[1] + math.random()*0.1, currentFinkenPosition[2] + math.random()*0.1)
+                orthoPresent = getFilledDirection(neighborArr)
+                -- go in clockwise orthogonal because why not
+                speedFactor2 = 2
+                if orthoPresent == 2 then
+                    self.setTargetToPosition(currentFinkenPosition[1]+sizeOfField/100*speedFactor2, currentFinkenPosition[2])
+                elseif orthoPresent == 4 then
+                    self.setTargetToPosition(currentFinkenPosition[1], currentFinkenPosition[2]+sizeOfField/100*speedFactor2)
+                elseif orthoPresent == 6 then
+                    self.setTargetToPosition(currentFinkenPosition[1]-sizeOfField/100*speedFactor2, currentFinkenPosition[2])
+                else
+                    self.setTargetToPosition(currentFinkenPosition[1], currentFinkenPosition[2]-sizeOfField/100*speedFactor2)
+                end
             end
         else
             self.setTarget(targetObj)
@@ -164,7 +182,7 @@ function finken.init(self)
             end
         end
         -- self.setTargetToPosition(0, 1)
-        myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0.2, true)
+        myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0.01, true)
 	end
 
 	function self.customSense()
@@ -209,14 +227,15 @@ end
 --         |   |       
 -- O                   O
 function canCalculateGradient( arr )
-    for i = 1,8 do
-        if arr[i] ~= nil and arr[(i%8)+1] ~= nil then
-            return i, {arr[i], arr[(i%8)+1]}
-        end
-    end
+    -- prefer the ones where we actually calculate the gradient at the current position
     for i = 9,12 do
         if arr[(i-8)*2] ~= nil and arr[((i-8)*2)%8+2] ~= nil then
             return i, {arr[(i-8)*2], arr[((i-8)*2)%8+2]}
+        end
+    end
+    for i = 1,8 do
+        if arr[i] ~= nil and arr[(i%8)+1] ~= nil then
+            return i, {arr[i], arr[(i%8)+1]}
         end
     end
     return -1
@@ -268,13 +287,15 @@ function calculateGradient( version, mapValues, centerValue)
     return xGrad, yGrad
 end
 
-function numInTable( num, tab )
-    for _, v in pairs(tab) do
-        if num == v then
-            return true
+
+
+function getFilledDirection( arr )
+    for i = 2,8,2 do
+        if arr[i] ~= nil then
+            return i
         end
     end
-    return false
+    return 2
 end
 
 return finken

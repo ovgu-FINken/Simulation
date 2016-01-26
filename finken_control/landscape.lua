@@ -50,6 +50,8 @@ function landscape.init(self)
         simSetStringSignal('_filePath',filePath)
 
         self.UpdateData()
+        xOffset = math.random() * xScale
+        yOffset = math.random() * yScale
         self.CreateTexture()
         simAddStatusbarMessage("Data: "..xSpeed..ySpeed..xScale..yScale..filePath)
     end
