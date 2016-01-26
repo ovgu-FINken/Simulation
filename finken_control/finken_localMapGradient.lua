@@ -146,6 +146,8 @@ function finken.init(self)
                     gradientLength = math.sqrt(xGrad*xGrad + yGrad*yGrad)
                     xGrad = xGrad/gradientLength * speedFactor
                     yGrad = yGrad/gradientLength * speedFactor
+                    -- xGrad = xGrad * speedFactor
+                    -- yGrad = yGrad * speedFactor
                     xTarget = currentFinkenPosition[1] + xGrad
                     yTarget = currentFinkenPosition[2] + yGrad
                     self.setTargetToPosition(xTarget, yTarget)
@@ -183,6 +185,7 @@ function finken.init(self)
         end
         -- self.setTargetToPosition(0, 1)
         myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0.01, true)
+        -- myMap:updateMap(xSpeed, ySpeed, colors[2]*255+colors[3], true, 0.01, true)
 	end
 
 	function self.customSense()
@@ -250,20 +253,20 @@ function calculateGradient( version, mapValues, centerValue)
         xGrad = mapValues[2] - mapValues[1]
         yGrad = centerValue - mapValues[2]
     elseif version == 2 then
-        xGrad = mapValues[1] - mapValues[2]
-        yGrad = centerValue - mapValues[1]
-    elseif version == 5 then
-        xGrad = mapValues[1] - mapValues[2]
-        yGrad = mapValues[2] - centerValue
-    elseif version == 6 then
         xGrad = mapValues[2] - mapValues[1]
-        yGrad = mapValues[2] - centerValue
+        yGrad = centerValue - mapValues[1]
     elseif version == 3 then
         xGrad = mapValues[2] - centerValue
         yGrad = mapValues[2] - mapValues[1]
     elseif version == 4 then
         xGrad = mapValues[1] - centerValue
         yGrad = mapValues[2] - mapValues[1]
+    elseif version == 5 then
+        xGrad = mapValues[1] - mapValues[2]
+        yGrad = mapValues[2] - centerValue
+    elseif version == 6 then
+        xGrad = mapValues[1] - mapValues[2]
+        yGrad = mapValues[1] - centerValue
     elseif version == 7 then
         xGrad = centerValue - mapValues[2]
         yGrad = mapValues[1] - mapValues[2]
