@@ -36,6 +36,8 @@ The visualisation is done with a static shape of a rotor, that is connected to a
 The rotor model is attached to the FINken body via a force sensor which applies the forces and torques calculated in the physical rotor model to the FINken body. The rotor is represented by a cylindrical shape which resembles the area swept by a real rotor and uses a particle simulation to emulate the airstream. The handling of the particle simulation is done inside a lua child script attached to the rotor model. The script has several parameters for the particle simulation, \todo{add complete param list}.
 During simulation, the particle velocity is the parameter used to control the finken. This rotor model was already included in VREP as an example and was used without further modifications, the theory behind it is shortly explained in \ref{sec:theomodel}. Using the particle simulation has the advantage of providing a small random factor that causes noise and it simulates the airstream which will influence  other copters in multicopter scenarios.
 
+The provided model contained an error,  and missed the quadratic influence of the air stream velocity onto the force. This error was corrected and the torque was made dependant on the resulting force instead of only the airstream velocity. \todo{describe more in detail}
+
 
 
 \subsection{Flight controller in simulation}
