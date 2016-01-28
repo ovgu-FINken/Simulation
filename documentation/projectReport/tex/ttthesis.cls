@@ -23,7 +23,7 @@
 \usepackage[T1]{fontenc}      % T1-encoded fonts: auch Wörter mit Umlauten trennen
 \usepackage[utf8]{inputenc} % Eingabe nach ISO 8859-1
 \usepackage[final]{graphicx}  % um Graphiken einzubinden
-
+\usepackage{siunitx}		  % get SI units like \ang{45} for angles
 
 \usepackage{makeidx}          % wir wollen auch einen Index
 \usepackage{fancyhdr}         % definiere einfache Headings
