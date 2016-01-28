@@ -349,7 +349,37 @@ class TestBusNode implements PropertyChangeListener {
 \label{sec:xmlImplementation}
 
 The project \textit{JavaXmlSax} was created with the idea in mind to provide a small, modular API, that gives the developer an abstract building block for fast and easy development of custom XML file readers. It uses the \href{http://www.saxproject.org/}{SAX Java API} and extends it in order to provide a template for fast creation of specific XML readers.\\
-The basic class in this module is the \textit{AbsSaxXmlReader} ...
+The basic class in this module is the abstract class \textit{AbsSaxXmlReader}. It encapsulates all necessary classes needed for creating and handling of the XML parsing and defines abstract methods, which allow its subclasses to provide their specific parsing criteria. Thus the developer can concentrate on the actual parsing logic and don't have to take care of setting up and managing the necessary input streams and files.\
+
+To create a specific XML reader we have to create a class, which extends the \textit{AbsXmlReader} and provides implementation of the abstract methods \textit{onStartElementRead} and \textit{onStopElementRead}.These methods are called when the \textit{AbsSaxXmlReader} encounters start or end XML tag. It is the role of the subclass to fetch the necessary attributes and create an instance of the XML element, when \textit{onStartElementRead} is called and store the instance in some sort of collection, when the closing tag of the element is reached. \
+A XML parser reads the whole XML file and returns the instances of all elements. In some case not all elements may be required and to save time and memory it would be preferred to stop the parsing after an element of interest has been found. Since the original Java SAX API does not provide the possibility to stop the parser after it has been started, we have implemented an mechanism for this.
+In order to stop the parsing, the method \textit{stopParsing()} has to be invoked. The function throws a custom defined Exception - \textit{StopParsingException}, that is handled in such a way, that the method \textit{parseXmlDocument()} returns immediately.
+
+The code below shows an example of how the XML parser can be used.
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small, language=Java]
+
+MessageXmlReader msgReader;
+List<Message>    messages;
+
+msgReader = new MessageXmlReader("/home/paparazzi/conf/messages.xml");
+
+msgReader.parseXmlDocument();
+
+messages  = msgReader.getMessages();
+
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+\
+
+The \textit{MessageXmlReader} is a class that extends the \textit{AbsSaxXmlReader} and provides implementation of its abstract methods. It returns all instances of messages contained in the \textit{/home/paparazzi/conf/messages.xml} file. The need to retrieve all messages was discussed 
+in \ref{par:messageRetrieval}. \
+
+
 
 
 \subsection{JavaFinken}
