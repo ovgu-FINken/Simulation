@@ -142,10 +142,10 @@ function finkenCore.step()
 			local errorHeight = heightTarget - basePosition[3]
 			cumulThrottle = cumulThrottle + errorHeight
 			local l = simGetVelocity(handle_finken)
-			thrust = 5.843*throttleTarget/100 + pPthrottle * errorHeight + iPthrottle * cumulThrottle + dPthrottle * (errorHeight - prevEThrottle) + l[3] * (-2) 
+			thrust = 22.175*throttleTarget/100 + pPthrottle * errorHeight + iPthrottle * cumulThrottle + dPthrottle * (errorHeight - prevEThrottle) + l[3] * (-2) 
 			prevEThrottle = errorHeight
 		else
-			thrust = 5.843*throttleTarget/100
+			thrust = 22.175*throttleTarget/100
 		end
 		
 		local euler=simGetObjectOrientation(handle_FinkenBase,-1)
