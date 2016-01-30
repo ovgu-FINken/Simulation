@@ -58,6 +58,7 @@ function landscape.init(self)
 
     function self.CreateTexture()
         shapeHandle = simCreateTexture(filePath, 12, nil, {xScale, yScale}, nil, 0, nil)
+        simSetObjectPosition(shapeHandle, -1, {0,0,100}) -- away from arena
     end
 
     function self.UpdateData()

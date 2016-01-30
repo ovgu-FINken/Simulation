@@ -185,6 +185,7 @@ function finken.init(self)
         end
         -- self.setTargetToPosition(0, 1)
         myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0.01, true)
+        myMap:UpdateTextureLocalMapDataTableForUI()
         -- myMap:updateMap(xSpeed, ySpeed, colors[2]*255+colors[3], true, 0.01, true)
 	end
 

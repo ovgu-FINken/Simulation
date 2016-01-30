@@ -1,6 +1,10 @@
 local LocalMap = {}
 LocalMap.__index = LocalMap
 
+local LMTextureHandle =-1
+local LMTextureID = -1
+local LMResolution =-1
+
 function LocalMap.new( totalSize, fieldSize )
 	local self = setmetatable({}, LocalMap)
     self.totalSize = totalSize
@@ -14,6 +18,9 @@ function LocalMap.new( totalSize, fieldSize )
     end
     self.localOffset = {fieldSize/2, fieldSize/2}
     self.centerIdx = math.ceil(self.resolution/2)
+
+    --create a texture for local map UI once and update it later
+    self:CreateTextureLocalMapDataTable()
     return self
 end
 
@@ -79,6 +86,64 @@ function LocalMap:shiftLocalMap(xOffset, yOffset)
         end -- xloop
     end
 end
+
+
+-- Create Texture and WriteTexture for the UI of local map visualization
+
+function  LocalMap:CreateTextureLocalMapDataTable()
+    --Create an empty texture with some scale
+    -- THE EmptyTexture.png resolution should map the, local map size and field size to proper visualization.
+    --number shapeHandle,number textureId,table_2 resolution=simCreateTexture(string fileName,number options,table_2 planeSizes=nil,table_2 scalingUV=nil,table_2 xy_g=nil,number fixedResolution=0,table_2 resolution=nil)
+
+    LMTextureHandle, LMTextureID, LMResolution= simCreateTexture('/Users/asemahassan/Documents/Simulation/resources/gradient_maps/map_images/EmptyTexture16.png',3, {self.totalSize/50,self.totalSize/50}, {1,1}, nil, 0, {1,1})
+    simAddStatusbarMessage('R:'..LMResolution[1]..LMResolution[2])
+
+    --Add the texture as the child of finken
+    --number result=simSetObjectParent(number objectHandle,number parentObjectHandle,boolean keepInPlace)
+    finkenCurrentPos=simGetObjectPosition(simGetObjectHandle('SimFinken_base'),-1)
+    simSetObjectParent(LMTextureHandle,simGetObjectHandle('SimFinken_base'),false)
+    simSetObjectPosition(LMTextureHandle, -1, {finkenCurrentPos[1],finkenCurrentPos[2],finkenCurrentPos[3]+0.25})
+
+    LMTextureID = simGetShapeTextureId(LMTextureHandle)
+    simSetShapeTexture(simGetObjectHandle('LocalMapVisual'), -1, 0,3, {1, 1}, {0, 0, 0}, nil)
+
+end
+
+function  LocalMap:UpdateTextureLocalMapDataTableForUI()
+
+    --TODO: save the image in directory ?
+
+    local textureDataMap = ''
+    rgb = {}
+
+     --get resolution of actual texture that you're writing and then iterate over each field and fill it with black color'
+    for i=1, LMResolution[1]*LMResolution[2]* 3 do
+        rgb[i]= 0
+    end
+
+    for r=1,self.resolution do
+        for c=1,self.resolution do
+            --string data=simPackBytes(table byteNumbers,number startByteIndex=0,number bytecount=0)
+            rgb[((c-1)*self.resolution+r)*3-2] = self.map[r][c]
+
+            if(rgb[((c-1)*self.resolution+r)*3-2] == nil) then
+                rgb[((c-1)*self.resolution+r)*3-2] = 0
+            else
+               rgb[((c-1)*self.resolution+r)*3-2]= math.floor(self.map[r][c]*255)
+            end
+
+       end
+    end
+
+    textureDataMap = simPackBytes(rgb)
+
+	--simWriteTexture(number textureId,number options,string textureData,number posX=0,number posY=0,number sizeX=0,number sizeY=0)
+    simWriteTexture(LMTextureID,0,textureDataMap)
+    simSetShapeTexture(simGetObjectHandle('LocalMapVisual'), LMTextureID, 0, 3, {1, 1}, {0, 0, 0}, nil)
+
+end --function
+
+
 
 function LocalMap:updateMap( xDistance, yDistance, value, average, alpha, replace )
     -- xDistance, yDistance: Distance the copter has moved (in meters)
