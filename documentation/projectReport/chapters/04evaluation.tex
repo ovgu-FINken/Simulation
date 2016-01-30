@@ -51,7 +51,22 @@ Even the slightest change to the thrust when hovering resulted in a strong accel
 
 
 \section{Accuracy}
-\todo{angular movement response }
+\begin{figure}
+\begin{center}
+\includegraphics[width=\textwidth]{pitch}
+\caption{Euler angles of simulated FINken and real FINken}
+\label{pic:pitchResponse}
+\end{center}
+\end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[width=\textwidth]{roll}
+\caption{Euler angles of simulated FINken and real FINken}
+\label{pic:rollResponse}
+\end{center}
+\end{figure}
+\todo{explanation for roll spikes: vreps internal handling of shapes; maybe copter and "IMU" are not moved at the same time? }
+\todo{filter values? }
 \begin{itemize}
 \item{plot graph of euler angles}
 \item{highlight start of drift, other interesting elements?}
