@@ -379,7 +379,7 @@ messages  = msgReader.getMessages();
 The \textit{MessageXmlReader} is a class that extends the \textit{AbsSaxXmlReader} and provides implementation of its abstract methods. It returns all instances of messages contained in the \textit{/home/paparazzi/conf/messages.xml} file. The need to retrieve all messages was discussed 
 in \ref{par:messageRetrieval}. \
 
-
+The \textit{MessageXmlReader} gives us a significant flexibility. Since it returns a list containing the instances of all messages, we can choose a messages of interest and subscribe/unsubscribe even dynamically at run-time to them. This can be extremely useful if some quadrocopter needs some message just for a limited time, for example calibration messages 
 
 
 \subsection{JavaFinken}
