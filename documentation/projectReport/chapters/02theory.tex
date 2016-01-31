@@ -1,9 +1,6 @@
 \chapter{Theory}
     \label{chap:theo}
     
-    
-    
-    
     \section{FINken Modelling}
     \label{sec:theomodel}
     
@@ -320,156 +317,154 @@
     The implementation and architecture of the Java API is duscussed in details in \ref{sec:implementation}. The purpose of the Java application is to serve as a communicating bridge between the Paparazzi Ground Station and the V-REP. It detects all quadrocopters in the V-REP simulation, builds their virtual representations and feeds the models with real-time data.
     
 \subsection{Ivy Bus}
-    Ivy Bus is a simple protocol and a set of open-source (LGPL) libraries and programs that allows applications to broadcast information through text messages, with a subscription mechanism based on regular expressions. Ivy libraries are available in C, C++, Java, Python and Perl, on Windows and Unix boxes and on Macs. \\
-    The Paparazzi Ground Station uses the Ivy Bus as a means of communication between the different software components. Figure \ref{fig:paparazziGS} depicts the communication structure in the Paparazzi Ground Station, in which the different agents communicate with each other by sending messages on the Ivy-Bus.
+
+Ivy Bus is a simple protocol and a set of open-source (LGPL) libraries and programs that allows applications to broadcast information through text messages, with a subscription mechanism based on regular expressions. Ivy libraries are available in C, C++, Java, Python and Perl, on Windows and Unix boxes and on Macs. \\
+The Paparazzi Ground Station uses the Ivy Bus as a means of communication between the different software components. Figure \ref{fig:paparazziGS} depicts the communication structure in the Paparazzi Ground Station, in which the different agents communicate with each other by sending messages on the Ivy-Bus.
+
+\begin{figure}[h!]
+ \begin{center}
+  \includegraphics[scale=0.7]{paparazzi_gs.png}
+ \end{center}
+  \caption{Ivy-Bus in Paparazzi Ground Station\label{fig:paparazziGS}}
+\end{figure}
+
+The UAV (in blue) is streaming its telemetry data to the ground control station, which is received by the link. The \textbf{link} agent manages the ground-based radio modem and distributes the received messages to the other agents across the Ivy-Bus.
+
+The Ivy Bus is an example of a publisher-subscriber protocol, in which senders of messages, called publishers, does not  explicitly specify the address of the receiver, but just send the message on one, shared by all nodes, bus. The recipients, called subscribers, which are interested in the message will accept it and the others will ignore it. The publisher-subscriber is a many to many communication model in which publishers are loosely coupled to subscribers - there is no space, flow and time coupling. This means that the publishers does not have to know the addresses of the subscribers and even does not need to know of their existence. Each can operate normally without the other and can continue its thread of execution regardless if the subscriber has received the message or not. It also provides scalability, which means that we can “attach” our Java API to the Ivy-Bus and start publishing and listening for messages without changing any line of source code in the Paparazzi Ground Station software.
+
+In the publisher-subscriber model, subscribers typically receive only a subset of the total messages published. The process of selecting messages for reception and processing is called filtering. There are two common forms of filtering: topic-based and content-based.
+In a topic-based system, messages are published to "topics" or named logical channels. Subscribers in a topic-based system will receive all messages published to the topics to which they subscribe, and all subscribers to a topic will receive the same messages. The publisher is responsible for defining the classes of messages to which subscribers can subscribe.
+In a content-based system, messages are only delivered to a subscriber if the attributes or content of those messages match constraints defined by the subscriber. The subscriber is responsible for classifying the messages. Both filtering techniques are depicted in figures \ref{fig:pubsubsc_topic_based} and \ref{fig:pubsubsc_content_based}.
+
+The Ivy Bus is a content-based publisher-subscriber and uses regular expressions for the message filtering.
+
+\begin{figure}[!tbp]
+  \centering
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[scale=0.4]{pubsubsc_topic_based.png}
+    \caption{Topic-based publisher-subscriber \label{fig:pubsubsc_content_based}}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[scale=0.4]{pubsubsc_content_based.png}
+    \caption{Content-based publisher-subscriber \label{fig:pubsubsc_topic_based}}
+  \end{minipage}
+\end{figure}
+
+\subsection{Communication}
+\label{sec:communication}
+
+The communication between V-REP and the quadrocopters passes through the Java API, which serves as a bridge between them. In fact the Java API does not communicate directly with the quadrocopter, but connects to the Ivy-Bus in the Paparazzi GS and can thus subscribe to the messages caring the telemetry data and also publish messages which will eventually be send to the quadrocopter by the link agent. On the other hand it uses the V-REP Remote-API to exchange information and provide the V-REP quadrocopter models with the data retrieved from the Ivy-Bus messages.\\ 
+Since we wanted to create a modular and reusable API, that can be used for other mixed-reality scenarios, the Java API was created with the idea in mind to be distributed, modular and rely on many abstraction layers.\\ 
+The API development has followed the requirement-driven principles and its main tasks are described in the following paragraphs. The implementation of the described bellow requirements in described in \ref{sec:commImplementation} of \ref{sec:implementation}.
+
+\subsubsection{V-REP-Remote API specific requirements}
+\label{sec:requirementsVREP}
+
+Below is a description of the requirements for the Java API which is responsible for the connection and communication with the V-REP environment. Its implementation is described in \ref{sec:vrepImplementation} of \ref{sec:implementation}.
+
+\paragraph{Connection to V-REP through the Remote API}
+
+There should be implemented a mechanism that enables to establish connection to the V-REP simulation. The connection should be able to be disconnected and reconnected at any time. Since the Remote API is based on a socket connection, it should be possible to connect to a V-REP server, situated on another machine, by specifying its IP address and port number. This will allow to run the V-REP simulation on a remote, powerful computer and thus release the local computer from having to deal with the simulation and communication program at the same time.
+
+\paragraph{V-REP scene object and scene representation}\label{sceneobject}
+\todo{integrate into sectionsec:theoryVrep}
+The main elements in V-REP that are used for building a simulation scene are scene objects (objects in short). Objects are visible in the scene hierarchy and in the scene view. In the scene view, objects have a three dimensional representation. Some of the object types are: shape, joint, proximity sensors, vision sensors and others. The shape object is a rigid mesh that is composed of triangular faces. Our quadrocopters are represented as a shape objects in the V-REP scene. But is also contains four infrared sensors which are of type proximity sensor object. So the quadrocopter is represented as a complex scene object. 
+The V-REP scene objects have to be represented as individual classes in order to be able to easily distinguish them and work with their properties. The class representing the scene object must have as fields the properties describing the simulation object - liniar and angular velocity, position and orientation. The V-REP scene object hierarchy should also be implemented by using inheritance and composition object oriented techniques. \\
+The Java API should provide methods to retrieve all scene objects from the V-REP scene and store them in a virtual scene representation for later use.\\
+Since our quadrocopters are represented as shape objects and typically a V-REP scene contains at least 20 shape objects by default, there should be implemented a scanner that retrieves the quadrocopters from the scene. The scanner must be able to retrieve the virtual and real quadrocopters in a separate containers.
+
+\paragraph{Continuous data exchange between quadrocopter instances and V-REP}
+
+As mentioned at the beginning of \ref{sec:comm} we divide our quadrocopters in virtual and real representation. The virtual representations exist only in the V-REP scene, but they have to be visible in the paparazzi ground station as if they are real flying drones. It means that all the quadrocopter flying parameters have to be sent to the paparazzi ground station as messages. It becomes clear that the virtual quadrocopters have to be provided continuously with live data from the V-REP - linear/angular velocity, position and orientation. The real quadrocopter representations does not need to be provided with V-REP parameters, since its velocity, orientation and height are coming from the physical flying drone, but it has to be provided with data from its proximity sensor scene objects. The update with V-REP data should have a frequency equal to the simulation step used - 50 ms by default.\\
+The real quadrocopter representation get provided with velocity, orientation and height from the physical flying quadrocopter and this data have to be provided to the V-REP quadrocopter object in order to fly like the physical one. This is the inverse communication from quadrocopter to V-REP and is realized with V-REP signaling mechanism. The update is done each time a new message has been received by the physical drone and its frequency depends on how often the messages are streamed from the copter and the communication latency. In order to achieve a realistic flying manuevers and have minimum drift the update should not exceed 20 ms.
+
+\subsubsection{Ivy Bus specific requirements}
+\label{sec:requirementsIVYBus}
+\paragraph{Ivy Bus connection}
+Each participant which wants to exchange information on the Ivy-Bus is described as a singular and independent bus node. In our program the participants that want to exchange data on the Ivy-Bus are the virtual and real representations of the quadrocopters. There should be designed a class, which allows the connecting on the bus, publishing and subscribing to messages. The quadrocopter representations have to inherit from it or composite it and thus become independent bus nodes.
+
+\paragraph{Message retrieval and subscription}
+\label{par:messageRetrieval}
+
+All the messages that the paparazzi software uses are described in a xml file called \textit{messages.xml}, residing in the \textit{/paparazzi/conf/} directory. The following listing is an example of the messages file containing two messages.
+
+\begin{lstlisting}[basicstyle=\tiny, caption={Message Xml definition}, label={lst:MessageXml}, language = Xml]
+<msg_class name="telemetry">
+ <message name="AIRSPEED" id="54">
+    <field name="airspeed" type="float" unit="m/s"/>
+    <field name="airspeed_sp" type="float" unit="m/s"/>
+    <field name="airspeed_cnt" type="float" unit="m/s"/>
+    <field name="groundspeed_sp" type="float" unit="m/s"/>
+  </message>
+  
+  <message name="SONAR_ARRAY" id="216">
+	<field name="sonar_front" type="uint16" alt_unit="cm"/>
+	<field name="sonar_right" type="uint16" alt_unit="cm"/>
+	<field name="sonar_back" type="uint16" alt_unit="cm"/>
+	<field name="sonar_left" type="uint16" alt_unit="cm"/>
+  </message>
+	
+	  . . . . 
+	  
+</msg_class>
+\end{lstlisting}
+
+In order to make the subscription and publishing of messages on the bus easier, each message should be represented as a corresponding class containing the message fields with its type and units.
+
+There should be implemented a class, which reads the \textit{messages.xml} file and creates an instance of the message class for each message. \\
+Once the messages are retrieved, the Ivy-Bus node should be capable of subscribing and publishing of any of the retrieved messages. The subscription should by dynamic and allow to subscribe to a new messages even at runtime. \\
+Once a message has been received, the Ivy-Bus node should provide the instance of the received message and its fields should contain the actual sensor values.\\
+Since our mixed reality scenario can involve many flying quadrocopters, there will be published the same messages but from different copters. In this case the messages are identified with the drone id number.
+Another requirement is that the Ivy-Bus node have to subscribe just to the messages published from the copter that it was assigned to and not receive the same messages from the other copters.
+
+\subsubsection{Application specific requirements}
+\label{sec:requirementsApplication}
+
+\paragraph{Aircraft retrieval}
+\label{par:aircraftRetrieval}
+The paparazzi software stores important information about the quadrocopters in an Xml file stored in \textit{/paparazzi/conf/conf.xml}
+
+\begin{lstlisting}[basicstyle=\tiny, label={lst:AircraftXml}, language = Xml]
+  <conf>
+    <aircraft
+      name="Quad_Lia_ovgu_01"
+      ac_id="1"
+      airframe="airframes/ovgu/free_flight.xml"
+      radio="radios/spektrum.xml"
+      telemetry="telemetry/ovgu/tmp_christoph.xml"
+      gui_color="white"
+    />
     
-    \begin{figure}[h!]
-     \begin{center}
-      \includegraphics[scale=0.7]{paparazzi_gs.png}
-     \end{center}
-      \caption{Ivy-Bus in Paparazzi Ground Station\label{fig:paparazziGS}}
-    \end{figure}
-    
-    The UAV (in blue) is streaming its telemetry data to the ground control station, which is received by the link. The \textbf{link} agent manages the ground-based radio modem and distributes the received messages to the other agents across the Ivy-Bus.
-    
-    The Ivy Bus is an example of a publisher-subscriber protocol, in which senders of messages, called publishers, does not  explicitly specify the address of the receiver, but just send the message on one, shared by all nodes, bus. The recipients, called subscribers, which are interested in the message will accept it and the others will ignore it. The publisher-subscriber is a many to many communication model in which publishers are loosely coupled to subscribers - there is no space, flow and time coupling. This means that the publishers does not have to know the addresses of the subscribers and even does not need to know of their existence. Each can operate normally without the other and can continue its thread of execution regardless if the subscriber has received the message or not. It also provides scalability, which means that we can “attach” our Java API to the Ivy-Bus and start publishing and listening for messages without changing any line of source code in the Paparazzi Ground Station software.
-    
-    In the publisher-subscriber model, subscribers typically receive only a subset of the total messages published. The process of selecting messages for reception and processing is called filtering. There are two common forms of filtering: topic-based and content-based.
-    In a topic-based system, messages are published to "topics" or named logical channels. Subscribers in a topic-based system will receive all messages published to the topics to which they subscribe, and all subscribers to a topic will receive the same messages. The publisher is responsible for defining the classes of messages to which subscribers can subscribe.
-    In a content-based system, messages are only delivered to a subscriber if the attributes or content of those messages match constraints defined by the subscriber. The subscriber is responsible for classifying the messages. Both filtering techniques are depicted in figures \ref{fig:pubsubsc_topic_based} and \ref{fig:pubsubsc_content_based}.
-    
-    The Ivy Bus is a content-based publisher-subscriber and uses regular expressions for the message filtering.
-    
-    \begin{figure}[!tbp]
-      \centering
-      \begin{minipage}[b]{0.4\textwidth}
-        \includegraphics[scale=0.4]{pubsubsc_topic_based.png}
-        \caption{Topic-based publisher-subscriber \label{fig:pubsubsc_content_based}}
-      \end{minipage}
-      \hfill
-      \begin{minipage}[b]{0.4\textwidth}
-        \includegraphics[scale=0.4]{pubsubsc_content_based.png}
-        \caption{Content-based publisher-subscriber \label{fig:pubsubsc_topic_based}}
-      \end{minipage}
-    \end{figure}
-    
-    \subsection{Communication}
-    \label{sec:communication}
-    
-    The communication between V-REP and the quadrocopters passes through the Java API, which serves as a bridge between them. In fact the Java API does not communicate directly with the quadrocopter, but connects to the Ivy-Bus in the Paparazzi GS and can thus subscribe to the messages caring the telemetry data and also publish messages which will eventually be send to the quadrocopter by the link agent. On the other hand it uses the V-REP Remote-API to exchange information and provide the V-REP quadrocopter models with the data retrieved from the Ivy-Bus messages.\\ 
-    Since we wanted to create a modular and reusable API, that can be used for other mixed-reality scenarios, the Java API was created with the idea in mind to be distributed, modular and rely on many abstraction layers.\\ 
-    The API development has followed the requirement-driven principles and its main tasks are described in the following paragraphs. The implementation of the described bellow requirements in described in \ref{sec:commImplementation} of \ref{sec:implementation}.
-    
-    \subsubsection{V-REP-Remote API specific requirements}
-    \label{sec:requirementsVREP}
-    
-    Below is a description of the requirements for the Java API which is responsible for the connection and communication with the V-REP environment. Its implementation is described in \ref{sec:vrepImplementation} of \ref{sec:implementation}.
-    
-    \paragraph{Connection to V-REP through the Remote API}
-    
-    There should be implemented a mechanism that enables to establish connection to the V-REP simulation. The connection should be able to be disconnected and reconnected at any time. Since the Remote API is based on a socket connection, it should be possible to connect to a V-REP server, situated on another machine, by specifying its IP address and port number. This will allow to run the V-REP simulation on a remote, powerful computer and thus release the local computer from having to deal with the simulation and communication program at the same time.
-    
-    \paragraph{V-REP scene object and scene representation}\label{sceneobject}
-    \todo{integrate into sectionsec:theoryVrep}
-    The main elements in V-REP that are used for building a simulation scene are scene objects (objects in short). Objects are visible in the scene hierarchy and in the scene view. In the scene view, objects have a three dimensional representation. Some of the object types are: shape, joint, proximity sensors, vision sensors and others. The shape object is a rigid mesh that is composed of triangular faces. Our quadrocopters are represented as a shape objects in the V-REP scene. But is also contains four infrared sensors which are of type proximity sensor object. So the quadrocopter is represented as a complex scene object. 
-    The V-REP scene objects have to be represented as individual classes in order to be able to easily distinguish them and work with their properties. The class representing the scene object must have as fields the properties describing the simulation object - liniar and angular velocity, position and orientation. The V-REP scene object hierarchy should also be implemented by using inheritance and composition object oriented techniques. \\
-    The Java API should provide methods to retrieve all scene objects from the V-REP scene and store them in a virtual scene representation for later use.\\
-    Since our quadrocopters are represented as shape objects and typically a V-REP scene contains at least 20 shape objects by default, there should be implemented a scanner that retrieves the quadrocopters from the scene. The scanner must be able to retrieve the virtual and real quadrocopters in a separate containers.
-    
-    \paragraph{Continuous data exchange between quadrocopter instances and V-REP}
-    
-    As mentioned at the beginning of \ref{sec:comm} we divide our quadrocopters in virtual and real representation. The virtual representations exist only in the V-REP scene, but they have to be visible in the paparazzi ground station as if they are real flying drones. It means that all the quadrocopter flying parameters have to be sent to the paparazzi ground station as messages. It becomes clear that the virtual quadrocopters have to be provided continuously with live data from the V-REP - linear/angular velocity, position and orientation. The real quadrocopter representations does not need to be provided with V-REP parameters, since its velocity, orientation and height are coming from the physical flying drone, but it has to be provided with data from its proximity sensor scene objects. The update with V-REP data should have a frequency equal to the simulation step used - 50 ms by default.\\
-    The real quadrocopter representation get provided with velocity, orientation and height from the physical flying quadrocopter and this data have to be provided to the V-REP quadrocopter object in order to fly like the physical one. This is the inverse communication from quadrocopter to V-REP and is realized with V-REP signaling mechanism. The update is done each time a new message has been received by the physical drone and its frequency depends on how often the messages are streamed from the copter and the communication latency. In order to achieve a realistic flying manuevers and have minimum drift the update should not exceed 20 ms.
-    
-    \subsubsection{Ivy Bus specific requirements}
-    \label{sec:requirementsIVYBus}
-    \paragraph{Ivy Bus connection}
-    Each participant which wants to exchange information on the Ivy-Bus is described as a singular and independent bus node. In our program the participants that want to exchange data on the Ivy-Bus are the virtual and real representations of the quadrocopters. There should be designed a class, which allows the connecting on the bus, publishing and subscribing to messages. The quadrocopter representations have to inherit from it or composite it and thus become independent bus nodes.
-    
-    \paragraph{Message retrieval and subscription}
-    \label{par:messageRetrieval}
-    
-    All the messages that the paparazzi software uses are described in a xml file called \textit{messages.xml}, residing in the \textit{/paparazzi/conf/} directory. The following listing is an example of the messages file containing two messages.
-    
-    \begin{lstlisting}[basicstyle=\tiny, caption={Message Xml definition}, label={lst:MessageXml}, language = Xml]
-    <msg_class name="telemetry">
-     <message name="AIRSPEED" id="54">
-        <field name="airspeed" type="float" unit="m/s"/>
-        <field name="airspeed_sp" type="float" unit="m/s"/>
-        <field name="airspeed_cnt" type="float" unit="m/s"/>
-        <field name="groundspeed_sp" type="float" unit="m/s"/>
-      </message>
-      
-      <message name="SONAR_ARRAY" id="216">
-    	<field name="sonar_front" type="uint16" alt_unit="cm"/>
-    	<field name="sonar_right" type="uint16" alt_unit="cm"/>
-    	<field name="sonar_back" type="uint16" alt_unit="cm"/>
-    	<field name="sonar_left" type="uint16" alt_unit="cm"/>
-      </message>
-    	
-    	  . . . . 
-    	  
-    </msg_class>
-    \end{lstlisting}
-    
-    In order to make the subscription and publishing of messages on the bus easier, each message should be represented as a corresponding class containing the message fields with its type and units.
-    
-    There should be implemented a class, which reads the \textit{messages.xml} file and creates an instance of the message class for each message. \\
-    Once the messages are retrieved, the Ivy-Bus node should be capable of subscribing and publishing of any of the retrieved messages. The subscription should by dynamic and allow to subscribe to a new messages even at runtime. \\
-    Once a message has been received, the Ivy-Bus node should provide the instance of the received message and its fields should contain the actual sensor values.\\
-    Since our mixed reality scenario can involve many flying quadrocopters, there will be published the same messages but from different copters. In this case the messages are identified with the drone id number.
-    Another requirement is that the Ivy-Bus node have to subscribe just to the messages published from the copter that it was assigned to and not receive the same messages from the other copters.
-    
-    \subsubsection{Application specific requirements}
-    \label{sec:requirementsApplication}
-    
-    \paragraph{Aircraft retrieval}
-    The paparazzi software stores important information about the quadrocopters in an Xml file stored in \textit{/paparazzi/conf/conf.xml}
-    
-    \begin{lstlisting}[basicstyle=\tiny, label={lst:AircraftXml}, language = Xml]
-      <conf>
-        <aircraft
-          name="Quad_Lia_ovgu_01"
-          ac_id="1"
-          airframe="airframes/ovgu/free_flight.xml"
-          radio="radios/spektrum.xml"
-          telemetry="telemetry/ovgu/tmp_christoph.xml"
-          gui_color="white"
-        />
-        
-        <aircraft
-          name="Quad_Lia_ovgu_02"
-          ac_id="2"
-          airframe="airframes/ovgu/free_flight_flow.xml"
-          radio="radios/spektrum.xml"
-          telemetry="telemetry/ovgu/free_flight.xml"
-          gui_color="#b34c14805f44"
-        />
-      
-      </conf>
-    \end{lstlisting}
-    
-    Each quadrocopter is described as an aircraft, which has its name, id and other attributes. The parameter that is of specific importance for us is the id number, which is added to each message sent by the quadrocopter. The content based filtering of the messages is based on this aircraft id number. It is required to create a XML reader that parses the XML document and returns an instance of each aircraft class for each aircraft entry in the XML file.
-    
-    \paragraph{Virtual and Real Quadrocopters representation}
-    
-    The virtual and real quadrocopters have to be described by an appropriate class. \\
-    Since they contain shared data and properties, an abstract parent class representing the quadrocopter will be an appropriate solution. The abstract quadrocopter should contain the aircraft it belongs to, so the name of the quadrocopter will coincide with the name of the aircraft. 
-    Since the id of the aircraft it represents is also contained, the quadrocopter will be able to send and receive the messages that only belong to the quadrocopter it represents. \\
-    Since the abstract quadrocopter represents also a V-REP scene object itself, it should contain the \textit{Shape} object it represents. Thus the orientation, rotation and velocity of the quadrocopter will be retrieved directly from the \textit{Shape} object.\\
-    The proximity sensors of the quadrocopters should also be modelled and the abstract quadrocopter should provide methods to retrieve the distances measured by the sensors.\\
-    The abstract class should also contain an IvyBus node, discussed in \ref{sec:requirementsIVYBus}, which will allow to connect/disconnect the quadrocopter from the IvyBus and to send and subscribe to messages filtered by the aircraft id it has. \\
-    In general the abstract quadrocopter should be a highly polymorphic class, being a scene object, aircraft and IvyBus node at the same time. 
-    It should have an interface allowing to connect/disconnect from the IvyBus, return object name, position, orientation, velocities and proximity sensor values. \\
-    The real and virtual quadrocopters have to be subclasses of the virtual one, implementing their specific behaviour. 
-    For example the real quadrocopter subscribes to the messages coming from the quadrocopter it represents and on message arrival retrieves the relevant parameters like pitch, yaw, row, thrust and updates the V-REP model using the signals mechanism. 
-    The virtual quadrocopter on the other hand takes the parameters from the scene object, that is represents, packs them in messages with the id of the aircraft it represents and publishes them on the IvyBus.
-    
-    \paragraph{Real and Virtual Quadrocopter retrieval}
-    
-    There should be implemented an automatic mechanism, that retrieved the instances of the real and virtual quadrocopters. The retrieval should be based on the scene objects retrieval and the aircraft parsing introduces in the previous paragraph. \\
-    After getting a list of all V-REP scene shape objects and all Aircrafts, it could be iterated in both lists and checked if any of the shape object's names matches the name of an aircraft. If the names match there should be created an instance of virtual or real quadrocopter with the corresponding Shape and Aircraft objects.
-    The decision if it is a real quadrocopter or a virtual one depends on the object name. The real quadrocopters have the standard FINKEN drone names like \textit{\texttt{Quad\_Lia\_ovgu\_01}}, \textit{\texttt{Quad\_Lia\_ovgu\_02}} and the virtual have an arbitrary name with s prefix \textit{Virtual}.
+    <aircraft
+      name="Quad_Lia_ovgu_02"
+      ac_id="2"
+      airframe="airframes/ovgu/free_flight_flow.xml"
+      radio="radios/spektrum.xml"
+      telemetry="telemetry/ovgu/free_flight.xml"
+      gui_color="#b34c14805f44"
+    />
+  
+  </conf>
+\end{lstlisting}
+
+Each quadrocopter is described as an aircraft, which has its name, id and other attributes. The parameter that is of specific importance for us is the id number, which is added to each message sent by the quadrocopter. The content based filtering of the messages is based on this aircraft id number. It is required to create a XML reader that parses the XML document and returns an instance of each aircraft class for each aircraft entry in the XML file.
+
+\paragraph{Virtual and Real Quadrocopters representation}
+
+The virtual and real quadrocopters have to be described by an appropriate class. \\
+Since they contain shared data and properties, an abstract parent class representing the quadrocopter will be an appropriate solution. The abstract quadrocopter should contain the aircraft it belongs to, so the name of the quadrocopter will coincide with the name of the aircraft. Since the id of the aircraft it represents is also contained, the quadrocopter will be able to send and receive the messages that only belong to the quadrocopter it represents. \\
+Since the abstract quadrocopter represents also a V-REP scene object itself, it should contain the \textit{Shape} object it represents. Thus the orientation, rotation and velocity of the quadrocopter will be retrieved directly from the \textit{Shape} object.\\
+The proximity sensors of the quadrocopters should also be modelled and the abstract quadrocopter should provide methods to retrieve the distances measured by the sensors.\\
+The abstract class should also contain an IvyBus node, discussed in \ref{sec:requirementsIVYBus}, which will allow to connect/disconnect the quadrocopter from the IvyBus and to send and subscribe to messages filtered by the aircraft id it has. \\
+In general the abstract quadrocopter should be a highly polymorphic class, being a scene object, aircraft and IvyBus node at the same time. It should have an interface allowing to connect/disconnect from the IvyBus, return object name, position, orientation, velocities and proximity sensor values. \\
+The real and virtual quadrocopters have to be subclasses of the abstract one, implementing their specific behaviour. For example the real quadrocopter subscribes to the messages coming from the quadrocopter it represents and on message arrival retrieves the relevant parameters like pitch, yaw, row, thrust and updates the V-REP model using the signals mechanism. The virtual quadrocopter on the other hand takes the parameters from the scene object, that is represents, packs them in messages with the id of the aircraft it represents and publishes them on the IvyBus.
+
+\paragraph{Real and Virtual Quadrocopter retrieval}
+
+There should be implemented an automatic mechanism, that retrieved the instances of the real and virtual quadrocopters from the V-REP scene. The retrieval should be based on the scene objects retrieval and the aircraft parsing introduced in the previous paragraph. \\
+After getting a list of all V-REP scene shape objects and all Aircrafts, it could be iterated in both lists and checked if any of the shape object's names matches the name of an aircraft. If the names match there should be created an instance of virtual or real quadrocopter with the corresponding Shape and Aircraft object.
+The decision if it is a real quadrocopter or a virtual one depends on the object name. The real quadrocopters have the standard FINKEN drone names like \textit{\texttt{Quad\_Lia\_ovgu\_01}}, \textit{\texttt{Quad\_Lia\_ovgu\_02}} and the virtual have an arbitrary name with s prefix \textit{Virtual}.
 
 % example for definition    
 % \begin{definitionnonum}[Softwarearchitektur ]

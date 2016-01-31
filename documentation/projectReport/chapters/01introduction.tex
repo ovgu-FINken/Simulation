@@ -36,7 +36,8 @@ In contrast to existing approaches for the use of mixed reality simulation as in
 
   
 \section{Problem Statement}
-    The goal of the project is to provide a realistic, fast and scalable simulation of the FINken quadcopter.  Simulated quadcopters should be connectable to a real flying FINkens, receiving it's \gls{IMU} data and behave like it's physical counterpart. The communication should work in both ways, so that the real FINken can react to simulated objects.
+    The goal of the project is to provide a realistic, fast and scalable simulation of the FINken quadcopter.  Simulated quadcopters should be connectable to a real flying FINkens, receiving it's    
+    \iffalse \gls{IMU} \fi  data and behave like it's physical counterpart. The communication should work in both ways, so that the real FINken can react to simulated objects.
 
 The physical quadcopter simulation is going to be done in the robotic simulation framework V-REP\cite{vrep}. The FINken Copter run the Paparazzi\cite{pprz} software, which already includes a communication link between a PC and the copter. Paparazzi uses an Ivy-Bus as a communication link, so the missing part between the Ivy-Bus of Paparazzi and V-REP will be handled by a dedicated Java program.
 
