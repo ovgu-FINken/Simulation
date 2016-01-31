@@ -412,6 +412,11 @@ virtualDrones = droneScanner.retrieveVirtualDrones(this.scene, this.client);
 \end{tabular}
 \end{center}
 
+\subsection{JavaFinken App}
+\label{sec:javaFinkenApp}
+
+The final application, that has been created upon the described above modules: \hyperref[sec:vrepImplementation]{Java-VREP}, \hyperref[sec:ivyBusImplementation]{JavaIvyBus}, \hyperref[sec:xmlImplementation]{JavaXmlSax} and \hyperref[sec:javaFinkenImplementation]{JavaFinken}  is the \textit{JavaFinkenApp}.
+
 \section{Quadcopter}
 
 This project was about to build a mixed reality simulation around the FINken quadcopter, so there weren't made many changes to the quadcopter and the firmare itself. A few changes were needed, regarding calibration, the message link and the communication from VREP to the FINken. At the start of the project, the FINken II was used, but when the FINken III was released, it could directly be use as all our needed functions were compatible. In fact, the new telemetry link of the FINken III made a much faster communication possible, which helped some delay issues with V-REP as put in \ref{sec:messLink}
