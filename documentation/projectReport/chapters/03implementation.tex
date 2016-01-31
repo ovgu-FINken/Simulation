@@ -415,7 +415,75 @@ virtualDrones = droneScanner.retrieveVirtualDrones(this.scene, this.client);
 \subsection{JavaFinken App}
 \label{sec:javaFinkenApp}
 
-The final application, that has been created upon the described above modules: \hyperref[sec:vrepImplementation]{Java-VREP}, \hyperref[sec:ivyBusImplementation]{JavaIvyBus}, \hyperref[sec:xmlImplementation]{JavaXmlSax} and \hyperref[sec:javaFinkenImplementation]{JavaFinken}  is the \textit{JavaFinkenApp}.
+The final application, that has been created upon the described above modules: \hyperref[sec:vrepImplementation]{Java-VREP}, \hyperref[sec:ivyBusImplementation]{JavaIvyBus}, \hyperref[sec:xmlImplementation]{JavaXmlSax} and \hyperref[sec:javaFinkenImplementation]{JavaFinken}  is the \textit{JavaFinkenApp}. The application has a small Graphical User Interface (GUI), that allows to specify an IP address and Port number of the machine, where the V-REP simulation is executed and also the IP address of the PC, where the Paparazzi ground station is running. This allows to distribute the Simulation on different machines like shown in \ref{fig:communication}.
+By default the the local machine IP Address \textit{"1.0.0.127"} is chosen. 
+
+\begin{figure}[h!]
+ \begin{center}
+  \includegraphics[scale=0.7]{FinkenSimulationBridge_GUI_1.png}
+ \end{center}
+  \caption{FinkenSimulationBridge GUI connection panel\label{fig:finkenGUI1}}
+\end{figure}
+
+On the above figure \ref{fig:finkenGUI1} you can see the connection panel of the GUI, where the IP addresses have to be specified. The path to the \textit{conf.xml} file, which stores the aircrafts and the path to the telemetry file have to be specified. The GUI provides separate tab for this. See figure \ref{fig:finkenGUI2}.
+
+\begin{figure}[h!]
+ \begin{center}
+  \includegraphics[scale=0.7]{FinkenSimBridge_GUI_2.png}
+ \end{center}
+  \caption{FinkenSimulationBridge GUI telemetry panel\label{fig:finkenGUI2}}
+\end{figure}
+
+After choosing the path to the telemetry file, the telemetry modes are parsed from this file and are  provided for choosing in the combo-box of the \textit{Telemetry mode} sub-frame. Thus a custom telemetry mode, defining the messages that the quadrocopter needs to subscribe to, can be chosen. \\
+
+The \href{http://www.oracle.com/technetwork/articles/javase/index-142890.html}{Model-View-Controller} (MVC) design has been used to implement the \textit{JavaFinkenApp}. The main class is the \textit{FinkenSimBridge}, which contains the main method, where the program starts. The \textit{FinkenSimBridgeView} defines the View - GUI components. And the \textit{FinkenSimBridgeController} plays the controller role. \\
+
+In order to start the communication, the "connect" button has to be clicked. The V-REP simulation must had been started in order to establish a connection. The listing below shows the method, executed by pressing the connect button.
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small, language=Java]
+
+void onConnect(VrepServer _server) {
+
+  this.vrepClient.connectToServer(_server);
+
+  if (this.vrepScene.isLoaded()) {
+    return;
+  }
+
+  this.vrepScene.loadScene();
+
+  this._retrieveVirtualDrones();
+
+  this._retrieveRealDrones();
+
+  this._initVirtualDrones();
+  this._initRealDrones();
+
+}
+        
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+The function is triggered when the connect button is clicked and takes as input argument the \textit{VrepServer}, which contains the IP Address and port number of the V-REP simulation. Then the \textit{VrepScene} is loaded and all V-REP objects are retrieved. After the scene is loaded, the virtual and real drones are fetched from the scene and stored in a list structure.
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small, language=Java]
+
+  private void _initRealDrones() {
+    for (RealFinkenDrone drone : this.realDrones) {
+      drone.joinIvyBus();
+      drone.loadTelemetryData(new File(TELEMETRY_FILE));
+      drone.startPublish();
+    }
+  }
+
+\end{lstlisting}
+\end{tabular}
+\end{center}
 
 \section{Quadcopter}
 
