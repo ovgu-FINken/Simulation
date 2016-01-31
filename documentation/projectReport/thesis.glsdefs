@@ -1,3 +1,33 @@
+\ifglsentryexists{IMU}{}%
+{%
+\gls@defglossaryentry{IMU}%
+{%
+name={IMU},%
+sort={IMU},%
+type={acronym},%
+first={Inertial Measurement Unit (IMU)},%
+firstplural={Inertial Measurement Units(IMUs)},%
+text={IMU},%
+plural={IMUs},%
+description={Inertial Measurement Unit},%
+descriptionplural={Inertial Measurement Unit\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Inertial Measurement Unit},%
+longplural={Inertial Measurement Units},%
+short={IMU},%
+shortplural={IMUs},%
+counter={page},%
+parent={},%
+%
+}%
+}%
 \ifglsentryexists{SysML}{}%
 {%
 \gls@defglossaryentry{SysML}%

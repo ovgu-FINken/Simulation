@@ -467,7 +467,7 @@ void onConnect(VrepServer _server) {
 \end{tabular}
 \end{center}
 
-The function is triggered when the connect button is clicked and takes as input argument the \textit{VrepServer}, which contains the IP Address and port number of the V-REP simulation. Then the \textit{VrepScene} is loaded and all V-REP objects are retrieved. After the scene is loaded, the virtual and real drones are fetched from the scene and stored in a list structure.
+The function is triggered when the connect button is clicked and takes as input argument the \textit{VrepServer}, which contains the IP Address and port number of the V-REP simulation. Then the \textit{VrepScene} is loaded and all V-REP objects are retrieved. After the scene is loaded, the virtual and real drones are fetched from the scene and stored in a list structure. The function \textit{initRealDrones()} makes the final initialization of the drones.
 
 \begin{center}
 \begin{tabular}{c}
@@ -484,6 +484,10 @@ The function is triggered when the connect button is clicked and takes as input 
 \end{lstlisting}
 \end{tabular}
 \end{center}
+
+First the drone is attached to the Ivy-Bus, then the telemetry data is loaded and the drone subscribes to the messages that reside in the specified telemetry-mode of the telemetry XML file. Eventually the the real drones start to get updated with the proximity-sensor data and to publish it as a message on the Ivy-Bus. The function \textit{initVirtualDrones()} does the same initialization for all the virtual drones retrieved from the V-REP scene.
+
+
 
 \section{Quadcopter}
 
