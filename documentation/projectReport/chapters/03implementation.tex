@@ -491,16 +491,48 @@ First the drone is attached to the Ivy-Bus, then the telemetry data is loaded an
 
 \section{Quadcopter}
 
-This project was about to build a mixed reality simulation around the FINken quadcopter, so there weren't made many changes to the quadcopter and the firmare itself. A few changes were needed, regarding calibration, the message link and the communication from VREP to the FINken. At the start of the project, the FINken II was used, but when the FINken III was released, it could directly be use as all our needed functions were compatible. In fact, the new telemetry link of the FINken III made a much faster communication possible, which helped some delay issues with V-REP as put in \ref{sec:messLink}
+This project was about to build a mixed reality simulation around the FINken quadcopter, so there weren't made many changes to the quadcopter and the firmware itself. A few changes were needed, regarding calibration, the message link and the communication from VREP to the FINken. At the start of the project, the FINken II was used, but when the FINken III was released, it could directly be used as all our needed functions were compatible. In fact, the new telemetry link of the FINken III made a much faster communication possible, which helped some delay issues with V-REP as put in \ref{sec:messLink}
 \subsection{FINken calibration}
+
+The pitch, yaw and roll angles of the quadrocopter are measured from the Inertial-Measurement-Unit (IMU). The IMU sensor may not be mounted perfectly level to the airframe due to construction issues, imperfect soldering of the sensor on the board or just a factory defect. Such issues will cause a big offset in the sensor readings and will be critical for our simulation.
+This was the case with the very first experiments. The quadrocopter in the V-REP simulation started to drift heavily from the real one at the very beginning of the simulation. As a result the quadrocopter was flying away from the simulated arena, although the real one was flying stable in the physical arena.\\
+Fortunately, the Paparazzi project already provides a \href{http://wiki.paparazziuav.org/wiki/ImuCalibration}{IMU calibration software}, which we used to calibrate the accelerometer. The calibration is implemented as a python script, that has to be run on the log file containing the accelerometer calibration data. The calibration procedure was easy to perform and we had to follow the following procedure:
+
 \begin{itemize}
-\item{The FINken has no external positioning system like GPS, so internal sensor errors will heavily affect the FINkens flight movements}
-\item{During the first experiments, a strong drift could be obeserved}
-\item{this drift could be traced back to an offset of the IMU of the copter }
-\item{The paparazzi software already provides functionalities to calibrate sensor \todo{find and link website}}
-\item{After calibration, the aircraft still moves due to noise, but the strong drifts could be eliminated}
-\todo{add calibrated values?}
+\item{Flash the board with our firmware}
+\item{Switch to the "raw sensors" telemetry mode via GCS->Settings->Telemetry and launch "server" to record a log}
+\item{Move the IMU into different positions to record relevant measurements for each axis. }
+\item{Stop the server so it will write the log file}
+\item{Run the Python script on it to get the calibration coefficients and add them to the airframe file}
 \end{itemize}
+
+
+The listing below shows our airframe file - \textit{/paparazzi/conf/airframes/ovgu/6imucalib.xml} with the calibration coefficients resulting from the calibration.
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small, language=XML]
+
+ <section name="IMU" prefix="IMU_">
+   ...
+   <define name="ACCEL_X_NEUTRAL" value="10"/>
+   <define name="ACCEL_Y_NEUTRAL" value="12"/>
+   <define name="ACCEL_Z_NEUTRAL" value="34"/>
+   <define name="ACCEL_X_SENS" value="4.86375969658" integer="16"/>
+   <define name="ACCEL_Y_SENS" value="4.86831208708" integer="16"/>
+   <define name="ACCEL_Z_SENS" value="4.90201085317" integer="16"/>
+   ...
+ </section>
+        
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+When a new firmware is flashed to the quadrocopter, the paparazzi software also flashes the calibration coefficients from the airframe file so that IMU gets calibrated. \\
+We observed a big improvements in the simulation performance after calibrating the IMU. Although the quadrocopter was still drifting to some extend, the strong drifts have disappeared. \\
+The calibration software also provides calibration for the gyroscope sensor. Although the drift in the gyro sensor is also very critical for the simulation performance, we did not perform any calibration on the gyroscope. The reason was, that the calibration of the gyroscope is very sophisticated and required a moving platform for each sensor axis, which was not present at the time of the project. However we believe, that calibration of the gyroscope will improve the results to a significant extend and should be performed in the future work of the project.
+
+
 \subsection{FINken message link}
 \label{sec:messLink}
 \begin{itemize}
