@@ -6,8 +6,8 @@ steeringBehaviorCore = require('steeringBehaviorCore')
 
 local COS_45 = 0.707--0,70710678
 local MAX_TARGET_DISTANCE = 7.5
-local MAX_DANGER = 0.6--0.2
-local MIN_SAME_DIRECTION = 0.2--0.4
+local MAX_DANGER = 0.8--0.2
+local MIN_SAME_DIRECTION = 0.4--0.4
 
 function contextSteeringBehavior.init(self)
 	
@@ -17,10 +17,15 @@ function contextSteeringBehavior.init(self)
 		local dangerMap = {0,0,0,0,0,0,0,0}
 		local sameDirectionMap = {1,1,1,1,1,1,1,1}
 		
+		local ui_handle = simGetUIHandle('UI_Context_Maps')
+		
 		-- calculate danger values for each direction
 		for i=1,8,1 do
 			local danger = 1 - contextData.sensorDistances[i]/7.5
-			if danger > dangerMap[i] then dangerMap[i] = danger end
+			if danger >= dangerMap[i] then 
+				dangerMap[i] = danger 
+				simSetUIButtonColor(ui_handle, 14+i, {1-danger, 1-danger, 1-danger})
+			end
 		end
 		
 		-- calculate interest values for each direction
@@ -67,7 +72,10 @@ function contextSteeringBehavior.init(self)
 				--if angleCos > 0 then -- vectors are pointing in same direction
 					-- map the cos value in the range of [0 - 1] and write it into the interestMap
 					angleCos = (angleCos + 1) / 2
-					if angleCos > interestMap[i] then interestMap[i] = angleCos end
+					if angleCos > interestMap[i] then
+						interestMap[i] = angleCos
+						simSetUIButtonColor(ui_handle, 6+i, {angleCos, angleCos, angleCos})
+					end
 				--end
 				-- simAddStatusbarMessage(string.format('cos:   %.2f',angleCos))
 			end
@@ -109,7 +117,8 @@ function contextSteeringBehavior.init(self)
 											-- vectorToTarget[1], vectorToTarget[2], vectorToTarget[3]))
 				
 				angleCos = getCosBetweenVectors(lastDirectionTransfomed, direction)
-				sameDirectionMap[i] = angleCos 
+				sameDirectionMap[i] = angleCos
+				simSetUIButtonColor(ui_handle, 22+i, {angleCos, angleCos, angleCos})
 				-- simAddStatusbarMessage(string.format('cos:   %.2f',angleCos))
 			end
 		end
@@ -117,6 +126,11 @@ function contextSteeringBehavior.init(self)
 		-- choose a direction with high interest an smal danger values
 		-- sort interest values in decreasing order
 		local sortedKeys = getKeysSortedByValue(interestMap, function(a, b) return a > b end)
+		
+		-- clear context UI-Chosen_Direction
+		for i=1,8,1 do
+			simSetUIButtonColor(ui_handle, 30+i, {1, 1, 1})
+		end
 		
 		for _, key in ipairs(sortedKeys) do
 			-- set the right steering direction
@@ -128,27 +142,35 @@ function contextSteeringBehavior.init(self)
 					if(key == 1) then -- front
 						steering = {0, -1, 0} --steering = {-1, 0, 0}
 						simAddStatusbarMessage('d1')
+						simSetUIButtonColor(ui_handle, 31, {0, 0.75, 0})
 					elseif(key == 2) then -- left
 						steering = {0, 0, -1} --steering = {0, -1, 0}
 						simAddStatusbarMessage('d2')
+						simSetUIButtonColor(ui_handle, 32, {0, 0.75, 0})
 					elseif(key == 3) then -- back
 						steering = {0, 1, 0} --steering = {1, 0, 0}
 						simAddStatusbarMessage('d3')
+						simSetUIButtonColor(ui_handle, 33, {0, 0.75, 0})
 					elseif(key == 4) then -- right
 						steering = {0, 0, 1} --steering = {0, 1, 0}
 						simAddStatusbarMessage('d4')
+						simSetUIButtonColor(ui_handle, 34, {0, 0.75, 0})
 					elseif(key == 5) then -- front_left
 						steering = {0, -COS_45, -COS_45} --steering = {-COS_45, -COS_45, 0}
 						simAddStatusbarMessage('d5')
+						simSetUIButtonColor(ui_handle, 35, {0, 0.75, 0})
 					elseif(key == 6) then -- front_right
 						steering = {0, -COS_45, COS_45} --steering = {-COS_45, COS_45, 0}
 						simAddStatusbarMessage('d6')
+						simSetUIButtonColor(ui_handle, 36, {0, 0.75, 0})
 					elseif(key == 7) then -- back_left
 						steering = {0, COS_45, -COS_45} --steering = {COS_45, -COS_45, 0}
 						simAddStatusbarMessage('d7')
+						simSetUIButtonColor(ui_handle, 37, {0, 0.75, 0})
 					elseif(key == 8) then -- back_right
 						steering = {0, COS_45, COS_45} --steering = {COS_45, COS_45, 0}
 						simAddStatusbarMessage('d8')
+						simSetUIButtonColor(ui_handle, 38, {0, 0.75, 0})
 					end
 				end
 			end

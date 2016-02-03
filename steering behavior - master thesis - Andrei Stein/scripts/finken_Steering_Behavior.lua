@@ -114,15 +114,17 @@ function finken.init(self)
 			if sensorDistances[i] then
 				context.sensorDistances[i]= sensorDistances[i]
 			end
-			if not sensorDistances[i] then
-				sensorDistances[i] = 7.5
+			
+			-- Filter sensor data if they are wrong
+			--if not sensorDistances[i] then
+			--	sensorDistances[i] = 7.5
 				
-				sensorFilter[i].count  = sensorFilter[i].count + 1
-				if sensorFilter[i].count > 20 then 
-					context.sensorDistances[i] = sensorDistances[i]
-					sensorFilter[i].count = 0
-				end
-			end
+			--	sensorFilter[i].count  = sensorFilter[i].count + 1
+			--	if sensorFilter[i].count > 20 then 
+			--		context.sensorDistances[i] = sensorDistances[i]
+			--		sensorFilter[i].count = 0
+			--	end
+			--end
 		end
 		
 		--context.sensorDistances = sensorDistances
