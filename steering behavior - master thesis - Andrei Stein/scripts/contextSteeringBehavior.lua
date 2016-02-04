@@ -11,6 +11,13 @@ local MIN_SAME_DIRECTION = 0.4--0.4
 
 function contextSteeringBehavior.init(self)
 	
+	-- reset context-ui at startup
+	local ui_handle2 = simGetUIHandle('UI_Context_Maps')
+	simSetUISlider(ui_handle2, 41, MAX_DANGER*1000)
+	simSetUIButtonLabel(ui_handle2, 43, MAX_DANGER)
+	simSetUISlider(ui_handle2, 42, MIN_SAME_DIRECTION*1000)
+	simSetUIButtonLabel(ui_handle2, 44, MIN_SAME_DIRECTION)
+	
 	function self.getSteering(contextData)
 		local steering = nil
 		local interestMap = {0,0,0,0,0,0,0,0}
@@ -221,7 +228,20 @@ function contextSteeringBehavior.init(self)
 		 simAddStatusbarMessage(string.format('steering x: %.2f	     y: %.2f	z: %.2f',
 											 steering[1], steering[2], steering[3]))
 		steering = TransformToWorldSystem(contextData.objectHandle, steering)
+		
+		-- update character values
+		self.updateCharacter()
+		
 		return subtractVectors(steering, contextData.currentPosition)--steering
+	end
+	
+	-- chages the character properties with the ui-sliders
+	function self.updateCharacter()
+		local ui_handle = simGetUIHandle('UI_Context_Maps')
+		MAX_DANGER = simGetUISlider(ui_handle, 41)/1000
+		simSetUIButtonLabel(ui_handle, 43, MAX_DANGER)
+		MIN_SAME_DIRECTION = simGetUISlider(ui_handle, 42)/1000
+		simSetUIButtonLabel(ui_handle, 44, MIN_SAME_DIRECTION)
 	end
 	
 	return self
