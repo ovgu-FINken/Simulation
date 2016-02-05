@@ -111,7 +111,7 @@ function landscape.init(self)
 
                         finkenPos = simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
                         finkenPos[3] = 0
-                        simSetShapeTexture(handle, textureId, 0, 12, {xScale/2,yScale/2}, {xOffset, yOffset, 0}, nil)
+                        simSetShapeTexture(handle, textureId, 0, 13, {xScale/2,yScale/2}, {xOffset, yOffset, 0}, nil)
                         simSetObjectPosition(handle, -1, finkenPos)
                         --
                 else

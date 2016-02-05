@@ -131,17 +131,17 @@ function finken.init(self)
             return
         end
 
-        speedFactor = 0.2
+        speedFactor = 0.25
         -- calculate actual gradient from encoded information, so that we can compare with our estimates
         xGrad_true = (colors[3] - 0.5) * speedFactor
         --     --multiply with -1 because image coordinates start in top left
         yGrad_true = ((colors[4] - 0.5) * -1) * speedFactor
 
         if targetReached then
-            neighborMat, neighborArr = myMap:getEightNeighbors()
-            gradientCalc, mapValues = canCalculateGradient(neighborArr)
+            neighborMat, neighborArr, matOffset, arrOffset = myMap:getEightNeighbors()
+            gradientCalc, mapValues, localOffsets = canCalculateGradient(neighborArr, arrOffset)
             if gradientCalc ~= -1 then
-                xGrad, yGrad = calculateGradient(gradientCalc, mapValues, neighborMat[2][2])
+                xGrad, yGrad = calculateGradient(gradientCalc, mapValues, neighborMat[2][2], localOffsets, matOffset[2][2])
                 if xGrad ~= 0 or yGrad ~= 0 then
                     gradientLength = math.sqrt(xGrad*xGrad + yGrad*yGrad)
                     xGrad = xGrad/gradientLength * speedFactor
@@ -184,8 +184,8 @@ function finken.init(self)
             end
         end
         -- self.setTargetToPosition(0, 1)
-        myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0.01, true)
-        -- myMap:updateMap(xSpeed, ySpeed, colors[2]*255+colors[3], true, 0.01, true)
+        myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0, true)
+        -- myMap:updateMap(xSpeed, ySpeed, colors[2]*255+colors[3], true, 0.2, true)
 	end
 
 	function self.customSense()
@@ -229,68 +229,89 @@ end
 --         |   |       
 --         |   |       
 -- O                   O
-function canCalculateGradient( arr )
+function canCalculateGradient( arr, offset )
     -- prefer the ones where we actually calculate the gradient at the current position
     for i = 9,12 do
         if arr[(i-8)*2] ~= nil and arr[((i-8)*2)%8+2] ~= nil then
-            return i, {arr[(i-8)*2], arr[((i-8)*2)%8+2]}
+            return i, {arr[(i-8)*2], arr[((i-8)*2)%8+2]}, {offset[(i-8)*2], offset[((i-8)*2)%8+2]}
         end
     end
     for i = 1,8 do
         if arr[i] ~= nil and arr[(i%8)+1] ~= nil then
-            return i, {arr[i], arr[(i%8)+1]}
+            return i, {arr[i], arr[(i%8)+1]}, {offset[i], offset[(i%8)+1]}
         end
     end
     return -1
 end
 
-function calculateGradient( version, mapValues, centerValue)
+function calculateGradient( version, mapValues, centerValue, mapOffsets, centerOffset)
     local xGrad = 0
     local yGrad = 0
-    
-    
     if version == 1 then
         xGrad = mapValues[2] - mapValues[1]
+        xScale = sizeOfField + mapOffsets[2][1] - mapOffsets[1][1]
         yGrad = centerValue - mapValues[2]
+        yScale = sizeOfField + centerOffset[2] - mapOffsets[2][2]
     elseif version == 2 then
         xGrad = mapValues[2] - mapValues[1]
+        xScale = sizeOfField + mapOffsets[2][1] - mapOffsets[1][1]
         yGrad = centerValue - mapValues[1]
+        yScale = sizeOfField + centerOffset[2] - mapOffsets[1][2]
     elseif version == 3 then
         xGrad = mapValues[2] - centerValue
+        xScale = sizeOfField + mapOffsets[2][1] - centerOffset[1]
         yGrad = mapValues[2] - mapValues[1]
+        yScale = sizeOfField + mapOffsets[2][2] - mapOffsets[1][2]
     elseif version == 4 then
         xGrad = mapValues[1] - centerValue
+        xScale = sizeOfField + mapOffsets[1][1] - centerOffset[1]
         yGrad = mapValues[2] - mapValues[1]
+        yScale = sizeOfField + mapOffsets[2][2] - mapOffsets[1][2]
     elseif version == 5 then
         xGrad = mapValues[1] - mapValues[2]
+        xScale = sizeOfField + mapOffsets[1][1] - mapOffsets[2][1]
         yGrad = mapValues[2] - centerValue
+        yScale = sizeOfField + mapOffsets[2][2] - centerOffset[2]
     elseif version == 6 then
         xGrad = mapValues[1] - mapValues[2]
+        xScale = sizeOfField + mapOffsets[1][1] - mapOffsets[2][1]
         yGrad = mapValues[1] - centerValue
+        yScale = sizeOfField + mapOffsets[1][2] - centerOffset[2]
     elseif version == 7 then
         xGrad = centerValue - mapValues[2]
+        xScale = sizeOfField + centerOffset[1] - mapOffsets[2][1]
         yGrad = mapValues[1] - mapValues[2]
+        yScale = sizeOfField + mapOffsets[1][2] - mapOffsets[2][2]
     elseif version == 8 then
         xGrad = centerValue - mapValues[1]
+        xScale = sizeOfField + centerOffset[1] - mapOffsets[1][1]
         yGrad = mapValues[1] - mapValues[2]
+        yScale = sizeOfField + mapOffsets[1][2] - mapOffsets[2][2]
     elseif version == 9 then
         xGrad = mapValues[2] - centerValue
+        xScale = sizeOfField + mapOffsets[2][1] - centerOffset[1]
         yGrad = centerValue - mapValues[1]
+        yScale = sizeOfField + centerOffset[2] - mapOffsets[1][2]
     elseif version == 10 then
         xGrad = mapValues[1] - centerValue
+        xScale = sizeOfField + mapOffsets[1][1] - centerOffset[1]
         yGrad = mapValues[2] - centerValue
+        yScale = sizeOfField + mapOffsets[2][2] - centerOffset[2]
     elseif version == 11 then
         xGrad = centerValue - mapValues[2]
+        xScale = sizeOfField + centerOffset[1] - mapOffsets[2][1]
         yGrad = mapValues[1] - centerValue
+        yScale = sizeOfField + mapOffsets[1][2] - centerOffset[2]
     else
         xGrad = centerValue - mapValues[1]
+        xScale = sizeOfField + centerOffset[1] - mapOffsets[1][1]
         yGrad = centerValue - mapValues[2]
+        yScale = sizeOfField + centerOffset[2] - mapOffsets[2][2]
     end
-
+    xGrad = xGrad * xScale
+    yGrad = yGrad * yScale
     return xGrad, yGrad
 end
-
-
 
 function getFilledDirection( arr )
     for i = 2,8,2 do

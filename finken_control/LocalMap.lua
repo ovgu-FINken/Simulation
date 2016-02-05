@@ -1,6 +1,6 @@
 local LocalMap = {}
 LocalMap.__index = LocalMap
-
+-- possible TODO: include the local offsets, so that it is possible to calculate gradients etc. more accurately
 function LocalMap.new( totalSize, fieldSize )
 	local self = setmetatable({}, LocalMap)
     self.totalSize = totalSize
@@ -8,9 +8,11 @@ function LocalMap.new( totalSize, fieldSize )
     self.resolution = math.floor(totalSize/fieldSize) -- The local map will have resolution*resolution fields
     simAddStatusbarMessage('Map resolution: '..self.resolution..'x'..self.resolution)
     self.map = {}
+    self.offsets = {}
     -- initialize map data with -1, -1
     for x = 1,self.resolution do
         self.map[x] = {}
+        self.offsets[x] = {}
     end
     self.localOffset = {fieldSize/2, fieldSize/2}
     self.centerIdx = math.ceil(self.resolution/2)
@@ -20,6 +22,7 @@ end
 -- limited functionality, when the elements in the map are tables
 function LocalMap:printData()
     simAddStatusbarMessage('PRINTING MAP DATA')
+    simAddStatusbarMessage('offset: '..self.localOffset[1]..' '..self.localOffset[2])
     for x = 1,self.resolution do
         for y = 1,self.resolution do
             if self.map[x][y] ~= nil then
@@ -36,8 +39,10 @@ function LocalMap:shiftLocalMap(xOffset, yOffset)
             for y = 1,self.resolution do
                 if(x + xOffset > self.resolution ) then -- check if it would be trying to copy values from outside map --> create new empty column
                         self.map[x][y] = nil
+                        self.offsets[x][y] = nil
                 else
                     self.map[x][y] = self.map[x + xOffset][y]
+                    self.offsets[x][y] = self.offsets[x + xOffset][y]
                 end
             end -- yloop
         end -- xloop
@@ -48,8 +53,10 @@ function LocalMap:shiftLocalMap(xOffset, yOffset)
             for y = 1,self.resolution do
                 if(x + xOffset < 1) then
                         self.map[x][y] = nil
+                        self.offsets[x][y] = nil
                 else
                     self.map[x][y] = self.map[x + xOffset][y]
+                    self.offsets[x][y] = self.offsets[x + xOffset][y]
                 end
             end -- yloop
         end -- xloop
@@ -60,8 +67,10 @@ function LocalMap:shiftLocalMap(xOffset, yOffset)
             for y = 1,self.resolution do
                 if(y + yOffset > self.resolution ) then
                         self.map[x][y] = nil
+                        self.offsets[x][y] = nil
                 else
                     self.map[x][y] = self.map[x][y+yOffset]
+                    self.offsets[x][y] = self.offsets[x][y+yOffset]
                 end
             end -- yloop
         end -- xloop
@@ -72,8 +81,10 @@ function LocalMap:shiftLocalMap(xOffset, yOffset)
             for y = self.resolution, 1, -1 do
                 if(y + yOffset < 1) then
                         self.map[x][y] = nil
+                        self.offsets[x][y] = nil
                 else
                     self.map[x][y] = self.map[x][y+yOffset]
+                    self.offsets[x][y] = self.offsets[x][y+yOffset]
                 end
             end -- yloop
         end -- xloop
@@ -104,19 +115,23 @@ function LocalMap:updateMap( xDistance, yDistance, value, average, alpha, replac
     shift[2] = math.floor(shiftOffset[2]/self.fieldSize)
     -- simAddStatusbarMessage('x y shift: '..shift[1]..' '..shift[2])
 
-    self.localOffset[1] = shiftOffset[1] - shift[1]
-    self.localOffset[2] = shiftOffset[2] - shift[2]
+    self.localOffset[1] = shiftOffset[1] - shift[1]*self.fieldSize
+    self.localOffset[2] = shiftOffset[2] - shift[2]*self.fieldSize
     
     self:shiftLocalMap(shift[1], shift[2])
 
-    if self.map[self.centerIdx][self.centerIdx]==nil or replace or  not average then
+    if self.map[self.centerIdx][self.centerIdx]==nil or replace or not average then
         self.map[self.centerIdx][self.centerIdx]=value
+        self.offsets[self.centerIdx][self.centerIdx] = {self.localOffset[1], self.localOffset[2]}
     else
+        xLocalOffset = (1-alpha)*self.offsets[self.centerIdx][self.centerIdx][1] + alpha * self.localOffset[1]
+        yLocalOffset = (1-alpha)*self.offsets[self.centerIdx][self.centerIdx][2] + alpha * self.localOffset[2]
+        self.offsets[self.centerIdx][self.centerIdx] = {xLocalOffset, yLocalOffset}
         if type(value=='number') then
-            self.map[self.centerIdx][self.centerIdx]=self.map[self.centerIdx][self.centerIdx]+alpha*value
+            self.map[self.centerIdx][self.centerIdx]=(1-alpha)*self.map[self.centerIdx][self.centerIdx]+alpha*value
         elseif type(value=='table') then
             for key,value in pairs(self.map[self.centerIdx][self.centerIdx]) do
-                self.map[self.centerIdx][self.centerIdx][key] = self.map[self.centerIdx][self.centerIdx][key] + alpha * value[key]
+                self.map[self.centerIdx][self.centerIdx][key] = (1-alpha)*self.map[self.centerIdx][self.centerIdx][key] + alpha * value[key]
             end
         else
             error('Cannot average non-numbers!')
@@ -128,20 +143,27 @@ function LocalMap:getEightNeighbors()
     -- returns the immediate neighbors of the central field and the center itself as a 3x3 array, and the neighbors only as a 1x8 array, starting at top left corner
     mat = {}
     arr = {}
+    matOffset = {}
+    arrOffset = {}
     for x = 1,3 do
         mat[x] = {}
         arr[x] = self.map[self.centerIdx+(x-2)][self.centerIdx-1]
+        matOffset[x] = {}
+        arrOffset[x] = self.offsets[self.centerIdx+(x-2)][self.centerIdx-1]
         for y = 1,3 do
             mat[x][y] = self.map[self.centerIdx+(x-2)][self.centerIdx+(y-2)]
+            matOffset[x][y] = self.offsets[self.centerIdx+(x-2)][self.centerIdx+(y-2)]
         end
     end
     arr[4] = self.map[self.centerIdx+1][self.centerIdx]
     arr[8] = self.map[self.centerIdx-1][self.centerIdx]
+    arrOffset[4] = self.offsets[self.centerIdx+1][self.centerIdx]
+    arrOffset[8] = self.offsets[self.centerIdx-1][self.centerIdx]
     for i = 5,7 do
         arr[i] = self.map[self.centerIdx-(i-6)][self.centerIdx+1]
+        arrOffset[i] = self.offsets[self.centerIdx-(i-6)][self.centerIdx+1]
     end
-
-    return mat, arr
+    return mat, arr, matOffset, arrOffset
 end
 
 return LocalMap
