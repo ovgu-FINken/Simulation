@@ -89,7 +89,8 @@
     
     For the whole copter, we get the combined force $F_{sum}$ with $F_{sum} = \sum_{i=1}^{4}{F_i}$ and the resulting thrust $F_b$ relative to the body with $F_b = (0, 0, F_{sum})^T$. For the torque in body frame angles, the rotation direction of the rotor have to be taken into account.
     \begin{equation}
-    \tau_b =\begin{bmatrix}\tau_\phi \\ \tau_\theta \\ \tau_\psi \end{bmatrix} = \begin{bmatrix}cos(45)lk(F_1 + F_2 - F_3 - F_4) \\ cos(45)lk(-F_1 + F_2 + F_3  - F_4  ) \\ \sum_{i=1}^{4}{\tau_i} \end{bmatrix}
+    \tau_b =\begin{bmatrix}\tau_\phi \\ \tau_\theta \\ \tau_\psi \end{bmatrix} = \begin{bmatrix}cos(45)lk_{torque}(F_1 + F_2 - F_3 - F_4) \\ cos(45)lk_{torque}(-F_1 + F_2 + F_3  - F_4  ) \\ \sum_{i=1}^{4}{\tau_i} \end{bmatrix}
+    \label{equ:torques}
     \end{equation}
     The rotor are mounted in distance $l$ from the copters center of mass and the copter arms form a $\ang{45}$ angle to the $x_b$- and $y_b$-axis, resulting in a distance of $cos(45)l$ to the axis which their thrust creates a force around\cite{luukkonen2011modelling}.
     
@@ -103,9 +104,7 @@
     
     
     \subsection{Rotor Modelling}
-    
-    
-    
+    \label{sec:rotorTheory}
     
     Due to manufacturing tolerances and external influences as air stream, the forces $F_i$ and torques $\tau_i$ generated at a certain angular velocity $\omega$ as decribed in \ref{equ:forceAndTorque} is different for each rotor. 
     In the previous section \ref{sec:copterModel}, we assumed, that all the rotors are identical. 
@@ -178,7 +177,7 @@
     \label{equ:thrustAirflow}
     \end{equation}
     
-    \ref{equ:thrustAirflow} and \ref{equ:airvelocities} together give a formula to determine the  velocity $v_{rotor}$  when the copter hovers .
+    \ref{equ:thrustAirflow} and \ref{equ:airvelocities} together give a formula to determine the  velocity $v_{rotor}$  when the copter hovers.
     \begin{equation}
     v_{rotor}= \sqrt{\frac{ F_i}{2 \rho_{air} A}}
     \end{equation}
@@ -221,26 +220,12 @@
     F_i = \dot n_{px}  \frac{\pi}{6}s_{px}^3  \rho_{px} v_{final}
     \end{equation}
     
-    Particle size $s_{px}$, mass $m_{px}$ and rate $\dot n_{px}$ can be arbitrarily chosen, as long as \ref{equ:simmfrrealmfr} is satisfied.
+    Particle size $s_{px}$, mass $m_{px}$ and rate $\dot n_{px}$ can be arbitrarily chosen, as long as \ref{equ:simmfrrealmfr} is satisfied. See \ref{sec:implparticle} for the calculated values.
     
-    
-    \begin{table}
-    \todo{table how many particles per simulation step}
-    \todo{move to implementation}
-    \todo{configuration table of particle object}
-    \label{tab:particlesPerStep}
-    \end{table}
     
 
-    \subsection{quadcopter control}
     
-    \todo{physics of quadcopter movements}
-    
-    \todo{theory of quadcopter control}
-    \begin{itemize}
-    \item{4 inputs and 6 DOF -> underactuated system}
-    \item{}
-    \end{itemize}
+
     
     \section{Vrep}
     \label{sec:theoryVrep}
@@ -251,7 +236,7 @@
      \begin{center}
       \includegraphics[scale=0.45]{vrepStruct.jpg}
      \end{center}
-      \caption{Structure of the VREP-framework \url{http://www.coppeliarobotics.com/helpFiles/en/images/writingCode1.jpg} 13.10.2015 \label{fig:vrepStruct}}
+      \caption{Structure of the VREP-framework from \url{http://www.coppeliarobotics.com/helpFiles/en/images/writingCode1.jpg} 13.10.2015 \label{fig:vrepStruct}}
     \end{figure}
     
     The V-REP main client application provides the basis vor the simulation. 
@@ -368,9 +353,7 @@ Below is a description of the requirements for the Java API which is responsible
 There should be implemented a mechanism that enables to establish connection to the V-REP simulation. The connection should be able to be disconnected and reconnected at any time. Since the Remote API is based on a socket connection, it should be possible to connect to a V-REP server, situated on another machine, by specifying its IP address and port number. This will allow to run the V-REP simulation on a remote, powerful computer and thus release the local computer from having to deal with the simulation and communication program at the same time.
 
 \paragraph{V-REP scene object and scene representation}\label{sceneobject}
-\todo{integrate into sectionsec:theoryVrep}
-The main elements in V-REP that are used for building a simulation scene are scene objects (objects in short). Objects are visible in the scene hierarchy and in the scene view. In the scene view, objects have a three dimensional representation. Some of the object types are: shape, joint, proximity sensors, vision sensors and others. The shape object is a rigid mesh that is composed of triangular faces. Our quadrocopters are represented as a shape objects in the V-REP scene. But is also contains four infrared sensors which are of type proximity sensor object. So the quadrocopter is represented as a complex scene object. 
-The V-REP scene objects have to be represented as individual classes in order to be able to easily distinguish them and work with their properties. The class representing the scene object must have as fields the properties describing the simulation object - liniar and angular velocity, position and orientation. The V-REP scene object hierarchy should also be implemented by using inheritance and composition object oriented techniques. \\
+The V-REP scene objects have to be represented as individual classes in order to be able to easily distinguish them and work with their properties. The class representing the scene object must have as fields the properties describing the simulation object - linear and angular velocity, position and orientation. The V-REP scene object hierarchy should also be implemented by using inheritance and composition object oriented techniques. \\
 The Java API should provide methods to retrieve all scene objects from the V-REP scene and store them in a virtual scene representation for later use.\\
 Since our quadrocopters are represented as shape objects and typically a V-REP scene contains at least 20 shape objects by default, there should be implemented a scanner that retrieves the quadrocopters from the scene. The scanner must be able to retrieve the virtual and real quadrocopters in a separate containers.
 
