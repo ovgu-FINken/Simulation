@@ -61,6 +61,12 @@ local function fixName(name,suffix)
 	end
 end
 
+-- initializes the finkens flight controllers and control signals
+-- initializes the object handles
+-- starts the remote API (note that because everything happens withing one simulation step, with multiple FINkens 
+-- you receive a warning that the remote API is already running, as the API is started before the next simulation
+-- step, it's status can't be checked in the current step, so every FINken tries to start a new one)
+---- @return
 function finkenCore.init()
 	thisIDsuffix = simGetNameSuffix(nil)
 	handle_FinkenBase = simGetObjectHandle(fixName('SimFinken_base'))
@@ -192,6 +198,7 @@ function finkenCore.setTarget(targetObject)
 	local corrX = targetXcontroller.stepResetIonTarget(errorX, execution_step_size / defaultStepSize)
 	local corrY = targetYcontroller.stepResetIonTarget(errorY, execution_step_size / defaultStepSize)
 	local corrZ = targetZcontroller.stepResetIonTarget(errorZ, execution_step_size / defaultStepSize)
+	-- @ToDo limit the signal to maximum functioning value
 	simSetFloatSignal(fixSignalName('pitch'), corrX)
 	simSetFloatSignal(fixSignalName('roll'), corrY)
 	simSetFloatSignal(fixSignalName('throttle'), 50+corrZ)
