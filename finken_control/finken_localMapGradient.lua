@@ -131,7 +131,7 @@ function finken.init(self)
             return
         end
 
-        speedFactor = 0.25
+        speedFactor = 0.50
         -- calculate actual gradient from encoded information, so that we can compare with our estimates
         xGrad_true = (colors[3] - 0.5) * speedFactor
         --     --multiply with -1 because image coordinates start in top left
@@ -186,7 +186,7 @@ function finken.init(self)
         -- self.setTargetToPosition(0, 1)
 
         myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0.01, true)
-        myMap:UpdateTextureLocalMapDataTableForUI()
+       myMap:UpdateTextureLocalMapDataTableForUI()
         -- myMap:updateMap(xSpeed, ySpeed, colors[2]*255+colors[3], true, 0.01, true)
 	end
 
