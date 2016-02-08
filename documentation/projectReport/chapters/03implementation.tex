@@ -6,8 +6,25 @@
 The FINken consists of the body, the rotors and the sensors. The body contains the behavioural and flight control, the thrust simulation is handled by scripts connected to the rotor structure.
 
 \subsection{Scene Modeling}
+\label{sec:sceneMod}
 
-The body consists of multiple objects, while visual representation and the physical behaviour are split. For visual representation, a *.stl file from the CAD-Model of the original FINken was imported. This shape is rather complex, which makes the simulation time consuming. To speed up the simulation, the shape of the finken was remodelled in VREP, using only simple rectangular shapes. Making the complex shape static, establishing a fixed connection and hiding the simple shape, the result is a a visual appealing simulation object with good simulation performance. A dummy-object is used as a singular measurement reference point in the middle of the FINken. This has to be taken into account when targeting physical objects, as the FINken will not be able to reach the target completely without colliding with the object. This dummy object should always be used when refering to the FINkens position, orientation or movements, as it is aligned to the global coordinate system while especially imported shapes may be rotated in the simulation. Vrep provides several pre-configured sensor type, the real FINkens sensors were modeled by using existing ultrasound distance sensors. The FINken is equipped with Maxbotix MB1232: I2CXL-MaxSonar-EZ3 sensors\url{(http://www.maxbotix.com/documents/I2CXL-MaxSonar-EZ_Datasheet.pdf}). According to the datasheet, they have an opening angle of $\ang{30}$ at maximum range when detecting smaller objects and maximum range of 7.65m for larger objects as walls. The datasheet states a rather complex beam shape, but for the simulation a cone with an opening angle of $\ang{30}$  and a height of 7.65m will be used. Finally, a dummy target objects belongs the virtual FINken. This object can be moved manually in the scene and the simulated quadcopter will fly towards it.  As the real FINken doesn't have the ability to fly to predefined points, we only used this feature for development.
+The body consists of multiple objects, while visual representation and the physical behaviour are split. 
+For visual representation, a *.stl file from the CAD-Model of the original FINken was imported. 
+This shape is rather complex, which makes the simulation time consuming. 
+To speed up the simulation, the shape of the finken was remodelled in VREP, using only simple rectangular shapes. 
+Making the complex shape static, establishing a fixed connection and hiding the simple shape, the result is a a visual appealing simulation object with good simulation performance. 
+
+A dummy-object is used as a singular measurement reference point in the middle of the FINken. 
+This has to be taken into account when targeting physical objects, as the FINken will not be able to reach the target completely without colliding with the object. 
+This dummy object should always be used when refering to the FINkens position, orientation or movements, as it is aligned to the global coordinate system while especially imported shapes may be rotated in the simulation. 
+
+Vrep provides several pre-configured sensor type, the real FINkens sensors were modeled by using existing ultrasound distance sensors. 
+The FINken is equipped with Maxbotix MB1232: I2CXL-MaxSonar-EZ3 sensors\url{(http://www.maxbotix.com/documents/I2CXL-MaxSonar-EZ_Datasheet.pdf}). 
+According to the datasheet, they have an opening angle of $\ang{30}$ at maximum range when detecting smaller objects and maximum range of 7.65m for larger objects as walls. 
+The datasheet states a rather complex beam shape, but for the simulation a cone with an opening angle of $\ang{30}$  and a height of 7.65m will be used. 
+Finally, a dummy target objects belongs the virtual FINken. 
+This object can be moved manually in the scene and the simulated quadcopter will fly towards it.  
+As the real FINken doesn't have the ability to fly to predefined points, we only used this feature for development.
 
 \begin{figure}[h!]
  \begin{center}
@@ -16,44 +33,28 @@ The body consists of multiple objects, while visual representation and the physi
   \caption{Parts of the simulation object \label{fig:vrepParts}}
 \end{figure}
 
-The measured weight of the real FINken was applied to the simulation object. As no advanced modelling like calculating moments of inertia was done, the weight of the motor was applied separately to the rotor model in VREP.  The motor assembly adds significant weight outside the FINkens center of gravity and therefore has a rather large influence on its behaviour. 
-\todo{weight table for finken2 and finken3}
+The measured weight of the real FINken was applied to the simulation object. 
+As no advanced modelling like calculating moments of inertia was done, the weight of the motor was applied separately to the rotor model in VREP.  The motor assembly adds significant weight outside the FINkens center of gravity and therefore has a rather large influence on its behaviour. 
+
+\todo{check weights of real finkens}
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|l|c|c|c|}
+    		\hline
+		Part & Weight FINken2 & Weight FINken3 & Weight in Simulation \\
+		\hline
+    		Body & 178g &  214g & 284\\
+    		\hline
+		Motor \& rotor & 4x 15g & 4x 25 & 4x 25\\
+    		\hline
+		Battery & 50g & 70g & - \\
+    		\hline
+	\end{tabular}
+    	\caption{FINken weights}
+      	\label{tab:finkWeight}
+\end{table}
+
 The linear damping factor of the FINken body material was set to 0.3, to decrease drift and to model the air resistance of the real FINken, which is minimal but nevertheless existent.
-
-
-The rotor model in VREP handles the thrust simulation and thus a huge part of the physical behaviour of the quadcopter model.  Again, visual representation and physical simulation are separated. 
-\todo{add picture of rotor}
-The visualisation is done with a static shape of a rotor, that is connected to a joint and rotates with a fixed speed. During flight, the rotation speed does not really change visually noticeable, a dynamic adaption of the rotation would only increase computation time without much benefit. Of course, the rotor shape could be made non-static and rotate in a particle stream, and apply the thrust force according to the particle collisions, but again, this would mean a massive increase of computation power and is not needed for our purposes.
-
-\begin{figure}[h!]
- \begin{center}
-  \includegraphics[width=\linewidth]{vrepRotorLegend}
- \end{center}
-  \caption{Parts of the simulated rotor \label{fig:vrepRotor}}
-\end{figure}
-
-
-The rotor model is attached to the FINken body via a force sensor which applies the forces and torques calculated in the physical rotor model to the FINken body. The rotor is represented by a cylindrical shape which resembles the area swept by a real rotor and uses a particle simulation to emulate the airstream. The handling of the particle simulation is done inside a lua child script attached to the rotor model. The script has several parameters for the particle simulation, \todo{add complete param list}.
-During simulation, the particle velocity is the parameter used to control the finken. This rotor model was already included in VREP as an example and was used without further modifications, the theory behind it is shortly explained in \ref{sec:theomodel}. Using the particle simulation has the advantage of providing a small random factor that causes noise and it simulates the airstream which will influence  other copters in multicopter scenarios.
-
-The provided model contained an error,  and missed the quadratic influence of the air stream velocity onto the force. This error was corrected and the torque was made dependant on the resulting force instead of only the airstream velocity. \todo{describe more in detail}
-
-
-
-\subsection{Flight controller in simulation}
-
-The V-REP example quadrocopter already included some flight controller out of the box
-
-\begin{itemize}
-\item{PID implementation with I-reset}
-\item{}
-\item{}
-\item{}
-\end{itemize}
-\todo{finken parameter estimation}
-
-\todo{controller tuning}
-
 
 \begin{table}[h]
 	\centering
@@ -74,9 +75,216 @@ The V-REP example quadrocopter already included some flight controller out of th
       	\label{tab:simSettings}
 \end{table}
 
+The rotor model in VREP handles the thrust simulation and thus a huge part of the physical behaviour of the quadcopter model.  
+Again, visual representation and physical simulation are separated. 
+
+The visualisation is done with a static shape of a rotor, that is connected to a joint and rotates with a fixed speed. 
+During flight, the rotation speed does not really change visually noticeable, a dynamic adaption of the rotation would only increase computation time without much benefit. 
+Of course, the rotor shape could be made non-static and rotate in a particle stream, and apply the thrust force according to the particle collisions, but again, this would mean a massive increase of computation power and is not needed for our purposes.
+
+\begin{figure}[h!]
+ \begin{center}
+  \includegraphics[width=\linewidth]{vrepRotorLegend}
+ \end{center}
+  \caption{Parts of the simulated rotor \label{fig:vrepRotor}}
+\end{figure}
+
+
+The rotor model is attached to the FINken body via a force sensor which applies the forces and torques calculated in the physical rotor model to the FINken body. 
+The rotor is represented by a cylindrical shape which resembles the area swept by a real rotor and uses a particle simulation to emulate the airstream. The handling of the particle simulation is done inside a lua child script attached to the rotor model.
+ 
+ 
+During simulation, the particle velocity is the parameter used to control the finken. This rotor model was already included in VREP as an example and was used with slight  modifications, the theory behind it is shortly explained in \ref{sec:rotorTheory}. 
+
+The particle velocity was calculated as in \ref{equ:velocity} to be $11.077 \frac{m}{s}$ under standard conditions.
+
+ \begin{equation}
+    v_{final}= 2 * \sqrt{\frac{ F_i}{2 \rho_{air} A}} = 2 \sqrt{\frac{ 0.096 kg * 9.81 \frac{m}{s}}{2 * 1.2041 \frac{kg}{m^3} * \frac{\pi}{4} * 0.1274^2 m^2}} = 11.0774 \frac{m}{s}
+    \label{equ:velocity}
+ \end{equation}
+ 
+ 
+    
+    The particle flow rate was initially set to $430 \frac{1}{s}$. 
+    Our simulation step size is $50 ms$, so this would mean $21.5$ per simulation step. 
+    As shown in \ref{tab:particleNum}, the maximum step size with a particle object with a capacity of $50$ particles would be $100 ms$ and simulation times below $10 ms$ might pose problems because of to few particles per step. 
+   The initial flow rote thus shows a good compromise between accuracy and computation time and was further used.
+    
+    With a particle rate of $\dot n = 430 \frac{1}{s}$ and the final velocity $v_{final} = 11.0774 \frac{m}{s}$, the particle mass can be calculated as in \ref{equ:particleMass}
+  
+   \begin{equation}
+    m_{px}= \frac{\dot m}{\dot n}=\frac{\frac{F_i}{2 v_{final} }}{\dot n} = \frac{\frac{0.096 kg * 9.81 \frac{m}{s}}{2 \sqrt{\frac{ 0.096 kg * 9.81 \frac{m}{s}}{2 * 1.2041 \frac{kg}{m^3} * \frac{\pi}{4} * 0.1274^2 m^2}} }}{430 \frac{1}{s}} = 1.9771 * 10^{-4} kg
+    \label{equ:particleMass}
+ \end{equation}
+    
+    Continuing with a particle diameter of $5mm$, the particle density can be obtained as in \ref{equ:particleDensity}.
+  
+      
+   \begin{equation}
+    \rho_{px}= \frac{\dot m}{\dot n V_{px}} = \frac{\frac{0.096 kg * 9.81 \frac{m}{s}}{2 \sqrt{\frac{ 0.096 kg * 9.81 \frac{m}{s}}{2 * 1.2041 \frac{kg}{m^3} * \frac{\pi}{4} * 0.1274^2 m^2}} }}{430 \frac{1}{s} \frac{pi}{6} 0.005^3 m^3} = 3020.8119 \frac{kg}{m^3}
+    \label{equ:particleDensity}
+ \end{equation}
+    
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|c|c|}
+    		\hline
+		Simulation step size & Particles per step \\
+		\hline
+    		5 ms & 2.15\\
+    		\hline
+    		10 ms & 4.3  \\
+    		\hline
+    		25 ms  & 10.75\\
+    		\hline
+    		50 ms & 21.5 \\
+    		\hline
+		100 ms & 43 \\
+    		\hline
+		200 ms & 86 \\
+    		\hline
+	\end{tabular}
+    	\caption{V-REP particles per step}
+      	\label{tab:particleNum}
+\end{table}
+
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|l|c|c|c|}
+    		\hline
+		Parameter & Original Value & new Value \\
+		\hline
+    		Particle Size & $5 mm$ &  $5 mm$\\
+    		\hline
+		Particle densitiy & $ 8500 \frac{kg}{m^3} $ & $3022 \frac{kg}{m^3} $   \\
+    		\hline
+		Initial velocity & $ 4 \frac{m}{s}$ & $11.0774 \frac{m}{s}$  \\
+    		\hline
+		Particle count per second & $430 \frac{1}{s}$ & $430 \frac{1}{s}$ \\
+    		\hline
+		Maximum number of particles & $50$ & $50$ \\
+    		\hline
+		Particle life time & $0.5 s$ & $0.5s$ \\
+    		\hline
+	\end{tabular}
+    	\caption{Particle simulation configuration parameters}
+      	\label{tab:particleConf}
+\end{table}
+
+Using the particle simulation has the advantage of providing a  random factor that causes noise and it simulates the airstream which will influence other copters in scenarios with multiple quadcopters.
+
+The existing rotor model in V-REP did work, but contained minor inaccuracies. The first issue was the constant particle creation rate. As shown in \ref{equ:mfr}, the mass flow rate also depends on the air velocity. Thus, the air velocity has a quadratic influence on the thrust, when only a linear one was modeled. This was corrected as in \ref{equ:pxrateNum} based on  \ref{equ:pxrate} that was derived in \ref{sec:rotorTheory}.
+
+  \begin{equation}
+    \dot n_{px} = \frac{\rho_{air} A}{2m_{px}} v_{final} = \frac{1.2041 \frac{kg}{m^3} \frac{pi}{4} 0.1274^2 m^2}{2 * 1.9771 * 10^{-4} kg} v_{final} = 38.8180 \frac{1}{m}v_{final}
+    \label{equ:pxrateNum}
+    \end{equation}
+    
+   The torque on the quadcopter was only dependant on the air velocity as well, while \ref{equ:torques} shows it's linear dependance on the thrust. Thus, a torque factor of $k_{torque} = 200$ was introduced to relate torque to thrust. 
+   As the torque is applied on the rotor model, V-REP's physics engine handles the leverage of the rotor torque on the quadcopter body.
+
+
+
+
+
+\subsection{Flight controller in simulation}
+
+The V-REP example quadrocopter already included a position control with a subsidiary attitude control out of the box, both implemented with PID controllers.
+As the real FINken does not have an absolute position control, the control of the simulated FINken was changed to a pure attitude control.
+The external input therefore was changed from a position to pitch, roll, yaw and throttle, as it is the case for the real quadcopter.
+Thus, the controllers needed to be restructured and due to a different weight, the gain values had to be adjusted.
+The gain values were only manually tuned. 
+The FINkens reaction to different control inputs were observed and the PID gain values were adjusted according to the behaviour.
+In a nutshell, the adjusments can be summed up as follows:
+\begin{itemize}
+	\item{$K_P$: Increase, if the reaction is to slow, decrease if overshooting}
+	\item{$K_I$: Increase to reduce steady state errors, decrease if reaction is to slow}
+	\item{$K_D$: Increase if reaction to changes is to slow, decrease if overshooting for changes}
+\end{itemize}
+
+As previously mentioned in \ref{sec:sceneMod}, the virtual FINkens position and orientation is received from a dummy Object in the middle of the simulation model, comparable to the \gls{AHRS} of the real FINken.
+
+The throttle can be directly controlled, by feeding the command signal directly to the rotors. 
+Then, only a factor is applied, to get the quadcopter to hover at $50 \%$ throttle. 
+However, as no feedback loop exists, the copter will drift away.
+Because the real FINken does not compensate the battery voltage, the hover throttle will change during flight, making this type of control unsuitable for a mixed reality simulation.
+
+As a solution, the height sensor of the real FINken can be used to set a target height.
+Then, a PID controller in the simulation can adjust the throttle accordingly.
+For this purpose, the position controller of the original simulation with only a proportional factor was reused. 
+Opposite to the real FINken, the height controller of the virtual one includes a proportional factor for the vertical speed.
+\begin{equation}
+thrust = 22.175 * throttle/100 +2 * e  - 2 *v_{vertical}
+\end{equation}
+
+
+The with only a proportional factor is symmetric, therefore the pitch and roll controller are identical.
+The rotation matrix of the \gls{IMU} dummy object is compared against the target orientation.
+The resulting error is forwarded to the respective instance of the PID controller class, together with the current time step.
+The PID controller computes the correction, which is subsequently applied to the rotor according to \ref{equ:torques}.
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|l|c|c|}
+    		\hline
+		Parameter & Original Value & new Value \\
+		\hline
+    		$K_P$ & $0.25$ &  $0.2$\\
+    		\hline
+		$K_I$ & $0$ & $0.1$   \\
+    		\hline
+		$K_D$  & $2.1$ & $1.5$  \\
+    		\hline
+	\end{tabular}
+    	\caption{PID gain values for pitch and roll}
+      	\label{tab:PIDpitchroll}
+\end{table}
+
+The yaw controller's gain parameters was estimated to the values in \ref{tab:PIDyaw}.
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|l|c|c|}
+    		\hline
+		Parameter & Original Value & new Value \\
+		\hline
+    		$K_P$ & $0.25$ &  $0.2$\\
+    		\hline
+		$K_I$ & $0$ & $0.1$   \\
+    		\hline
+		$K_D$  & $2.1$ & $1.5$  \\
+    		\hline
+	\end{tabular}
+    	\caption{PID gain values for yaw}
+      	\label{tab:PIDyaw}
+\end{table}
+The original yaw controller did not take into account, that the same orientation could be described by a positive and a negative angle.
+To address this issue, it has to be ensured that $-\pi<e_{yaw}<\pi$, as in the following Lua code.
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small, language={[5.2]Lua}]
+	local errorYaw=euler[3]-yawTarget*(math.pi/180)
+	if errorYaw < -math.pi then
+		errorYaw = 2*math.pi+errorYaw
+	else if errorYaw > math.pi then
+			errorYaw=yawTarget*(math.pi/180)-euler[3]
+		end
+	end
+\end{lstlisting}
+
+\end{tabular}
+\end{center}
+
+
+To prevent the effect of windup of the integral part of the controller, the integral part is reset for all used controllers when the target is reached and the sign of the error changes.
+
+\todo{position PD controller?}
+
+
+
+
 \subsection{Simulation Software Structure}
 
-\todo{finish diagram of finken software}
 \tikzset{
     group/.style={
            rectangle,
@@ -164,14 +372,14 @@ The base class is the finkenCore, which contains the main flight control algorit
 The input commands for controlling the FINken are set via the signal communication of VREP. Signals inside VREP are the most versatile communication possibility which can be accessed from anywhere inside VREP and any remote API, they can be seen as a kind of global variable. Signals can be of integer, float or string type, where custom data types can be sent in text form as string signals. 
 
 The finkenCore needs to be initialized at simulation start the for each simulated FINken. It starts the VREP remote API server and creates the API signals. Also, the PID controllers for flight control are initialized. 
-During simulation, calling the FINkenCore.step() method handles the flight control. The input values are read from the signals \textit{pitch}, \textit{roll}, \textit{yaw} and \textit{throttle}. When the signal \textit{height} has a positive value, the FINkenCore will control the thrust so that the simulated FINken will keep the height provided by the signal, otherweise only the \textit{throttle} signal is used directly. The previously initialized PID controllers are used to compute the target air stream velocity for each rotor to move the simulated FINken to the target orientation.
+During simulation, calling the \textit{FINkenCore.step()} method handles the flight control. The input values are read from the signals \textit{pitch}, \textit{roll}, \textit{yaw} and \textit{throttle}. When the signal \textit{height} has a positive value, the FINkenCore will control the thrust so that the simulated FINken will keep the height provided by the signal, otherwise only the \textit{throttle} signal is used directly. The previously initialized PID controllers are used to compute the target air stream velocity for each rotor to move the simulated FINken to the target orientation.
 
 To keep a quadcopter at a certain height without an external reference requires an exact equilibrium between gravity and thrust. The current real FINkens do not compensate the battery voltage, so the same throttle corresponds to different thrust forces during flight. Also, each FINken unit has slightly different base thrust. Therefore, the thrust in the simulation is tuned with a logisitc curve \ref{equ:logistic} to decrease the influence of the throttle close to the hover thrust. 
 \begin{equation}
-throttle_{tuned} = \begin{cases}
--\frac{a * |throttle|}{a - |throttle| + 50} + 50 & throttle < 0 \\
-\frac{b * throttle}{b - throttle + 50} + 50 & throttle >= 0\\
-\end{cases}
+	throttle_{tuned} = \begin{cases}
+		-\frac{a * |throttle|}{a - |throttle| + 50} + 50 & throttle < 0 \\
+		\frac{b * throttle}{b - throttle + 50} + 50 & throttle >= 0\\
+	\end{cases}
 \label{equ:logistic}
 \end{equation}
 The default values for the throttle tuning function are  $a = 1$ and $b = 1$. 
@@ -190,6 +398,7 @@ The finken.lua module provides an basic structure for further enhancements. It's
 
 
 FinkenMeta.lua is loaded in the child script of a dummy object in the scene  to have an API to the simulation that is not connected to a single FINken. This can be used to dynamically manipulate the environment during simulation, e.g. by adding objects like other FINkens.
+
 \section{Communication V-REP - Quadrocopters}
 \label{sec:commImplementation}
 

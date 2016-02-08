@@ -171,6 +171,7 @@ function finkenCore.step()
 		local rollCorr=rollController.stepResetIonTarget(errorRoll, execution_step_size / defaultStepSize)
 
 		-- yaw control:
+		-- ToDo: add modulo operation for robustness against huge values?
 		local errorYaw=euler[3]-yawTarget*(math.pi/180)
 		if errorYaw < -math.pi then
 			errorYaw = 2*math.pi+errorYaw
