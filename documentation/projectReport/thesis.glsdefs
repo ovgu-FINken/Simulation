@@ -28,6 +28,36 @@ parent={},%
 %
 }%
 }%
+\ifglsentryexists{AHRS}{}%
+{%
+\gls@defglossaryentry{AHRS}%
+{%
+name={AHRS},%
+sort={AHRS},%
+type={acronym},%
+first={Attitude Heading Reference System (AHRS)},%
+firstplural={Attitude Heading Reference System\acrpluralsuffix  (AHRS\acrpluralsuffix )},%
+text={AHRS},%
+plural={AHRS\acrpluralsuffix },%
+description={Attitude Heading Reference System},%
+descriptionplural={Attitude Heading Reference System\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Attitude Heading Reference System},%
+longplural={Attitude Heading Reference Systems},%
+short={AHRS},%
+shortplural={AHRSs},%
+counter={page},%
+parent={},%
+%
+}%
+}%
 \ifglsentryexists{SysML}{}%
 {%
 \gls@defglossaryentry{SysML}%
