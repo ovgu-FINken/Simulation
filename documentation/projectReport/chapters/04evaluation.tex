@@ -84,7 +84,7 @@ On \ref{fig:matlabPosEstimation} you can see the calculated possible positions a
   \caption{position estimation\label{fig:matlabPosEstimation}}
 \end{figure}
 
-The positioning system relies on accurate sensor readings to provide a precise position estimation. Our gyroscope provides noisy estimation of the yaw angle and the distance sensors are also quite noisy. Since our quadcopter is equipped with just four distance sensors, the localization system cannot tolerate the noise as good as with eight sensors. For this reasons an accurate position estimation could not be expected, but it should provide some reference estimation of the flying path.
+The positioning system relies on accurate sensor readings to provide a precise position estimation. Our gyroscope provides noisy estimation of the yaw angle and the distance sensors are also quite noisy. Since our quadcopter is equipped with just four distance sensors, the localization system cannot tolerate the noise as good as with eight sensors. For this reasons an accurate position estimation could not be expected, but it should provide some reference estimation of the flying path. On \ref{fig:matlabPosPath} you can see the results of the position estimation. Each position has been marked with a blue star, so that we can see where the quadcopter has been. It is not possible to show the actual flying path as a function of time, but it shows which parts of the arena had been occupied by the quadcopter during the flight. \ref{fig:vrepPosPath} shows the flight path of the simulated quadcopter in the V-REP. As in \ref{fig:matlabPosPath} it does not shows the trajectory as a function of time, but just the occupied positions during the flight. The x and y axes of the plot show the V-REP scene arena and the small rectangle represents the flight arena.
 
 \begin{figure}[h!]
  \begin{center}
@@ -97,8 +97,12 @@ The positioning system relies on accurate sensor readings to provide a precise p
  \begin{center}
   \includegraphics[scale=0.7]{vrepPath.png}
  \end{center}
-  \caption{V-REP flight path\label{fig:matlabPosPath}}
+  \caption{V-REP flight path\label{fig:vrepPosPath}}
 \end{figure}
+
+The estimated positions on \ref{fig:matlabPosPath} are very scattered, due to the fact that the localization system cannot estimate the position with a big accuracy. In the worst case, as a correct position was assumed one of the calculated possible points, which was far away from the previous estimated position. This creates a big jumps in the path, which does not coincide with the real flight path. The scattered plot and the jumps are caused by the noisy sensor measurements. A couple of attempts to filter the sensor readings ware made, but the plot still looked scattered to a significant extend. Also a Kalman Filter was implemented to eliminate the big jumps between the current and previous quadcopter positions, but the results ware still not satisfying.\\
+On the other hand \ref{fig:vrepPosPath} shows a clear flying path, because the position is not estimated, but taken directly from the V-REP environment.
+
 
 \begin{itemize}
 \item{stability}
@@ -107,66 +111,3 @@ The positioning system relies on accurate sensor readings to provide a precise p
 \item{maybe show angular movement plot at this time to find explanation there}
 \end{itemize}
 
-
-% example for including picture
-%\begin{figure}
-%\begin{center}
-%\includegraphics[width=\textheight,angle=90]{SimulinkLibArchitect}
-%\caption{Aufbau der Conqat Simulink Library}
-%\label{slLibArch}
-%\end{center}
-%\end{figure}
-%\begin{figure}
-%\begin{center}
-%\includegraphics[width=\textwidth]{archDoc}
-%\caption{Aufbau des Software-Prototypen}
-%\label{pic:saProto}
-%\end{center}
-%\end{figure}
-
-
-
-% example for code listing
-%\begin{lstlisting}[caption=Metric-Interface]
-%interface Metric {
-%/**
-% * @return the  value of the metric as it is defined 
-% * for the block/architecture and all its subblocks
-% */
-%    public double getGlobalValue();
-%/**
-% * @return the worst value of the metric among the 
-% * block/architecture and all its subblocks
-% */
-%    public double getWorstValue();
-%/**
-% * @return the block with the worst value of the 
-% * metric among the block/architecture and all its subblocks
-% */
-%    public ArchitectureBlock getMaxBlock();
-%/**
-% * @return a list of all values of the metric for the 
-% * block/architecture and its subblocks
-% */
-%    public double[] getAllBlockValues();
-%}
-%\end{lstlisting}
-%
-%
-%\begin{lstlisting}[caption=Metric-Interface, label=lst:filter]
-%/**
-%* disables all subBlocks that are masked in the simulink 
-%* Model and have no input
-%* @param currentBlock
-%*/
-%void maskedZeroInDisable(ArchitectureBlock currentBlock){
-%   for (ArchitectureBlock subBlock :
-%  currentBlock.getSubBlocks()){
-%      if (subBlock.getInPorts().isEmpty() && 
-%     subBlock.hasAttribute("MaskEnableString")){
-%         subBlock.disable();
-%      }
-%      maskedZeroInDisable(subBlock);
-%   }
-%}
-%\end{lstlisting}
