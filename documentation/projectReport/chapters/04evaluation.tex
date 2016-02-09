@@ -45,13 +45,24 @@ As a result, we decided to tune the throttle response of the virtual Quadcopter 
 
 \end{itemize}
 
-\section{Speed}
+\section{Timing}
+\subsection{VREP performance}
+\begin{itemize}
+\item{}
+\item{}
+\item{}
+\item{}
+\end{itemize}
 
 
+\subsection{Timings in the Communication link}
+\label{sec:commTiming}
 \todo{communication delay}
 \begin{itemize}
-
+\item{}
+\item{}
 \item{mean delta t between sent messages, compare with the configured message frequency}
+\item{possible buffering in AHRS}
 \item{ run this with two or multiple quadrocopter}
 \item{latency of JAVA link}
 \end{itemize}
@@ -63,30 +74,82 @@ As a result, we decided to tune the throttle response of the virtual Quadcopter 
 
 
 \section{Accuracy}
+
+To evaluate the accuracy of the simulation, we compared the orientation of the real FINken and the simulated model.  
+We let the real FINken fly freely in the arena using the wall avoid control and linked the simulated FINken.
+V-REP, paparazzi and the Java bridge were all run on the same machine.
+The test flight which is referred to in the following was filmed.
+The video, a screen recording of the simulation and the corresponding log files can be found online \todo{make raw data available} \todo{insert link to raw data}
+The real quadcopter has some issues with the yaw angle. 
+A cause for this is that the magnetometer does not provide reliable values indoors, due to interferences of electro-magnetic fields.
+The sensors of the FINken are symmetrical, so yaw is not needed for regular movements.
+Thus, it is tried to keep the copters orientation around the $z$ axis more or less stable.
+The flight chose
+
+The pitch and roll angles of the simulated FINken are more interesting.
+When we logged the values via the telemetry link of paparazzi, and compared them to the values exported from the simulation, we noticed a time offset. 
+This is not surprising, as we don't use an absolute reference time, but it made it impossible to directly compare the orientation logs.
+To get a meaningful graphic, we manually resampled the logs and put them on a common time base.
+Characteristic patterns were used to achieve a common time base.
+In \ref{pic:pitchResponse} can be seen that the simulated FINken nicely adopts the real FINken's movements. 
+The first spike at about $7s$ shows the takeoff. 
+From $12s$ to $22s$ it can be seen how the real FINken got close to a wall and started to avoid it. 
+The flight was stopped after about $43s$, the huge spikes at the end of the graph show how the response when the copter fell to the ground.
 \begin{figure}
-\begin{center}
-\includegraphics[width=\textwidth]{pitch}
-\caption{Euler angles of simulated FINken and real FINken}
-\label{pic:pitchResponse}
-\end{center}
+	\begin{center}
+	\includegraphics[width=\textwidth]{pitch}
+	\caption{Pitch angles of simulated FINken and real FINken}
+	\label{pic:pitchResponse}
+	\end{center}
 \end{figure}
+
+A more detailed plot of the pitch comparison is shown in \ref{pic:pitchDetail}.
+Every spike of the real FINkens movement is directly followed by a spike in the same direction of the simulated FINken.
+The smaller movements do not correspond exactly, as the simulated copter contains its own attitude controller.
+Thus, keeping the simulated FINken stable in air has a higher priority than following the real copter's movements.
+The graph shows some points, e.g. before $17s$ where movement of the simulated FINken appears to precede the real FINken's movement.
+This can have two possible explanations.
+Firstly, as mentioned before, the time base was readjusted manually.
+Thus, it might be possible, that as explained in \ref{sec:commTiming} \todo{write the explanation}, that the values were sent with a wrong timestamp that wasn't corrected during the adjustment, or even made worse by the resampling.
+Secondly,  the controller of the simulated FINken's controller has the same goal as the real FINken, namely to keep the copter stable. 
+In the following, it could be possible, that both controllers are going to apply the same changes and that the virtual one is slightly faster.
+ 
+
 \begin{figure}
-\begin{center}
-\includegraphics[width=\textwidth]{roll}
-\caption{Euler angles of simulated FINken and real FINken}
-\label{pic:rollResponse}
-\end{center}
+	\begin{center}
+	\includegraphics[width=\textwidth]{pitch_detail}
+	\caption{Pitch angles of simulated FINken and real FINken}
+	\label{pic:pitchDetail}
+	\end{center}
 \end{figure}
+
+Interestingly, the roll of the FINkens as shown in \ref{fig:rollDetail} doesn't fit as well as the pitch, despite having identical controllers.
+In this flight, we observed some logging error in V-REP. 
+The huge
+
+It can be seen, that the virtual FINken tries to follow the movements, but
+\todo{add plot with roll spikes and pitch plot}
+\begin{figure}
+	\begin{center}
+	\includegraphics[width=\textwidth]{roll}
+	\caption{Roll angles of simulated FINken and real FINken}
+	\label{pic:rollResponse}
+	\end{center}
+\end{figure}
+
+
 \todo{explanation for roll spikes: vreps internal handling of shapes; maybe copter and "IMU" are not moved at the same time? }
 \todo{filter values? }
 \begin{itemize}
 \item{plot graph of euler angles}
 \item{highlight start of drift, other interesting elements?}
 \item{plot difference between graphs}
-\end{itemize}
-\todo{path of quadcopter}
-\begin{itemize}
 
+\end{itemize}
+\todo{error/diff plot?}
+
+
+\begin{itemize}
 \item{using Medusa positioning system}
 \item{shortly explain limitations/problems with the system}
 \item{results are not perfect, but it is what is available}
