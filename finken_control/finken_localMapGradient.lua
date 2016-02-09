@@ -14,12 +14,12 @@ function finken.init(self)
     function self.initializeUI()
         -- Following is the handle of FINken2's associated UI (user interface):
         finkenLocalMapUI=simGetUIHandle("FinkenLocalMap")
-        printLocalMapData=simGetUIHandle("PrintLocalMapData")
         -- Set the title of the user interface: 
         simSetUIButtonLabel(finkenLocalMapUI,0,"Finken Local map:")
         simSetUIButtonLabel(finkenLocalMapUI,3,"Size of Map (in CM):") 
         simSetUIButtonLabel(finkenLocalMapUI,4,"Size of Field (in CM):") 
-        simSetUIButtonLabel(finkenLocalMapUI,7,"Update") 
+        simSetUIButtonLabel(finkenLocalMapUI,7,"Update")
+        simSetUIButtonLabel(finkenLocalMapUI,8,"Display Data")
 
         -- Retrieve the desired data from the user interface:
         sizeOfContainer = tonumber(simGetUIButtonLabel(finkenLocalMapUI,5))
@@ -29,6 +29,7 @@ function finken.init(self)
         simSetFloatSignal('_LM_SizeOfContainer',sizeOfContainer)
         simSetFloatSignal('_LM_SizeOfField',sizeOfField)
     end
+
 
 	function self.customInit()
 		helperSay("Follow the gradient estimated from the local map...")
@@ -95,9 +96,9 @@ function finken.init(self)
 
 
     function self.CheckUIButton()
-        --check if update button is pressed
-        startBtnValue = simGetUIEventButton(printLocalMapData)
-        boolValue = 3
+        --check if display data button is pressed
+        startBtnValue = simGetUIEventButton(finkenLocalMapUI)
+        boolValue = 8
         if(startBtnValue == boolValue) then
             myMap:printData()
         end
@@ -105,7 +106,6 @@ function finken.init(self)
 
 
 	function self.customRun()
-        self.CheckUIButton()
         -- Gradient images from matlab
         -- R: height
         -- G: x gradient (0.5 intensity corresponds to 0 gradient)
@@ -114,7 +114,10 @@ function finken.init(self)
         -- the first element colors[1] is the overall lightness of the image
         -- the other elements colors[2] is Red, colors[3] is Green, colors[4] is Blue
 
+        self.CheckUIButton()
+
 		local _, colors = simReadVisionSensor(simGetObjectHandle('Floor_camera'))
+
 		--simAddStatusbarMessage(colors[1]..' '..colors[2]..' '..colors[3]..' '..colors[4])
 
         -- Setting the speed signals, so that the texture and arena can be moved
@@ -184,10 +187,9 @@ function finken.init(self)
             end
         end
         -- self.setTargetToPosition(0, 1)
-
         myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0.01, true)
-       myMap:UpdateTextureLocalMapDataTableForUI()
-        -- myMap:updateMap(xSpeed, ySpeed, colors[2]*255+colors[3], true, 0.01, true)
+        myMap:UpdateTextureLocalMapDataTableForUI()
+        --myMap:updateMap(xSpeed, ySpeed, colors[2]*255+colors[3], true, 0.01, true)
 	end
 
 	function self.customSense()
