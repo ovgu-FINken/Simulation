@@ -137,12 +137,13 @@ In the following, it could be possible, that both controllers are going to apply
 	\end{center}
 \end{figure}
 
-Interestingly, the roll of the FINkens as shown in \ref{fig:rollDetail} doesn't fit as well as the pitch, despite having identical controllers.
+Interestingly, the roll of the FINkens as shown in \ref{fig:rollResponse} doesn't fit as well as the pitch, despite having identical controllers.
 In this flight, we observed some logging error in V-REP. 
-The huge
+The huge spikes in the virtual FINken's roll angle could not be observed in the screen capture of the simulation.
+When comparing the spikes in \ref{pic:rollResponse} with the plot of the pitch in \ref{pic:pitchResponse}, one can notice that the erroneous spikes in the roll correspond to the valid spikes in the pitch.
+An explanation could be, that the rotation matrix for the dummy object, which is linked to the simulated FINken's body, was not computed correctly.
+Unfortunately, we could not reproduce this error, but it shows that one should be careful when using sensor data, be it from hardware sensors or from software.
 
-It can be seen, that the virtual FINken tries to follow the movements, but
-\todo{add plot with roll spikes and pitch plot}
 \begin{figure}
 	\begin{center}
 	\includegraphics[width=\textwidth]{roll}
@@ -151,14 +152,12 @@ It can be seen, that the virtual FINken tries to follow the movements, but
 	\end{center}
 \end{figure}
 
-
-\todo{explanation for roll spikes: vreps internal handling of shapes; maybe copter and "IMU" are not moved at the same time? }
-\todo{filter values? }
+The plots for the angular responses of the simulation show, that it is possible to let a virtual FINken mimic a real flying one by transmitting the \gls{AHRS} values. 
+The response of the model does not exactly match, but to achieve this, the simulation model needs to be excessively tuned, which is out of scope of this work.
 \begin{itemize}
 \item{plot graph of euler angles}
-\item{highlight start of drift, other interesting elements?}
+\item{highlight start of drift at 30s, other interesting elements?}
 \item{plot difference between graphs}
-
 \end{itemize}
 
 
