@@ -6,7 +6,8 @@
 \section{Testing with Joystick}
 
 
-In order to evaluate, at an early stage, how flyable and responsivee to external commands the VREP Quadcopter was, and how reliable the communication link between the V-REP and the Ivy-Bus system is, a Hardware-in-the-loop (HIL) set-up was build. \ref{fig:finkenHIL} shows the HIL set-up, consisting of a joystick, which is attached on the Ivy-Bus and controls the V-REP Quadcopter.
+In order to evaluate, at an early stage, how flyable and responsivee to external commands the VREP Quadcopter was, and how reliable the communication link between the V-REP and the Ivy-Bus system is, a Hardware-in-the-loop (HIL) set-up was build. 
+\ref{fig:finkenHIL} shows the HIL set-up, consisting of a joystick, which is attached on the Ivy-Bus and controls the V-REP Quadcopter.
 
 
 \begin{figure}[h!]
@@ -16,20 +17,31 @@ In order to evaluate, at an early stage, how flyable and responsivee to external
   \caption{Finken Hardware-in-the-loop\label{fig:finkenHIL}}
 \end{figure}
 
-The HIL evaluation was implemented as a separate project - \textit{JavaFinkenSimHil}. It uses the Java external library \href{https://java.net/projects/jinput}{JInput} for reading the inputs from the joystick. The already created \textit{JavaIvyBus} module, which was discussed in \ref{sec:ivyBusImplementation}, is used to connect the Joystick to the Ivy-Bus. \\
+The HIL evaluation was implemented as a separate project - \textit{JavaFinkenSimHil}. 
+It uses the Java external library \href{https://java.net/projects/jinput}{JInput} for reading the inputs from the joystick. 
+The already created \textit{JavaIvyBus} module, which was discussed in \ref{sec:ivyBusImplementation}, is used to connect the Joystick to the Ivy-Bus. \\
+
 The \textit{Joystick} class has as a local variable the class \textit{JoystickBusNode}, which extends the abstract \textit{AbsIvyBusNode}, thus being able to communicate on the common Ivy-Bus network. \\
-The \textit{Joystick} class polls the data from the Joystick device at 50 Mhz and sends them to the \textit{JoystickBusNode}, which on the other hand encapsulates the data in 
-a FINKEN\_ROTORCRAFT\_FP message and publishes it on the bus. \\ 
-The FINKEN\_ROTORCRAFT\_FP is the message that the real Quadcopter uses to publish its pitch, yaw and roll angles. Since the Joystick fakes the real Quadcopter, the JavaFinkenApp receives the message as if coming from the real one, thus not even a single line of code had to be changed in the JavaFinkenApp, in order to use the HIL evaluation. \\
+
+The \textit{Joystick} class polls the data from the Joystick device at 50 Mhz and sends them to the \textit{JoystickBusNode}, which on the other hand encapsulates the data in a FINKEN\_ROTORCRAFT\_FP message and publishes it on the bus. \\ 
+
+The FINKEN\_ROTORCRAFT\_FP is the message that the real Quadcopter uses to publish its pitch, yaw and roll angles. 
+Since the Joystick fakes the real Quadcopter, the JavaFinkenApp receives the message as if coming from the real one, thus not even a single line of code had to be changed in the JavaFinkenApp, in order to use the HIL evaluation. \\
 
 As a result of the evaluation we came to the following conclusions:
 
 \begin{itemize}
-\item{The controlling of the Quadcopter was very precise and accurate. We ware able to make any manoeuvre and flight path as desired. \\ When flying with the Joystick, one can get a real feeling
-of the Quadcopter flight dynamics and behaviour}.
+\item{The controlling of the Quadcopter was very precise and accurate. 
+We ware able to make any manoeuvre and flight path as desired. \\ 
 
-\item{We experienced challenges with keeping the Quadcopter at a level height, using the throttle levers of the Joystick. It turned out, that keeping a level height was a matter of eye-hand coordination. \\
-Even the slightest change to the thrust when hovering resulted in a strong accelaration in $z$-axis. Even if this behaviour corresponds to the real quadcopter, we identified it as a problem, as the hover thrust of the real quadcopter changes during flight time with the battery voltage. As a result, we decided to tune the throttle response of the virtual Quadcopter with a logistic curve as described in \ref{equ:logistic}}.
+When flying with the Joystick, one can get a real feeling of the Quadcopter flight dynamics and behaviour}.
+
+\item{We experienced challenges with keeping the Quadcopter at a level height, using the throttle levers of the Joystick. 
+It turned out, that keeping a level height was a matter of eye-hand coordination. \\
+
+Even the slightest change to the thrust when hovering resulted in a strong accelaration in $z$-axis. 
+Even if this behaviour corresponds to the real quadcopter, we identified it as a problem, as the hover thrust of the real quadcopter changes during flight time with the battery voltage. 
+As a result, we decided to tune the throttle response of the virtual Quadcopter with a logistic curve as described in \ref{equ:logistic}}.
 
 \end{itemize}
 
