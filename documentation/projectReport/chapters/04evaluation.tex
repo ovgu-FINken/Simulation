@@ -6,7 +6,8 @@
 \section{Testing with Joystick}
 
 
-In order to evaluate, at an early stage, how flyable and responsivee to external commands the VREP Quadcopter was, and how reliable the communication link between the V-REP and the Ivy-Bus system is, a Hardware-in-the-loop (HIL) set-up was build. \ref{fig:finkenHIL} shows the HIL set-up, consisting of a joystick, which is attached on the Ivy-Bus and controls the V-REP Quadcopter.
+In order to evaluate, at an early stage, how flyable and responsivee to external commands the VREP Quadcopter was, and how reliable the communication link between the V-REP and the Ivy-Bus system is, a Hardware-in-the-loop (HIL) set-up was build. 
+\ref{fig:finkenHIL} shows the HIL set-up, consisting of a joystick, which is attached on the Ivy-Bus and controls the V-REP Quadcopter.
 
 
 \begin{figure}[h!]
@@ -16,26 +17,56 @@ In order to evaluate, at an early stage, how flyable and responsivee to external
   \caption{Finken Hardware-in-the-loop\label{fig:finkenHIL}}
 \end{figure}
 
-The HIL evaluation was implemented as a separate project - \textit{JavaFinkenSimHil}. It uses the Java external library \href{https://java.net/projects/jinput}{JInput} for reading the inputs from the joystick. The already created \textit{JavaIvyBus} module, which was discussed in \ref{sec:ivyBusImplementation}, is used to connect the Joystick to the Ivy-Bus. \\
+The HIL evaluation was implemented as a separate project - \textit{JavaFinkenSimHil}. 
+It uses the Java external library \href{https://java.net/projects/jinput}{JInput} for reading the inputs from the joystick. 
+The already created \textit{JavaIvyBus} module, which was discussed in \ref{sec:ivyBusImplementation}, is used to connect the Joystick to the Ivy-Bus. \\
+
 The \textit{Joystick} class has as a local variable the class \textit{JoystickBusNode}, which extends the abstract \textit{AbsIvyBusNode}, thus being able to communicate on the common Ivy-Bus network. \\
-The \textit{Joystick} class polls the data from the Joystick device at 50 Mhz and sends them to the \textit{JoystickBusNode}, which on the other hand encapsulates the data in 
-a FINKEN\_ROTORCRAFT\_FP message and publishes it on the bus. \\ 
-The FINKEN\_ROTORCRAFT\_FP is the message that the real Quadcopter uses to publish its pitch, yaw and roll angles. Since the Joystick fakes the real Quadcopter, the JavaFinkenApp receives the message as if coming from the real one, thus not even a single line of code had to be changed in the JavaFinkenApp, in order to use the HIL evaluation. \\
+
+The \textit{Joystick} class polls the data from the Joystick device at 50 Mhz and sends them to the \textit{JoystickBusNode}, which on the other hand encapsulates the data in a FINKEN\_ROTORCRAFT\_FP message and publishes it on the bus. \\ 
+
+The FINKEN\_ROTORCRAFT\_FP is the message that the real Quadcopter uses to publish its pitch, yaw and roll angles. 
+Since the Joystick fakes the real Quadcopter, the JavaFinkenApp receives the message as if coming from the real one, thus not even a single line of code had to be changed in the JavaFinkenApp, in order to use the HIL evaluation. \\
 
 As a result of the evaluation we came to the following conclusions:
 
 \begin{itemize}
-\item{The controlling of the Quadcopter was very precise and accurate. We ware able to make any manoeuvre and flight path as desired. \\ When flying with the Joystick, one can get a real feeling
-of the Quadcopter flight dynamics and behaviour}.
+\item{The controlling of the Quadcopter was very precise and accurate. 
+We ware able to make any manoeuvre and flight path as desired. \\ 
 
-\item{We experienced challenges with keeping the Quadcopter at a level height, using the throttle levers of the Joystick. It turned out, that keeping a level height was a matter of eye-hand coordination. \\
-Even the slightest change to the thrust when hovering resulted in a strong accelaration in $z$-axis. Even if this behaviour corresponds to the real quadcopter, we identified it as a problem, as the hover thrust of the real quadcopter changes during flight time with the battery voltage. As a result, we decided to tune the throttle response of the virtual Quadcopter with a logistic curve as described in \ref{equ:logistic}}.
+When flying with the Joystick, one can get a real feeling of the Quadcopter flight dynamics and behaviour}.
+
+\item{We experienced challenges with keeping the Quadcopter at a level height, using the throttle levers of the Joystick. 
+It turned out, that keeping a level height was a matter of eye-hand coordination. \\
+
+Even the slightest change to the thrust when hovering resulted in a strong accelaration in $z$-axis. 
+Even if this behaviour corresponds to the real quadcopter, we identified it as a problem, as the hover thrust of the real quadcopter changes during flight time with the battery voltage. 
+As a result, we decided to tune the throttle response of the virtual Quadcopter with a logistic curve as described in \ref{equ:logistic}}.
 
 \end{itemize}
 
-\section{Speed}
+\section{Timing}
+\subsection{VREP performance}
+\begin{itemize}
+\item{}
+\item{}
+\item{}
+\item{}
+\end{itemize}
 
 The rate at which the V-REP simulated quadcopter receives the telemetry data from the flying quadcopter is crucial for the mixed reality simulation. The period at which a message is sent is configurable in the telemetry file, but there are several factors, that can influence the message frequency.
+
+\subsection{Timings in the Communication link}
+\label{sec:commTiming}
+\todo{communication delay}
+\begin{itemize}
+\item{}
+\item{}
+\item{mean delta t between sent messages, compare with the configured message frequency}
+\item{possible buffering in AHRS}
+\item{ run this with two or multiple quadrocopter}
+\item{latency of JAVA link}
+\end{itemize}
 
 \begin{figure}[h!]
  \begin{center}
@@ -58,27 +89,78 @@ The rate at which the V-REP simulated quadcopter receives the telemetry data fro
 
 
 \section{Accuracy}
+
+To evaluate the accuracy of the simulation, we compared the orientation of the real FINken and the simulated model.  
+We let the real FINken fly freely in the arena using the wall avoid control and linked the simulated FINken.
+V-REP, paparazzi and the Java bridge were all run on the same machine.
+The test flight which is referred to in the following was filmed.
+The video, a screen recording of the simulation and the corresponding log files can be found online \todo{make raw data available} \todo{insert link to raw data}
+The real quadcopter has some issues with the yaw angle. 
+A cause for this is that the magnetometer does not provide reliable values indoors, due to interferences of electro-magnetic fields.
+The sensors of the FINken are symmetrical, so yaw is not needed for regular movements.
+Thus, it is tried to keep the copters orientation around the $z$ axis more or less stable.
+The flight chose
+
+The pitch and roll angles of the simulated FINken are more interesting.
+When we logged the values via the telemetry link of paparazzi, and compared them to the values exported from the simulation, we noticed a time offset. 
+This is not surprising, as we don't use an absolute reference time, but it made it impossible to directly compare the orientation logs.
+To get a meaningful graphic, we manually resampled the logs and put them on a common time base.
+Characteristic patterns were used to achieve a common time base.
+In \ref{pic:pitchResponse} can be seen that the simulated FINken nicely adopts the real FINken's movements. 
+The first spike at about $7s$ shows the takeoff. 
+From $12s$ to $22s$ it can be seen how the real FINken got close to a wall and started to avoid it. 
+The flight was stopped after about $43s$, the huge spikes at the end of the graph show how the response when the copter fell to the ground.
 \begin{figure}
-\begin{center}
-\includegraphics[width=\textwidth]{pitch}
-\caption{Euler angles of simulated FINken and real FINken}
-\label{pic:pitchResponse}
-\end{center}
+	\begin{center}
+	\includegraphics[width=\textwidth]{pitch}
+	\caption{Pitch angles of simulated FINken and real FINken}
+	\label{pic:pitchResponse}
+	\end{center}
 \end{figure}
+
+A more detailed plot of the pitch comparison is shown in \ref{pic:pitchDetail}.
+Every spike of the real FINkens movement is directly followed by a spike in the same direction of the simulated FINken.
+The smaller movements do not correspond exactly, as the simulated copter contains its own attitude controller.
+Thus, keeping the simulated FINken stable in air has a higher priority than following the real copter's movements.
+The graph shows some points, e.g. before $17s$ where movement of the simulated FINken appears to precede the real FINken's movement.
+This can have two possible explanations.
+Firstly, as mentioned before, the time base was readjusted manually.
+Thus, it might be possible, that as explained in \ref{sec:commTiming} \todo{write the explanation}, that the values were sent with a wrong timestamp that wasn't corrected during the adjustment, or even made worse by the resampling.
+Secondly,  the controller of the simulated FINken's controller has the same goal as the real FINken, namely to keep the copter stable. 
+In the following, it could be possible, that both controllers are going to apply the same changes and that the virtual one is slightly faster.
+ 
+
 \begin{figure}
-\begin{center}
-\includegraphics[width=\textwidth]{roll}
-\caption{Euler angles of simulated FINken and real FINken}
-\label{pic:rollResponse}
-\end{center}
+	\begin{center}
+	\includegraphics[width=\textwidth]{pitch_detail}
+	\caption{Pitch angles of simulated FINken and real FINken}
+	\label{pic:pitchDetail}
+	\end{center}
 \end{figure}
-\todo{explanation for roll spikes: vreps internal handling of shapes; maybe copter and "IMU" are not moved at the same time? }
-\todo{filter values? }
+
+Interestingly, the roll of the FINkens as shown in \ref{fig:rollResponse} doesn't fit as well as the pitch, despite having identical controllers.
+In this flight, we observed some logging error in V-REP. 
+The huge spikes in the virtual FINken's roll angle could not be observed in the screen capture of the simulation.
+When comparing the spikes in \ref{pic:rollResponse} with the plot of the pitch in \ref{pic:pitchResponse}, one can notice that the erroneous spikes in the roll correspond to the valid spikes in the pitch.
+An explanation could be, that the rotation matrix for the dummy object, which is linked to the simulated FINken's body, was not computed correctly.
+Unfortunately, we could not reproduce this error, but it shows that one should be careful when using sensor data, be it from hardware sensors or from software.
+
+\begin{figure}
+	\begin{center}
+	\includegraphics[width=\textwidth]{roll}
+	\caption{Roll angles of simulated FINken and real FINken}
+	\label{pic:rollResponse}
+	\end{center}
+\end{figure}
+
+The plots for the angular responses of the simulation show, that it is possible to let a virtual FINken mimic a real flying one by transmitting the \gls{AHRS} values. 
+The response of the model does not exactly match, but to achieve this, the simulation model needs to be excessively tuned, which is out of scope of this work.
 \begin{itemize}
 \item{plot graph of euler angles}
-\item{highlight start of drift, other interesting elements?}
+\item{highlight start of drift at 30s, other interesting elements?}
 \item{plot difference between graphs}
 \end{itemize}
+
 
 Eventually we wanted to evaluate to what extend the path of the flying quadrocopter matches the path of the simulated quadcopter. V-REP provides an easy way to plot the two dimensional position of the quadrocopter and draw the flying path, but our real quadrocopter does not have a positioning system and its position estimation is not possible.\\ In order to estimate the position we have used the MEDUSA localization system developed in our faculty [add reference to the paper]. The system calculates the two dimensional position of a mobile robot moving in a rectangular arena, using eight proximity sensors and a gyroscope. It uses the yaw angle of the robot and the distances to the walls from the proximity sensors to calculate a set of possible positions, where the quadrocopter could be. Then it moves through all possible points and calculates the distances, that the proximity sensors should read at that particular point and angle of rotation. Comparing the real readings from the quadrocopter proximity sensors and the calculated distances, a probability function is calculated, that indicates the probability that the real quadrocopter is situated at the particular point. The point with the highest probability is chosen for the quadcopter position.\\
 The MEDUSA positioning system turned out to be an easy and fast way to get an estimation of the position, since our quadcopter has four ultrasound sensors, positioned at 90 degrees from each other, and a gyroscope, which provides the angle of rotation. The fact, that the original positioning system uses eight distance sensors was not disturbing, since it is possible to estimate the position even with two sensors. But a higher number of sensors provides more fault-tolerance to the system and more accuracy. It was also not necessary to implement the algorithm in the firmware of the quadcopter. We used the log file, that the Paparazzi software uses to write the sensor data and fetch the sensor readings from there using a Matlab script. Only a minor changes ware required in the configuration of the sensor numbers, the sensors maximum range and the size of the arena.\\
