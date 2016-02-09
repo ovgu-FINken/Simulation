@@ -110,7 +110,7 @@ public class MessagesTab extends AbsTab implements PropertyChangeListener {
       @Override
       public void run() {
         for (RealFinkenDrone drone : _drones) {
-          MessagesTab.this.combo.addItem(drone.getObjectName().getBaseName());
+          MessagesTab.this.combo.addItem(drone.getObjectName().getBaseName());  
         }
       }
     });
@@ -150,10 +150,10 @@ public class MessagesTab extends AbsTab implements PropertyChangeListener {
   }
   
   private void _initDrone(RealFinkenDrone _drone) {
-    if (this.drone == null) {
-      return;
+    if (this.drone != null) {
+      this.drone.removePropertyChangeListener(this);
     }
-    this.drone.removePropertyChangeListener(this);
+    
     this.drone = _drone;
     this.drone.addPropertyChangeListener(this);
   }
