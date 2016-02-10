@@ -58,7 +58,9 @@ function finken.init(self)
 		context.objectHandle = self.getObjectHandle()
 		context.sensorDistances = {7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5}
 		-- set first target
-		context.targets['goal1'] = {4,4,2}
+		context.targets['goal1'] = {9.5, -13.5, 2.5}
+		context.targets['goal2'] = {9.5, 10, 2.5}
+		context.targets['goal3'] = {-7, 15, 2.5}
 	end
 
 
@@ -91,6 +93,10 @@ function finken.init(self)
 		
 		-- set the controll target to the new steering position
 		local newPosition = addVectors(context.currentPosition, velocity)
+		
+		-- keep hight 2.5 !!!!!!!!!!!!!!!!!!!! Its a cheat and should be handle properly in final version
+		newPosition[3] = 2.5
+		
 		simSetObjectPosition(targetObj, -1, newPosition)
 		self.setTarget(targetObj)
 	end
@@ -112,7 +118,9 @@ function finken.init(self)
 		
 		for i=1,8,1 do
 			if sensorDistances[i] then
-				context.sensorDistances[i]= sensorDistances[i]
+				context.sensorDistances[i] = sensorDistances[i]
+			else 
+				context.sensorDistances[i] = 7.5
 			end
 			
 			-- Filter sensor data if they are wrong

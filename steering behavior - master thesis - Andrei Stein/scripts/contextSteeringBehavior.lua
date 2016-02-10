@@ -29,15 +29,40 @@ function contextSteeringBehavior.init(self)
 		-- calculate danger values for each direction
 		for i=1,8,1 do
 			local danger = 1 - contextData.sensorDistances[i]/7.5
-			if danger >= dangerMap[i] then 
+			--if danger >= dangerMap[i] then 
 				dangerMap[i] = danger 
-				simSetUIButtonColor(ui_handle, 14+i, {1-danger, 1-danger, 1-danger})
-			end
+			--end
+			simSetUIButtonColor(ui_handle, 14+i, {1-danger, 1-danger, 1-danger})
 		end
 		
 		-- calculate interest values for each direction
 		for k, target in pairs(contextData.targets) do
 			local vectorToTarget = TransformToLokalSystem(contextData.objectHandle, target)
+			local lenght = getEuclideanNorm(vectorToTarget)
+			if(lenght < 0.6) then
+				if(k == 'goal1') then
+					if(contextData.targets['goal1']) then
+						contextData.targets['goal1'] = nil
+					end
+					local target_handle = simGetObjectHandle('Sphere')
+					simSetModelProperty(target_handle, sim_modelproperty_not_visible)
+				end
+				if(k == 'goal2') then
+					if(contextData.targets['goal2']) then
+						contextData.targets['goal2'] = nil
+					end
+					local target_handle = simGetObjectHandle('Sphere0')
+					simSetModelProperty(target_handle, sim_modelproperty_not_visible)
+				end
+				if(k == 'goal3') then
+					if(contextData.targets['goal3']) then
+						contextData.targets['goal3'] = nil
+					end
+					local target_handle = simGetObjectHandle('Sphere1')
+					simSetModelProperty(target_handle, sim_modelproperty_not_visible)
+				end
+			end
+			
 			vectorToTarget = truncateVector(vectorToTarget, MAX_TARGET_DISTANCE)
 			
 			local direction = {0,0,0}
@@ -78,7 +103,7 @@ function contextSteeringBehavior.init(self)
 				angleCos = getCosBetweenVectors(vectorToTarget, direction)
 				--if angleCos > 0 then -- vectors are pointing in same direction
 					-- map the cos value in the range of [0 - 1] and write it into the interestMap
-					angleCos = (angleCos + 1) / 2
+					angleCos = ((angleCos + 1) / 2)*(1-(lenght/35))-- delete this *(1-(lenght/35)) if no nearest target should be supplied
 					if angleCos > interestMap[i] then
 						interestMap[i] = angleCos
 						simSetUIButtonColor(ui_handle, 6+i, {angleCos, angleCos, angleCos})
