@@ -100,8 +100,8 @@ end
 
 
 -- Create Texture and WriteTexture for the UI of local map visualization
-
 function  LocalMap:CreateTextureLocalMapDataTable()
+
     --Create an empty texture with some scale
     -- THE EmptyTexture.png resolution should map the, local map size and field size to proper visualization.
     --number shapeHandle,number textureId,table_2 resolution=simCreateTexture(string fileName,number options,table_2 planeSizes=nil,table_2 scalingUV=nil,table_2 xy_g=nil,number fixedResolution=0,table_2 resolution=nil)
@@ -122,41 +122,38 @@ end
 
 function LocalMap:TempSaveImage()
 
-    local textureDataMap = ''
-    rgb = {}
+        local textureDataMap = ''
+        rgb = {}
 
-    --get resolution of actual texture that you're writing and then iterate over each field and fill it with black color'
-    for i=1, self.resolution*self.resolution*3 do
-        rgb[i]= 0
-    end
-
-    for r=1,self.resolution do
-        for c=1,self.resolution do
-        --string data=simPackBytes(table byteNumbers,number startByteIndex=0,number bytecount=0)
-        rgb[((c-1)*self.resolution+r)*3-2] = self.map[r][c]
-
-    if(rgb[((c-1)*self.resolution+r)*3-2] == nil) then
-        rgb[((c-1)*self.resolution+r)*3-2] = 0
-    else
-        rgb[((c-1)*self.resolution+r)*3-2]= math.floor(self.map[r][c]*255)
+        --get resolution of actual texture that you're writing and then iterate over each field and fill it with black color'
+        for i=1, self.resolution*self.resolution*3 do
+            rgb[i]= 0
         end
 
+        for r=1,self.resolution do
+            for c=1,self.resolution do
+            --string data=simPackBytes(table byteNumbers,number startByteIndex=0,number bytecount=0)
+            rgb[((c-1)*self.resolution+r)*3-2] = self.map[r][c]
+
+        if(rgb[((c-1)*self.resolution+r)*3-2] == nil) then
+            rgb[((c-1)*self.resolution+r)*3-2] = 0
+        else
+            rgb[((c-1)*self.resolution+r)*3-2]= math.floor(self.map[r][c]*255)
+            end
+
+            end
         end
-    end
 
     textureDataMap = simPackBytes(rgb)
 
-    -- saving image
+
     simSaveImage(textureDataMap,{self.resolution,self.resolution},0, 'localmap.png',-1)
 
     --create texture from the saved image
     self:CreateTextureLocalMapDataTable()
-
 end
 
 function  LocalMap:UpdateTextureLocalMapDataTableForUI()
-
-    --TODO: save the image in directory ?
 
     local textureDataMap = ''
     rgb = {}
@@ -181,9 +178,7 @@ function  LocalMap:UpdateTextureLocalMapDataTableForUI()
     end
 
     textureDataMap = simPackBytes(rgb)
-
 	--simWriteTexture(number textureId,number options,string textureData,number posX=0,number posY=0,number sizeX=0,number sizeY=0)
-
     simWriteTexture(LMTextureID,0,textureDataMap)
     simSetShapeTexture(simGetObjectHandle('LocalMapVisual'), LMTextureID, 0, 3, {1, 1}, {0, 0, 0}, nil)
 
