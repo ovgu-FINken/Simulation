@@ -154,9 +154,23 @@ The response of the model does not exactly match, but to achieve this, the simul
 \end{itemize}
 
 
-Eventually we wanted to evaluate to what extend the path of the flying quadrocopter matches the path of the simulated quadcopter. V-REP provides an easy way to plot the two dimensional position of the quadrocopter and draw the flying path, but our real quadrocopter does not have a positioning system and its position estimation is not possible.\\ In order to estimate the position we have used the MEDUSA localization system developed in our faculty [add reference to the paper]. The system calculates the two dimensional position of a mobile robot moving in a rectangular arena, using eight proximity sensors and a gyroscope. It uses the yaw angle of the robot and the distances to the walls from the proximity sensors to calculate a set of possible positions, where the quadrocopter could be. Then it moves through all possible points and calculates the distances, that the proximity sensors should read at that particular point and angle of rotation. Comparing the real readings from the quadrocopter proximity sensors and the calculated distances, a probability function is calculated, that indicates the probability that the real quadrocopter is situated at the particular point. The point with the highest probability is chosen for the quadcopter position.\\
-The MEDUSA positioning system turned out to be an easy and fast way to get an estimation of the position, since our quadcopter has four ultrasound sensors, positioned at 90 degrees from each other, and a gyroscope, which provides the angle of rotation. The fact, that the original positioning system uses eight distance sensors was not disturbing, since it is possible to estimate the position even with two sensors. But a higher number of sensors provides more fault-tolerance to the system and more accuracy. It was also not necessary to implement the algorithm in the firmware of the quadcopter. We used the log file, that the Paparazzi software uses to write the sensor data and fetch the sensor readings from there using a Matlab script. Only a minor changes ware required in the configuration of the sensor numbers, the sensors maximum range and the size of the arena.\\
-On \ref{fig:matlabPosEstimation} you can see the calculated possible positions and the quadcopter positioned at the point with the highest possibility value. The lines represent the ultrasound sensors and the length of the lines depict the maximum sensor range. The red fractions of the lines show the actual distance measured by the sensor. 
+Eventually we wanted to evaluate to what extend the path of the flying quadrocopter matches the path of the simulated quadcopter. V-REP provides an easy way to plot the two dimensional position of the quadrocopter and draw the flying path, but our real quadrocopter does not have a positioning system and its position estimation is not possible.\\ 
+
+In order to estimate the position we have used the MEDUSA localization system developed in our faculty by Zug, Dietrich and Brezhnyev\cite{Zug2011RobLoc}. 
+The system calculates the two dimensional position of a mobile robot moving in a rectangular arena, using eight proximity sensors and a gyroscope. 
+It uses the yaw angle of the robot and the distances to the walls from the proximity sensors to calculate a set of possible positions, where the quadrocopter could be. 
+Then it moves through all possible points and calculates the distances, that the proximity sensors should read at that particular point and angle of rotation. 
+Comparing the real readings from the quadrocopter proximity sensors and the calculated distances, a probability function is calculated, that indicates the probability that the real quadrocopter is situated at the particular point. 
+The point with the highest probability is chosen for the quadcopter position.\\
+
+The MEDUSA positioning system turned out to be an easy and fast way to get an estimation of the position, since our quadcopter has four ultrasound sensors, positioned at 90 degrees from each other, and a gyroscope, which provides the angle of rotation. 
+The fact, that the original positioning system uses eight distance sensors was not disturbing, since it is possible to estimate the position even with two sensors. 
+But a higher number of sensors provides more fault-tolerance to the system and more accuracy. 
+It was also not necessary to implement the algorithm in the firmware of the quadcopter. 
+We used the log file, that the Paparazzi software uses to write the sensor data and fetch the sensor readings from there using a Matlab script. 
+Only a minor changes ware required in the configuration of the sensor numbers, the sensors maximum range and the size of the arena.\\
+On \ref{fig:matlabPosEstimation} you can see the calculated possible positions and the quadcopter positioned at the point with the highest possibility value. 
+The lines represent the ultrasound sensors and the length of the lines depict the maximum sensor range. The red fractions of the lines show the actual distance measured by the sensor. 
 
 \begin{figure}[h!]
  \begin{center}
@@ -165,7 +179,13 @@ On \ref{fig:matlabPosEstimation} you can see the calculated possible positions a
   \caption{position estimation\label{fig:matlabPosEstimation}}
 \end{figure}
 
-The positioning system relies on accurate sensor readings to provide a precise position estimation. Our gyroscope provides noisy estimation of the yaw angle and the distance sensors are also quite noisy. Since our quadcopter is equipped with just four distance sensors, the localization system cannot tolerate the noise as good as with eight sensors. For this reasons an accurate position estimation could not be expected, but it should provide some reference estimation of the flying path. On \ref{fig:matlabPosPath} you can see the results of the position estimation. Each position has been marked with a blue star, so that we can see where the quadcopter has been. It is not possible to show the actual flying path as a function of time, but it shows which parts of the arena had been occupied by the quadcopter during the flight. \ref{fig:vrepPosPath} shows the flight path of the simulated quadcopter in the V-REP. As in \ref{fig:matlabPosPath} it does not shows the trajectory as a function of time, but just the occupied positions during the flight. The x and y axes of the plot show the V-REP scene arena and the small rectangle represents the flight arena.
+The positioning system relies on accurate sensor readings to provide a precise position estimation. 
+Our gyroscope provides noisy estimation of the yaw angle and the distance sensors are also quite noisy. Since our quadcopter is equipped with just four distance sensors, the localization system cannot tolerate the noise as good as with eight sensors. 
+For this reasons an accurate position estimation could not be expected, but it should provide some reference estimation of the flying path. 
+On \ref{fig:matlabPosPath} you can see the results of the position estimation. 
+Each position has been marked with a blue star, so that we can see where the quadcopter has been. It is not possible to show the actual flying path as a function of time, but it shows which parts of the arena had been occupied by the quadcopter during the flight. \ref{fig:vrepPosPath} shows the flight path of the simulated quadcopter in the V-REP. 
+As in \ref{fig:matlabPosPath} it does not shows the trajectory as a function of time, but just the occupied positions during the flight. 
+The x and y axes of the plot show the V-REP scene arena and the small rectangle represents the flight arena.
 
 \begin{figure}[h!]
  \begin{center}
@@ -181,8 +201,17 @@ The positioning system relies on accurate sensor readings to provide a precise p
   \caption{V-REP flight path\label{fig:vrepPosPath}}
 \end{figure}
 
-The estimated positions on \ref{fig:matlabPosPath} are very scattered, due to the fact that the localization system cannot estimate the position with a big accuracy. In the worst case, as a correct position was assumed one of the calculated possible points, which was far away from the previous estimated position. This creates a big jumps in the path, which does not coincide with the real flight path. The scattered plot and the jumps are caused by the noisy sensor measurements. A couple of attempts to filter the sensor readings ware made, but the plot still looked scattered to a significant extend. Also a Kalman Filter was implemented to eliminate the big jumps between the current and previous quadcopter positions, but the results ware still not satisfying.\\
-On the other hand \ref{fig:vrepPosPath} shows a clear flying path, due to the fact that the position is not estimated, but taken directly from the V-REP environment. The graph shows how the quadcopter drifts and to what extend it flies away from the arena.\\
-Eventually we came to the conclusion, that the used approach for position estimation was not good enough for our needs and a detailed comparison between the flying paths of the real and simulated quadcopter could not be done at this stage. However the working group has the intention to build a camera positioning system and track the quadcopter position with a camera mounted on the top of the arena.
+The estimated positions on \ref{fig:matlabPosPath} are very scattered, due to the fact that the localization system cannot estimate the position with a big accuracy. 
+In the worst case, as a correct position was assumed one of the calculated possible points, which was far away from the previous estimated position. 
+This creates a big jumps in the path, which does not coincide with the real flight path. 
+The scattered plot and the jumps are caused by the noisy sensor measurements. 
+A couple of attempts to filter the sensor readings ware made, but the plot still looked scattered to a significant extend. 
+Also a Kalman Filter was implemented to eliminate the big jumps between the current and previous quadcopter positions, but the results ware still not satisfying.\\ \todo{there is a kalman filter in the localizaiton system?}
+
+On the other hand \ref{fig:vrepPosPath} shows a clear flying path, due to the fact that the position is not estimated, but taken directly from the V-REP environment. 
+The graph shows how the quadcopter drifts and to what extend it flies away from the arena.\\
+
+Eventually we came to the conclusion, that the used approach for position estimation was not good enough for our needs and a detailed comparison between the flying paths of the real and simulated quadcopter could not be done at this stage. 
+However the working group has the intention to build a camera positioning system and track the quadcopter position with a camera mounted on the top of the arena.
 
 
