@@ -106,7 +106,7 @@ function  LocalMap:CreateTextureLocalMapDataTable()
     -- THE EmptyTexture.png resolution should map the, local map size and field size to proper visualization.
     --number shapeHandle,number textureId,table_2 resolution=simCreateTexture(string fileName,number options,table_2 planeSizes=nil,table_2 scalingUV=nil,table_2 xy_g=nil,number fixedResolution=0,table_2 resolution=nil)
 
-    LMTextureHandle, LMTextureID, LMResolution= simCreateTexture('/Users/asemahassan/Documents/Simulation/resources/gradient_maps/map_images/localmap.png',3, {self.totalSize/50,self.totalSize/50}, {1,1}, nil, 0, {1,1}, {self.resolution,self.resolution})
+    LMTextureHandle, LMTextureID, LMResolution= simCreateTexture('localmap.png',3, {self.totalSize/50,self.totalSize/50}, {1,1}, nil, 0, {1,1}, {self.resolution,self.resolution})
 
     simAddStatusbarMessage('R:'..LMResolution[1]..LMResolution[2])
     --Add the texture as the child of finken
@@ -147,7 +147,7 @@ function LocalMap:TempSaveImage()
     textureDataMap = simPackBytes(rgb)
 
     -- saving image
-    simSaveImage(textureDataMap,{self.resolution,self.resolution},0, '/Users/asemahassan/Documents/Simulation/resources/gradient_maps/map_images/localmap.png',-1)
+    simSaveImage(textureDataMap,{self.resolution,self.resolution},0, 'localmap.png',-1)
 
     --create texture from the saved image
     self:CreateTextureLocalMapDataTable()
