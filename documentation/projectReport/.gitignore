@@ -29,7 +29,7 @@
 *.mtc1
 *.out
 *.synctex.gz
-
+thesis.pdf
 # Mac IDE files
 *.swp
 *~

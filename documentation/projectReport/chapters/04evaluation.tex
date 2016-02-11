@@ -47,6 +47,17 @@ As a result, we decided to tune the throttle response of the virtual Quadcopter 
 
 \section{Timing and Performance}
 \subsection{VREP performance}
+The VREP simulation is quit performant, running even on an old $2.4 GHz$ Core 2 Duo close to real time.
+In this case, the execution of the lua scripts take the most time with typically $32ms — 42ms$.
+The distance sensor handling takes $14ms — 18ms$ and the Bullet physics engine accounts for $10ms — 12ms$.
+These times are according to the VREP internal profiler.
+Profiling inside the Lua scripts showed, that the quadcopter main script, with the controllers and e.g. logging functions only takes 1-5 ms according to time measurements with  \empf{simGetSystemTimeInMs()}.
+The rotor scripts need $1ms — 5ms$ each, which might be optimizable.
+However, it seems that the biggest factor is the VREP internal handling of Lua.
+Optimizing here might be possible, but requires detailed information about the handling.
+
+\todo{add compter where vrep does run in RT}
+
 \subsection{Timings in the Communication link}
 \label{sec:commTiming}
 
