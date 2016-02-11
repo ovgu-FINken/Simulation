@@ -2,7 +2,7 @@ local landscape = {}
 local handle = simGetObjectHandle('Landscape')
 local imgIter = 1
 local step = 0
-local xSpeed, ySpeed, xScale, yScale, filePath
+local xSpeed, ySpeed, xScale, yScale, filePath, fileName
 local xOffset = 0
 local yOffset = 0
 local shapeHandle =-1
@@ -27,13 +27,13 @@ function landscape.init(self)
         conveyorUIControl=simGetUIHandle("ConveyorControls")
         -- Set the title of the user interface: 
         simSetUIButtonLabel(conveyorUIControl,0,"Parameters for map:")
-     
         simSetUIButtonLabel(conveyorUIControl,3,"xSpeed:") 
         simSetUIButtonLabel(conveyorUIControl,4,"ySpeed:") 
         simSetUIButtonLabel(conveyorUIControl,5,"xScale:") 
         simSetUIButtonLabel(conveyorUIControl,6,"yScale:") 
         simSetUIButtonLabel(conveyorUIControl,7,"Path:") 
-        simSetUIButtonLabel(conveyorUIControl,8,"Update") 
+        simSetUIButtonLabel(conveyorUIControl,8,"Filename:")
+        simSetUIButtonLabel(conveyorUIControl,14,"Update")
 
         -- Retrieve the desired data from the user interface:
         xSpeed = tonumber(simGetUIButtonLabel(conveyorUIControl,9))
@@ -41,6 +41,7 @@ function landscape.init(self)
         xScale = tonumber(simGetUIButtonLabel(conveyorUIControl,11))
         yScale = tonumber(simGetUIButtonLabel(conveyorUIControl,12))
         filePath = simGetUIButtonLabel(conveyorUIControl,13)
+        fileName = simGetUIButtonLabel(conveyorUIControl,16)
         
         --Setup all signals to be called from outside this scene
         simSetFloatSignal('_xSpeed',xSpeed)
@@ -48,16 +49,17 @@ function landscape.init(self)
         simSetFloatSignal('_xScale',xScale)
         simSetFloatSignal('_yScale',yScale)
         simSetStringSignal('_filePath',filePath)
+        simSetStringSignal('_fileName',fileName)
 
         self.UpdateData()
         xOffset = math.random() * xScale
         yOffset = math.random() * yScale
         self.CreateTexture()
-        simAddStatusbarMessage("Data: "..xSpeed..ySpeed..xScale..yScale..filePath)
+        simAddStatusbarMessage("Data: "..xSpeed..ySpeed..xScale..yScale..filePath..fileName)
     end
 
     function self.CreateTexture()
-        shapeHandle = simCreateTexture(filePath, 12, nil, {xScale, yScale}, nil, 0, nil)
+        shapeHandle = simCreateTexture(filePath..fileName, 12, nil, {xScale, yScale}, nil, 0, nil)
         simSetObjectPosition(shapeHandle, -1, {0,0,100}) -- away from arena
     end
 
@@ -71,6 +73,7 @@ function landscape.init(self)
 
         filePath=simGetStringSignal('_filePath')
 
+        fileName=simGetStringSignal('_fileName')
         --simAddStatusbarMessage("Updated Data")
     end
 
@@ -78,7 +81,7 @@ function landscape.init(self)
         --pass values as signals to landscape class
         -- check if update button is pressed
         updateBtnValue = simGetUIEventButton(conveyorUIControl)
-        boolValue = 8
+        boolValue = 14
         if(updateBtnValue == boolValue) then
             -- Retrieve the desired data from the user interface:
             xSpeed = tonumber(simGetUIButtonLabel(conveyorUIControl,9))
@@ -86,6 +89,7 @@ function landscape.init(self)
             xScale = tonumber(simGetUIButtonLabel(conveyorUIControl,11))
             yScale = tonumber(simGetUIButtonLabel(conveyorUIControl,12))
             filePath = simGetUIButtonLabel(conveyorUIControl,13)
+            fileName = simGetUIButtonLabel(conveyorUIControl,16)
             
             --Setup all signals to be called from outside this scene
             simSetFloatSignal('_xSpeed',xSpeed)
@@ -93,6 +97,7 @@ function landscape.init(self)
             simSetFloatSignal('_xScale',xScale)
             simSetFloatSignal('_yScale',yScale)
             simSetStringSignal('_filePath',filePath)
+            simSetStringSignal('_fileName',fileName)
             --myLandscape.UpdateData()
         end
     end
