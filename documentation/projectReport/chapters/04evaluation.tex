@@ -47,17 +47,6 @@ As a result, we decided to tune the throttle response of the virtual Quadcopter 
 
 \section{Timing and Performance}
 \subsection{VREP performance}
-The VREP simulation is quit performant, running even on an old $2.4 GHz$ Core 2 Duo close to real time.
-In this case, the execution of the lua scripts take the most time with typically $32ms — 42ms$.
-The distance sensor handling takes $14ms — 18ms$ and the Bullet physics engine accounts for $10ms — 12ms$.
-These times are according to the VREP internal profiler.
-Profiling inside the Lua scripts showed, that the quadcopter main script, with the controllers and e.g. logging functions only takes 1-5 ms according to time measurements with  \empf{simGetSystemTimeInMs()}.
-The rotor scripts need $1ms — 5ms$ each, which might be optimizable.
-However, it seems that the biggest factor is the VREP internal handling of Lua.
-Optimizing here might be possible, but requires detailed information about the handling.
-
-\todo{add compter where vrep does run in RT}
-
 \subsection{Timings in the Communication link}
 \label{sec:commTiming}
 
@@ -73,7 +62,7 @@ Optimizing here might be possible, but requires detailed information about the h
 The rate at which the V-REP simulated quadcopter receives the telemetry data from the flying quadcopter is crucial for the mixed reality simulation. The period at which a message is sent is configurable in the telemetry file, but there are several factors, that can influence the message frequency. The paparazzi ground station link module distributes the received telemetry on the Ivy-Bus and a slight delay could be expected there as a result of message buffering. The Ivy-Bus is a topic based publisher subscriber communication protocol and the processing of the regular expressions can be expensive. On the final link of chain is our Java communication bridge.\\
 
 Considering the above factors, that can introduce a delay in the message transmission, we decided to measure how frequently the messages are sent to V-REP. Since V-REP does not provide any methods to measure the communication lag, we decided to measure how fast the Java communication bridge is sending the parameters to the V-REP. \ref{fig:messageLag} shows the results of the measurements with a single quadrocopter flying. The message is configured to be sent every 22 ms. What we see on the graph is that the average time at which the Java communication bridge sends the message to the V-REP quadcopter is around 27 ms. There are some messages that are sent even above 60 ms, but their number is relatively small and the delay scarcely exceeds the V-REP simulation step. A surprising fact is that some messages are sent even more frequently than the configured 22 ms. Since we could not find any explanation of this, we assumed that the paparazzi link uses some buffering strategy that leads to the observed fact. \\
-In order to evaluate the performance of the Ivy-Bus when there are more agents, we did the same test with two flying quadrocopters. On \ref{fig:messageLag2} you can see that the graph shows the same pattern as in \ref{fig:messageLag}, but the average value is slightly increased.\\
+In order to evaluate the performance of the Ivy-Bus when there are more agents, we did the same test with two flying quadrocopters. On \ref{fig:messageLag2} you can see that the graph shows the same pattern as in \ref{fig:messageLag}, but the average value is slightly increased.
 
 \begin{figure}[h!]
  \begin{center}
