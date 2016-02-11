@@ -45,14 +45,14 @@ As a result, we decided to tune the throttle response of the virtual Quadcopter 
 
 \end{itemize}
 
-\section{Timing and Performance}
+\section{Simulation and Messaging  Performance}
 \subsection{VREP performance}
- The VREP simulation is quit performant, running even on an old $2.4 GHz$ Core 2 Duo close to real time.
- In this case, the execution of the lua scripts take the most time with typically $32ms — 42ms$.
- The distance sensor handling takes $14ms — 18ms$ and the Bullet physics engine accounts for $10ms — 12ms$.
+ The VREP simulation is quite performant, running even on an old $2.4 GHz$ Core 2 Duo close to real time.
+ In this case, the execution of the lua scripts take the most time with typically $32ms - 42ms$.
+ The distance sensor handling takes $14ms - 18ms$ and the Bullet physics engine accounts for $10ms — 12ms$.
  These times are according to the VREP internal profiler.
- Profiling inside the Lua scripts showed, that the quadcopter main script, with the controllers and e.g. logging functions only takes 1-5 ms according to time measurements with  \empf{simGetSystemTimeInMs()}.
- The rotor scripts need $1ms — 5ms$ each, which might be optimizable.
+ Profiling inside the Lua scripts showed, that the quadcopter main script, with the controllers and e.g. logging functions only takes 1-5 ms according to time measurements with  \emph{simGetSystemTimeInMs()}.
+ The rotor scripts need $1ms - 5ms$ each, which might be optimizable.
  However, it seems that the biggest factor is the VREP internal handling of Lua.
  Optimizing here might be possible, but requires detailed information about the handling.
  
@@ -71,10 +71,23 @@ As a result, we decided to tune the throttle response of the virtual Quadcopter 
 %\end{itemize}
 
 
-The rate at which the V-REP simulated quadcopter receives the telemetry data from the flying quadcopter is crucial for the mixed reality simulation. The period at which a message is sent is configurable in the telemetry file, but there are several factors, that can influence the message frequency. The paparazzi ground station link module distributes the received telemetry on the Ivy-Bus and a slight delay could be expected there as a result of message buffering. The Ivy-Bus is a topic based publisher subscriber communication protocol and the processing of the regular expressions can be expensive. On the final link of chain is our Java communication bridge.\\
+The rate at which the V-REP simulated quadcopter receives the telemetry data from the flying quadcopter is crucial for the mixed reality simulation. 
+The period at which a message is sent is configurable in the telemetry file, but there are several factors, that can influence the message frequency. 
+The paparazzi ground station link module distributes the received telemetry on the Ivy-Bus and a slight delay could be expected there as a result of message buffering. 
+The Ivy-Bus is a topic based publisher subscriber communication protocol and the processing of the regular expressions can be expensive. 
+On the final link of chain is our Java communication bridge.\\
 
-Considering the above factors, that can introduce a delay in the message transmission, we decided to measure how frequently the messages are sent to V-REP. Since V-REP does not provide any methods to measure the communication lag, we decided to measure how fast the Java communication bridge is sending the parameters to the V-REP. \ref{fig:messageLag} shows the results of the measurements with a single quadrocopter flying. The message is configured to be sent every 22 ms. What we see on the graph is that the average time at which the Java communication bridge sends the message to the V-REP quadcopter is around 27 ms. There are some messages that are sent even above 60 ms, but their number is relatively small and the delay scarcely exceeds the V-REP simulation step. A surprising fact is that some messages are sent even more frequently than the configured 22 ms. Since we could not find any explanation of this, we assumed that the paparazzi link uses some buffering strategy that leads to the observed fact. \\
-In order to evaluate the performance of the Ivy-Bus when there are more agents, we did the same test with two flying quadrocopters. On \ref{fig:messageLag2} you can see that the graph shows the same pattern as in \ref{fig:messageLag}, but the average value is slightly increased.
+Considering the above factors, that can introduce a delay in the message transmission, we decided to measure how frequently the messages are sent to V-REP. 
+Since V-REP does not provide any methods to measure the communication lag, we decided to measure how fast the Java communication bridge is sending the parameters to the V-REP. 
+\ref{fig:messageLag} shows the results of the measurements with a single quadrocopter flying. 
+The message is configured to be sent every 22 ms. 
+What we see on the graph is that the average time at which the Java communication bridge sends the message to the V-REP quadcopter is around 27 ms. 
+There are some messages that are sent even above 60 ms, but their number is relatively small and the delay scarcely exceeds the V-REP simulation step. 
+A surprising fact is that some messages are sent even more frequently than the configured 22 ms. 
+Since we could not find any explanation of this, we assumed that the paparazzi link uses some buffering strategy that leads to the observed fact. \\
+
+In order to evaluate the performance of the Ivy-Bus when there are more agents, we did the same test with two flying quadrocopters. 
+On \ref{fig:messageLag2} you can see that the graph shows the same pattern as in \ref{fig:messageLag}, but the average value is slightly increased.
 
 \begin{figure}[h!]
  \begin{center}
@@ -122,6 +135,9 @@ The flight was stopped after about $43s$, the huge spikes at the end of the grap
 	\end{center}
 \end{figure}
 
+The virtual copter started to drift away approximately at $30s$ as can be observed in the video.
+In \ref{pic:pitchResponse} can be seen, that the virtual and real pitch deviate around $30s$ for a short time, which could be the cause for the drift.
+
 A more detailed plot of the pitch comparison is shown in \ref{pic:pitchDetail}.
 Every spike of the real FINkens movement is directly followed by a spike in the same direction of the simulated FINken.
 The smaller movements do not correspond exactly, as the simulated copter contains its own attitude controller.
@@ -129,7 +145,8 @@ Thus, keeping the simulated FINken stable in air has a higher priority than foll
 The graph shows some points, e.g. before $17s$ where movement of the simulated FINken appears to precede the real FINken's movement.
 This can have two possible explanations.
 Firstly, as mentioned before, the time base was readjusted manually.
-Thus, it might be possible, that as explained in \ref{sec:commTiming} \todo{write the explanation}, that the values were sent with a wrong timestamp that wasn't corrected during the adjustment, or even made worse by the resampling.
+Thus, it might be possible, that as explained in \ref{sec:commTiming}, the values were sent with a wrong timestamp because of paparazzi's internal buffering.
+If the wrong timestamps weren't corrected during the adjustment, or even made worse by the resampling ,they could shift the logged values.
 Secondly,  the controller of the simulated FINken's controller has the same goal as the real FINken, namely to keep the copter stable. 
 In the following, it could be possible, that both controllers are going to apply the same changes and that the virtual one is slightly faster.
  
@@ -137,7 +154,7 @@ In the following, it could be possible, that both controllers are going to apply
 \begin{figure}
 	\begin{center}
 	\includegraphics[width=\textwidth]{pitch_detail}
-	\caption{Pitch angles of simulated FINken and real FINken}
+	\caption{Detailed pitch angles of simulated FINken and real FINken}
 	\label{pic:pitchDetail}
 	\end{center}
 \end{figure}
@@ -159,11 +176,8 @@ Unfortunately, we could not reproduce this error, but it shows that one should b
 
 The plots for the angular responses of the simulation show, that it is possible to let a virtual FINken mimic a real flying one by transmitting the \gls{AHRS} values. 
 The response of the model does not exactly match, but to achieve this, the simulation model needs to be excessively tuned, which is out of scope of this work.
-\begin{itemize}
-\item{plot graph of euler angles}
-\item{highlight start of drift at 30s, other interesting elements?}
-\item{plot difference between graphs}
-\end{itemize}
+\todo{plot difference between graphs}
+
 
 
 Eventually we wanted to evaluate to what extend the path of the flying quadrocopter matches the path of the simulated quadcopter. V-REP provides an easy way to plot the two dimensional position of the quadrocopter and draw the flying path, but our real quadrocopter does not have a positioning system and its position estimation is not possible.\\ 
@@ -181,8 +195,10 @@ But a higher number of sensors provides more fault-tolerance to the system and m
 It was also not necessary to implement the algorithm in the firmware of the quadcopter. 
 We used the log file, that the Paparazzi software uses to write the sensor data and fetch the sensor readings from there using a Matlab script. 
 Only a minor changes ware required in the configuration of the sensor numbers, the sensors maximum range and the size of the arena.\\
+
 On \ref{fig:matlabPosEstimation} you can see the calculated possible positions and the quadcopter positioned at the point with the highest possibility value. 
-The lines represent the ultrasound sensors and the length of the lines depict the maximum sensor range. The red fractions of the lines show the actual distance measured by the sensor. 
+The lines represent the ultrasound sensors and the length of the lines depict the maximum sensor range. 
+The red fractions of the lines show the actual distance measured by the sensor. 
 
 \begin{figure}[h!]
  \begin{center}
@@ -192,10 +208,13 @@ The lines represent the ultrasound sensors and the length of the lines depict th
 \end{figure}
 
 The positioning system relies on accurate sensor readings to provide a precise position estimation. 
-Our gyroscope provides noisy estimation of the yaw angle and the distance sensors are also quite noisy. Since our quadcopter is equipped with just four distance sensors, the localization system cannot tolerate the noise as good as with eight sensors. 
+Our gyroscope provides noisy estimation of the yaw angle and the distance sensors are also quite noisy. 
+Since our quadcopter is equipped with just four distance sensors, the localization system cannot tolerate the noise as good as with eight sensors. 
 For this reasons an accurate position estimation could not be expected, but it should provide some reference estimation of the flying path. 
 On \ref{fig:matlabPosPath} you can see the results of the position estimation. 
-Each position has been marked with a blue star, so that we can see where the quadcopter has been. It is not possible to show the actual flying path as a function of time, but it shows which parts of the arena had been occupied by the quadcopter during the flight. \ref{fig:vrepPosPath} shows the flight path of the simulated quadcopter in the V-REP. 
+Each position has been marked with a blue star, so that we can see where the quadcopter has been. 
+It is not possible to show the actual flying path as a function of time, but it shows which parts of the arena had been occupied by the quadcopter during the flight. 
+\ref{fig:vrepPosPath} shows the flight path of the simulated quadcopter in the V-REP. 
 As in \ref{fig:matlabPosPath} it does not shows the trajectory as a function of time, but just the occupied positions during the flight. 
 The x and y axes of the plot show the V-REP scene arena and the small rectangle represents the flight arena.
 
