@@ -1,5 +1,5 @@
-\ifgerman{\chapter{Auswertung}}{\chapter{Implementation}}
-\label{sec:implementation}
+\ifgerman{\chapter{Durchführung}}{\chapter{Implementation}}
+\label{chap:implementation}
 
 \section{Simulation Environment}
 
@@ -19,9 +19,9 @@ This has to be taken into account when targeting physical objects, as the FINken
 This dummy object should always be used when refering to the FINkens position, orientation or movements, as it is aligned to the global coordinate system while especially imported shapes may be rotated in the simulation. 
 
 Vrep provides several pre-configured sensor type, the real FINkens sensors were modeled by using existing ultrasound distance sensors. 
-The FINken is equipped with Maxbotix MB1232: I2CXL-MaxSonar-EZ3 sensors\url{(http://www.maxbotix.com/documents/I2CXL-MaxSonar-EZ_Datasheet.pdf}). 
-According to the datasheet, they have an opening angle of $\ang{30}$ at maximum range when detecting smaller objects and maximum range of 7.65m for larger objects as walls. 
-The datasheet states a rather complex beam shape, but for the simulation a cone with an opening angle of $\ang{30}$  and a height of 7.65m will be used. 
+The FINken is equipped with \href{http://www.maxbotix.com/documents/I2CXL-MaxSonar-EZ_Datasheet.pdf}{Maxbotix MB1232: I2CXL-MaxSonar-EZ3} sensors. 
+According to the datasheet, they have an opening angle of $\ang{30}$ at maximum range when detecting smaller objects and maximum range of $2.65m$ for larger objects as walls. 
+The datasheet states a rather complex beam shape, but for the simulation a cone with an opening angle of $\ang{30}$  and a height of $7.65m$ will be used, as the alternative sensor earlier had a range of $7.65m$ and in the simulation it is very easy to internally cap the values. 
 Finally, a dummy target objects belongs the virtual FINken. 
 This object can be moved manually in the scene and the simulated quadcopter will fly towards it.  
 As the real FINken doesn't have the ability to fly to predefined points, we only used this feature for development.
@@ -284,7 +284,7 @@ To prevent the effect of windup of the integral part of the controller, the inte
 
 
 \subsection{Simulation Software Structure}
-
+\label{sec:simSoftStruct}
 \tikzset{
     group/.style={
            rectangle,
@@ -699,7 +699,7 @@ First the drone is attached to the Ivy-Bus, then the telemetry data is loaded an
 
 
 \section{Quadcopter}
-
+\label{sec:finken}
 This project was about to build a mixed reality simulation around the FINken quadcopter, so there weren't made many changes to the quadcopter and the firmware itself. A few changes were needed, regarding calibration, the message link and the communication from VREP to the FINken. At the start of the project, the FINken II was used, but when the FINken III was released, it could directly be used as all our needed functions were compatible. In fact, the new telemetry link of the FINken III made a much faster communication possible, which helped some delay issues with V-REP as put in \ref{sec:messLink}
 \subsection{FINken calibration}
 
