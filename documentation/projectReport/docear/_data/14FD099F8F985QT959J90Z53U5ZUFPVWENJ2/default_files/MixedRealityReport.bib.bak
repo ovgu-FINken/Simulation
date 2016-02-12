@@ -108,6 +108,16 @@
   timestamp = {2015.11.04}
 }
 
+@ELECTRONIC{solid,
+  month = {2},
+  year = {2016},
+  title = {SOLID (object-oriented design)},
+  organization = {Wikipedia},
+  url = {https://en.wikipedia.org/wiki/SOLID_(object-oriented_design)},
+  owner = {Nanoq},
+  timestamp = {2016.02.12}
+}
+
 @comment{jabref-meta: selector_publisher:}
 
 @comment{jabref-meta: selector_author:}
