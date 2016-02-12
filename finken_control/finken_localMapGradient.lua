@@ -51,7 +51,7 @@ function finken.init(self)
         if self.drunk then
             self.widthFactor = 30
             self.stepFactor = 0.5
-            self.checkpointEpsilonRatio = 0.995 -- the higher this value, the further away the target can be
+            self.checkpointEpsilonRatio = 0.1 --0.995 -- the higher this value, the further away the target can be
             self.checkpoints = {}
             self.remainingCheckpoints = 0
         end
@@ -258,6 +258,8 @@ function finken.init(self)
 
 	function self.customClean()
 
+
+    -- Gradient speed
     --Called once at the end of simulation, write log data here
     fileWriting = writingfile.init(writingfile)
     fileWriting.WriteFile()
