@@ -744,80 +744,33 @@ The calibration software also provides calibration for the gyroscope sensor. Alt
 
 \subsection{FINken message link}
 \label{sec:messLink}
-\begin{itemize}
-\item{FINkenII: Bluetooth Link, max. message frequency?}
-\item{The Bluetooth Link limited the datarate, so getting new INS-Data from the real FINken for each simulation step was not possible}
-\item{FINkenIII: 802.15.4 based communication}
-\item{New communication allows messages to be sent every 21ms}
-\item{VREP simulation runs with 50ms}
-\item{even if packets are dropped, in general there is always new data for each simulation step}
-\end{itemize}
+In the beginning of this project, the second iteration of the FINken, the FINken II was used. 
+There, the telemetry link was implemented with Bluetooth LE.
+It showed, that the data rate was barely sufficient when the quadcopter was next to the computer running the ground station and dropped heavily with more distance.
+The simulation runs with a time step of $50ms$, so it is desirable to get the telemetry message at the same rate to provide new data for each simulation step.
+This was not possible with the bluetooth link.
+
+The FINken III that was introduced during this project features 802.15.4 based communication.
+This evolution has two major benefits.
+First, in allows to send telemetry data with every $21ms$, even multiple messages, so it could be ensured that at least on average, a new message would be available for each simulation time step, even if one package is dropped.
+Second, in the new communication, the quadcopter broadcasts it's data.
+This allows to have multiple quadcopter connected to the same groundstation and the groundstation receives data as soon as the FINken is switched on.
+The latter is a valuable improvement over the necessary linking for the bluetooth communication of the FINken II.
+
+
+
 \subsection{VREP to FINken communication}
-\begin{itemize}
-\item{to make virtual objects visible to the real FINken, they need to be send somehow from the virtual scene to the real hardware}
-\item{FINken only perceives with ultrasound sensors}
-\item{only the distances to virtual objects detected by the virtual FINken need to be sent}
-\item{paparazzi allows to send messages via the telemetry link}
-\item{in the FINkens firmware, when the distance values for the real ultrasound sensors are checked, the message with the virtual distances needs to be evaluated}
-\item{because right now only collision avoidance is interesting, the minimum of the two values is used as the final distance}
-\item{\todo{look at sensorModel code and add more details}}
-\end{itemize}
-% example for bar plots
-%\begin{tikzpicture}
-%  \centering
-%  \begin{axis}[
-%        ybar = 0,
-%    height=6cm,
-%    width=15cm,
-%    enlarge x limits={rel=0.1},
-%    axis lines*=left,
-%    ymin=0,
-%    ymax=50,
-%     legend style={at={(0.5,-0.27)},
-%        anchor=north,legend columns=-1},
-%        ylabel={\#Anzahl Blöcke},
-%        xlabel={Halstead Volumen},
-%        cycle list = {black,black!70,black!40,black!10},
-%        symbolic x coords={10,20,30,40,50,70,90,120,300,750,>750},
-%     xtick=data,
-%        nodes near coords,
-%    every node near coord/.append style={
-%        anchor=mid west,
-%        rotate=90 }]
-%     \addplot+[] coordinates {(10,3) (20,18) (30,8)(40,1)(50,0)(70,6)(90,6)(120,0)(300,2)(750,0)(>750,0)};
-%    \addplot+[fill,text=black] coordinates {(10,3) (20,28) (30,22)(40,7)(50,2)(70,4)(90,11)(120,1)(300,1)(750,2)(>750,0)};
-%   \addplot+[fill,,text=black] coordinates {(10,1) (20,1) (30,17)(40,30)(50,10)(70,17)(90,10)(120,8)(300,5)(750,1)(>750,0)};
-%    \legend{Modell1,Modell2,Modell3}
-%  \end{axis}
-%\end{tikzpicture}
-%
-%
-%
-%\begin{tikzpicture}
-%  \centering
-%  \begin{axis}[
-%        ybar = 0,
-%    height=6cm,
-%    width=15cm,
-%    enlarge x limits={rel=0.1},
-%    axis lines*=left,
-%    ymin=0,
-%    ymax=70,
-%     legend style={at={(0.5,-0.27)},
-%        anchor=north,legend columns=-1},
-%        ylabel={\#Anzahl Blöcke},
-%        xlabel={Anzahl Elemente pro Block},
-%        cycle list = {black,black!70,black!40,black!10},
-%        symbolic x coords={10,20,30,40,50,70,90,120,300,750,>750},
-%     xtick=data,
-%        nodes near coords,
-%    every node near coord/.append style={
-%        anchor=mid west,
-%        rotate=90 }]
-%     \addplot+[] coordinates {(10,29) (20,6) (30,3)(40,4)(50,0)(70,0)(90,0)(120,0)(300,2)(750,0)(>750,0)};
-%    \addplot+[fill,text=black]  coordinates {(10,56) (20,11) (30,4)(40,1)(50,3)(70,3)(90,0)(120,1)(300,0)(750,2)(>750,0)};
-%    \addplot+[fill,,text=black] coordinates {(10,41) (20,25) (30,10)(40,7)(50,7)(70,2)(90,2)(120,1)(300,3)(750,2)(>750,2)};
-%    \legend{Modell1,Modell2,Modell3}
-%  \end{axis}
-%\end{tikzpicture}
+The focus of the project lied on the communication from the real hardware to the simulation.
+However,to make virtual objects visible to the real FINken, they need to be send somehow from the virtual scene to the real world.
+The FINken relies on the ultrasound sensors to detect object, therefore especially the virtual distances to objects needs to be transmitted.
+Paparazzi provides a two way communication with the telemetry link.
+Thereby the existing solutions could be used to send the messages, as we as well implemented the communication structure bidirectional.
+
+The modules of the FINken's firmware can subscribe to telemetry messages.
+Since the ultrasound sensors are handled in one module, it is easy to include a subscription to our virtual distance data into the module.
+At the moment, the distance sensor are only used for collision avoidance, so only the closer object is interesting.
+Therefore, the integration of the virtual values was done by using the minimum value of the real and virtual distance measurements.
+This ensures, that the real FINken will try to avoid any detected object, be it detected by its own sensors or by the sensors of its virtual counterpart.
+
+
 
