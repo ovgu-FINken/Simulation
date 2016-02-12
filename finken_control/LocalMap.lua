@@ -121,32 +121,7 @@ function  LocalMap:CreateTextureLocalMapDataTable()
 end
 
 function LocalMap:TempSaveImage()
-
-        local textureDataMap = ''
-        rgb = {}
-
-        --get resolution of actual texture that you're writing and then iterate over each field and fill it with black color'
-        for i=1, self.resolution*self.resolution*3 do
-            rgb[i]= 0
-        end
-
-        for r=1,self.resolution do
-            for c=1,self.resolution do
-            --string data=simPackBytes(table byteNumbers,number startByteIndex=0,number bytecount=0)
-            rgb[((c-1)*self.resolution+r)*3-2] = self.map[r][c]
-
-        if(rgb[((c-1)*self.resolution+r)*3-2] == nil) then
-            rgb[((c-1)*self.resolution+r)*3-2] = 0
-        else
-            rgb[((c-1)*self.resolution+r)*3-2]= math.floor(self.map[r][c]*255)
-            end
-
-            end
-        end
-
-    textureDataMap = simPackBytes(rgb)
-
-
+    textureDataMap = self:mapToByteString()
     simSaveImage(textureDataMap,{self.resolution,self.resolution},0, 'localmap.png',-1)
 
     --create texture from the saved image
@@ -154,37 +129,33 @@ function LocalMap:TempSaveImage()
 end
 
 function  LocalMap:UpdateTextureLocalMapDataTableForUI()
-
-    local textureDataMap = ''
-    rgb = {}
-
-     --get resolution of actual texture that you're writing and then iterate over each field and fill it with black color'
-    for i=1, LMResolution[1]*LMResolution[2]* 3 do
-        rgb[i]= 0
-    end
-
-    for r=1,self.resolution do
-        for c=1,self.resolution do
-            --string data=simPackBytes(table byteNumbers,number startByteIndex=0,number bytecount=0)
-            rgb[((c-1)*self.resolution+r)*3-2] = self.map[r][c]
-
-            if(rgb[((c-1)*self.resolution+r)*3-2] == nil) then
-                rgb[((c-1)*self.resolution+r)*3-2] = 0
-            else
-               rgb[((c-1)*self.resolution+r)*3-2]= math.floor(self.map[r][c]*255)
-            end
-
-       end
-    end
-
-    textureDataMap = simPackBytes(rgb)
+    textureDataMap = self:mapToByteString()
 	--simWriteTexture(number textureId,number options,string textureData,number posX=0,number posY=0,number sizeX=0,number sizeY=0)
     simWriteTexture(LMTextureID,0,textureDataMap)
     simSetShapeTexture(simGetObjectHandle('LocalMapVisual'), LMTextureID, 0, 3, {1, 1}, {0, 0, 0}, nil)
 
 end --function
 
+function LocalMap:mapToByteString()
+    rgb = {}
+    for i=1, self.resolution*self.resolution*3 do
+        rgb[i]= 0
+    end
 
+    for r=1,self.resolution do
+        for c=1,self.resolution do
+            rgb[((c-1)*self.resolution+r)*3-2] = self.map[r][c]
+
+            if(rgb[((c-1)*self.resolution+r)*3-2] == nil) then
+                rgb[((c-1)*self.resolution+r)*3-2] = 0
+            else
+                rgb[((c-1)*self.resolution+r)*3-2]= math.floor(self.map[r][c]*255)
+            end
+        end
+    end
+    textureData = simPackBytes(rgb)
+    return textureData
+end
 
 function LocalMap:updateMap( xDistance, yDistance, value, average, alpha, replace )
     -- xDistance, yDistance: Distance the copter has moved (in meters)
