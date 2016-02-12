@@ -31,6 +31,14 @@
   publisher = {Citeseer}
 }
 
+@ELECTRONIC{vrep,
+  author = {Coppelia-Robotics},
+  title = {V-REP},
+  url = {http://www.coppeliarobotics.com},
+  owner = {Nanoq},
+  timestamp = {2015.11.04}
+}
+
 @PHDTHESIS{deeg2006modeling,
   author = {Deeg, Carsten},
   title = {Modeling, Simulation, and Implementation of an Autonomously Flying
@@ -100,19 +108,11 @@
   timestamp = {2015.12.13}
 }
 
-@ELECTRONIC{vrep,
-  title = {V-REP},
-  organization = {Coppelia Robotics},
-  url = {http://www.coppeliarobotics.com},
-  owner = {Nanoq},
-  timestamp = {2015.11.04}
-}
-
 @ELECTRONIC{solid,
   month = {2},
   year = {2016},
   title = {SOLID (object-oriented design)},
-  organization = {Wikipedia},
+  howpublished = {Wikipedia},
   url = {https://en.wikipedia.org/wiki/SOLID_(object-oriented_design)},
   owner = {Nanoq},
   timestamp = {2016.02.12}

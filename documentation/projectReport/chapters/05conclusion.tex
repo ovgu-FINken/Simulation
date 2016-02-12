@@ -5,6 +5,11 @@
 During the project, a stable simulation of the FINken quadcopter was built.
 The performance of the simulation needs to be improved for bigger quadcopter swarms, but one real FINken can be connected to one simulated FINken running in real time on any modern computer.
 The simulation reproduces the real FINken's movements sufficiently as shown in \ref{sec:accuracy}.
+The simulation is based on un-threaded Lua scripts attached to the simulation objects.
+The scripts are stored outside VREP and have a modular structure.
+A base class provides attitude control and a flight control API.
+Additionally, custom functionalities can be implemented in Lua in a custom class for each virtual FINken.
+
 
 A Java API was build, that manages the V-REP scene and communication to the quadcopters. 
 The API is very modular and comprises of several stand alone projects, each of which can be reused for other projects and mixed-reality simulations. The software architecture was build according to the  SOLID \cite{solid} principles.
@@ -29,12 +34,25 @@ Until now, the cause of this behaviour could not be found.
 
 
 \section{Future Work}
-\begin{itemize}
-\item{enhance the stability of the mixed reality simulation}
-\item{include the sensor data from the optical flow and ultrasound sensors for the positioning of the virtual quadcopter}
-\item{implement real swarm algorithms with the framework}
-\item{}
-\end{itemize}
+\label{future}
+The fundamentals for a mixed reality simulation were set during this work.
+However, it would be desirable to get a stable simulation for the whole quadcopter flight time to use the mixed reality simulation for longer scenarios.
+A first step towards this goal could be to include data form the ultrasound sensors and the optical flows sensor which was set up parallel to this project.
+These sensors would provide a reference to the environment and a sensor fusion would have a major positive benefit on the accuracy of the virtual copters position.
+For evaluation purposes, an external reference system by optical tracking the copters could be used to get better internal sensor models by comparing the internal sensor data with the results from the external system.
+
+An other idea would be to use the simulation environment to test the software that runs on the copter, by loading the C-code running on the copter into the simulation.
+This would most likely need a more detailed physical model, but would have the benefit of detecting problem completely without risking the expensive hardware.
+
+Additionally, in the case described above, the API of the real and virtual copters would be identical. 
+However, this could be achieved more easily, and would make it easier to test scenarios with multiple FINkens without the need do differentiate between real world and simulation.
+
+
+The simulation  provides the possibility to implement swarm algorithms that should later be handled by the real FINken.
+This could be started right away, but defining a API first that can be handled by real FINkens and simulation would increase the reuse of this work.
+
+
+
 %Die Beurteilung ist einer der wichtigsten Abschnitte der Arbeit
 %- Sie enthält die Quintessenz des gesamten Projektes
 %Viele lesen nur die Einführung und die Beurteilung an
