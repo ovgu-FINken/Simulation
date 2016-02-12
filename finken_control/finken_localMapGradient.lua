@@ -1,4 +1,5 @@
 local LocalMap = require('LocalMap')
+local writingfile = require("writingfile")
 local finken = {}
 
 local boxContainer, sizeOfContainer, sizeOfField, targetReached, targetEpsilon, myMap
@@ -197,6 +198,13 @@ function finken.init(self)
 	end
 
 	function self.customClean()
+
+    --Called once at the end of simulation, write log data here
+        fileWriting = writingfile.init(writingfile)
+        fileWriting.WriteFile()
+        fileWriting.ReadFile()
+        fileWriting.AppendFile()
+        fileWriting.ReadFile()
 
 	end
     
