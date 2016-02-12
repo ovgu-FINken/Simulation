@@ -2,7 +2,7 @@ local LocalMap = require('LocalMap')
 local writingfile = require("writingfile")
 local finken = {}
 
-local boxContainer, sizeOfContainer, sizeOfField, targetReached, targetEpsilon, myMap
+local boxContainer, sizeOfContainer, sizeOfField
 
 finkenCore = require('finkenCore')
 
@@ -42,14 +42,26 @@ function finken.init(self)
         self.UpdateLocalMapDataFromUI()
         --Create a VirtualBoxAround the Finken
         self.CreateAVirtualBoxAroundFinken()
+        -- initialize magic numbers and state information
+        self.targetReached = true
+        self.gradientSpeed = 0.3
+        self.exploreSpeed = 2
+        self.targetEpsilon = 0.05
+        self.drunk = true
+        if self.drunk then
+            self.widthFactor = 30
+            self.stepFactor = 0.5
+            self.checkpointEpsilonRatio = 0.995 -- the higher this value, the further away the target can be
+            self.checkpoints = {}
+            self.remainingCheckpoints = 0
+        end
+        self.position = simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
         --Create a local map data table, initialise with {0,0}
-        targetReached = true
-        targetEpsilon = 0.05
         for k, v in pairs(LocalMap) do
             simAddStatusbarMessage(k)
         end
-        myMap = LocalMap.new(sizeOfContainer, sizeOfField)
-        for k, v in pairs(myMap) do
+        self.myMap = LocalMap.new(sizeOfContainer, sizeOfField)
+        for k, v in pairs(self.myMap) do
             simAddStatusbarMessage(k)
         end
     end
@@ -62,7 +74,7 @@ function finken.init(self)
     end
 
     function self.setTargetToPosition( x, y )
-        simSetObjectPosition(targetObj, -1, {x, y, 1})
+        simSetObjectPosition(targetObj, -1, {x, y, 2})
         self.setTarget(targetObj)
     end
 
@@ -101,7 +113,7 @@ function finken.init(self)
         startBtnValue = simGetUIEventButton(finkenLocalMapUI)
         boolValue = 8
         if(startBtnValue == boolValue) then
-            myMap:printData()
+            self.myMap:printData()
         end
     end
 
@@ -119,14 +131,12 @@ function finken.init(self)
 
 		local _, colors = simReadVisionSensor(simGetObjectHandle('Floor_camera'))
 
-		--simAddStatusbarMessage(colors[1]..' '..colors[2]..' '..colors[3]..' '..colors[4])
-
         -- Setting the speed signals, so that the texture and arena can be moved
-        oldFinkenPosition = currentFinkenPosition or {0, 0, 0}
-        currentFinkenPosition = simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
+        oldFinkenPosition = self.position
+        self.position= simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
 
-        xSpeed = currentFinkenPosition[1] - oldFinkenPosition[1]
-        ySpeed = currentFinkenPosition[2] - oldFinkenPosition[2]
+        xSpeed = self.position[1] - oldFinkenPosition[1]
+        ySpeed = self.position[2] - oldFinkenPosition[2]
 
         simSetFloatSignal('_xSpeed', -xSpeed*100)
         simSetFloatSignal('_ySpeed', -ySpeed*100)
@@ -135,63 +145,112 @@ function finken.init(self)
             return
         end
 
-        speedFactor = 0.50
-        -- calculate actual gradient from encoded information, so that we can compare with our estimates
-        xGrad_true = (colors[3] - 0.5) * speedFactor
-        --     --multiply with -1 because image coordinates start in top left
-        yGrad_true = ((colors[4] - 0.5) * -1) * speedFactor
+        self.updateTarget()
 
-        if targetReached then
-            neighborMat, neighborArr, matOffset, arrOffset = myMap:getEightNeighbors()
+        self.myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0.01, true)
+        self.myMap:UpdateTextureLocalMapDataTableForUI()
+        --myMap:updateMap(xSpeed, ySpeed, colors[2]*255+colors[3], true, 0.01, true)
+	end
+
+    function self.updateTarget()
+        if self.targetReached then
+            self.setNewTarget()
+        else
+            self.setTarget(targetObj)
+            currentTargetPosition = simGetObjectPosition(targetObj, -1)
+            -- euclidean distance to target
+            xDist = currentTargetPosition[1]-self.position[1]
+            yDist = currentTargetPosition[2]-self.position[2]
+            distToTarget = math.sqrt(xDist * xDist + yDist * yDist)
+            self.updateReachedStatus( distToTarget )
+        end
+    end 
+
+    function self.updateReachedStatus( distToTarget )
+        if self.drunk and self.remainingCheckpoints > 0 then
+            targetDist = sizeOfField/100 * self.widthFactor * self.checkpointEpsilonRatio
+        else
+            targetDist = self.targetEpsilon
+        end
+        if distToTarget < targetDist then
+            self.targetReached = true
+            simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {0, 1, 0})
+        end 
+    end
+
+    function self.setNewTarget()
+        if self.drunk and self.remainingCheckpoints > 0 then
+            self.setTargetToPosition(self.checkpoints[self.remainingCheckpoints][1], self.checkpoints[self.remainingCheckpoints][2])
+            self.remainingCheckpoints = self.remainingCheckpoints - 1
+            simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {0, 0, 1})
+            if self.remainingCheckpoints == 0 then
+                simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {1, 0, 0})
+            end
+            self.targetReached = false
+        else
+            neighborMat, neighborArr, matOffset, arrOffset = self.myMap:getEightNeighbors()
             gradientCalc, mapValues, localOffsets = canCalculateGradient(neighborArr, arrOffset)
             if gradientCalc ~= -1 then
                 xGrad, yGrad = calculateGradient(gradientCalc, mapValues, neighborMat[2][2], localOffsets, matOffset[2][2])
                 if xGrad ~= 0 or yGrad ~= 0 then
-                    gradientLength = math.sqrt(xGrad*xGrad + yGrad*yGrad)
-                    xGrad = xGrad/gradientLength * speedFactor
-                    yGrad = yGrad/gradientLength * speedFactor
-                    -- xGrad = xGrad * speedFactor
-                    -- yGrad = yGrad * speedFactor
-                    xTarget = currentFinkenPosition[1] + xGrad
-                    yTarget = currentFinkenPosition[2] + yGrad
-                    self.setTargetToPosition(xTarget, yTarget)
-                    targetReached = false
-                    esti_ang = math.acos(xGrad/speedFactor) *180 /math.pi
-                    true_ang = math.acos(xGrad_true/math.sqrt(xGrad_true*xGrad_true + yGrad_true*yGrad_true))/math.pi *180
-                    -- simAddStatusbarMessage('length:'..gradientLength..' x '..xGrad)
-                    simAddStatusbarMessage('estimate: '..esti_ang)
-                    simAddStatusbarMessage('actual: '..true_ang )
-                end
+                    self.setTargetToGradient(xGrad, yGrad)
+                end -- else it will continue in previous direction
             else
-                -- self.setTargetToPosition(currentFinkenPosition[1] + math.random()*0.1, currentFinkenPosition[2] + math.random()*0.1)
-                orthoPresent = getFilledDirection(neighborArr)
-                -- go in clockwise orthogonal because why not
-                speedFactor2 = 2
-                if orthoPresent == 2 then
-                    self.setTargetToPosition(currentFinkenPosition[1]+sizeOfField/100*speedFactor2, currentFinkenPosition[2])
-                elseif orthoPresent == 4 then
-                    self.setTargetToPosition(currentFinkenPosition[1], currentFinkenPosition[2]+sizeOfField/100*speedFactor2)
-                elseif orthoPresent == 6 then
-                    self.setTargetToPosition(currentFinkenPosition[1]-sizeOfField/100*speedFactor2, currentFinkenPosition[2])
-                else
-                    self.setTargetToPosition(currentFinkenPosition[1], currentFinkenPosition[2]-sizeOfField/100*speedFactor2)
-                end
-            end
-        else
-            self.setTarget(targetObj)
-            currentTargetPosition = simGetObjectPosition(targetObj, -1)
-            -- manhattan distance to target
-            distToTarget = math.abs(currentTargetPosition[1]-currentFinkenPosition[1]) + math.abs(currentTargetPosition[2]-currentFinkenPosition[2])
-            if distToTarget < targetEpsilon then
-                targetReached = true
-                -- simAddStatusbarMessage('target reached')
+                self.setTargetToExplore(neighborArr)
             end
         end
-        -- self.setTargetToPosition(0, 1)
-        myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0.01, true)
-        myMap:UpdateTextureLocalMapDataTableForUI()
-        --myMap:updateMap(xSpeed, ySpeed, colors[2]*255+colors[3], true, 0.01, true)
-	end
+    end
+
+    function self.setTargetToGradient(xGrad, yGrad)
+        gradientLength = math.sqrt(xGrad*xGrad + yGrad*yGrad)
+        xGradNormalized = xGrad/gradientLength
+        yGradNormalized = yGrad/gradientLength
+        
+        xGrad = xGradNormalized * self.gradientSpeed
+        yGrad = yGradNormalized * self.gradientSpeed
+        if self.drunk then
+            onLinePosition = self.position
+            xStep = xGradNormalized * sizeOfField/100 * self.stepFactor
+            yStep = yGradNormalized * sizeOfField/100 * self.stepFactor
+            xSideStep = yGradNormalized * sizeOfField/100 * self.widthFactor
+            ySideStep = -xGradNormalized * sizeOfField/100 * self.widthFactor
+            numCheckpoints = math.ceil(self.gradientSpeed / (sizeOfField/100 * self.stepFactor)) -- all that fit in between, plus one for final target
+            self.remainingCheckpoints = numCheckpoints - 1
+            while numCheckpoints > 1 do
+                onLinePosition = {onLinePosition[1] + xStep, onLinePosition[2] + yStep}
+                self.checkpoints[numCheckpoints] = {onLinePosition[1] + xSideStep, onLinePosition[2] + ySideStep}
+                numCheckpoints = numCheckpoints - 1
+                xSideStep = -xSideStep
+                ySideStep = -ySideStep
+            end
+            self.checkpoints[1] = {self.position[1] + xGrad, self.position[2] + yGrad}
+
+            self.setTargetToPosition(self.checkpoints[self.remainingCheckpoints+1][1], self.checkpoints[self.remainingCheckpoints+1][2])
+            simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {0, 0, 1})
+            self.targetReached = false
+        else
+            xTarget = self.position[1] + xGrad
+            yTarget = self.position[2] + yGrad
+            self.setTargetToPosition(xTarget, yTarget)
+            simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {1, 0, 0})
+            self.targetReached = false
+        end
+    end
+
+    function self.setTargetToExplore( neighborArr )
+        orthoPresent = getFilledDirection(neighborArr)
+        -- go in clockwise orthogonal because why not
+        exploreTargetOffset = sizeOfField/100*self.exploreSpeed
+        if orthoPresent == 2 then
+            self.setTargetToPosition(self.position[1]+exploreTargetOffset, self.position[2])
+        elseif orthoPresent == 4 then
+            self.setTargetToPosition(self.position[1], self.position[2]+exploreTargetOffset)
+        elseif orthoPresent == 6 then
+            self.setTargetToPosition(self.position[1]-exploreTargetOffset, self.position[2])
+        else
+            self.setTargetToPosition(self.position[1], self.position[2]-exploreTargetOffset)
+        end
+    end
 
 	function self.customSense()
 
@@ -200,11 +259,11 @@ function finken.init(self)
 	function self.customClean()
 
     --Called once at the end of simulation, write log data here
-        fileWriting = writingfile.init(writingfile)
-        fileWriting.WriteFile()
-        fileWriting.ReadFile()
-        fileWriting.AppendFile()
-        fileWriting.ReadFile()
+    fileWriting = writingfile.init(writingfile)
+    fileWriting.WriteFile()
+    fileWriting.ReadFile()
+    fileWriting.AppendFile()
+    fileWriting.ReadFile()
 
 	end
     
