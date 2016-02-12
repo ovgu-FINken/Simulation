@@ -1,21 +1,29 @@
 \chapter{Conclusion}
 \label{sec:conclusion}
 
-
 \section{Reached goals}
-\begin{itemize}
-\item{a stable simulation was built}
-\item{the simulation of multiple quadcopters is possible in near real time}
-\item{a java program was build that can read and write on the ivy bus paparazzi uses}
-\item{the java program can communicate with both VREP and paparazzi}
-\item{orientation messages from the quadcopter can be sent to the simulation in less than a simulation time step}
-\item{the virtual quadcopter resonds fast to command messages}
-\item{
-A Java API was build, that manages the V-REP scene and communication to the quadcopters. The API is very modular and comprises of several stand alone projects, each of which can be reused for other projects and mixed-reality simulations. The software architecture was build according to the  \href{https://en.wikipedia.org/wiki/SOLID_28object-oriented_design}{SOLID} principles and other design-patterns. The design uses abstraction layers between the modules, which make it possible to benefit from the open-closed principle and add new functionality without changing existing code.
-}
+During the project, a stable simulation of the FINken quadcopter was built.
+The performance of the simulation needs to be improved for bigger quadcopter swarms, but one real FINken can be connected to one simulated FINken running in real time on any modern computer.
+The simulation reproduces the real FINken's movements sufficiently as shown in \ref{sec:accuracy}.
 
-\item{for a short time, until noise and possibly missing value induce a drift that can't be corrected with just internal measurements, it can be observed how the virtual copter follows the movements of a real one}
-\end{itemize}
+A Java API was build, that manages the V-REP scene and communication to the quadcopters. 
+The API is very modular and comprises of several stand alone projects, each of which can be reused for other projects and mixed-reality simulations. The software architecture was build according to the  SOLID \cite{solid} principles.
+The design uses abstraction layers between the modules, which make it possible to benefit from the open-closed principle and add new functionality without changing existing code.
+
+The communication between VREP and the real FINken is fast enough to send new data for every simulation timestep.
+The controllers of the virtual FINken adapt the new target values quickly and the movements of the real quadcopter can be observed in the virtual one.
+Internal sensor noise and inaccuracies and a missing external reference let the virtual FINken drift away.
+Correctly calibrating the FINken's internal sensor vastly improved the drift by removing sensor offsets.
+However, stable flight is only possible for typically half a minute, then, the cumulated errors let the virtual FINken drift out of the arena.
+
+A major problem for the simulation is the drift around the $z$ axis.
+When starting the FINken, often it starts yawing heavily right after take off.
+This yaw occurs due to sensor errors and resulting wrong correction commands to the motor controllers.
+Hence this error can't be detected and falsifies the simulation.
+With a different yaw angle, the coordinate systems of the real and virtual copter aren't aligned anymore, so pitch and roll commands result in movement into different directions.
+When this behaviour was observed, the experiment was aborted, as no useful results could be obtained.
+Until now, the cause of this behaviour could not be found.
+
 
 
 
