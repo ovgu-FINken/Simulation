@@ -107,7 +107,6 @@ function  LocalMap:CreateTextureLocalMapDataTable()
     --number shapeHandle,number textureId,table_2 resolution=simCreateTexture(string fileName,number options,table_2 planeSizes=nil,table_2 scalingUV=nil,table_2 xy_g=nil,number fixedResolution=0,table_2 resolution=nil)
 
     LMTextureHandle, LMTextureID, LMResolution= simCreateTexture('localmap.png',3, {self.totalSize/50,self.totalSize/50}, {1,1}, nil, 0, {1,1}, {self.resolution,self.resolution})
-
     simAddStatusbarMessage('R:'..LMResolution[1]..LMResolution[2])
     --Add the texture as the child of finken
     --number result=simSetObjectParent(number objectHandle,number parentObjectHandle,boolean keepInPlace)

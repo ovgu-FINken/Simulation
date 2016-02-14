@@ -2,15 +2,59 @@ local LocalMap = require('LocalMap')
 local writingfile = require("writingfile")
 local finken = {}
 
-local boxContainer, sizeOfContainer, sizeOfField
-
+local boxContainer, sizeOfContainer, sizeOfField, currentMapHeight
+ local heightLog = {}
 finkenCore = require('finkenCore')
 
 function finken.init(self)
-
 	local function helperSay(textToSay)
 		simAddStatusbarMessage(textToSay)
 	end
+
+    --save a timestamped log array to a file
+    --currently only works for data arrays with 3 columns
+    --@newSuffix and @newDirectoryPath are optional
+    --fileExtension can be .txt .csv .log
+    -- we need csv to plot graphs (data separated by commas)
+
+    local function SaveLogDataToFile(logData, newLogName, mapName, newSuffix, newDirectoryPath, fileExtension)
+
+        local headerOnce=false
+        local myTimeString = os.date("%Y%m%d%H%M%S")
+        newDirectoryPath = newDirectoryPath or ""
+        newSuffix = newSuffix or ""
+        local myLogFile = assert(io.open(newDirectoryPath..mapName.."_".. newSuffix.."_"..newLogName.."_"..myTimeString..fileExtension, "w"))
+
+        if headerOnce==false then
+            myLogFile:write("GradientMap:,",mapName,"\n")
+            myLogFile:write("LMap TotalSize:,",simGetFloatSignal('_LM_SizeOfContainer'),"\n")
+            myLogFile:write("LMap FieldSize:,",simGetFloatSignal('_LM_SizeOfField'),"\n")
+            myLogFile:write("Gradient Speed:,",self.gradientSpeed,"\n")
+            myLogFile:write("Explore Speed:,",self.exploreSpeed,"\n")
+            myLogFile:write("Target Epsilon:,",self.targetEpsilon,"\n")
+            myLogFile:write("Time steps,Height\n\n")
+            headerOnce=true
+        end
+        local timestamp, logValue
+        local sortedLogKeys = {}
+
+        for timestamp, logValue in pairs(logData) do
+            table.insert(sortedLogKeys,timestamp)
+        end
+
+        table.sort(sortedLogKeys)
+        for  _, timestamp in ipairs(sortedLogKeys) do
+            logValue = logData[timestamp]
+            myLogFile:write(timestamp, ",",logValue, "\n")
+            myLogFile:flush()
+        end
+        return myLogFile:close()
+    end
+
+    function  self.SaveLogDataEachTimeStep()
+        local timestamp = math.floor(simGetSimulationTime()*1000)
+        heightLog[timestamp] = currentMapHeight
+    end
 
     function self.initializeUI()
         -- Following is the handle of FINken2's associated UI (user interface):
@@ -43,15 +87,15 @@ function finken.init(self)
         --Create a VirtualBoxAround the Finken
         self.CreateAVirtualBoxAroundFinken()
         -- initialize magic numbers and state information
-        self.targetReached = true
-        self.gradientSpeed = 0.3
-        self.exploreSpeed = 2
-        self.targetEpsilon = 0.05
-        self.drunk = true
-        if self.drunk then
+        self.targetReached = simGetIntegerSignal('_targetReached') or 1 -- 0 for false and 1 for true
+        self.gradientSpeed = simGetFloatSignal('_gradientSpeed') or 0.3
+        self.exploreSpeed = simGetFloatSignal('_exploreSpeed') or 2.0
+        self.targetEpsilon = simGetFloatSignal('_targetEpsilon') or 0.05
+        self.drunk = simGetIntegerSignal('_drunk') or 1 -- 0 for false and 1 for true
+        if self.drunk==1 then
             self.widthFactor = 30
             self.stepFactor = 0.5
-            self.checkpointEpsilonRatio = 0.1 --0.995 -- the higher this value, the further away the target can be
+            self.checkpointEpsilonRatio = 0.995 -- the higher this value, the further away the target can be
             self.checkpoints = {}
             self.remainingCheckpoints = 0
         end
@@ -110,13 +154,11 @@ function finken.init(self)
 
     function self.CheckUIButton()
         --check if display data button is pressed
-        startBtnValue = simGetUIEventButton(finkenLocalMapUI)
-        boolValue = 8
-        if(startBtnValue == boolValue) then
+        btnValue = simGetUIEventButton(finkenLocalMapUI)
+        if(btnValue == 8) then
             self.myMap:printData()
         end
     end
-
 
 	function self.customRun()
         -- Gradient images from matlab
@@ -126,18 +168,15 @@ function finken.init(self)
         -- the vision sensor Floor_camera returns a table of values
         -- the first element colors[1] is the overall lightness of the image
         -- the other elements colors[2] is Red, colors[3] is Green, colors[4] is Blue
-
+        self.SaveLogDataEachTimeStep()
         self.CheckUIButton()
 
 		local _, colors = simReadVisionSensor(simGetObjectHandle('Floor_camera'))
-
         -- Setting the speed signals, so that the texture and arena can be moved
         oldFinkenPosition = self.position
         self.position= simGetObjectPosition(simGetObjectHandle('SimFinken_base'), -1)
-
         xSpeed = self.position[1] - oldFinkenPosition[1]
         ySpeed = self.position[2] - oldFinkenPosition[2]
-
         simSetFloatSignal('_xSpeed', -xSpeed*100)
         simSetFloatSignal('_ySpeed', -ySpeed*100)
 
@@ -145,15 +184,15 @@ function finken.init(self)
             return
         end
 
+        --saving current height of map where finken is at this time step.
+        currentMapHeight = colors[2]
         self.updateTarget()
-
-        self.myMap:updateMap(xSpeed, ySpeed, colors[2], true, 0.01, true)
+        self.myMap:updateMap(xSpeed, ySpeed, currentMapHeight, true, 0.01, true)
         self.myMap:UpdateTextureLocalMapDataTableForUI()
-        --myMap:updateMap(xSpeed, ySpeed, colors[2]*255+colors[3], true, 0.01, true)
 	end
 
     function self.updateTarget()
-        if self.targetReached then
+        if self.targetReached==1 then
             self.setNewTarget()
         else
             self.setTarget(targetObj)
@@ -167,26 +206,26 @@ function finken.init(self)
     end 
 
     function self.updateReachedStatus( distToTarget )
-        if self.drunk and self.remainingCheckpoints > 0 then
+        if self.drunk==1 and self.remainingCheckpoints > 0 then
             targetDist = sizeOfField/100 * self.widthFactor * self.checkpointEpsilonRatio
         else
             targetDist = self.targetEpsilon
         end
         if distToTarget < targetDist then
-            self.targetReached = true
+            self.targetReached = simGetIntegerSignal('_targetReached') or 1 -- 0 for false and 1 for true
             simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {0, 1, 0})
         end 
     end
 
     function self.setNewTarget()
-        if self.drunk and self.remainingCheckpoints > 0 then
+        if self.drunk==1 and self.remainingCheckpoints > 0 then
             self.setTargetToPosition(self.checkpoints[self.remainingCheckpoints][1], self.checkpoints[self.remainingCheckpoints][2])
             self.remainingCheckpoints = self.remainingCheckpoints - 1
             simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {0, 0, 1})
             if self.remainingCheckpoints == 0 then
                 simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {1, 0, 0})
             end
-            self.targetReached = false
+            self.targetReached = simGetIntegerSignal('_targetReached') or 0 -- 0 for false and 1 for true
         else
             neighborMat, neighborArr, matOffset, arrOffset = self.myMap:getEightNeighbors()
             gradientCalc, mapValues, localOffsets = canCalculateGradient(neighborArr, arrOffset)
@@ -208,7 +247,7 @@ function finken.init(self)
         
         xGrad = xGradNormalized * self.gradientSpeed
         yGrad = yGradNormalized * self.gradientSpeed
-        if self.drunk then
+        if self.drunk==1 then
             onLinePosition = self.position
             xStep = xGradNormalized * sizeOfField/100 * self.stepFactor
             yStep = yGradNormalized * sizeOfField/100 * self.stepFactor
@@ -227,13 +266,13 @@ function finken.init(self)
 
             self.setTargetToPosition(self.checkpoints[self.remainingCheckpoints+1][1], self.checkpoints[self.remainingCheckpoints+1][2])
             simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {0, 0, 1})
-            self.targetReached = false
+            self.targetReached = simGetIntegerSignal('_targetReached') or 0 -- 0 for false and 1 for true
         else
             xTarget = self.position[1] + xGrad
             yTarget = self.position[2] + yGrad
             self.setTargetToPosition(xTarget, yTarget)
             simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {1, 0, 0})
-            self.targetReached = false
+            self.targetReached = simGetIntegerSignal('_targetReached') or 0 -- 0 for false and 1 for true
         end
     end
 
@@ -258,15 +297,16 @@ function finken.init(self)
 
 	function self.customClean()
 
+        --Called once at the end of simulation, write log data here
 
-    -- Gradient speed
-    --Called once at the end of simulation, write log data here
-    fileWriting = writingfile.init(writingfile)
-    fileWriting.WriteFile()
-    fileWriting.ReadFile()
-    fileWriting.AppendFile()
-    fileWriting.ReadFile()
+        --SaveLogDataToFile(logData, newLogName, mapName, newSuffix, newDirectoryPath)
+         SaveLogDataToFile(heightLog, "Height",simGetStringSignal("_fileName"),simGetNameSuffix(nil),nil, ".csv")
 
+        --No need of these methods anymore
+       -- fileWriting = writingfile.init(writingfile)
+       -- fileWriting.WriteFile()
+       -- fileWriting.AppendFile()
+       -- fileWriting.ReadFile()
 	end
     
 	return self
