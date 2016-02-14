@@ -168,7 +168,7 @@ function finken.init(self)
         -- the vision sensor Floor_camera returns a table of values
         -- the first element colors[1] is the overall lightness of the image
         -- the other elements colors[2] is Red, colors[3] is Green, colors[4] is Blue
-        self.SaveLogDataEachTimeStep()
+
         self.CheckUIButton()
 
 		local _, colors = simReadVisionSensor(simGetObjectHandle('Floor_camera'))
@@ -189,6 +189,8 @@ function finken.init(self)
         self.updateTarget()
         self.myMap:updateMap(xSpeed, ySpeed, currentMapHeight, true, 0.01, true)
         self.myMap:UpdateTextureLocalMapDataTableForUI()
+
+        self.SaveLogDataEachTimeStep()
 	end
 
     function self.updateTarget()
