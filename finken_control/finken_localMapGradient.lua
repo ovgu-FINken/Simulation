@@ -32,7 +32,8 @@ function finken.init(self)
             myLogFile:write("LMap TotalSize:,",simGetFloatSignal('_LM_SizeOfContainer'),"\n")
             myLogFile:write("LMap FieldSize:,",simGetFloatSignal('_LM_SizeOfField'),"\n")
             myLogFile:write("LMap Resolution:,",lMapRes,"*",lMapRes,"\n")
-            
+
+            myLogFile:write("Drunk Mode:,",simGetIntegerSignal('_drunk') or 1,"\n") --,self.drunk
             myLogFile:write("Gradient Speed:,",simGetFloatSignal('_gradientSpeed') or 0.3,"\n") --,self.gradientSpeed
             myLogFile:write("Explore Speed:,",simGetFloatSignal('_exploreSpeed') or 2.0,"\n") --self.exploreSpeed
             myLogFile:write("Target Epsilon:,",simGetFloatSignal('_targetEpsilon') or 0.05,"\n") --self.targetEpsilon
@@ -312,7 +313,7 @@ function finken.init(self)
 
         --Called once at the end of simulation, write log data here
         --SaveLogDataToFile(logData, newLogName, mapName, newSuffix, newDirectoryPath, fileExtension)
-         SaveLogDataToFile(heightLog, "Height",simGetStringSignal("_fileName"),simGetNameSuffix(nil),nil, ".csv")
+         SaveLogDataToFile(heightLog, "Height",simGetStringSignal('_fileName'),simGetNameSuffix(nil),nil, ".csv")
 
         --No need of these methods anymore
        -- fileWriting = writingfile.init(writingfile)
