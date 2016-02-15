@@ -32,10 +32,17 @@ function finken.init(self)
             myLogFile:write("LMap TotalSize:,",simGetFloatSignal('_LM_SizeOfContainer'),"\n")
             myLogFile:write("LMap FieldSize:,",simGetFloatSignal('_LM_SizeOfField'),"\n")
             myLogFile:write("LMap Resolution:,",lMapRes,"*",lMapRes,"\n")
+            
             myLogFile:write("Gradient Speed:,",simGetFloatSignal('_gradientSpeed') or 0.3,"\n") --,self.gradientSpeed
             myLogFile:write("Explore Speed:,",simGetFloatSignal('_exploreSpeed') or 2.0,"\n") --self.exploreSpeed
             myLogFile:write("Target Epsilon:,",simGetFloatSignal('_targetEpsilon') or 0.05,"\n") --self.targetEpsilon
-            myLogFile:write("Time steps,Height\n\n")
+            
+            myLogFile:write("Width Factor:,",simGetFloatSignal('_widthFactor') or 30,"\n") --self.widthFactor
+            myLogFile:write("Step Factor:,",simGetFloatSignal('_stepFactor') or 0.5,"\n") --self.stepFactor
+            myLogFile:write("CP EpsilonRatio:,",simGetFloatSignal('_checkpointEpsilonRatio') or 0.995,"\n") --self.checkpointEpsilonRatio
+            myLogFile:write("\n\n")
+             
+            myLogFile:write("Time steps,Height\n")
             headerOnce=true
         end
         local timestamp, logValue
@@ -90,15 +97,16 @@ function finken.init(self)
         --Create a VirtualBoxAround the Finken
         self.CreateAVirtualBoxAroundFinken()
         -- initialize magic numbers and state information
-        self.targetReached = simGetIntegerSignal('_targetReached') or 1 -- 0 for false and 1 for true
+        self.targetReached = 1 -- 0 for false and 1 for true
         self.gradientSpeed = simGetFloatSignal('_gradientSpeed') or 0.3
         self.exploreSpeed = simGetFloatSignal('_exploreSpeed') or 2.0
         self.targetEpsilon = simGetFloatSignal('_targetEpsilon') or 0.05
         self.drunk = simGetIntegerSignal('_drunk') or 1 -- 0 for false and 1 for true
         if self.drunk==1 then
-            self.widthFactor = 30
-            self.stepFactor = 0.5
-            self.checkpointEpsilonRatio = 0.995 -- the higher this value, the further away the target can be
+            self.widthFactor = simGetFloatSignal('_widthFactor') or 30
+            self.stepFactor = simGetFloatSignal('_stepFactor') or 0.5
+            -- the higher this value, the further away the target can be
+            self.checkpointEpsilonRatio = simGetFloatSignal('_checkpointEpsilonRatio') or 0.995
             self.checkpoints = {}
             self.remainingCheckpoints = 0
         end
@@ -217,7 +225,7 @@ function finken.init(self)
             targetDist = self.targetEpsilon
         end
         if distToTarget < targetDist then
-            self.targetReached = simGetIntegerSignal('_targetReached') or 1 -- 0 for false and 1 for true
+            self.targetReached = 1 -- 0 for false and 1 for true
             simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {0, 1, 0})
         end 
     end
@@ -230,7 +238,7 @@ function finken.init(self)
             if self.remainingCheckpoints == 0 then
                 simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {1, 0, 0})
             end
-            self.targetReached = simGetIntegerSignal('_targetReached') or 0 -- 0 for false and 1 for true
+            self.targetReached = 0 -- 0 for false and 1 for true
         else
             neighborMat, neighborArr, matOffset, arrOffset = self.myMap:getEightNeighbors()
             gradientCalc, mapValues, localOffsets = canCalculateGradient(neighborArr, arrOffset)
@@ -271,13 +279,13 @@ function finken.init(self)
 
             self.setTargetToPosition(self.checkpoints[self.remainingCheckpoints+1][1], self.checkpoints[self.remainingCheckpoints+1][2])
             simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {0, 0, 1})
-            self.targetReached = simGetIntegerSignal('_targetReached') or 0 -- 0 for false and 1 for true
+            self.targetReached = 0 -- 0 for false and 1 for true
         else
             xTarget = self.position[1] + xGrad
             yTarget = self.position[2] + yGrad
             self.setTargetToPosition(xTarget, yTarget)
             simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {1, 0, 0})
-            self.targetReached = simGetIntegerSignal('_targetReached') or 0 -- 0 for false and 1 for true
+            self.targetReached = 0 -- 0 for false and 1 for true
         end
     end
 
