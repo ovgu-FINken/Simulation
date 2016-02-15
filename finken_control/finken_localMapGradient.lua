@@ -26,12 +26,15 @@ function finken.init(self)
         local myLogFile = assert(io.open(newDirectoryPath..mapName.."_".. newSuffix.."_"..newLogName.."_"..myTimeString..fileExtension, "w"))
 
         if headerOnce==false then
+            local lMapRes = simGetFloatSignal('_LM_SizeOfContainer')/simGetFloatSignal('_LM_SizeOfField')
             myLogFile:write("GradientMap:,",mapName,"\n")
+            myLogFile:write("GradientMap Scale:,",simGetFloatSignal('_xScale'),"*",simGetFloatSignal('_yScale'),"\n")
             myLogFile:write("LMap TotalSize:,",simGetFloatSignal('_LM_SizeOfContainer'),"\n")
             myLogFile:write("LMap FieldSize:,",simGetFloatSignal('_LM_SizeOfField'),"\n")
-            myLogFile:write("Gradient Speed:,",self.gradientSpeed,"\n")
-            myLogFile:write("Explore Speed:,",self.exploreSpeed,"\n")
-            myLogFile:write("Target Epsilon:,",self.targetEpsilon,"\n")
+            myLogFile:write("LMap Resolution:,",lMapRes,"*",lMapRes,"\n")
+            myLogFile:write("Gradient Speed:,",simGetFloatSignal('_gradientSpeed') or 0.3,"\n") --,self.gradientSpeed
+            myLogFile:write("Explore Speed:,",simGetFloatSignal('_exploreSpeed') or 2.0,"\n") --self.exploreSpeed
+            myLogFile:write("Target Epsilon:,",simGetFloatSignal('_targetEpsilon') or 0.05,"\n") --self.targetEpsilon
             myLogFile:write("Time steps,Height\n\n")
             headerOnce=true
         end
@@ -300,8 +303,7 @@ function finken.init(self)
 	function self.customClean()
 
         --Called once at the end of simulation, write log data here
-
-        --SaveLogDataToFile(logData, newLogName, mapName, newSuffix, newDirectoryPath)
+        --SaveLogDataToFile(logData, newLogName, mapName, newSuffix, newDirectoryPath, fileExtension)
          SaveLogDataToFile(heightLog, "Height",simGetStringSignal("_fileName"),simGetNameSuffix(nil),nil, ".csv")
 
         --No need of these methods anymore
