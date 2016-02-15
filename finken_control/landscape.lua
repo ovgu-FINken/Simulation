@@ -20,18 +20,14 @@ function landscape.init(self)
         simAddStatusbarMessage("Old step method")
     end
 
-    function self.customInit( )
-        -- This is executed exactly once, the first time this script is executed
-        landscapesParent=simGetObjectAssociatedWithScript(sim_handle_self)
-        -- following is the handle of landscape's associated UI (user interface):
-        conveyorUIControl=simGetUIHandle("ConveyorControls")
-        -- Set the title of the user interface: 
+    function self.initializeUI()
+        -- Set the title of the user interface:
         simSetUIButtonLabel(conveyorUIControl,0,"Parameters for map:")
-        simSetUIButtonLabel(conveyorUIControl,3,"xSpeed:") 
-        simSetUIButtonLabel(conveyorUIControl,4,"ySpeed:") 
-        simSetUIButtonLabel(conveyorUIControl,5,"xScale:") 
-        simSetUIButtonLabel(conveyorUIControl,6,"yScale:") 
-        simSetUIButtonLabel(conveyorUIControl,7,"Path:") 
+        simSetUIButtonLabel(conveyorUIControl,3,"xSpeed:")
+        simSetUIButtonLabel(conveyorUIControl,4,"ySpeed:")
+        simSetUIButtonLabel(conveyorUIControl,5,"xScale:")
+        simSetUIButtonLabel(conveyorUIControl,6,"yScale:")
+        simSetUIButtonLabel(conveyorUIControl,7,"Path:")
         simSetUIButtonLabel(conveyorUIControl,8,"Filename:")
         simSetUIButtonLabel(conveyorUIControl,14,"Update")
 
@@ -42,14 +38,27 @@ function landscape.init(self)
         yScale = tonumber(simGetUIButtonLabel(conveyorUIControl,12))
         filePath = simGetUIButtonLabel(conveyorUIControl,13)
         fileName = simGetUIButtonLabel(conveyorUIControl,16)
-        
-        --Setup all signals to be called from outside this scene
-        simSetFloatSignal('_xSpeed',xSpeed)
-        simSetFloatSignal('_ySpeed',ySpeed)
-        simSetFloatSignal('_xScale',xScale)
-        simSetFloatSignal('_yScale',yScale)
-        simSetStringSignal('_filePath',filePath)
-        simSetStringSignal('_fileName',fileName)
+    end
+
+    function self.customInit()
+    -- This is executed exactly once, the first time this script is executed
+    landscapesParent=simGetObjectAssociatedWithScript(sim_handle_self)
+    -- following is the handle of landscape's associated UI (user interface):
+    conveyorUIControl=simGetUIHandle("ConveyorControls")
+
+    isRemoteApi = simGetIntegerSignal('_isRemoteApi') or 0
+    simAddStatusbarMessage("IsRemoteApi:"..isRemoteApi)
+
+    if isRemoteApi==0 then
+            self.initializeUI()
+            --Setup all signals to be called from outside this scene
+            simSetFloatSignal('_xSpeed',xSpeed)
+            simSetFloatSignal('_ySpeed',ySpeed)
+            simSetFloatSignal('_xScale',xScale)
+            simSetFloatSignal('_yScale',yScale)
+            simSetStringSignal('_filePath',filePath)
+            simSetStringSignal('_fileName',fileName)
+        end
 
         self.UpdateData()
         xOffset = math.random() * xScale
@@ -59,21 +68,23 @@ function landscape.init(self)
     end
 
     function self.CreateTexture()
+       -- fileName=simGetStringSignal('_fileName')
         shapeHandle = simCreateTexture(filePath..fileName, 12, nil, {xScale, yScale}, nil, 0, nil)
         simSetObjectPosition(shapeHandle, -1, {0,0,100}) -- away from arena
     end
 
     function self.UpdateData()
 
-        xSpeed=simGetFloatSignal('_xSpeed')
-        ySpeed=simGetFloatSignal('_ySpeed')
+        xSpeed= simGetFloatSignal('_xSpeed') or 0.5
+        ySpeed= simGetFloatSignal('_ySpeed') or 0.5
 
-        xScale=simGetFloatSignal('_xScale')
-        yScale=simGetFloatSignal('_yScale')
+        xScale= simGetFloatSignal('_xScale') or 10
+        yScale= simGetFloatSignal('_yScale') or 10
 
-        filePath=simGetStringSignal('_filePath')
+        filePath= simGetStringSignal('_filePath') or '/Users/asemahassan/Documents/Simulation/resources/gradient_maps/map_images/'
 
         fileName=simGetStringSignal('_fileName')
+
         --simAddStatusbarMessage("Updated Data")
     end
 

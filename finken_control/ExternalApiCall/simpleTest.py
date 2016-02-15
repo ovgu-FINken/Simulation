@@ -50,20 +50,56 @@ if clientID!=-1:
     # Now send some data to V-REP in a non-blocking fashion:
     vrep.simxAddStatusbarMessage(clientID,'Hello V-REP!',vrep.simx_opmode_oneshot)
     vrep.simxStartSimulation(clientID,vrep.simx_opmode_oneshot_wait)
+    vrep.simxPauseSimulation(clientID,vrep.simx_opmode_oneshot_wait)
+
+    print('B_FileName:',vrep.simxGetStringSignal(clientID,'_fileName',vrep.simx_opmode_streaming))
+    print('XScale:',vrep.simxGetFloatSignal(clientID,'_xScale',vrep.simx_opmode_streaming))
+    print('YScale:',vrep.simxGetFloatSignal(clientID,'_yScale',vrep.simx_opmode_streaming))
+    print('TotalSize:',vrep.simxGetFloatSignal(clientID,'_LM_SizeOfContainer',vrep.simx_opmode_streaming))
+    print('FieldSize:',vrep.simxGetFloatSignal(clientID,'_LM_SizeOfField',vrep.simx_opmode_streaming))
+    print('GradientSpeed:',vrep.simxGetFloatSignal(clientID,'_gradientSpeed',vrep.simx_opmode_streaming))
+    print('ExploreSpeed:',vrep.simxGetFloatSignal(clientID,'_exploreSpeed',vrep.simx_opmode_streaming))
+    print('TargetEpsilon:',vrep.simxGetFloatSignal(clientID,'_targetEpsilon',vrep.simx_opmode_streaming))
+    print('WidthFactor:',vrep.simxGetFloatSignal(clientID,'_widthFactor',vrep.simx_opmode_streaming))
+    print('StepFactor:',vrep.simxGetFloatSignal(clientID,'_stepFactor',vrep.simx_opmode_streaming))
+    print('CPEpsilonRation:',vrep.simxGetFloatSignal(clientID,'_checkpointEpsilonRatio',vrep.simx_opmode_streaming))
+    print('IsDrunk:',vrep.simxGetIntegerSignal(clientID,'_drunk',vrep.simx_opmode_streaming))
 
     # Now try to retrieve data in a blocking fashion (i.e. a service call):
+    vrep.simxSetIntegerSignal(clientID,'_isRemoteApi',0,vrep.simx_opmode_oneshot)
+
+    vrep.simxSetStringSignal(clientID,'_fileName','large_hills_smooth.png',vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_xScale',10,vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_yScale',10,vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_LM_SizeOfContainer',10,vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_LM_SizeOfField',1,vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_gradientSpeed',15,vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_exploreSpeed',5,vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_targetEpsilon',1,vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_widthFactor',3,vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_stepFactor',1,vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_checkpointEpsilonRatio',0.5,vrep.simx_opmode_oneshot)
+    vrep.simxSetFloatSignal(clientID,'_drunk',0,vrep.simx_opmode_oneshot)
+
     time.sleep(5)
+    vrep.simxStartSimulation(clientID,vrep.simx_opmode_oneshot_wait)
+
+    print('FileName:',vrep.simxGetStringSignal(clientID,'_fileName',vrep.simx_opmode_streaming))
+    print('XScale:',vrep.simxGetFloatSignal(clientID,'_xScale',vrep.simx_opmode_streaming))
+    print('YScale:',vrep.simxGetFloatSignal(clientID,'_yScale',vrep.simx_opmode_streaming))
+    print('TotalSize:',vrep.simxGetFloatSignal(clientID,'_LM_SizeOfContainer',vrep.simx_opmode_streaming))
+    print('FieldSize:',vrep.simxGetFloatSignal(clientID,'_LM_SizeOfField',vrep.simx_opmode_streaming))
+    print('GradientSpeed:',vrep.simxGetFloatSignal(clientID,'_gradientSpeed',vrep.simx_opmode_streaming))
+    print('ExploreSpeed:',vrep.simxGetFloatSignal(clientID,'_exploreSpeed',vrep.simx_opmode_streaming))
+    print('TargetEpsilon:',vrep.simxGetFloatSignal(clientID,'_targetEpsilon',vrep.simx_opmode_streaming))
+    print('WidthFactor:',vrep.simxGetFloatSignal(clientID,'_widthFactor',vrep.simx_opmode_streaming))
+    print('StepFactor:',vrep.simxGetFloatSignal(clientID,'_stepFactor',vrep.simx_opmode_streaming))
+    print('CPEpsilonRation:',vrep.simxGetFloatSignal(clientID,'_checkpointEpsilonRatio',vrep.simx_opmode_streaming))
+    print('IsDrunk:',vrep.simxGetIntegerSignal(clientID,'_drunk',vrep.simx_opmode_streaming))
+
     # Now close the connection to V-REP:
     #vrep.simxStopSimulation(clientID,vrep.simx_opmode_oneshot)
-
-    print('Result:',vrep.simxStopSimulation(clientID,vrep.simx_opmode_oneshot_wait))
-
-    time.sleep(5)
-
-    vrep.simxStartSimulation(clientID,vrep.simx_opmode_oneshot_wait)
-    # Now try to retrieve data in a blocking fashion (i.e. a service call):
-    time.sleep(5)
-
+    time.sleep(500)
     print('Result:',vrep.simxStopSimulation(clientID,vrep.simx_opmode_oneshot_wait))
     vrep.simxFinish(clientID)
 else:

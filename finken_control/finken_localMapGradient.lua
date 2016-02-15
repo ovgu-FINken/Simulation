@@ -3,7 +3,7 @@ local writingfile = require("writingfile")
 local finken = {}
 
 local boxContainer, sizeOfContainer, sizeOfField, currentMapHeight
- local heightLog = {}
+local heightLog = {}
 finkenCore = require('finkenCore')
 
 function finken.init(self)
@@ -68,8 +68,6 @@ function finken.init(self)
     end
 
     function self.initializeUI()
-        -- Following is the handle of FINken2's associated UI (user interface):
-        finkenLocalMapUI=simGetUIHandle("FinkenLocalMap")
         -- Set the title of the user interface: 
         simSetUIButtonLabel(finkenLocalMapUI,0,"Finken Local map:")
         simSetUIButtonLabel(finkenLocalMapUI,3,"Size of Map (in CM):") 
@@ -89,12 +87,21 @@ function finken.init(self)
 
 	function self.customInit()
 		helperSay("Follow the gradient estimated from the local map...")
-        -- set some initializations
-        self.initializeUI()
-        self.CopterPositionSetToCenterOfMap()
 
+        -- Following is the handle of FINken2's associated UI (user interface):
+        finkenLocalMapUI=simGetUIHandle("FinkenLocalMap")
+
+        isRemoteApi = simGetIntegerSignal('_isRemoteApi') or 0
+        simAddStatusbarMessage("IsRemoteApi:"..isRemoteApi)
+
+        if isRemoteApi==0 then
+            self.initializeUI()
+        end
+
+        self.CopterPositionSetToCenterOfMap()
         -- Update the local map data and then setup a map around finken
         self.UpdateLocalMapDataFromUI()
+
         --Create a VirtualBoxAround the Finken
         self.CreateAVirtualBoxAroundFinken()
         -- initialize magic numbers and state information
@@ -158,8 +165,8 @@ function finken.init(self)
     end
 
     function self.UpdateLocalMapDataFromUI()
-        sizeOfContainer =  simGetFloatSignal('_LM_SizeOfContainer')
-        sizeOfField = simGetFloatSignal('_LM_SizeOfField')
+        sizeOfContainer =  simGetFloatSignal('_LM_SizeOfContainer') or 10
+        sizeOfField = simGetFloatSignal('_LM_SizeOfField') or 1
         simAddStatusbarMessage('Map: '..sizeOfContainer..'  Field: '..sizeOfField)
     end
 
