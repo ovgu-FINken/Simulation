@@ -37,8 +37,6 @@ function IMU.init(self, handle)
 		simSetFloatSignal('imu:rollRate', angularRate[1])
 		simSetFloatSignal('imu:pitchRate', angularRate[2])
 		simSetFloatSignal('imu:yawRate', angularRate[3])
-
-		--optional: pack multiple values in signal
 	end
 
 	-- Generates random numbers that are approximately normally distributed, with mean 0 and standard deviation ~sigma

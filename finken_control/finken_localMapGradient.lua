@@ -115,7 +115,7 @@ function finken.init(self)
         self.gradientSpeed = simGetFloatSignal('_gradientSpeed') or 0.3
         self.exploreSpeed = simGetFloatSignal('_exploreSpeed') or 2.0
         self.targetEpsilon = simGetFloatSignal('_targetEpsilon') or 0.05
-        self.mode = simGetIntegerSignal('_mode') or 1 -- 0 for false and 1 for true
+        self.mode = simGetIntegerSignal('_mode') or 2 -- 0 for straight line gradient, 1 for drunk gradient, 2 for random
         if self.mode==1 then
             self.widthFactor = simGetFloatSignal('_widthFactor') or 30
             self.stepFactor = simGetFloatSignal('_stepFactor') or 0.5
@@ -212,14 +212,19 @@ function finken.init(self)
         --saving current height of map where finken is at this time step.
         currentMapHeight = colors[2]
         self.updateTarget()
-        self.myMap:updateMap(xSpeed, ySpeed, currentMapHeight, true, 0.01, true)
+        imu_xVel = simGetFloatSignal('imu:xVel') * 0.05 or 0      -- multiply with 0.05 because imu gives speed in m/s and one simulation step is 50 ms 
+        imu_yVel = simGetFloatSignal('imu:yVel') * 0.05 or 0
+        
+        self.myMap:updateMap(imu_xVel, imu_yVel, currentMapHeight, true, 0.01, false)
         self.myMap:UpdateTextureLocalMapDataTableForUI()
 
         self.SaveLogDataEachTimeStep()
 	end
 
     function self.updateTarget()
-        if self.targetReached==1 then
+        if self.mode==2 then
+            self.setTargetToPosition(self.position[1]+(math.random()-0.5) * self.gradientSpeed, self.position[1]+(math.random()-0.5) * self.gradientSpeed)
+        elseif self.targetReached==1 then
             self.setNewTarget()
         else
             self.setTarget(targetObj)

@@ -1,0 +1,77 @@
+Overview:
+
+GradientMap: pyramid.png
+GradientMap Scale: 10*10	depends on resolution of map image
+LMap TotalSize: 100			minimum 3 times FieldSize
+LMap FieldSize: 5			at least 1, because of copter speeds, larger than one pixel of the map image
+Mode: 0, 1, 2
+Gradient Speed: 0.15		0.1 -- 2 also depends on map size/resolution
+Explore Speed: 2.5			0.5 -- 4 approx.
+Target Epsilon: 0.05		smaller than gradient speed --> can potentially increase both gradient speed and target epsilon to large values
+Width Factor: 2				larger than 1
+Step Factor: 0.5			smaller than 1
+CP EpsilonRatio: 0.5		should increase with width factor
+noise: 0					smaller than 1?
+
+1
+
+GradientMap: large_hills_smooth.png
+GradientMap Scale: 10*10	
+LMap TotalSize: 100			
+LMap FieldSize: 5			
+		Mode: 0, 1, 2
+Gradient Speed: 0.15		
+Explore Speed: 2.5			
+Target Epsilon: 0.05		
+Width Factor: 2				
+Step Factor: 0.5			
+CP EpsilonRatio: 0.5		
+noise: 0					
+
+
+2
+
+GradientMap: large_hills_smooth.png
+GradientMap Scale: 10*10	
+LMap TotalSize: 100			
+LMap FieldSize: 5			
+		Mode: 0, 1, 2
+Gradient Speed: 0.15		
+Explore Speed: 2.5			
+Target Epsilon: 0.05		
+Width Factor: 2				
+Step Factor: 0.5			
+CP EpsilonRatio: 0.5		
+noise: 0
+
+
+3
+
+GradientMap: pyramid.png
+GradientMap Scale: 10*10	
+LMap TotalSize: 100			
+LMap FieldSize: 5			
+Mode: 0
+Gradient Speed: 0.15		
+Explore Speed: 2.5			
+Target Epsilon: 0.05		
+Width Factor: 2				
+Step Factor: 0.5			
+CP EpsilonRatio: 0.5		
+		noise: [0,] medium, large
+
+4
+
+GradientMap: pyramid.png
+GradientMap Scale: 10*10	
+LMap TotalSize: 100			
+LMap FieldSize: 5			
+Mode: 1
+Gradient Speed: 0.15		
+Explore Speed: 2.5			
+Target Epsilon: 0.05		
+Width Factor: 2				
+Step Factor: 0.5			
+CP EpsilonRatio: 0.5		
+		noise: [0,] medium, large
+

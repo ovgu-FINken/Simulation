@@ -45,27 +45,29 @@ def send_parameters(client, parameters, idx, mode):
 
 opmode = vrep.simx_opmode_oneshot
 
-max_time = 0.01 * 60 * 1000  # stop simulation after this much time (in ms)
+max_time = 3 * 60 * 1000  # stop simulation after this much time (in ms)
 
 num_repetitions = 1
 
 # TODO: describe what the parameters do
 params = dict()
-params['_fileName'] = ['cone.png'] * num_repetitions
+params['_fileName'] = ['pyramid.png', 'pyramid.png', 'pyramid.png'] * num_repetitions
 
-params['_xScale'] = [2] * num_repetitions
-params['_yScale'] = [3] * num_repetitions
+params['_xScale'] = [10, 10, 10] * num_repetitions
+params['_yScale'] = [10, 10, 10] * num_repetitions
 
-params['_LM_SizeOfContainer'] = [25.0] * num_repetitions
-params['_LM_SizeOfField'] = [5] * num_repetitions
+params['_LM_SizeOfContainer'] = [100, 100, 100] * num_repetitions
+params['_LM_SizeOfField'] = [5, 5, 5] * num_repetitions
 
-params['_gradientSpeed'] = [0.3] * num_repetitions
-params['_exploreSpeed'] = [2.5] * num_repetitions
-params['_targetEpsilon'] = [0.1] * num_repetitions
-params['_widthFactor'] = [4] * num_repetitions
+params['_gradientSpeed'] = [0.15, 0.15, 0.15] * num_repetitions
+params['_exploreSpeed'] = [2.5, 2.5, 2.5] * num_repetitions
+params['_targetEpsilon'] = [0.05, 0.05, 0.05] * num_repetitions
+params['_widthFactor'] = [2, 2, 2] * num_repetitions
 params['_stepFactor'] = [0.5] * num_repetitions
-params['_checkpointEpsilonRatio'] = [0.5] * num_repetitions
-params['_drunk'] = [1] * num_repetitions
+params['_checkpointEpsilonRatio'] = [0.5, 0.5, 0.5] * num_repetitions
+params['_drunk'] = [0, 1, 2] * num_repetitions
+
+params['imu:noiseMagnitude'] = [0, 0, 0] * num_repetitions
 
 vrep.simxFinish(-1)  # just in case, close all opened connections
 clientID = vrep.simxStart('127.0.0.1', 19997, True, True, 5000, 5)  # Connect to V-REP
