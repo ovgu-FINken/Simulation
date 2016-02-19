@@ -41,22 +41,22 @@ function landscape.init(self)
     end
 
     function self.customInit()
-    -- This is executed exactly once, the first time this script is executed
-    landscapesParent=simGetObjectAssociatedWithScript(sim_handle_self)
-    -- following is the handle of landscape's associated UI (user interface):
-    conveyorUIControl=simGetUIHandle("ConveyorControls")
+        -- This is executed exactly once, the first time this script is executed
+        landscapesParent=simGetObjectAssociatedWithScript(sim_handle_self)
+        -- following is the handle of landscape's associated UI (user interface):
+        conveyorUIControl=simGetUIHandle("ConveyorControls")
 
-    isRemoteApi = simGetIntegerSignal('_isRemoteApi') or 0
-    simAddStatusbarMessage("IsRemoteApi:"..isRemoteApi)
+        isRemoteApi = simGetIntegerSignal('_isRemoteApi') or 0
+        simAddStatusbarMessage("IsRemoteApi:"..isRemoteApi)
 
-    if isRemoteApi==0 then
-            self.initializeUI()
+        self.initializeUI()
+        simSetStringSignal('_filePath',filePath)
+        if isRemoteApi==0 then
             --Setup all signals to be called from outside this scene
             simSetFloatSignal('_xSpeed',xSpeed)
             simSetFloatSignal('_ySpeed',ySpeed)
             simSetFloatSignal('_xScale',xScale)
             simSetFloatSignal('_yScale',yScale)
-            simSetStringSignal('_filePath',filePath)
             simSetStringSignal('_fileName',fileName)
         end
 
