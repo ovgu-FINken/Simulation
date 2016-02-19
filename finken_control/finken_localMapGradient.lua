@@ -21,7 +21,8 @@ function finken.init(self)
 
         local headerOnce=false
         local myTimeString = os.date("%Y%m%d%H%M%S")
-        newDirectoryPath = newDirectoryPath or ""
+        simAddStatusbarMessage(newDirectoryPath)
+        newDirectoryPath = newDirectoryPath..'../../logs/'
         newSuffix = newSuffix or ""
         local myLogFile = assert(io.open(newDirectoryPath..mapName.."_".. newSuffix.."_"..newLogName.."_"..myTimeString..fileExtension, "w"))
 
@@ -317,16 +318,8 @@ function finken.init(self)
 	end
 
 	function self.customClean()
-
         --Called once at the end of simulation, write log data here
-        --SaveLogDataToFile(logData, newLogName, mapName, newSuffix, newDirectoryPath, fileExtension)
-         SaveLogDataToFile(heightLog, "Height",simGetStringSignal('_fileName'),simGetNameSuffix(nil),nil, ".csv")
-
-        --No need of these methods anymore
-       -- fileWriting = writingfile.init(writingfile)
-       -- fileWriting.WriteFile()
-       -- fileWriting.AppendFile()
-       -- fileWriting.ReadFile()
+        SaveLogDataToFile(heightLog, "Height",simGetStringSignal('_fileName'),simGetNameSuffix(nil), simGetStringSignal('_filePath'), ".csv")
 	end
     
 	return self

@@ -81,7 +81,7 @@ function landscape.init(self)
         xScale= simGetFloatSignal('_xScale') or 10
         yScale= simGetFloatSignal('_yScale') or 10
 
-        filePath= simGetStringSignal('_filePath') or '/Users/asemahassan/Documents/Simulation/resources/gradient_maps/map_images/'
+        filePath= simGetStringSignal('_filePath') or simGetUIButtonLabel(conveyorUIControl,13)
 
         fileName=simGetStringSignal('_fileName')
 
