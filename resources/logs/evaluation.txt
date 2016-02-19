@@ -15,7 +15,7 @@ noise: 0					smaller than 1?
 
 1
 
-GradientMap: large_hills_smooth.png
+GradientMap: pyramid.png
 GradientMap Scale: 10*10	
 LMap TotalSize: 100			
 LMap FieldSize: 5			

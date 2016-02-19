@@ -115,7 +115,7 @@ function finken.init(self)
         self.gradientSpeed = simGetFloatSignal('_gradientSpeed') or 0.3
         self.exploreSpeed = simGetFloatSignal('_exploreSpeed') or 2.0
         self.targetEpsilon = simGetFloatSignal('_targetEpsilon') or 0.05
-        self.mode = simGetIntegerSignal('_mode') or 2 -- 0 for straight line gradient, 1 for drunk gradient, 2 for random
+        self.mode = simGetIntegerSignal('_mode') or 0 -- 0 for straight line gradient, 1 for drunk gradient, 2 for random
         if self.mode==1 then
             self.widthFactor = simGetFloatSignal('_widthFactor') or 30
             self.stepFactor = simGetFloatSignal('_stepFactor') or 0.5

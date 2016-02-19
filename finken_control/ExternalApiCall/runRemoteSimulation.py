@@ -20,6 +20,8 @@ def run_simulation_for_time(t, parameters, id_number, client, mode):
     time.sleep(4)
     vrep.simxSynchronous(client, False)
     # vrep.simxPauseSimulation(client, mode)
+    vrep.simxGetObjectHandle(client, '', vrep.simx_opmode_oneshot_wait)
+    time.sleep(10)
     while vrep.simxGetLastCmdTime(client) < t:
         time.sleep(5)
         print('waiting for simulation to finish')
@@ -37,7 +39,7 @@ def send_parameters(client, parameters, idx, mode):
     for k, v, in parameters.items():
         if k == '_fileName':
             vrep.simxSetStringSignal(client, k, v[idx], mode)
-        elif k == '_drunk':
+        elif k == '_mode':
             vrep.simxSetIntegerSignal(client, k, v[idx], mode)
         else:
             vrep.simxSetFloatSignal(client, k, v[idx], mode)
@@ -47,10 +49,11 @@ opmode = vrep.simx_opmode_oneshot
 
 max_time = 3 * 60 * 1000  # stop simulation after this much time (in ms)
 
-num_repetitions = 1
+num_repetitions = 25
 
 # TODO: describe what the parameters do
 params = dict()
+# params['_fileName'] = ['large_hills_smooth.png', 'large_hills_smooth.png', 'large_hills_smooth.png'] * num_repetitions
 params['_fileName'] = ['pyramid.png', 'pyramid.png', 'pyramid.png'] * num_repetitions
 
 params['_xScale'] = [10, 10, 10] * num_repetitions
@@ -63,9 +66,9 @@ params['_gradientSpeed'] = [0.15, 0.15, 0.15] * num_repetitions
 params['_exploreSpeed'] = [2.5, 2.5, 2.5] * num_repetitions
 params['_targetEpsilon'] = [0.05, 0.05, 0.05] * num_repetitions
 params['_widthFactor'] = [2, 2, 2] * num_repetitions
-params['_stepFactor'] = [0.5] * num_repetitions
+params['_stepFactor'] = [0.5, 0.5, 0.5] * num_repetitions
 params['_checkpointEpsilonRatio'] = [0.5, 0.5, 0.5] * num_repetitions
-params['_drunk'] = [0, 1, 2] * num_repetitions
+params['_mode'] = [0, 1, 2] * num_repetitions
 
 params['imu:noiseMagnitude'] = [0, 0, 0] * num_repetitions
 
