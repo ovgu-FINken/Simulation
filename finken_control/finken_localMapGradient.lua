@@ -34,7 +34,7 @@ function finken.init(self)
             myLogFile:write("LMap FieldSize:,",simGetFloatSignal('_LM_SizeOfField'),"\n")
             myLogFile:write("LMap Resolution:,",lMapRes,"*",lMapRes,"\n")
 
-            myLogFile:write("Drunk Mode:,",simGetIntegerSignal('_drunk') or 1,"\n") --,self.drunk
+            myLogFile:write("Mode:,",simGetIntegerSignal('_mode') or 0,"\n") -- if 0 then straight line, if 1 then drunk, if 2 then random
             myLogFile:write("Gradient Speed:,",simGetFloatSignal('_gradientSpeed') or 0.3,"\n") --,self.gradientSpeed
             myLogFile:write("Explore Speed:,",simGetFloatSignal('_exploreSpeed') or 2.0,"\n") --self.exploreSpeed
             myLogFile:write("Target Epsilon:,",simGetFloatSignal('_targetEpsilon') or 0.05,"\n") --self.targetEpsilon
@@ -42,6 +42,11 @@ function finken.init(self)
             myLogFile:write("Width Factor:,",simGetFloatSignal('_widthFactor') or 30,"\n") --self.widthFactor
             myLogFile:write("Step Factor:,",simGetFloatSignal('_stepFactor') or 0.5,"\n") --self.stepFactor
             myLogFile:write("CP EpsilonRatio:,",simGetFloatSignal('_checkpointEpsilonRatio') or 0.995,"\n") --self.checkpointEpsilonRatio
+
+            myLogFile:write("IMU Noise:,",simGetFloatSignal('imu:noiseMagnitude') or 0,"\n")
+
+
+
             myLogFile:write("\n\n")
              
             myLogFile:write("Time steps,Height\n")
@@ -110,8 +115,8 @@ function finken.init(self)
         self.gradientSpeed = simGetFloatSignal('_gradientSpeed') or 0.3
         self.exploreSpeed = simGetFloatSignal('_exploreSpeed') or 2.0
         self.targetEpsilon = simGetFloatSignal('_targetEpsilon') or 0.05
-        self.drunk = simGetIntegerSignal('_drunk') or 1 -- 0 for false and 1 for true
-        if self.drunk==1 then
+        self.mode = simGetIntegerSignal('_mode') or 1 -- 0 for false and 1 for true
+        if self.mode==1 then
             self.widthFactor = simGetFloatSignal('_widthFactor') or 30
             self.stepFactor = simGetFloatSignal('_stepFactor') or 0.5
             -- the higher this value, the further away the target can be
@@ -228,7 +233,7 @@ function finken.init(self)
     end 
 
     function self.updateReachedStatus( distToTarget )
-        if self.drunk==1 and self.remainingCheckpoints > 0 then
+        if self.mode==1 and self.remainingCheckpoints > 0 then
             targetDist = sizeOfField/100 * self.widthFactor * self.checkpointEpsilonRatio
         else
             targetDist = self.targetEpsilon
@@ -240,7 +245,7 @@ function finken.init(self)
     end
 
     function self.setNewTarget()
-        if self.drunk==1 and self.remainingCheckpoints > 0 then
+        if self.mode==1 and self.remainingCheckpoints > 0 then
             self.setTargetToPosition(self.checkpoints[self.remainingCheckpoints][1], self.checkpoints[self.remainingCheckpoints][2])
             self.remainingCheckpoints = self.remainingCheckpoints - 1
             simSetShapeColor(simGetObjectHandle('SimFinken_target'), nil, 0, {0, 0, 1})
@@ -269,7 +274,7 @@ function finken.init(self)
         
         xGrad = xGradNormalized * self.gradientSpeed
         yGrad = yGradNormalized * self.gradientSpeed
-        if self.drunk==1 then
+        if self.mode==1 then
             onLinePosition = self.position
             xStep = xGradNormalized * sizeOfField/100 * self.stepFactor
             yStep = yGradNormalized * sizeOfField/100 * self.stepFactor
