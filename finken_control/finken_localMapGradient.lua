@@ -223,7 +223,8 @@ function finken.init(self)
 
     function self.updateTarget()
         if self.mode==2 then
-            self.setTargetToPosition(self.position[1]+(math.random()-0.5) * self.gradientSpeed, self.position[1]+(math.random()-0.5) * self.gradientSpeed)
+            --self.setTargetToPosition(self.position[1]+(math.random()-0.5) * self.gradientSpeed,self.position[1]+(math.random()-0.5) * self.gradientSpeed)
+            self.setTargetToPosition(self.position[1]+(math.random()-0.5) * self.gradientSpeed, self.position[2]+(math.random()-0.5) * self.gradientSpeed)
         elseif self.targetReached==1 then
             self.setNewTarget()
         else
