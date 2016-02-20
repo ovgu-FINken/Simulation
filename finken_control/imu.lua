@@ -13,7 +13,7 @@ function IMU.init(self, handle)
 		velocity, angularRate = simGetObjectVelocity(objHandle)
 		orientation = simGetObjectOrientation(objHandle, -1)
 
-		sigma = simGetFloatSignal('imu:noiseMagnitude') or 0
+		sigma = simGetFloatSignal('imu:noiseMagnitude') or 0.05
 
 		-- apply noise
 		if sigma ~= 0 then
@@ -45,7 +45,13 @@ function IMU.init(self, handle)
 		-- subtract from 1 because result can be 0, and we want to take the logarithm
 		local r = 1 - math.random()
 		-- devide by 1.81 to get approximately standard deviation 1
-		return sigma * math.log((1-r)/r) / 1.81
+		local rt = sigma * math.log((1-r)/r) / 1.81
+		-- sometimes this result is -inf, even when r != 0, so we just regenerate it
+		while rt == math.log(0) do
+			r = 1 - math.random()
+			rt = sigma * math.log((1-r)/r) / 1.81
+		end
+		return rt 
 	end
 
 	simAddStatusbarMessage('initialized IMU')
