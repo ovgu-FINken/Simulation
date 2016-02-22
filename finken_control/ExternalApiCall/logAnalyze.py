@@ -3,7 +3,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-folder = '../../resources/logs/hills_modes/'
+folder = '../../resources/logs/pyramid_noise/straight_noise/'
 
 for d in os.listdir(folder):
     results = []
@@ -31,7 +31,7 @@ for d in os.listdir(folder):
     upper = mean_data + std
     linehandle = plt.plot(x.T, mean_data.T, label=d)
     plt.fill_between(x, lower.T, upper.T, alpha=0.1, color=linehandle[0].get_c())
-    plt.legend()
+    plt.legend(loc='best')
     plt.xlabel('time [s]')
     plt.ylabel('height')
     plt.title(folder.split('/')[-2])
