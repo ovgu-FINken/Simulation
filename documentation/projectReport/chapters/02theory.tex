@@ -194,12 +194,12 @@
     The mass flow rate $\dot m$ of the particle is the product of particle rate $\dot n_{px}$ and the particle mass $m_{px}$.
     \begin{equation}
     \dot m =  \dot n_{px} m_{px}= \dot n_{px}  \frac{\pi}{6}s_{px}^3  \rho_{px}
-    \label{equ_simmfr}
+    \label{equ:simmfr}
     \end{equation}
     
     During flight, if the air stream velocity $v_{final}$ changes, the mass flow changes as well according to \ref{equ:mfr}, so the mass flow rate needs to be expressed as a function of air stream velocity. 
     
-    Equating \ref{equ_simmfr} with  \ref{equ:mfr} in \ref{equ:simmfrrealmfr} relates particle rate $n_{px}$ to the already known parameters particle mass $m_{px}$, air density $\rho_{air}$, rotor area $A$ and the final air stream velocity $v_{final}$ in \ref{equ:pxrate}.
+    Equating \ref{equ:simmfr} with  \ref{equ:mfr} in \ref{equ:simmfrrealmfr} relates particle rate $n_{px}$ to the already known parameters particle mass $m_{px}$, air density $\rho_{air}$, rotor area $A$ and the final air stream velocity $v_{final}$ in \ref{equ:pxrate}.
     
     \begin{equation}
     \dot n_{px} m_{px} =  \rho_{air} A v_{rotor}
@@ -215,12 +215,13 @@
     But, all parameters except for air stream speed are constant.
     Thererefore,  the copter's dynamics can be simulated by connecting the air stream velocity to the throttle, so the copter's thrust will be adjusted accordingly.
     
-    The thrust of the rotor can be expressed as \ref{equ:simThrust} by inserting \ref{equ:simmfr} into \ref{equ:momentumTheory}
+    The thrust of the rotor can be expressed as \ref{equ:simThrust} by inserting \ref{equ:simmfr} into \ref{equ:momentum}
     \begin{equation}
     F_i = \dot n_{px}  \frac{\pi}{6}s_{px}^3  \rho_{px} v_{final}
+    \label{equ:simThrust}
     \end{equation}
     
-    Particle size $s_{px}$, mass $m_{px}$ and rate $\dot n_{px}$ can be arbitrarily chosen, as long as \ref{equ:simmfrrealmfr} is satisfied. See \ref{sec:implparticle} for the calculated values.
+    Particle size $s_{px}$, mass $m_{px}$ and rate $\dot n_{px}$ can be arbitrarily chosen, as long as \ref{equ:simmfrrealmfr} is satisfied. See \ref{sec:sceneMod} for the calculated values.
     
     
 
@@ -258,7 +259,7 @@
     The downside of these Lua-scripts is, that they are stored inside the binary scene file. 
     Thus, it's difficult to put them under version control or do collaborative work. 
     As the Lua-Engine inside V-REP provides full Lua support, this can be avoided by using the internal scripts only to import and call the actual scripts that are stored outside the scene. 
-    In section \ref{sec:implSoftware} is described how we handled this problem in detail.
+    In section \ref{sec:simSoftStruct} is described how we handled this problem in detail.
     
     If Lua doesn't offer the needed performance or functionalities, the second way to build deeply integrated software is the internal C++ API for plugins.
     The most flexible, but least performant way is the remote API of V-REP.
@@ -298,13 +299,22 @@
     
 \subsection{Java API}
     Java API is the external program, that we have implemented to communicate with V-REP through the Remote API.
-    We have chosen to implement our external program, communicating with the V-REP, in the Java programming language regarding the following advantages: Java's platform independence allows to run the external program even on different machine with different operating system than the one used for running the V-REP environment.  Java is object-orientated which favours the use of design patterns and highly abstraction layers, which allows us to write an API that is modular, reusable and can later be easily extended to support other mixed-reality scenarious. Java also associates documentation with the actual code. The JavaDoc produces browsable documentation from the comments written in the code, which will be useful for anybody who wants to extend the project\\
-    The implementation and architecture of the Java API is duscussed in details in \ref{sec:implementation}. The purpose of the Java application is to serve as a communicating bridge between the Paparazzi Ground Station and the V-REP. It detects all quadrocopters in the V-REP simulation, builds their virtual representations and feeds the models with real-time data.
+    We have chosen to implement our external program, communicating with the V-REP, in the Java programming language regarding the following advantages: Java's platform independence allows to run the external program even on different machine with different operating system than the one used for running the V-REP environment.  
+    Java is object-orientated which favours the use of design patterns and highly abstraction layers, which allows us to write an API that is modular, reusable and can later be easily extended to support other mixed-reality scenarios. 
+    Java also associates documentation with the actual code. 
+    The JavaDoc produces browsable documentation from the comments written in the code, which will be useful for anybody who wants to extend the project\\
+    
+    The implementation and architecture of the Java API is discussed in details in \ref{chap:implementation}. 
+    The purpose of the Java application is to serve as a communicating bridge between the Paparazzi Ground Station and the V-REP. 
+    It detects all quadrocopters in the V-REP simulation, builds their virtual representations and feeds the models with real-time data.
     
 \subsection{Ivy Bus}
 
-Ivy Bus is a simple protocol and a set of open-source (LGPL) libraries and programs that allows applications to broadcast information through text messages, with a subscription mechanism based on regular expressions. Ivy libraries are available in C, C++, Java, Python and Perl, on Windows and Unix boxes and on Macs. \\
-The Paparazzi Ground Station uses the Ivy Bus as a means of communication between the different software components. Figure \ref{fig:paparazziGS} depicts the communication structure in the Paparazzi Ground Station, in which the different agents communicate with each other by sending messages on the Ivy-Bus.
+Ivy Bus is a simple protocol and a set of open-source (LGPL) libraries and programs that allows applications to broadcast information through text messages, with a subscription mechanism based on regular expressions. 
+Ivy libraries are available in C, C++, Java, Python and Perl, on Windows and Unix boxes and on Macs. \\
+
+The Paparazzi Ground Station uses the Ivy Bus as a means of communication between the different software components. 
+ \ref{fig:paparazziGS} depicts the communication structure in the Paparazzi Ground Station, in which the different agents communicate with each other by sending messages on the Ivy-Bus.
 
 \begin{figure}[h!]
  \begin{center}
@@ -341,12 +351,12 @@ The Ivy Bus is a content-based publisher-subscriber and uses regular expressions
 
 The communication between V-REP and the quadrocopters passes through the Java API, which serves as a bridge between them. In fact the Java API does not communicate directly with the quadrocopter, but connects to the Ivy-Bus in the Paparazzi GS and can thus subscribe to the messages caring the telemetry data and also publish messages which will eventually be send to the quadrocopter by the link agent. On the other hand it uses the V-REP Remote-API to exchange information and provide the V-REP quadrocopter models with the data retrieved from the Ivy-Bus messages.\\ 
 Since we wanted to create a modular and reusable API, that can be used for other mixed-reality scenarios, the Java API was created with the idea in mind to be distributed, modular and rely on many abstraction layers.\\ 
-The API development has followed the requirement-driven principles and its main tasks are described in the following paragraphs. The implementation of the described bellow requirements in described in \ref{sec:commImplementation} of \ref{sec:implementation}.
+The API development has followed the requirement-driven principles and its main tasks are described in the following paragraphs. The implementation of the described bellow requirements in described in \ref{sec:commImplementation} of \ref{chap:implementation}.
 
 \subsubsection{V-REP-Remote API specific requirements}
 \label{sec:requirementsVREP}
 
-Below is a description of the requirements for the Java API which is responsible for the connection and communication with the V-REP environment. Its implementation is described in \ref{sec:vrepImplementation} of \ref{sec:implementation}.
+Below is a description of the requirements for the Java API which is responsible for the connection and communication with the V-REP environment. Its implementation is described in \ref{sec:vrepImplementation} of \ref{chap:implementation}.
 
 \paragraph{Connection to V-REP through the Remote API}
 

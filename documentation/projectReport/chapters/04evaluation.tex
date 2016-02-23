@@ -150,7 +150,7 @@ In the following, it could be possible, that both controllers are going to apply
 	\end{center}
 \end{figure}
 
-Interestingly, the roll of the FINkens as shown in \ref{fig:rollResponse} doesn't fit as well as the pitch, despite having identical controllers.
+Interestingly, the roll of the FINkens as shown in \ref{pic:rollResponse} doesn't fit as well as the pitch, despite having identical controllers.
 In this flight, we observed some logging error in V-REP. 
 The huge spikes in the virtual FINken's roll angle could not be observed in the screen capture of the simulation.
 When comparing the spikes in \ref{pic:rollResponse} with the plot of the pitch in \ref{pic:pitchResponse}, one can notice that the erroneous spikes in the roll correspond to the valid spikes in the pitch.
@@ -173,7 +173,7 @@ The response of the model does not exactly match, but to achieve this, the simul
 
 Eventually we wanted to evaluate to what extend the path of the flying quadrocopter matches the path of the simulated quadcopter. V-REP provides an easy way to plot the two dimensional position of the quadrocopter and draw the flying path, but our real quadrocopter does not have a positioning system and its position estimation is not possible.\\ 
 
-In order to estimate the position we have used the MEDUSA localization system developed in our faculty by Zug, Dietrich and Brezhnyev\cite{Zug2011RobLoc}. 
+In order to estimate the position we have used the MEDUSA localization system developed in our faculty by Zug, Steup, Dietrich and Brezhnyev\cite{Zug2011RobLoc}. 
 The system calculates the two dimensional position of a mobile robot moving in a rectangular arena, using eight proximity sensors and a gyroscope. 
 It uses the yaw angle of the robot and the distances to the walls from the proximity sensors to calculate a set of possible positions, where the quadrocopter could be. 
 Then it moves through all possible points and calculates the distances, that the proximity sensors should read at that particular point and angle of rotation. 

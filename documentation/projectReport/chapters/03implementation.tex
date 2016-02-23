@@ -94,7 +94,7 @@ The rotor model is attached to the FINken body via a force sensor which applies 
 The rotor is represented by a cylindrical shape which resembles the area swept by a real rotor and uses a particle simulation to emulate the airstream. The handling of the particle simulation is done inside a lua child script attached to the rotor model.
  
  
-During simulation, the particle velocity is the parameter used to control the finken. This rotor model was already included in VREP as an example and was used with slight  modifications, the theory behind it is shortly explained in \ref{sec:rotorTheory}. 
+During simulation, the particle velocity is the parameter used to control the finken. This rotor model was already included in VREP as an example and was used with slight  modifications, the theory behind it is shortly explained in \ref{sec:theoryRotor}. 
 
 The particle velocity was calculated as in \ref{equ:velocity} to be $11.077 \frac{m}{s}$ under standard conditions.
 
@@ -174,7 +174,7 @@ The particle velocity was calculated as in \ref{equ:velocity} to be $11.077 \fra
 
 Using the particle simulation has the advantage of providing a  random factor that causes noise and it simulates the airstream which will influence other copters in scenarios with multiple quadcopters.
 
-The existing rotor model in V-REP did work, but contained minor inaccuracies. The first issue was the constant particle creation rate. As shown in \ref{equ:mfr}, the mass flow rate also depends on the air velocity. Thus, the air velocity has a quadratic influence on the thrust, when only a linear one was modeled. This was corrected as in \ref{equ:pxrateNum} based on  \ref{equ:pxrate} that was derived in \ref{sec:rotorTheory}.
+The existing rotor model in V-REP did work, but contained minor inaccuracies. The first issue was the constant particle creation rate. As shown in \ref{equ:mfr}, the mass flow rate also depends on the air velocity. Thus, the air velocity has a quadratic influence on the thrust, when only a linear one was modeled. This was corrected as in \ref{equ:pxrateNum} based on  \ref{equ:pxrate} that was derived in \ref{sec:theoryRotor}.
 
   \begin{equation}
     \dot n_{px} = \frac{\rho_{air} A}{2m_{px}} v_{final} = \frac{1.2041 \frac{kg}{m^3} \frac{pi}{4} 0.1274^2 m^2}{2 * 1.9771 * 10^{-4} kg} v_{final} = 38.8180 \frac{1}{m}v_{final}
@@ -402,7 +402,7 @@ FinkenMeta.lua is loaded in the child script of a dummy object in the scene  to 
 \section{Communication V-REP - Quadrocopters}
 \label{sec:commImplementation}
 
-This chapter describes the implementation of the requirements on the Java-API, which ware discussed in \ref{sec:communication} of \ref{chap:theo}. It begins with an overview of the software architecture and continues with the explanation of the created projects, classes and their use. It helps understanding how the communication between the V-REP and the quadrocopters is implemented and how to use the API or extend it in order to implement other mixed-reality scenarios.\\
+This chapter describes the implementation of the requirements on the Java-API, which ware discussed in \ref{sec:communication} of \ref{chap:theory}. It begins with an overview of the software architecture and continues with the explanation of the created projects, classes and their use. It helps understanding how the communication between the V-REP and the quadrocopters is implemented and how to use the API or extend it in order to implement other mixed-reality scenarios.\\
 Note that this is just a brief explanation of the Java-API implementation. If you want to go in details refer to the Javadoc which is also provided as an attachment to this paper.
 
 \subsection{Software architecture}
@@ -412,7 +412,7 @@ The software architecture of the Java-API, which serves as a communication bridg
 On \ref{fig:apiArchitecture} is depicted an raw overview of the Java-API software architecture.
 The final program is assembled from independently developed components. Each part is independent and provide well-defined exported interfaces so that the other parts can use them.
 The first layer contains the projects \textit{JavaV-REP}, \textit{JavaIvyBus} and \textit{JavaXmlSax}.\\
-The \textit{JavaV-REP} is the implementation of the requirements concerning V-REP, that ware discussed in \ref{sec:requirementsVREP} of \ref{chap:theo}. At the heart of this project is the V-REP Remote-API binding for Java provided by Coppelia. The \textit{JavaVrep} project extends this library and provides further utility methods for establishing connection to remote V-REP servers as well as retrieving and manipulating scene objects. The \textit{JavaV-REP} project is described in more details in \ref{sec:vrepImplementation}.\\
+The \textit{JavaV-REP} is the implementation of the requirements concerning V-REP, that ware discussed in \ref{sec:requirementsVREP} of \ref{chap:theory}. At the heart of this project is the V-REP Remote-API binding for Java provided by Coppelia. The \textit{JavaVrep} project extends this library and provides further utility methods for establishing connection to remote V-REP servers as well as retrieving and manipulating scene objects. The \textit{JavaV-REP} project is described in more details in \ref{sec:vrepImplementation}.\\
 
 \begin{figure}[h!]
  \begin{center}
@@ -438,7 +438,7 @@ On the top of the hierarchy is situated the actual application of our project ca
 \subsection{JavaV-REP}
 \label{sec:vrepImplementation}
 
-All the functionality, that concerns V-REP and was discussed in \ref{sec:requirementsVREP} of \ref{chap:theo} is implemented as a single Java project called \textit{JavaVREP}.\\
+All the functionality, that concerns V-REP and was discussed in \ref{sec:requirementsVREP} of \ref{chap:theory} is implemented as a single Java project called \textit{JavaVREP}.\\
  The project uses the V-REP Remote-API Java binding - package \textit{coppelia} (containing 12 Java classes) and the \textit{libremoteApiJava.so} or \textit{libremoteApiJava.dll} (depending if the platform is Linux or Windows). The \textit{libremoteApiJava.so} should be placed in the Java home directory, e.g \textit{/usr/lib/jvm/java-8-oracle/jre/lib/amd64}, in order for the project to be compiled.\\
 The main class is the \textit{VrepConnection.java}, which is a wrapper of the \textit{remoteApi.java} class provided by the V-REP remote API. Its singleton instance can be retrieved by calling:
 
@@ -516,9 +516,9 @@ The project \textit{JavaVrep} also defines the interface \textit{ObjectUpdator} 
 \subsection{JavaIvyBus}
 \label{sec:ivyBusImplementation}
 
-The requirements regarding the Ivy-Bus, that ware stated in \ref{sec:requirementsIVYBus} of \ref{chap:theo} are implemented in a stand-alone Java project called \textit{JavaIvyBus}. \\
+The requirements regarding the Ivy-Bus, that ware stated in \ref{sec:requirementsIVYBus} of \ref{chap:theory} are implemented in a stand-alone Java project called \textit{JavaIvyBus}. \\
 The project requires the \textit{ivy-java.jar} library to be on its class path in order to be compiled.\\
-The project contains class definitions of the Paparazzi messages that are defined in a Xml file. See listing \ref{lst:MessageXml} of \ref{chap:theo}. The interface \textit{Message} and its abstract implementation \textit{AbsMessage} describe such a message with its name, period at which the message is sent, identifier and \textit{MessageField}s. \\
+The project contains class definitions of the Paparazzi messages that are defined in a Xml file. See listing \ref{lst:MessageXml} of \ref{chap:theory}. The interface \textit{Message} and its abstract implementation \textit{AbsMessage} describe such a message with its name, period at which the message is sent, identifier and \textit{MessageField}s. \\
 The interface \textit{IvyBusNode} represents a single independent node communicating on the common bus. By inheriting from its abstract implementation \textit{AbsIvyBusNode}, one can create a custom bus-node. The methods \textit{IvyBusNode.connect()} and \textit{IvyBusNode.disconnect()} are used to attach the particular node to the bus and disconnect it. The \textit{IvyBusNode} also conforms to the Java Beans specification and and fires asynchronous notifications each time the node joins or leaves the bus.
 After obtaining an instance of a \textit{Message}, parsed from the Xml file or a custom-created, the bus-node can subscribe to this \textit{Message} by invoking the method \textit{IvyBusNode.subscribeToMessage(Message msg)} and thus receive all the messages of this kind or use the method \textit{IvyBusNode.subscribeToIdMessage(Message msg, int id)}, which subscribes to the messages published just by this quadrocopter ehich has the same id. \\
 Once a \textit{Message} to which the bus node has subscribed has been received, the bus node fires an notification and gives the instance of the received \textit{Message}, with all of its \textit{MessageField}s initialized with the actual message values. The following listing shows an example hot to subscribe to a message and get asynchronous notification when the message is received.
