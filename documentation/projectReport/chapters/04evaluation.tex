@@ -3,7 +3,7 @@
 \section{Testing with Joystick}
 \label{sec:evalJoystick}
 
-In order to evaluate, at an early stage, how flyable and responsivee to external commands the VREP Quadcopter was, and how reliable the communication link between the V-REP and the Ivy-Bus system is, a Hardware-in-the-loop (HIL) set-up was build. 
+In order to evaluate, at an early stage, how flyable and responsive to external commands the V-REP Quadcopter was, and how reliable the communication link between the V-REP and the Ivy-Bus system is, a Hardware-in-the-loop (HIL) set-up was build. 
 \ref{fig:finkenHIL} shows the HIL set-up, consisting of a joystick, which is attached on the Ivy-Bus and controls the V-REP Quadcopter.
 
 
@@ -20,7 +20,7 @@ The already created \textit{JavaIvyBus} module, which was discussed in \ref{sec:
 
 The \textit{Joystick} class has as a local variable the class \textit{JoystickBusNode}, which extends the abstract \textit{AbsIvyBusNode}, thus being able to communicate on the common Ivy-Bus network. \\
 
-The \textit{Joystick} class polls the data from the Joystick device at 50 Mhz and sends them to the \textit{JoystickBusNode}, which on the other hand encapsulates the data in a FINKEN\_ROTORCRAFT\_FP message and publishes it on the bus. \\ 
+The \textit{Joystick} class polls the data from the Joystick device at 50 MHz and sends them to the \textit{JoystickBusNode}, which on the other hand encapsulates the data in a FINKEN\_ROTORCRAFT\_FP message and publishes it on the bus. \\ 
 
 The FINKEN\_ROTORCRAFT\_FP is the message that the real Quadcopter uses to publish its pitch, yaw and roll angles. 
 Since the Joystick fakes the real Quadcopter, the JavaFinkenApp receives the message as if coming from the real one, thus not even a single line of code had to be changed in the JavaFinkenApp, in order to use the HIL evaluation. \\
@@ -29,32 +29,32 @@ As a result of the evaluation we came to the following conclusions:
 
 \begin{itemize}
 \item{The controlling of the Quadcopter was very precise and accurate. 
-We ware able to make any manoeuvre and flight path as desired. \\ 
+We ware able to make any maneuver and flight path as desired. \\ 
 
-When flying with the Joystick, one can get a real feeling of the Quadcopter flight dynamics and behaviour}.
+When flying with the Joystick, one can get a real feeling of the Quadcopter flight dynamics and behavior}.
 
 \item{We experienced challenges with keeping the Quadcopter at a level height, using the throttle levers of the Joystick. 
 It turned out, that keeping a level height was a matter of eye-hand coordination. \\
 
 Even the slightest change to the thrust when hovering resulted in a strong acceleration in $z$-axis. 
-Even if this behaviour corresponds to the real quadcopter, we identified it as a problem, as the hover thrust of the real quadcopter changes during flight time with the battery voltage. 
+Even if this behavior corresponds to the real quadcopter, we identified it as a problem, as the hover thrust of the real quadcopter changes during flight time with the battery voltage. 
 As a result, we decided to tune the throttle response of the virtual Quadcopter with a logistic curve as described in \ref{equ:logistic}}.
 
 \end{itemize}
 
 \section{Simulation and Messaging  Performance}
 \label{sec:performance}
-\subsection{VREP performance}
- The VREP simulation is quite performant, running even on an old $2.4 GHz$ Core 2 Duo close to real time.
- In this case, the execution of the lua scripts take the most time with typically $32ms - 42ms$.
+\subsection{V-REP performance}
+ The V-REP simulation is quite performant, running even on an old $2.4 GHz$ Core 2 Duo close to real time.
+ In this case, the execution of the Lua scripts take the most time with typically $32ms - 42ms$.
  The distance sensor handling takes $14ms - 18ms$ and the Bullet physics engine accounts for $10ms — 12ms$.
- These times are according to the VREP internal profiler.
+ These times are according to the V-REP internal profiler.
  Profiling inside the Lua scripts showed, that the quadcopter main script, with the controllers and e.g. logging functions only takes 1-5 ms according to time measurements with  \emph{simGetSystemTimeInMs()}.
  The rotor scripts need $1ms - 5ms$ each, which might be optimizable.
- However, it seems that the biggest factor is the VREP internal handling of Lua.
+ However, it seems that the biggest factor is the V-REP internal handling of Lua.
  Optimizing here might be possible, but requires detailed information about the handling.
  
- \todo{add compter where vrep does run in RT}
+ \todo{add computer where V-REP does run in RT}
  
 
 \subsection{Timings in the Communication link}
@@ -130,7 +130,7 @@ The virtual copter started to drift away approximately at $30s$ as can be observ
 In \ref{pic:pitchResponse} can be seen, that the virtual and real pitch deviate around $30s$ for a short time, which could be the cause for the drift.
 
 A more detailed plot of the pitch comparison is shown in \ref{pic:pitchDetail}.
-Every spike of the real FINkens movement is directly followed by a spike in the same direction of the simulated FINken.
+Every spike of the real FINken's movement is directly followed by a spike in the same direction of the simulated FINken.
 The smaller movements do not correspond exactly, as the simulated copter contains its own attitude controller.
 Thus, keeping the simulated FINken stable in air has a higher priority than following the real copter's movements.
 The graph shows some points, e.g. before $17s$ where movement of the simulated FINken appears to precede the real FINken's movement.
@@ -228,7 +228,10 @@ In the worst case, as a correct position was assumed one of the calculated possi
 This creates a big jumps in the path, which does not coincide with the real flight path. 
 The scattered plot and the jumps are caused by the noisy sensor measurements. 
 A couple of attempts to filter the sensor readings ware made, but the plot still looked scattered to a significant extend. 
-Also a Kalman Filter was implemented to eliminate the big jumps between the current and previous quadcopter positions, but the results ware still not satisfying.\\ \todo{there is a kalman filter in the localizaiton system?}
+Thereupon, to eliminate the jumps, we limited the distance the copter could move in a single time step.
+This resembles that the real FINken can only move with a limited velocity.
+However, this improved the results slightly but still isn't satisfying for a perfectly accurate positioning system.
+
 
 On the other hand \ref{fig:vrepPosPath} shows a clear flying path, due to the fact that the position is not estimated, but taken directly from the V-REP environment. 
 The graph shows how the quadcopter drifts and to what extend it flies away from the arena.\\

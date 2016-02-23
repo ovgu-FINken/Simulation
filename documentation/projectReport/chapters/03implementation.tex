@@ -11,14 +11,14 @@ The FINken consists of the body, the rotors and the sensors. The body contains t
 The body consists of multiple objects, while visual representation and the physical behaviour are split. 
 For visual representation, a *.stl file from the CAD-Model of the original FINken was imported. 
 This shape is rather complex, which makes the simulation time consuming. 
-To speed up the simulation, the shape of the finken was remodelled in VREP, using only simple rectangular shapes. 
+To speed up the simulation, the shape of the finken was remodelled in V-REP, using only simple rectangular shapes. 
 Making the complex shape static, establishing a fixed connection and hiding the simple shape, the result is a a visual appealing simulation object with good simulation performance. 
 
 A dummy-object is used as a singular measurement reference point in the middle of the FINken. 
 This has to be taken into account when targeting physical objects, as the FINken will not be able to reach the target completely without colliding with the object. 
 This dummy object should always be used when refering to the FINkens position, orientation or movements, as it is aligned to the global coordinate system while especially imported shapes may be rotated in the simulation. 
 
-Vrep provides several pre-configured sensor type, the real FINkens sensors were modeled by using existing ultrasound distance sensors. 
+V-REP provides several pre-configured sensor type, the real FINkens sensors were modeled by using existing ultrasound distance sensors. 
 The FINken is equipped with \href{http://www.maxbotix.com/documents/I2CXL-MaxSonar-EZ_Datasheet.pdf}{Maxbotix MB1232: I2CXL-MaxSonar-EZ3} sensors. 
 According to the datasheet, they have an opening angle of $\ang{30}$ at maximum range when detecting smaller objects and maximum range of $2.65m$ for larger objects as walls. 
 The datasheet states a rather complex beam shape, but for the simulation a cone with an opening angle of $\ang{30}$  and a height of $7.65m$ will be used, as the alternative sensor earlier had a range of $7.65m$ and in the simulation it is very easy to internally cap the values. 
@@ -34,7 +34,7 @@ As the real FINken doesn't have the ability to fly to predefined points, we only
 \end{figure}
 
 The measured weight of the real FINken was applied to the simulation object. 
-As no advanced modelling like calculating moments of inertia was done, the weight of the motor was applied separately to the rotor model in VREP.  The motor assembly adds significant weight outside the FINkens center of gravity and therefore has a rather large influence on its behaviour. 
+As no advanced modelling like calculating moments of inertia was done, the weight of the motor was applied separately to the rotor model in V-REP.  The motor assembly adds significant weight outside the FINkens center of gravity and therefore has a rather large influence on its behaviour. 
 
 \todo{check weights of real finkens}
 \begin{table}[h]
@@ -75,7 +75,7 @@ The linear damping factor of the FINken body material was set to 0.3, to decreas
       	\label{tab:simSettings}
 \end{table}
 
-The rotor model in VREP handles the thrust simulation and thus a huge part of the physical behaviour of the quadcopter model.  
+The rotor model in V-REP handles the thrust simulation and thus a huge part of the physical behaviour of the quadcopter model.  
 Again, visual representation and physical simulation are separated. 
 
 The visualisation is done with a static shape of a rotor, that is connected to a joint and rotates with a fixed speed. 
@@ -94,7 +94,7 @@ The rotor model is attached to the FINken body via a force sensor which applies 
 The rotor is represented by a cylindrical shape which resembles the area swept by a real rotor and uses a particle simulation to emulate the airstream. The handling of the particle simulation is done inside a lua child script attached to the rotor model.
  
  
-During simulation, the particle velocity is the parameter used to control the finken. This rotor model was already included in VREP as an example and was used with slight  modifications, the theory behind it is shortly explained in \ref{sec:theoryRotor}. 
+During simulation, the particle velocity is the parameter used to control the finken. This rotor model was already included in V-REP as an example and was used with slight  modifications, the theory behind it is shortly explained in \ref{sec:theoryRotor}. 
 
 The particle velocity was calculated as in \ref{equ:velocity} to be $11.077 \frac{m}{s}$ under standard conditions.
 
@@ -190,12 +190,12 @@ The existing rotor model in V-REP did work, but contained minor inaccuracies. Th
 
 \subsection{Flight controller in simulation}
 
-The V-REP example quadrocopter already included a position control with a subsidiary attitude control out of the box, both implemented with PID controllers.
+The V-REP example quadrocopter already included a position control with a subsidiary attitude control out of the box, both implemented with \gls{PID} controllers.
 As the real FINken does not have an absolute position control, the control of the simulated FINken was changed to a pure attitude control.
 The external input therefore was changed from a position to pitch, roll, yaw and throttle, as it is the case for the real quadcopter.
 Thus, the controllers needed to be restructured and due to a different weight, the gain values had to be adjusted.
 The gain values were only manually tuned. 
-The FINkens reaction to different control inputs were observed and the PID gain values were adjusted according to the behaviour.
+The FINkens reaction to different control inputs were observed and the \gls{PID} gain values were adjusted according to the behaviour.
 In a nutshell, the adjusments can be summed up as follows:
 \begin{itemize}
 	\item{$K_P$: Increase, if the reaction is to slow, decrease if overshooting}
@@ -211,7 +211,7 @@ However, as no feedback loop exists, the copter will drift away.
 Because the real FINken does not compensate the battery voltage, the hover throttle will change during flight, making this type of control unsuitable for a mixed reality simulation.
 
 As a solution, the height sensor of the real FINken can be used to set a target height.
-Then, a PID controller in the simulation can adjust the throttle accordingly.
+Then, a \gls{PID} controller in the simulation can adjust the throttle accordingly.
 For this purpose, the position controller of the original simulation with only a proportional factor was reused. 
 Opposite to the real FINken, the height controller of the virtual one includes a proportional factor for the vertical speed.
 \begin{equation}
@@ -221,8 +221,8 @@ thrust = 22.175 * throttle/100 +2 * e  - 2 *v_{vertical}
 
 The with only a proportional factor is symmetric, therefore the pitch and roll controller are identical.
 The rotation matrix of the \gls{IMU} dummy object is compared against the target orientation.
-The resulting error is forwarded to the respective instance of the PID controller class, together with the current time step.
-The PID controller computes the correction, which is subsequently applied to the rotor according to \ref{equ:torques}.
+The resulting error is forwarded to the respective instance of the \gls{PID} controller class, together with the current time step.
+The \gls{PID} controller computes the correction, which is subsequently applied to the rotor according to \ref{equ:torques}.
 
 \begin{table}[h]
 	\centering
@@ -237,7 +237,7 @@ The PID controller computes the correction, which is subsequently applied to the
 		$K_D$  & $2.1$ & $1.5$  \\
     		\hline
 	\end{tabular}
-    	\caption{PID gain values for pitch and roll}
+    	\caption{\gls{PID} gain values for pitch and roll}
       	\label{tab:PIDpitchroll}
 \end{table}
 
@@ -255,7 +255,7 @@ The yaw controller's gain parameters was estimated to the values in \ref{tab:PID
 		$K_D$  & $2.1$ & $1.5$  \\
     		\hline
 	\end{tabular}
-    	\caption{PID gain values for yaw}
+    	\caption{\gls{PID} gain values for yaw}
       	\label{tab:PIDyaw}
 \end{table}
 The original yaw controller did not take into account, that the same orientation could be described by a positive and a negative angle.
@@ -366,13 +366,13 @@ To prevent the effect of windup of the integral part of the controller, the inte
 	\label{fig:finkenSoftStruct}
 \end{figure}
 
-The simulation software is written in Lua and runs inside a non-threaded child script of each FINken quadrocopter in VREP.  
+The simulation software is written in Lua and runs inside a non-threaded child script of each FINken quadrocopter in V-REP.  
 
 The base class is the finkenCore, which contains the main flight control algorithm and a steering interface as well as an interface to the FINkens sensors.
-The input commands for controlling the FINken are set via the signal communication of VREP. Signals inside VREP are the most versatile communication possibility which can be accessed from anywhere inside VREP and any remote API, they can be seen as a kind of global variable. Signals can be of integer, float or string type, where custom data types can be sent in text form as string signals. 
+The input commands for controlling the FINken are set via the signal communication of V-REP. Signals inside V-REP are the most versatile communication possibility which can be accessed from anywhere inside V-REP and any remote API, they can be seen as a kind of global variable. Signals can be of integer, float or string type, where custom data types can be sent in text form as string signals. 
 
-The finkenCore needs to be initialized at simulation start the for each simulated FINken. It starts the VREP remote API server and creates the API signals. Also, the PID controllers for flight control are initialized. 
-During simulation, calling the \textit{FINkenCore.step()} method handles the flight control. The input values are read from the signals \textit{pitch}, \textit{roll}, \textit{yaw} and \textit{throttle}. When the signal \textit{height} has a positive value, the FINkenCore will control the thrust so that the simulated FINken will keep the height provided by the signal, otherwise only the \textit{throttle} signal is used directly. The previously initialized PID controllers are used to compute the target air stream velocity for each rotor to move the simulated FINken to the target orientation.
+The finkenCore needs to be initialized at simulation start the for each simulated FINken. It starts the V-REP remote API server and creates the API signals. Also, the \gls{PID} controllers for flight control are initialized. 
+During simulation, calling the \textit{FINkenCore.step()} method handles the flight control. The input values are read from the signals \textit{pitch}, \textit{roll}, \textit{yaw} and \textit{throttle}. When the signal \textit{height} has a positive value, the FINkenCore will control the thrust so that the simulated FINken will keep the height provided by the signal, otherwise only the \textit{throttle} signal is used directly. The previously initialized \gls{PID} controllers are used to compute the target air stream velocity for each rotor to move the simulated FINken to the target orientation.
 
 To keep a quadcopter at a certain height without an external reference requires an exact equilibrium between gravity and thrust. The current real FINkens do not compensate the battery voltage, so the same throttle corresponds to different thrust forces during flight. Also, each FINken unit has slightly different base thrust. Therefore, the thrust in the simulation is tuned with a logisitc curve \ref{equ:logistic} to decrease the influence of the throttle close to the hover thrust. 
 \begin{equation}
@@ -390,9 +390,9 @@ The simulated FINken is equipped with 4 distance sensors which resemble the 4 ul
 By writing the distance values to a signal, they can be propagated to the Ivy-Bus and thus to the real FINken by our Java communication app, which enables the real FINken to detect virtual objects, as simulated FINken or walls that only exist in the Simulation.
 
 
-While the FINken is normally controlled by setting the pitch, roll, yaw and throttle directly, an alternative is to specify a target object. This method was originally used by the example quadcopter model of V-REP, though the function works differently in the FINkenCore now. When calling  \textit{setTarget(targetObject)}, the differences in x, y and z coordinates of the FINken base to the target objects are given to three PID controllers which calculate the pitch, roll and throttle to move the FINken to the target objects position. Those values are then published via the control signals for the FINken and regularly processed by it's internal controls. Therefore, \textit{setTarget(tragetObject)} needs to be called every time before \textit{step()}, when a target object should be approached.
+While the FINken is normally controlled by setting the pitch, roll, yaw and throttle directly, an alternative is to specify a target object. This method was originally used by the example quadcopter model of V-REP, though the function works differently in the FINkenCore now. When calling  \textit{setTarget(targetObject)}, the differences in x, y and z coordinates of the FINken base to the target objects are given to three \gls{PID} controllers which calculate the pitch, roll and throttle to move the FINken to the target objects position. Those values are then published via the control signals for the FINken and regularly processed by it's internal controls. Therefore, \textit{setTarget(tragetObject)} needs to be called every time before \textit{step()}, when a target object should be approached.
 
-In the previous sections, only the signal names for the first simulated FINken were used for better readability. As the simulation is scalable, more than one FINken can be added, therefore a naming scheme for signals is needed to prevent collisions of the globally visible signals. The signals corresponding to the first FINken are \textit{pitch}, \textit{roll}, \textit{yaw}, \textit{throttle}, \textit{height} and \textit{sensor\_dist}. For the second FINken, when the first one is copied, VREP automatically adds "\#0" to it's name. Following this convention, but leaving the '\#' to prevent problems with special characters when forwarding the signals through our interface, we add '0' to the signal names for the second FINken and consecutively enumerate following FINkens.
+In the previous sections, only the signal names for the first simulated FINken were used for better readability. As the simulation is scalable, more than one FINken can be added, therefore a naming scheme for signals is needed to prevent collisions of the globally visible signals. The signals corresponding to the first FINken are \textit{pitch}, \textit{roll}, \textit{yaw}, \textit{throttle}, \textit{height} and \textit{sensor\_dist}. For the second FINken, when the first one is copied, V-REP automatically adds "\#0" to it's name. Following this convention, but leaving the '\#' to prevent problems with special characters when forwarding the signals through our interface, we add '0' to the signal names for the second FINken and consecutively enumerate following FINkens.
 
 The finken.lua module provides an basic structure for further enhancements. It's contained functions like \textit{step()} and \textit{sense()} are called called inside V-REP during the appropriate simulation step sections. By calling custom functions inside those functions, the behaviour of the FINkens can be customised without any need to change the lua scripts inside V-REP. If a heterogenous swarm of FINkens with different functionalities should be implemented, the different finken-scripts have to be imported by the different FINkens in the simulation, which needs to be done in the lua scripts inside V-REP.
 
@@ -430,12 +430,12 @@ A short explanation of how this API can be used is included in \ref{sec:xmlImple
 On the next layer in the hierarchy is the \textit{JavaFinken} API. It uses the APIs from the layer below to provide further abstractions and utilities for our FINKEN project. It consists of classes that describe 
 the aircrafts defined in the paparazzi, defines the basic classes that represent our virtual and real quadrocopters and their sensors, defines a representation of the telemetry and the V-REP signals. With the help of \textit{JavaIvyBus} API, lying on the layer below, the Ivy-Bus nodes, specific for the virtual and real quadrocopters are represented. The abstraction provided by \textit{JavaXmlSax} is used to create a custom Xml readers for parsing the telemetry, messages and aircrafts from the Xml files. A more detailed description of the API is included in \ref{sec:javaFinkenImplementation} \\
 
-On the top of the hierarchy is situated the actual application of our project called \textit{JavaFinkenAPP}. It uses \textit{JavaFinken} API to bind the provided utility classes in a specific application meeting our project requirements. The application has a simple Graphical User Interface that facilitates specifying the IP and Port number of the V-REP simulation server, specifying path to the paparazzi software, a button for establishing the connection and other UI elements.
+On the top of the hierarchy is situated the actual application of our project called \textit{JavaFinkenAPP}. It uses \textit{JavaFinken} API to bind the provided utility classes in a specific application meeting our project requirements. The application has a simple \gls{GUI} that facilitates specifying the IP and Port number of the V-REP simulation server, specifying path to the paparazzi software, a button for establishing the connection and other UI elements.
 
 
 
 
-\subsection{JavaV-REP}
+\subsection{Java V-REP}
 \label{sec:vrepImplementation}
 
 All the functionality, that concerns V-REP and was discussed in \ref{sec:requirementsVREP} of \ref{chap:theory} is implemented as a single Java project called \textit{JavaVREP}.\\
@@ -487,7 +487,7 @@ if (!client.isConnected()) {
 The above example shows how to connect to a V-REP server. The IP \textit{127.0.0.1} specifies that the server is running on the same machine. The port number can be chosen arbitrary, but have to match on both client and server site.\\
 In order to close the connection just the method \textit{client.close()} has to be called. \\
 
-The \textit{VrepClient} conforms to the Java Beans specification and can thus fire events when the connection has been established or disconnected. Any class who is interested in catching these events asynchronously, for example GUI, will have to implement \textit{PropertyChangeListener} and register. See
+The \textit{VrepClient} conforms to the Java Beans specification and can thus fire events when the connection has been established or disconnected. Any class who is interested in catching these events asynchronously, for example \gls{GUI}, will have to implement \textit{PropertyChangeListener} and register. See
 \url{https://docs.oracle.com/javase/tutorial/javabeans/writing/events.html} for more information. \\
 
 Each V-REP scene object is represented by the interface \textit{VrepObject} and the \textit{AbsVrepObject} represents an abstract scene object from which all types of object derive. The abstract scene object has private properties like \textit{Position}, \textit{Orientation}, \textit{LinearVelocity} and \textit{AngularVelocity}, which represent its inertial parameters taken from the V-REP.
@@ -624,28 +624,28 @@ virtualDrones = droneScanner.retrieveVirtualDrones(this.scene, this.client);
 \subsection{JavaFinken App}
 \label{sec:javaFinkenApp}
 
-The final application, that has been created upon the described above modules: \hyperref[sec:vrepImplementation]{Java-VREP}, \hyperref[sec:ivyBusImplementation]{JavaIvyBus}, \hyperref[sec:xmlImplementation]{JavaXmlSax} and \hyperref[sec:javaFinkenImplementation]{JavaFinken}  is the \textit{JavaFinkenApp}. The application has a small Graphical User Interface (GUI), that allows to specify an IP address and Port number of the machine, where the V-REP simulation is executed and also the IP address of the PC, where the Paparazzi ground station is running. This allows to distribute the Simulation on different machines like shown in \ref{fig:communication}.
+The final application, that has been created upon the described above modules: \hyperref[sec:vrepImplementation]{Java-VREP}, \hyperref[sec:ivyBusImplementation]{JavaIvyBus}, \hyperref[sec:xmlImplementation]{JavaXmlSax} and \hyperref[sec:javaFinkenImplementation]{JavaFinken}  is the \textit{JavaFinkenApp}. The application has a small \gls{GUI}, that allows to specify an IP address and Port number of the machine, where the V-REP simulation is executed and also the IP address of the PC, where the Paparazzi ground station is running. This allows to distribute the Simulation on different machines like shown in \ref{fig:communication}.
 By default the the local machine IP Address \textit{"1.0.0.127"} is chosen. 
 
 \begin{figure}[h!]
  \begin{center}
   \includegraphics[scale=0.7]{FinkenSimulationBridge_GUI_1.png}
  \end{center}
-  \caption{FinkenSimulationBridge GUI connection panel\label{fig:finkenGUI1}}
+  \caption{FinkenSimulationBridge \gls{GUI} connection panel\label{fig:finkenGUI1}}
 \end{figure}
 
-On the above figure \ref{fig:finkenGUI1} you can see the connection panel of the GUI, where the IP addresses have to be specified. The path to the \textit{conf.xml} file, which stores the aircrafts and the path to the telemetry file have to be specified. The GUI provides separate tab for this. See figure \ref{fig:finkenGUI2}.
+On the above figure \ref{fig:finkenGUI1} you can see the connection panel of the \gls{GUI}, where the IP addresses have to be specified. The path to the \textit{conf.xml} file, which stores the aircrafts and the path to the telemetry file have to be specified. The \gls{GUI} provides separate tab for this. See figure \ref{fig:finkenGUI2}.
 
 \begin{figure}[h!]
  \begin{center}
   \includegraphics[scale=0.7]{FinkenSimBridge_GUI_2.png}
  \end{center}
-  \caption{FinkenSimulationBridge GUI telemetry panel\label{fig:finkenGUI2}}
+  \caption{FinkenSimulationBridge \gls{GUI} telemetry panel\label{fig:finkenGUI2}}
 \end{figure}
 
 After choosing the path to the telemetry file, the telemetry modes are parsed from this file and are  provided for choosing in the combo-box of the \textit{Telemetry mode} sub-frame. Thus a custom telemetry mode, defining the messages that the quadrocopter needs to subscribe to, can be chosen. \\
 
-The \href{http://www.oracle.com/technetwork/articles/javase/index-142890.html}{Model-View-Controller} (MVC) design has been used to implement the \textit{JavaFinkenApp}. The main class is the \textit{FinkenSimBridge}, which contains the main method, where the program starts. The \textit{FinkenSimBridgeView} defines the View - GUI components. And the \textit{FinkenSimBridgeController} plays the controller role. \\
+The \href{http://www.oracle.com/technetwork/articles/javase/index-142890.html}{Model-View-Controller} (MVC) design has been used to implement the \textit{JavaFinkenApp}. The main class is the \textit{FinkenSimBridge}, which contains the main method, where the program starts. The \textit{FinkenSimBridgeView} defines the View - \gls{GUI} components. And the \textit{FinkenSimBridgeController} plays the controller role. \\
 
 In order to start the communication, the "connect" button has to be clicked. The V-REP simulation must had been started in order to establish a connection. The listing below shows the method, executed by pressing the connect button.
 
@@ -700,7 +700,7 @@ First the drone is attached to the Ivy-Bus, then the telemetry data is loaded an
 
 \section{Quadcopter}
 \label{sec:finken}
-This project was about to build a mixed reality simulation around the FINken quadcopter, so there weren't made many changes to the quadcopter and the firmware itself. A few changes were needed, regarding calibration, the message link and the communication from VREP to the FINken. At the start of the project, the FINken II was used, but when the FINken III was released, it could directly be used as all our needed functions were compatible. In fact, the new telemetry link of the FINken III made a much faster communication possible, which helped some delay issues with V-REP as put in \ref{sec:messLink}
+This project was about to build a mixed reality simulation around the FINken quadcopter, so there weren't made many changes to the quadcopter and the firmware itself. A few changes were needed, regarding calibration, the message link and the communication from V-REP to the FINken. At the start of the project, the FINken II was used, but when the FINken III was released, it could directly be used as all our needed functions were compatible. In fact, the new telemetry link of the FINken III made a much faster communication possible, which helped some delay issues with V-REP as put in \ref{sec:messLink}
 \subsection{FINken calibration}
 
 The pitch, yaw and roll angles of the quadrocopter are measured from the Inertial-Measurement-Unit (IMU). The IMU sensor may not be mounted perfectly level to the airframe due to construction issues, imperfect soldering of the sensor on the board or just a factory defect. Such issues will cause a big offset in the sensor readings and will be critical for our simulation.
@@ -759,7 +759,7 @@ The latter is a valuable improvement over the necessary linking for the bluetoot
 
 
 
-\subsection{VREP to FINken communication}
+\subsection{V-REP to FINken communication}
 The focus of the project lied on the communication from the real hardware to the simulation.
 However,to make virtual objects visible to the real FINken, they need to be send somehow from the virtual scene to the real world.
 The FINken relies on the ultrasound sensors to detect object, therefore especially the virtual distances to objects needs to be transmitted.

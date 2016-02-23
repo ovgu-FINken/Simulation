@@ -7,7 +7,7 @@ During the project, a stable simulation of the FINken quadcopter was built.
 The performance of the simulation needs to be improved for bigger quadcopter swarms, but one real FINken can be connected to one simulated FINken running in real time on any modern computer.
 The simulation reproduces the real FINken's movements sufficiently as shown in \ref{sec:accuracy}.
 The simulation is based on un-threaded Lua scripts attached to the simulation objects.
-The scripts are stored outside VREP and have a modular structure.
+The scripts are stored outside V-REP and have a modular structure.
 A base class provides attitude control and a flight control API.
 Additionally, custom functionalities can be implemented in Lua in a custom class for each virtual FINken.
 
@@ -16,7 +16,7 @@ A Java API was build, that manages the V-REP scene and communication to the quad
 The API is very modular and comprises of several stand alone projects, each of which can be reused for other projects and mixed-reality simulations. The software architecture was build according to the  SOLID \cite{solid} principles.
 The design uses abstraction layers between the modules, which make it possible to benefit from the open-closed principle and add new functionality without changing existing code.
 
-The communication between VREP and the real FINken is fast enough to send new data for every simulation timestep.
+The communication between V-REP and the real FINken is fast enough to send new data for every simulation timestep.
 The controllers of the virtual FINken adapt the new target values quickly and the movements of the real quadcopter can be observed in the virtual one.
 Internal sensor noise and inaccuracies and a missing external reference let the virtual FINken drift away.
 Correctly calibrating the FINken's internal sensor vastly improved the drift by removing sensor offsets.
