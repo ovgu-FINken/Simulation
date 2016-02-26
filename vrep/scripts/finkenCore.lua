@@ -10,8 +10,8 @@ local targetZcontroller = finkenPID.new()
 --local finken system variable definitions
 local thisIDsuffix = nil
 
-local sensorHandles = {distFront = nil, distLeft = nil, distBack = nil, distRight = nil}
-local sensorDistances = {7.5,7.5,7.5,7.5}	
+local sensorHandles = {distFront = nil, distLeft = nil, distBack = nil, distRight = nil, distBottom = nil}
+local sensorDistances = {7.5,7.5,7.5,7.5,7.5}	
 
 local handle_FinkenBase = nil
 local handle_finken = nil
@@ -76,6 +76,7 @@ function finkenCore.init()
 	sensorHandles.distLeft = simGetObjectHandle(fixName('SimFinken_sensor_left'))
 	sensorHandles.distBack = simGetObjectHandle(fixName('SimFinken_sensor_back'))
 	sensorHandles.distRight = simGetObjectHandle(fixName('SimFinken_sensor_right'))
+	sensorHandles.distBottom = simGetObjectHandle(fixName('SimFinken_sensor_bottom'))
 	simSetStringSignal(fixSignalName('sensor_dist'),simPackFloats(sensorDistances))
 end
 
@@ -92,6 +93,7 @@ function finkenCore.printSensorData()
 	simAddStatusbarMessage('dist_left: ' ..sensorDistances[2])
 	simAddStatusbarMessage('dist_back: ' ..sensorDistances[3])
 	simAddStatusbarMessage('dist_right: ' ..sensorDistances[4])
+	simAddStatusbarMessage('dist_right: ' ..sensorDistances[5])
 end
 
 
@@ -178,12 +180,13 @@ end
 --@return {float dist_front, float dist_left, float dist_back, float dist_right}
 --]]
 function finkenCore.sense()
-	status= simHandleProximitySensor(sim_handle_all)
+	local status = simHandleProximitySensor(sim_handle_all)
 	status, sensorDistances[1], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distFront)
 	status, sensorDistances[2], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distLeft)
 	status, sensorDistances[3], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distBack)
 	status, sensorDistances[4], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distRight)
-	for i=1,4,1 do
+    status, sensorDistances[5], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distBottom)
+	for i=1,5,1 do
 		if not sensorDistances[i] then
 			sensorDistances[i] = 7.5
 		end
