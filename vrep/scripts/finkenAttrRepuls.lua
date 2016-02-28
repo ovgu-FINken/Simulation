@@ -1,10 +1,8 @@
 local finken = {}
-
 finkenCore = require('finkenCore')
 
 function finken.init(self)
-	local distances = {} 
-	local otherObjectPositions = {}	
+	local distances = {front = 7.5, left = 7.5, back = 7.5, right = 7.5, bottom = 1.5} 
 	local context = {
 		wallDetectedFront = 0,
 		wallDetectedLeft = 0,
@@ -15,7 +13,8 @@ function finken.init(self)
 		distanceBack = nil,
 		distanceRight = nil
 	}
-	local attrRepuls_params = 
+	local attrRepuls_params = {a = 1, b = 4, c = 1.5, wCohesion = 0.8, wTarget = 0.2} 
+
 
 
 	local function helperSay(textToSay)
@@ -55,17 +54,6 @@ function finken.init(self)
 		_, distances.back = simReadProximitySensor(sensors.back)
 		_, distances.right = simReadProximitySensor(sensors.right)
 		_, distances.bottom = simReadProximitySensor(sensors.bottom)
-		--@TODO update context?	
-		table.insert(otherObjectPositions, {-distances.front, 0, 0})
-		context.distanceFront = distances.front
-		table.insert(otherObjectPositions, {distance.back, 0, 0})
-		context.distanceBack = distances.back
-		table.insert(otherObjectPositions, {0, -distances.left, 0})
-		context.distanceLeft = distances.left
-		table.insert(otherObjectPositions, {0, distances.right, 0})
-		context.distanceRight = distances.right
-
-
 	end
 
 	function self.customClean()
