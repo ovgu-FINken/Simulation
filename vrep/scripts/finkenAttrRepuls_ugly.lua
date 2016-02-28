@@ -5,18 +5,18 @@ finkenCore = require('finkenCore')
 function finken.init(self)
 
 	thisIDsuffix = simGetNameSuffix(nil)
-	local config = prepareConfig(thisIDsuffix)
+	local config = prepareConfig({suffix = thisIDsuffix})
 
 
 	local object = getObjectHandle("SimFinken", config.suffix)
 	local script = simGetScriptAssociatedWithObject(object)
 
 	local sensors = {
-		front = getObjectHandle("SimFinken_sensor_front", config.suffix),
-		back = getObjectHandle("SimFinken_sensor_back", config.suffix),
-		left = getObjectHandle("SimFinken_sensor_left", config.suffix),
-		right = getObjectHandle("SimFinken_sensor_right", config.suffix),
-		bottom = getObjectHandle("SimFinken_sensor_bottom", config.suffix)
+		front = getObjectHandle(fixName("SimFinken_sensor_front")),
+		back = getObjectHandle(fixName("SimFinken_sensor_back")),
+		left = getObjectHandle(fixName("SimFinken_sensor_left")),
+		right = getObjectHandle(fixName("SimFinken_sensor_right")),
+		bottom = getObjectHandle(fixName("SimFinken_sensor_bottom"))
 	}
 
 	local context = {
@@ -93,7 +93,7 @@ end
       end
   end
 
-- -@todo convert to setSignal
+--@todo convert to setSignal
 function adjustParameter(parameter, error, pidController, config, script)
 	local value = config.default + pidController.adjust(error)
 
@@ -286,13 +286,16 @@ function getObjectOrientation(object)
 		yaw = -math.deg(orientation[2])
 	}
 end
-
+  function fixName(name)
+      if (thisIDsuffix ~= -1) then
+          return (name..'#'..thisIDsuffix)
+      else
+          return name
+      end
+  end
 function getObjectHandle(name, suffix)
-	if suffix and suffix ~= "" then
-		name = name .. "#" .. suffix
-	end
 
-	return simGetObjectHandle(name)
+	return simGetObjectHandle(fixName(name))
 end
 
 function prepareConfig(config)
