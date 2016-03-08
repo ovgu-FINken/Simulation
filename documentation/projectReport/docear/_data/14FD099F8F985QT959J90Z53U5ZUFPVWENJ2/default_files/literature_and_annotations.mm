@@ -1,7 +1,7 @@
 <map version="docear 1.1" project="14FD099F8F985QT959J90Z53U5ZUFPVWENJ2" project_last_home="file:/Users/Nanoq/Documents/Uni/OvGU/DigiEng/Semester3/DigiEngProjekt/Simulation/documentation/projectReport/docear/" type="literature_annotations" dcr_id="1377252530894_1grl6v933xx72ya3jsw2wns1a">
 <!--To view this file, download Docear - The Academic Literature Suite from http://www.docear.org -->
 <attribute_registry SHOW_ATTRIBUTES="hide"/>
-<node FOLDED="false" ID="ID_1723255651" CREATED="1283093380553" MODIFIED="1455240472896" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
+<node FOLDED="false" ID="ID_1723255651" CREATED="1283093380553" MODIFIED="1457450572318" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
 
 <html>
   <head>
@@ -74,7 +74,7 @@
 <attribute NAME="mon_subdirs" VALUE="2" OBJECT="java.lang.Integer|2"/>
 <attribute NAME="mon_add_extra_incoming_node" VALUE="2" OBJECT="java.lang.Integer|2"/>
 <attribute NAME="mon_flatten_dirs" VALUE="2" OBJECT="java.lang.Integer|2"/>
-<node TEXT="Incoming" POSITION="right" ID="ID_684370683" CREATED="1377252712955" MODIFIED="1455240472904" MOVED="1377252717488" COLOR="#ffffff" BACKGROUND_COLOR="#006699" INCOMING="true" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Incoming" POSITION="right" ID="ID_684370683" CREATED="1377252712955" MODIFIED="1457450572328" MOVED="1377252717488" COLOR="#ffffff" BACKGROUND_COLOR="#006699" INCOMING="true" DCR_PRIVACY_LEVEL="DEMO">
 <font NAME="Courier New" BOLD="true"/>
 <edge COLOR="#006699"/>
 <node TEXT="MixedReality" ID="ID_17756140" CREATED="1443508880463" MODIFIED="1443508880465" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/">
@@ -83,7 +83,7 @@
 </docear_node_extensions>
 </node>
 </node>
-<node TEXT="QuadcopterControl" POSITION="right" ID="ID_61962184" CREATED="1377254965195" MODIFIED="1455240472904" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="QuadcopterControl" POSITION="right" ID="ID_61962184" CREATED="1377254965195" MODIFIED="1457450572329" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#007c7c"/>
 <node TEXT="Quadcopter Control Design and Flight Operation" ID="ID_1959705249" CREATED="1442917986314" MODIFIED="1450021233729" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/quadcopterControl/Karwoski2011QuadcopterControl.pdf">
 <attribute NAME="key" VALUE="Karwoski2011"/>
@@ -118,8 +118,278 @@
 <attribute NAME="year" VALUE="2011"/>
 </node>
 </node>
-<node TEXT="Mixed Reality Simulaiton" POSITION="right" ID="ID_898640622" CREATED="1377254976740" MODIFIED="1455240472928" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Mixed Reality Simulaiton" POSITION="right" ID="ID_898640622" CREATED="1377254976740" MODIFIED="1457450572344" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#7c7c00"/>
+<node TEXT="2015Ayanian_IROS_MixedRealityRobotics.pdf" FOLDED="true" ID="ID_1702170606" CREATED="1457451587863" MODIFIED="1457451612610" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf" MOVED="1457451619181">
+<pdf_annotation type="PDF_FILE" object_id="0" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+<node TEXT="INTRODUCTION" ID="ID_187497293" CREATED="1457451588890" MODIFIED="1457451588890" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="1" object_id="2043988007635599329" object_number="4" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+<node TEXT="RELATED WORK" ID="ID_1594679048" CREATED="1457451588951" MODIFIED="1457451588951" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="1" object_id="1278459426037529872" object_number="8" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+<node TEXT="MIXED REALITY COMPONENTS" ID="ID_905998419" CREATED="1457451589016" MODIFIED="1457451589016" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="2" object_id="7754068509957025259" object_number="12" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+<node TEXT="Physical Environment" ID="ID_804144790" CREATED="1457451589081" MODIFIED="1457451589081" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="2" object_id="3185696777730926544" object_number="16" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+<node TEXT="Virtual Environment" ID="ID_1266802782" CREATED="1457451589147" MODIFIED="1457451589148" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="2" object_id="5407694267858943348" object_number="20" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+<node TEXT="Physical-Virtual Interaction" ID="ID_1630090190" CREATED="1457451589214" MODIFIED="1457451589215" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="2" object_id="8931119374083261677" object_number="24" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+<node TEXT="Physical To Virtual" ID="ID_296207823" CREATED="1457451589268" MODIFIED="1457451589269" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="2" object_id="1091750541498908893" object_number="28" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+<node TEXT="Virtual To Physical" ID="ID_1301615685" CREATED="1457451589337" MODIFIED="1457451589337" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="2" object_id="6251049713657389593" object_number="32" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+</node>
+</node>
+<node TEXT="Benefits of Mixed Reality" ID="ID_731596436" CREATED="1457451589394" MODIFIED="1457451589394" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="2" object_id="264445416310812642" object_number="36" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+<node TEXT="DEMONSTRATIONS" ID="ID_961715519" CREATED="1457451588143" MODIFIED="1457451588143" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="3" object_id="1867755069791567423" object_number="40" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+<node TEXT="Human-Following UAVs" ID="ID_1794126484" CREATED="1457451588760" MODIFIED="1457451588760" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="3" object_id="4817862810217290952" object_number="44" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+<node TEXT="Technical Details" ID="ID_1602570549" CREATED="1457451589482" MODIFIED="1457451589483" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="3" object_id="5299392648813181893" object_number="48" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+<node TEXT="Discussion" ID="ID_738889426" CREATED="1457451588730" MODIFIED="1457451588730" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="4" object_id="4058588051756536355" object_number="52" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+</node>
+<node TEXT="Area Coverage using UAVs" ID="ID_1744143103" CREATED="1457451588517" MODIFIED="1457451588518" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="4" object_id="3744889108107852897" object_number="56" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+<node TEXT="Technical Details" ID="ID_249695553" CREATED="1457451588637" MODIFIED="1457451588637" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="4" object_id="5223175103096668993" object_number="60" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+<node TEXT="Discussion" ID="ID_1499042143" CREATED="1457451588498" MODIFIED="1457451588499" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="5" object_id="1865811830740754581" object_number="64" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+</node>
+<node TEXT="Object Moving with Limited Localization" ID="ID_1211782225" CREATED="1457451588115" MODIFIED="1457451588115" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="5" object_id="7940241878643677494" object_number="68" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+<node TEXT="Technical Details" ID="ID_1551362700" CREATED="1457451588287" MODIFIED="1457451588287" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="5" object_id="8895599217335354568" object_number="72" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+<node TEXT="Discussion" ID="ID_1293025654" CREATED="1457451588064" MODIFIED="1457451588064" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="5" object_id="5138262264145020549" object_number="76" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+</node>
+</node>
+<node TEXT="DISCUSSION" ID="ID_1962200277" CREATED="1457451587983" MODIFIED="1457451587984" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="5" object_id="7857135497793205763" object_number="80" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+<node TEXT="References" ID="ID_662824693" CREATED="1457451587695" MODIFIED="1457451587729" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2015Ayanian_IROS_MixedRealityRobotics.pdf">
+<pdf_annotation type="BOOKMARK" page="6" object_id="2224654441061837672" object_number="84" document_hash="E98ECC3ADA4AB1EC822552EAC8FDAE8239F820F56BB1BC89AFF5508F3E591C8">
+    <pdf_title>Mixed Reality for Robotics</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Honig2015"/>
+<attribute NAME="authors" VALUE="H&#xf6;nig, Wolfgang and Milanes, Christina and Scaria, Lisa and Phan, Thai and Bolas, Mark and Ayanian, Nora"/>
+<attribute NAME="title" VALUE="Mixed reality in robotics"/>
+<attribute NAME="year" VALUE="2015"/>
+</node>
+</node>
+<node TEXT="2011Burgacher_MixedRealityMultimodal.pdf" FOLDED="true" ID="ID_973223972" CREATED="1457453342602" MODIFIED="1457453342610" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2011Burgacher_MixedRealityMultimodal.pdf" MOVED="1457453480073">
+<pdf_annotation type="PDF_FILE" object_id="0" document_hash="F29214BC0B7791777AC2861A807AE28B3EDCD94B69D3EA4167BEACA7D1D99C">
+    <pdf_title>Mixed Reality Simulation Framework for Multimodal Remote Sensing</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Burgbacher2011"/>
+<attribute NAME="authors" VALUE="Burgbacher, Ulrich and Steinicke, Frank and Hinrichs, Klaus H."/>
+<attribute NAME="title" VALUE="Mixed Reality Simulation Framework for Multimodal Remote Sensing"/>
+<attribute NAME="year" VALUE="2011"/>
+<node TEXT="Introduction" ID="ID_1646620526" CREATED="1457453342853" MODIFIED="1457453342854" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2011Burgacher_MixedRealityMultimodal.pdf">
+<pdf_annotation type="BOOKMARK" page="1" object_id="4561333592507004996" object_number="3" document_hash="F29214BC0B7791777AC2861A807AE28B3EDCD94B69D3EA4167BEACA7D1D99C">
+    <pdf_title>Mixed Reality Simulation Framework for Multimodal Remote Sensing</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Burgbacher2011"/>
+<attribute NAME="authors" VALUE="Burgbacher, Ulrich and Steinicke, Frank and Hinrichs, Klaus H."/>
+<attribute NAME="title" VALUE="Mixed Reality Simulation Framework for Multimodal Remote Sensing"/>
+<attribute NAME="year" VALUE="2011"/>
+</node>
+<node TEXT="AVIGLE Framework" ID="ID_539120575" CREATED="1457453343044" MODIFIED="1457453343044" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2011Burgacher_MixedRealityMultimodal.pdf">
+<pdf_annotation type="BOOKMARK" page="2" object_id="8673708045829125309" object_number="7" document_hash="F29214BC0B7791777AC2861A807AE28B3EDCD94B69D3EA4167BEACA7D1D99C">
+    <pdf_title>Mixed Reality Simulation Framework for Multimodal Remote Sensing</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Burgbacher2011"/>
+<attribute NAME="authors" VALUE="Burgbacher, Ulrich and Steinicke, Frank and Hinrichs, Klaus H."/>
+<attribute NAME="title" VALUE="Mixed Reality Simulation Framework for Multimodal Remote Sensing"/>
+<attribute NAME="year" VALUE="2011"/>
+<node TEXT="Workflow" ID="ID_1038932154" CREATED="1457453343116" MODIFIED="1457453343116" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2011Burgacher_MixedRealityMultimodal.pdf">
+<pdf_annotation type="BOOKMARK" page="2" object_id="8878394495751493762" object_number="11" document_hash="F29214BC0B7791777AC2861A807AE28B3EDCD94B69D3EA4167BEACA7D1D99C">
+    <pdf_title>Mixed Reality Simulation Framework for Multimodal Remote Sensing</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Burgbacher2011"/>
+<attribute NAME="authors" VALUE="Burgbacher, Ulrich and Steinicke, Frank and Hinrichs, Klaus H."/>
+<attribute NAME="title" VALUE="Mixed Reality Simulation Framework for Multimodal Remote Sensing"/>
+<attribute NAME="year" VALUE="2011"/>
+</node>
+</node>
+<node TEXT="Mixed Reality Simulation" ID="ID_1453511764" CREATED="1457453343241" MODIFIED="1457453343241" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2011Burgacher_MixedRealityMultimodal.pdf">
+<pdf_annotation type="BOOKMARK" page="3" object_id="6271073646375796621" object_number="15" document_hash="F29214BC0B7791777AC2861A807AE28B3EDCD94B69D3EA4167BEACA7D1D99C">
+    <pdf_title>Mixed Reality Simulation Framework for Multimodal Remote Sensing</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Burgbacher2011"/>
+<attribute NAME="authors" VALUE="Burgbacher, Ulrich and Steinicke, Frank and Hinrichs, Klaus H."/>
+<attribute NAME="title" VALUE="Mixed Reality Simulation Framework for Multimodal Remote Sensing"/>
+<attribute NAME="year" VALUE="2011"/>
+</node>
+<node TEXT="Application: ToF-Sensor Evaluation" ID="ID_1743905734" CREATED="1457453343324" MODIFIED="1457453343325" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2011Burgacher_MixedRealityMultimodal.pdf">
+<pdf_annotation type="BOOKMARK" page="3" object_id="2115875353177760830" object_number="19" document_hash="F29214BC0B7791777AC2861A807AE28B3EDCD94B69D3EA4167BEACA7D1D99C">
+    <pdf_title>Mixed Reality Simulation Framework for Multimodal Remote Sensing</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Burgbacher2011"/>
+<attribute NAME="authors" VALUE="Burgbacher, Ulrich and Steinicke, Frank and Hinrichs, Klaus H."/>
+<attribute NAME="title" VALUE="Mixed Reality Simulation Framework for Multimodal Remote Sensing"/>
+<attribute NAME="year" VALUE="2011"/>
+</node>
+<node TEXT="Conclusion" ID="ID_577519600" CREATED="1457453343406" MODIFIED="1457453343406" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2011Burgacher_MixedRealityMultimodal.pdf">
+<pdf_annotation type="BOOKMARK" page="4" object_id="7717214190797531961" object_number="23" document_hash="F29214BC0B7791777AC2861A807AE28B3EDCD94B69D3EA4167BEACA7D1D99C">
+    <pdf_title>Mixed Reality Simulation Framework for Multimodal Remote Sensing</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Burgbacher2011"/>
+<attribute NAME="authors" VALUE="Burgbacher, Ulrich and Steinicke, Frank and Hinrichs, Klaus H."/>
+<attribute NAME="title" VALUE="Mixed Reality Simulation Framework for Multimodal Remote Sensing"/>
+<attribute NAME="year" VALUE="2011"/>
+</node>
+<node TEXT="REFERENCES " ID="ID_1418768461" CREATED="1457453343588" MODIFIED="1457453343588" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/2011Burgacher_MixedRealityMultimodal.pdf">
+<pdf_annotation type="BOOKMARK" page="4" object_id="7249079755967037635" object_number="27" document_hash="F29214BC0B7791777AC2861A807AE28B3EDCD94B69D3EA4167BEACA7D1D99C">
+    <pdf_title>Mixed Reality Simulation Framework for Multimodal Remote Sensing</pdf_title>
+</pdf_annotation>
+<attribute NAME="key" VALUE="Burgbacher2011"/>
+<attribute NAME="authors" VALUE="Burgbacher, Ulrich and Steinicke, Frank and Hinrichs, Klaus H."/>
+<attribute NAME="title" VALUE="Mixed Reality Simulation Framework for Multimodal Remote Sensing"/>
+<attribute NAME="year" VALUE="2011"/>
+</node>
+</node>
 <node TEXT="Chen2011FlexibleMixedRealityFramework.pdf" ID="ID_1754356920" CREATED="1443508880454" MODIFIED="1450021233714" LINK="project://14FD099F8F985QT959J90Z53U5ZUFPVWENJ2/literature_repository/MixedReality/Chen2011FlexibleMixedRealityFramework.pdf" MOVED="1443509044425">
 <pdf_annotation type="PDF_FILE" object_id="0" document_hash="F9F479146CF56DDAFB838FF9EBECB6132E06793AB496F2EAB6A3A4AF9BDBA1">
     <pdf_title>A Flexible Mixed Reality Simulation Framework for Software Development in Robotics</pdf_title>
@@ -504,18 +774,18 @@
 <node TEXT="" ID="ID_1812939908" CREATED="1443509233173" MODIFIED="1443509233173"/>
 </node>
 </node>
-<node TEXT="basic software" POSITION="right" ID="ID_1382318753" CREATED="1377254985251" MODIFIED="1455240473087" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="basic software" POSITION="right" ID="ID_1382318753" CREATED="1377254985251" MODIFIED="1457450572391" DCR_PRIVACY_LEVEL="DEMO">
 <edge COLOR="#7c0000"/>
-<node TEXT="paparazzi" ID="ID_322863121" CREATED="1377254985251" MODIFIED="1455240473087" DCR_PRIVACY_LEVEL="DEMO" LINK="http://wiki.paparazziuav.org/wiki/Main_Page">
+<node TEXT="paparazzi" ID="ID_322863121" CREATED="1377254985251" MODIFIED="1457450572392" DCR_PRIVACY_LEVEL="DEMO" LINK="http://wiki.paparazziuav.org/wiki/Main_Page">
 <attribute NAME="key" VALUE="pprz"/>
 <attribute NAME="title" VALUE="Paparazzi"/>
 </node>
-<node TEXT="vrep" ID="ID_1951434641" CREATED="1377254985251" MODIFIED="1455241044023" DCR_PRIVACY_LEVEL="DEMO" LINK="http://www.coppeliarobotics.com">
+<node TEXT="vrep" ID="ID_1951434641" CREATED="1377254985251" MODIFIED="1457450572393" DCR_PRIVACY_LEVEL="DEMO" LINK="http://www.coppeliarobotics.com">
 <attribute NAME="key" VALUE="vrep"/>
 <attribute NAME="title" VALUE="V-REP"/>
 <attribute NAME="authors" VALUE="Coppelia-Robotics"/>
 </node>
-<node TEXT="&lt;research category 3.3&gt;" ID="ID_444536474" CREATED="1377254985251" MODIFIED="1455240473087" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="&lt;research category 3.3&gt;" ID="ID_444536474" CREATED="1377254985251" MODIFIED="1457450572393" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
 <node TEXT="Java API" POSITION="right" ID="ID_217795722" CREATED="1455236046836" MODIFIED="1455236054539">
 <edge COLOR="#00ffff"/>
@@ -534,7 +804,7 @@
 <attribute NAME="year" VALUE="2011"/>
 </node>
 </node>
-<node LOCALIZED_STYLE_REF="defaultstyle.floating" POSITION="left" ID="ID_989309610" CREATED="1344498811808" MODIFIED="1455240473088" HGAP="-209" VSHIFT="-339" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
+<node LOCALIZED_STYLE_REF="defaultstyle.floating" POSITION="left" ID="ID_989309610" CREATED="1344498811808" MODIFIED="1457450572394" HGAP="-209" VSHIFT="-339" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
 
 <html>
   <head>
@@ -560,7 +830,7 @@
 </html>
 </richcontent>
 </node>
-<node POSITION="right" ID="ID_534222974" CREATED="1377252859602" MODIFIED="1455240473089" MOVED="1377255389469" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
+<node POSITION="right" ID="ID_534222974" CREATED="1377252859602" MODIFIED="1457450572394" MOVED="1377255389469" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
 
 <html>
   <head>
@@ -577,13 +847,13 @@
 </html>
 </richcontent>
 <edge COLOR="#7c0000"/>
-<node TEXT="Example 1: Sort your PDFs (each PDF&#xa;will have its annotations as child node)" ID="ID_1397770501" CREATED="1377253207728" MODIFIED="1455240473089" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Category 1: Academic Software&#xa;&amp; Services" ID="ID_975521723" CREATED="1344508592622" MODIFIED="1455240473089" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Example 1: Sort your PDFs (each PDF&#xa;will have its annotations as child node)" ID="ID_1397770501" CREATED="1377253207728" MODIFIED="1457450572396" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Category 1: Academic Software&#xa;&amp; Services" ID="ID_975521723" CREATED="1344508592622" MODIFIED="1457450572397" DCR_PRIVACY_LEVEL="DEMO">
 <hook NAME="FirstGroupNode"/>
 </node>
-<node TEXT="Category 2: Academic Search Engine&#xa;Optimization (ASEO)" ID="ID_1447634729" CREATED="1344508911688" MODIFIED="1455240473089" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="Category 3: Search Engine Spam" FOLDED="true" ID="ID_606982085" CREATED="1344509076356" MODIFIED="1455240473089" DCR_PRIVACY_LEVEL="DEMO"/>
-<node ID="ID_141894498" CREATED="1377254593942" MODIFIED="1455240473090" MOVED="1377254728216" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
+<node TEXT="Category 2: Academic Search Engine&#xa;Optimization (ASEO)" ID="ID_1447634729" CREATED="1344508911688" MODIFIED="1457450572397" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Category 3: Search Engine Spam" FOLDED="true" ID="ID_606982085" CREATED="1344509076356" MODIFIED="1457450572397" DCR_PRIVACY_LEVEL="DEMO"/>
+<node ID="ID_141894498" CREATED="1377254593942" MODIFIED="1457450572397" MOVED="1377254728216" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
 
 <html>
   <head>
@@ -599,8 +869,8 @@
 <font BOLD="false"/>
 </node>
 </node>
-<node TEXT="Example 2: Sort your annotations only" ID="ID_1439541577" CREATED="1377253251000" MODIFIED="1455240473090" DCR_PRIVACY_LEVEL="DEMO">
-<node ID="ID_1342127086" CREATED="1377254593942" MODIFIED="1455240473090" MOVED="1377254728216" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
+<node TEXT="Example 2: Sort your annotations only" ID="ID_1439541577" CREATED="1377253251000" MODIFIED="1457450572397" DCR_PRIVACY_LEVEL="DEMO">
+<node ID="ID_1342127086" CREATED="1377254593942" MODIFIED="1457450572397" MOVED="1377254728216" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
 
 <html>
   <head>
@@ -615,34 +885,34 @@
 </richcontent>
 <font BOLD="false"/>
 </node>
-<node TEXT=" Academic Software&#xa;&amp; Services" FOLDED="true" ID="ID_1702652111" CREATED="1344508592622" MODIFIED="1455240473090" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT=" Academic Software&#xa;&amp; Services" FOLDED="true" ID="ID_1702652111" CREATED="1344508592622" MODIFIED="1457450572398" DCR_PRIVACY_LEVEL="DEMO">
 <hook NAME="FirstGroupNode"/>
 </node>
-<node TEXT="Academic Search Engine&#xa;Optimization (ASEO)" FOLDED="true" ID="ID_1106797781" CREATED="1344508911688" MODIFIED="1455240473090" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Definition &amp; Origin" FOLDED="true" ID="ID_1773051357" CREATED="1344508926204" MODIFIED="1455240473091" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="Guidelines" FOLDED="true" ID="ID_194005043" CREATED="1344508982673" MODIFIED="1455240473091" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="Opinions" FOLDED="true" ID="ID_1930051329" CREATED="1344509152237" MODIFIED="1455240473091" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Pro" FOLDED="true" ID="ID_1392476056" CREATED="1344509155557" MODIFIED="1455240473091" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="Con" FOLDED="true" ID="ID_1940856338" CREATED="1344509156803" MODIFIED="1455240473091" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="These annotations already have&#xa;bibliographic data assigned (move&#xa;the mouse over the nodes to see it)" ID="ID_373642256" CREATED="1345720620556" MODIFIED="1455240473091" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Academic Search Engine&#xa;Optimization (ASEO)" FOLDED="true" ID="ID_1106797781" CREATED="1344508911688" MODIFIED="1457450572398" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Definition &amp; Origin" FOLDED="true" ID="ID_1773051357" CREATED="1344508926204" MODIFIED="1457450572398" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Guidelines" FOLDED="true" ID="ID_194005043" CREATED="1344508982673" MODIFIED="1457450572398" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Opinions" FOLDED="true" ID="ID_1930051329" CREATED="1344509152237" MODIFIED="1457450572398" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Pro" FOLDED="true" ID="ID_1392476056" CREATED="1344509155557" MODIFIED="1457450572398" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Con" FOLDED="true" ID="ID_1940856338" CREATED="1344509156803" MODIFIED="1457450572398" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="These annotations already have&#xa;bibliographic data assigned (move&#xa;the mouse over the nodes to see it)" ID="ID_373642256" CREATED="1345720620556" MODIFIED="1457450572399" DCR_PRIVACY_LEVEL="DEMO">
 <hook NAME="SummaryNode"/>
 <font BOLD="true"/>
 </node>
 </node>
 </node>
 </node>
-<node TEXT="Search Engine Spam" FOLDED="true" ID="ID_1289497345" CREATED="1344509076356" MODIFIED="1455240473091" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Classic Search Engine Spam" FOLDED="true" ID="ID_331289321" CREATED="1344509216406" MODIFIED="1455240473091" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="Academic Search Engine Spam" FOLDED="true" ID="ID_142245057" CREATED="1344509218390" MODIFIED="1455240473092" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Origin" FOLDED="true" ID="ID_1454640722" CREATED="1344509131751" MODIFIED="1455240473092" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="Current problems of..." FOLDED="true" ID="ID_1759697893" CREATED="1344509232404" MODIFIED="1455240473092" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Google Scholar" FOLDED="true" ID="ID_1671464522" CREATED="1344509399579" MODIFIED="1455240473092" MOVED="1377255679985" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="Microsoft &amp; CiteSeer" FOLDED="true" ID="ID_625521591" CREATED="1344509385586" MODIFIED="1455240473092" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Search Engine Spam" FOLDED="true" ID="ID_1289497345" CREATED="1344509076356" MODIFIED="1457450572400" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Classic Search Engine Spam" FOLDED="true" ID="ID_331289321" CREATED="1344509216406" MODIFIED="1457450572400" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Academic Search Engine Spam" FOLDED="true" ID="ID_142245057" CREATED="1344509218390" MODIFIED="1457450572400" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Origin" FOLDED="true" ID="ID_1454640722" CREATED="1344509131751" MODIFIED="1457450572400" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Current problems of..." FOLDED="true" ID="ID_1759697893" CREATED="1344509232404" MODIFIED="1457450572400" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Google Scholar" FOLDED="true" ID="ID_1671464522" CREATED="1344509399579" MODIFIED="1457450572400" MOVED="1377255679985" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Microsoft &amp; CiteSeer" FOLDED="true" ID="ID_625521591" CREATED="1344509385586" MODIFIED="1457450572401" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
 </node>
 </node>
 </node>
-<node ID="ID_1893786783" CREATED="1377253325287" MODIFIED="1455240473092" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
+<node ID="ID_1893786783" CREATED="1377253325287" MODIFIED="1457450572401" DCR_PRIVACY_LEVEL="DEMO"><richcontent TYPE="NODE">
 
 <html>
   <head>
@@ -664,21 +934,21 @@
   </body>
 </html>
 </richcontent>
-<node TEXT="Todos" ID="ID_892954068" CREATED="1377253393791" MODIFIED="1455240473092" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Ask John to send me his new paper" ID="ID_1718393569" CREATED="1377253395047" MODIFIED="1455240473092" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Todos" ID="ID_892954068" CREATED="1377253393791" MODIFIED="1457450572401" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Ask John to send me his new paper" ID="ID_1718393569" CREATED="1377253395047" MODIFIED="1457450572401" DCR_PRIVACY_LEVEL="DEMO">
 <icon BUILTIN="button_ok"/>
 </node>
-<node TEXT="Submit article to journal" ID="ID_1884899473" CREATED="1377253406567" MODIFIED="1455240473093" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Submit article to journal" ID="ID_1884899473" CREATED="1377253406567" MODIFIED="1457450572401" DCR_PRIVACY_LEVEL="DEMO">
 <icon BUILTIN="25%"/>
 </node>
-<node TEXT="Find interns to help with Docear development" ID="ID_387032517" CREATED="1377253444350" MODIFIED="1455240473093" DCR_PRIVACY_LEVEL="DEMO">
-<node TEXT="Ask at university" ID="ID_873534185" CREATED="1377253462110" MODIFIED="1455240473093" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Find interns to help with Docear development" ID="ID_387032517" CREATED="1377253444350" MODIFIED="1457450572401" DCR_PRIVACY_LEVEL="DEMO">
+<node TEXT="Ask at university" ID="ID_873534185" CREATED="1377253462110" MODIFIED="1457450572401" DCR_PRIVACY_LEVEL="DEMO">
 <icon BUILTIN="messagebox_warning"/>
 </node>
-<node TEXT="Place note on Docear homepage" ID="ID_102199314" CREATED="1377253471334" MODIFIED="1455240473093" DCR_PRIVACY_LEVEL="DEMO"/>
-<node TEXT="Send newsletter" ID="ID_914479173" CREATED="1377253483862" MODIFIED="1455240473093" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Place note on Docear homepage" ID="ID_102199314" CREATED="1377253471334" MODIFIED="1457450572402" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Send newsletter" ID="ID_914479173" CREATED="1377253483862" MODIFIED="1457450572402" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
-<node TEXT="Read later" ID="ID_101014227" CREATED="1377254821613" MODIFIED="1455240473093" DCR_PRIVACY_LEVEL="DEMO"/>
+<node TEXT="Read later" ID="ID_101014227" CREATED="1377254821613" MODIFIED="1457450572402" DCR_PRIVACY_LEVEL="DEMO"/>
 </node>
 </node>
 </node>

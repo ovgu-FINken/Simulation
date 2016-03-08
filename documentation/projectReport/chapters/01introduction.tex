@@ -33,17 +33,25 @@ The idea is to build a mixed reality simulation environment where one or multipl
 This would provide a testing possibility for new behaviour and enhancements like inter-copter communication models as well as making upscaling of swarms more easy. 
 Simulated quadcopter can be added arbitrarily (enough computation power assumed) without increasing cost and damaging risk as with additional real quadcopter. 
 
-In contrast to existing approaches for the use of mixed reality simulation as in \cite{Chen2011}, our focus lies not on hardware development, but on increasing situation complexity by computation power instead of more cost intensive real hardware.
+In contrast to existing approaches for the use of mixed reality simulation as in \cite{Chen2011}, our focus lies not on hardware development.
+Instead, we focus on increasing situation complexity by computation power instead of more cost intensive real hardware.
 
+The authors of  \cite{Honig2015} describe a similar approach, even using similar tools. 
+They as well use mixed reality to enhance quadcopter swarms.
+However, they're implementaion of swarms rely heavily on a precise external camera tracking system. 
+This limits the application to situations were such a tracking system can be provided.
+Our goal is, to provide a setup that can operate independently of a tracking system.
+Still, if some kind of tracking system is available, it could be used to improve the simulation.
 
-\todo{what are existing solutions, what's different in this approach, what is the improvement}
+Burgbacher, Steinicke and Hinrichs sketch a possibility to use mixed-reality simulations for the development in real world multi-robot projects in \cite{Burgbacher2011}.
+They describe, how a simulation can be enriched with real elements when the hardware successively becomes available during the progress of the project.
 
 
        
 
 
   
-\section{Problem Statement}
+\section{Problem Statement}do
 \label{sec:problem}
     The goal of the project is to provide a realistic, fast and scalable simulation of the FINken quadcopter.  
     Simulated quadcopters should be connectable to a real flying FINkens, receiving it's    
