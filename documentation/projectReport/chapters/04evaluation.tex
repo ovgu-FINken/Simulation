@@ -45,16 +45,18 @@ As a result, we decided to tune the throttle response of the virtual Quadcopter 
 \section{Simulation and Messaging  Performance}
 \label{sec:performance}
 \subsection{V-REP performance}
- The V-REP simulation is quite performant, running even on an old $2.4 GHz$ Core 2 Duo close to real time.
- In this case, the execution of the Lua scripts take the most time with typically $32ms - 42ms$.
+ The V-REP simulation is quite performant, running even on an old $2.4 GHz$ Core 2 Duo (T8300, 4GB RAM) close to real time.
+ On this machine, running OS X, the execution of the Lua scripts takes the most time with typically $32ms - 42ms$.
  The distance sensor handling takes $14ms - 18ms$ and the Bullet physics engine accounts for $10ms — 12ms$.
- These times are according to the V-REP internal profiler.
+ A modern computer even with a low-voltage i7 runs the simulation in real time without problems. A second computer, running Windows 10 with a i7-6650U CPU and 16GB RAM computes the Lua scripts in $26ms - 31ms$, the distance sensor handling in $6ms - 7ms$ and the Bullet physics in $6ms - 8ms$.
+ These times are obtained by  the V-REP internal profiler.
+ 
  Profiling inside the Lua scripts showed, that the quadcopter main script, with the controllers and e.g. logging functions only takes 1-5 ms according to time measurements with  \emph{simGetSystemTimeInMs()}.
  The rotor scripts need $1ms - 5ms$ each, which might be optimizable.
  However, it seems that the biggest factor is the V-REP internal handling of Lua.
- Optimizing here might be possible, but requires detailed information about the handling.
- 
- \todo{add computer where V-REP does run in RT}
+ Optimizing here might be possible, but requires detailed information about the internal structures.
+
+
  
 
 \subsection{Timings in the Communication link}
