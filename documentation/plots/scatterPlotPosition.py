@@ -25,6 +25,21 @@ def plotLine(logFileName):
     #ax1.set_xlim([-4,0])
     fig.savefig('orientation.png')
 
-plotLine('simulation-1Orientation20160202225728.log')
+def plotLogistic(a,b):
+    fig = plt.figure()
+    x = np.linspace(-50,50,201)
+    y = np.zeros(201)
+    y[0:100] = -(a*abs(x[0:100]))/(a - abs(x[0:100]) + 50) +50 
+    y[100:201] = (b*x[100:201])/(b - x[100:201] + 50) +50 
+    ax1 = fig.add_subplot(111)
+    ax1.axis([0,100,0,100])
+    x = np.linspace(0,100,201)
+    print(x)
+    print(y)
+    ax1.plot(x,y, color = 'r')
+    fig.savefig('logistic.png')
+
+plotLogistic(1,1)
+#plotLine('simulation-1Orientation20160202225728.log')
 #plotpath('simulationPosition20151216140935.log')
 #plotpath('logExampleArenaBoundaries.log')    

@@ -375,15 +375,27 @@ The finkenCore needs to be initialized at simulation start the for each simulate
 During simulation, calling the \textit{FINkenCore.step()} method handles the flight control. The input values are read from the signals \textit{pitch}, \textit{roll}, \textit{yaw} and \textit{throttle}. When the signal \textit{height} has a positive value, the FINkenCore will control the thrust so that the simulated FINken will keep the height provided by the signal, otherwise only the \textit{throttle} signal is used directly. The previously initialized \gls{PID} controllers are used to compute the target air stream velocity for each rotor to move the simulated FINken to the target orientation.
 
 To keep a quadcopter at a certain height without an external reference requires an exact equilibrium between gravity and thrust. The current real FINkens do not compensate the battery voltage, so the same throttle corresponds to different thrust forces during flight. Also, each FINken unit has slightly different base thrust. Therefore, the thrust in the simulation is tuned with a logisitc curve \ref{equ:logistic} to decrease the influence of the throttle close to the hover thrust. 
+
+\begin{minipage}{0.4\textwidth}
+
+
+		\includegraphics[width=\linewidth,keepaspectratio=true]{logistic.png}
+	\captionof{figure}{Throttle tuning curve}
+	\label{fig:throttleTuning}
+
+\end{minipage}%
+\begin{minipage}{0.6\textwidth}
 \begin{equation}
 	throttle_{tuned} = \begin{cases}
 		-\frac{a * |throttle|}{a - |throttle| + 50} + 50 & throttle < 0 \\
-		\frac{b * throttle}{b - throttle + 50} + 50 & throttle >= 0\\
+		\frac{b * throttle}{b - throttle + 50} + 50 & throttle \geq 0\\
 	\end{cases}
 \label{equ:logistic}
 \end{equation}
+\end{minipage}
+
 The default values for the throttle tuning function are  $a = 1$ and $b = 1$. 
-\todo{insert plot of function?}
+
 
 
 The simulated FINken is equipped with 4 distance sensors which resemble the 4 ultrasound sensors of the real FINken. The FINkenCore module contains a \textit{sense()} function that reads the 4 distance sensors and writes the values to the signal \textit{sensor\_dist}. As signals only support limited data types, \textit{sensor\_dist} is a string signal containing a packed float array. The array contains the distances in the order \textit{front}, \textit{left}, \textit{back}, \textit{right}.  If the FINken gets more sensors in the future, their evaluation has to be added to this method.
