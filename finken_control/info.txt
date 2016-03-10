@@ -1,0 +1,8 @@
+ExternalApiCall contains the python script to control the vrep simulation.
+	Also contains a script to load, parse and plot log files created by the Finken.
+
+legacy contains old scene and script files, that were created as we were working on the different parts of the project.
+	The script in ExternalApiCall was programmed for the LocalMapGradient scene in this folder.
+	It probably also works with the SwarmGradient file if there is only one Finken, but not for multiple Finken.
+	
+SwarmGradient.ttt is the main scene file and finkenSwarmGradient.lua the main script file that defines the Finken behavior.

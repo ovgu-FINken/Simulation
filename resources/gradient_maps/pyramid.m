@@ -1,3 +1,4 @@
+% generates a simple pyramid heightmap
 height = zeros(2*256 - 1);
 
 for i = 2:length(height) - 1

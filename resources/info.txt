@@ -1,3 +1,17 @@
-gradient_maps contains images, where the gradient is encoded in the G and B color values, as well as MATLAB scripts to create these kinds of images.
+evaluation
+	Some plots that were created for the evaluation of the gradient following behavior.
 
-reference contains the landscape scene and the associated script from the ss15 branch so we can look at how the color sensor was implemented.
+gradient_maps 
+	MATLAB scripts to generate gradient and height maps, as well as a folder with some examples.
+	
+logs
+	Here all the Finken logs are saved when the simulation is stopped.
+	
+noise_estimation
+	MATLAB scripts with which real IMU data can be analyzed to estimate a realistic value for the noise magnitude.
+	
+presentation
+	The presentation slides and demo videos.
+	
+reference 
+	the landscape scene and the associated script from the ss15 branch so we can look at how the color sensor was implemented.

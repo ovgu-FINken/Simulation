@@ -42,4 +42,4 @@ img(:, :, 2) = x_grad;
 img(:, :, 3) = y_grad;
 imshow(img);
 %uncomment this to save the created image
-imwrite(img, 'circle.png');
+%imwrite(img, 'circle.png');
