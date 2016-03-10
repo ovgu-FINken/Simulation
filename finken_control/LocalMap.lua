@@ -1,19 +1,20 @@
 local LocalMap = {}
 LocalMap.__index = LocalMap
 
-local LMTextureHandle =-1
-local LMTextureID = -1
-local LMResolution =-1
+
 
 function LocalMap.new( totalSize, fieldSize )
 	local self = setmetatable({}, LocalMap)
+    self.LMTextureHandle =-1
+    self.LMTextureID = -1
+    self.LMResolution =-1
     self.totalSize = totalSize
     self.fieldSize = fieldSize
     self.resolution = math.floor(totalSize/fieldSize) -- The local map will have resolution*resolution fields
     simAddStatusbarMessage('Map resolution: '..self.resolution..'x'..self.resolution)
     self.map = {}
     self.offsets = {}
-    -- initialize map data with -1, -1
+
     for x = 1,self.resolution do
         self.map[x] = {}
         self.offsets[x] = {}
@@ -26,7 +27,7 @@ function LocalMap.new( totalSize, fieldSize )
     return self
 end
 
--- limited functionality, when the elements in the map are tables
+-- limited functionality when the elements in the map are tables
 function LocalMap:printData()
     simAddStatusbarMessage('PRINTING MAP DATA')
     simAddStatusbarMessage('offset: '..self.localOffset[1]..' '..self.localOffset[2])
@@ -102,19 +103,15 @@ end
 -- Create Texture and WriteTexture for the UI of local map visualization
 function  LocalMap:CreateTextureLocalMapDataTable()
 
-    --Create an empty texture with some scale
-    -- THE EmptyTexture.png resolution should map the, local map size and field size to proper visualization.
-    --number shapeHandle,number textureId,table_2 resolution=simCreateTexture(string fileName,number options,table_2 planeSizes=nil,table_2 scalingUV=nil,table_2 xy_g=nil,number fixedResolution=0,table_2 resolution=nil)
-
-    LMTextureHandle, LMTextureID, LMResolution= simCreateTexture('localmap.png',3, {self.totalSize/50,self.totalSize/50}, {1,1}, nil, 0, {1,1}, {self.resolution,self.resolution})
-    simAddStatusbarMessage('R:'..LMResolution[1]..LMResolution[2])
+    -- Create an empty texture with some scale
+    self.LMTextureHandle, self.LMTextureID, self.LMResolution = simCreateTexture('localmap.png',3, {self.totalSize/50,self.totalSize/50}, {1,1}, nil, 0, {1,1}, {self.resolution,self.resolution})
+    simAddStatusbarMessage('R:'..self.LMResolution[1]..self.LMResolution[2])
     --Add the texture as the child of finken
-    --number result=simSetObjectParent(number objectHandle,number parentObjectHandle,boolean keepInPlace)
     finkenCurrentPos=simGetObjectPosition(simGetObjectHandle('SimFinken_base'),-1)
-    simSetObjectParent(LMTextureHandle,simGetObjectHandle('SimFinken_base'),false)
-    simSetObjectPosition(LMTextureHandle, -1, {finkenCurrentPos[1],finkenCurrentPos[2],finkenCurrentPos[3]-5.0})
-
-    LMTextureID = simGetShapeTextureId(LMTextureHandle)
+    simSetObjectParent(self.LMTextureHandle,simGetObjectHandle('SimFinken_base'),false)
+    simSetObjectPosition(self.LMTextureHandle, -1, {finkenCurrentPos[1],finkenCurrentPos[2],finkenCurrentPos[3]-5.0})
+    simAddStatusbarMessage('texture id: '..self.LMTextureID)
+    self.LMTextureID = simGetShapeTextureId(self.LMTextureHandle)
     simSetShapeTexture(simGetObjectHandle('LocalMapVisual'), -1, 0,3, {1, 1}, {0, 0, 0}, nil)
 
 end
@@ -130,8 +127,8 @@ end
 function  LocalMap:UpdateTextureLocalMapDataTableForUI()
     textureDataMap = self:mapToByteString()
 	--simWriteTexture(number textureId,number options,string textureData,number posX=0,number posY=0,number sizeX=0,number sizeY=0)
-    simWriteTexture(LMTextureID,0,textureDataMap)
-    simSetShapeTexture(simGetObjectHandle('LocalMapVisual'), LMTextureID, 0, 3, {1, 1}, {0, 0, 0}, nil)
+    simWriteTexture(self.LMTextureID,0,textureDataMap)
+    simSetShapeTexture(simGetObjectHandle('LocalMapVisual'), self.LMTextureID, 0, 3, {1, 1}, {0, 0, 0}, nil)
 
 end --function
 

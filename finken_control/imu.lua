@@ -5,15 +5,24 @@ local objHandle = -1
 local velocity = {0, 0, 0}
 local orientation = {0, 0, 0}
 local angularRate = {0, 0, 0}
+local suffix = simGetNameSuffix(nil)
 
 function IMU.init(self, handle)
+	local function setFloatSignal( signalName, value )
+        if suffix ~= -1 then
+            return simSetFloatSignal(signalName.."#"..suffix, value)
+        else 
+            return simSetFloatSignal(signalName, value)
+        end
+    end
+
 	objHandle = handle
 	function self.step()
 		-- get velocity
 		velocity, angularRate = simGetObjectVelocity(objHandle)
 		orientation = simGetObjectOrientation(objHandle, -1)
 
-		sigma = simGetFloatSignal('imu:noiseMagnitude') or 0.05
+		sigma = simGetFloatSignal('imu:noiseMagnitude') or 0.01
 
 		-- apply noise
 		if sigma ~= 0 then
@@ -29,14 +38,14 @@ function IMU.init(self, handle)
 			end	
 		end		
 		--velocity x,y,z, roll, pitch (against world), yaw cannot be measured reliably in real copter, roll-, pitch-, yawrate
-		simSetFloatSignal('imu:xVel', velocity[1])
-		simSetFloatSignal('imu:yVel', velocity[2])
-		simSetFloatSignal('imu:zVel', velocity[3])
-		simSetFloatSignal('imu:roll', orientation[1])
-		simSetFloatSignal('imu:pitch', orientation[2])
-		simSetFloatSignal('imu:rollRate', angularRate[1])
-		simSetFloatSignal('imu:pitchRate', angularRate[2])
-		simSetFloatSignal('imu:yawRate', angularRate[3])
+		setFloatSignal('imu:xVel', velocity[1])
+		setFloatSignal('imu:yVel', velocity[2])
+		setFloatSignal('imu:zVel', velocity[3])
+		setFloatSignal('imu:roll', orientation[1])
+		setFloatSignal('imu:pitch', orientation[2])
+		setFloatSignal('imu:rollRate', angularRate[1])
+		setFloatSignal('imu:pitchRate', angularRate[2])
+		setFloatSignal('imu:yawRate', angularRate[3])
 	end
 
 	-- Generates random numbers that are approximately normally distributed, with mean 0 and standard deviation ~sigma
