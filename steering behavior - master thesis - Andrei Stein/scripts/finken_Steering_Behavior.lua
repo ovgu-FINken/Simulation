@@ -10,6 +10,7 @@ contextData = require('contextData')
 
 local sensorHandles = {}
 local sensorDistances = {7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5}
+local detect_handles = {}
 
 local sensorFilter = {{lastValue = 7.5, count = 0},
 					  {lastValue = 7.5, count = 0},
@@ -58,9 +59,9 @@ function finken.init(self)
 		context.objectHandle = self.getObjectHandle()
 		context.sensorDistances = {7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5}
 		-- set first target
-		context.targets['goal1'] = {9.5, -13.5, 2.5}
-		context.targets['goal2'] = {9.5, 10, 2.5}
-		context.targets['goal3'] = {-7, 15, 2.5}
+		context.targets['goal1'] = {4, 4, 2.05}
+		--context.targets['goal2'] = {9.5, 10, 2.5}
+		--context.targets['goal3'] = {-7, 15, 2.5}
 	end
 
 
@@ -107,19 +108,26 @@ function finken.init(self)
 	--]]
 	function self.customSense()
 		status= simHandleProximitySensor(sim_handle_all)
-		status, sensorDistances[1], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distFront)
-		status, sensorDistances[2], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distLeft)
-		status, sensorDistances[3], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distBack)
-		status, sensorDistances[4], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distRight)
-		status, sensorDistances[5], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distFrontLeft)
-		status, sensorDistances[6], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distFrontRight)
-		status, sensorDistances[7], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distBackLeft)
-		status, sensorDistances[8], detect_vector, detect_handle, detect_surface= simReadProximitySensor(sensorHandles.distBackRight)
+		status, sensorDistances[1], detect_vector, detect_handles[1], detect_surface= simReadProximitySensor(sensorHandles.distFront)
+		status, sensorDistances[2], detect_vector, detect_handles[2], detect_surface= simReadProximitySensor(sensorHandles.distLeft)
+		status, sensorDistances[3], detect_vector, detect_handles[3], detect_surface= simReadProximitySensor(sensorHandles.distBack)
+		status, sensorDistances[4], detect_vector, detect_handles[4], detect_surface= simReadProximitySensor(sensorHandles.distRight)
+		status, sensorDistances[5], detect_vector, detect_handles[5], detect_surface= simReadProximitySensor(sensorHandles.distFrontLeft)
+		status, sensorDistances[6], detect_vector, detect_handles[6], detect_surface= simReadProximitySensor(sensorHandles.distFrontRight)
+		status, sensorDistances[7], detect_vector, detect_handles[7], detect_surface= simReadProximitySensor(sensorHandles.distBackLeft)
+		status, sensorDistances[8], detect_vector, detect_handles[8], detect_surface= simReadProximitySensor(sensorHandles.distBackRight)
 		
 		for i=1,8,1 do
 			if sensorDistances[i] then
 				context.sensorDistances[i] = sensorDistances[i]
-			else 
+				if(detect_handles[i] and string.find(simGetObjectName(detect_handles[i]), "SimFinken_texture")) then
+					context.copters[i] = true
+					simAddStatusbarMessage(simGetObjectName(detect_handles[i]))
+				else
+					context.copters[i] = false
+				end
+			else
+				context.copters[i] = false
 				context.sensorDistances[i] = 7.5
 			end
 			

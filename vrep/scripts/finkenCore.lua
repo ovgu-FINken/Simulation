@@ -57,6 +57,7 @@ end
 
 function finkenCore.init()
 	thisIDsuffix = simGetNameSuffix(nil)
+	simAddStatusbarMessage(thisIDsuffix)
 	handle_FinkenBase = simGetObjectHandle(finkenCore.fixName('SimFinken_base'))
 	handle_finken = simGetObjectAssociatedWithScript(sim_handle_self)
 	execution_step_size = simGetSimulationTimeStep()
@@ -66,7 +67,7 @@ function finkenCore.init()
 	yawController.init(0.04, 0.001, 1.1) --(0.1, , )
 	targetXcontroller.init(2, 0, 4)
 	targetYcontroller.init(2, 0, 4)
-	targetZcontroller.init(6, 0, 8)
+	targetZcontroller.init(10, 0, 8)
 	simSetFloatSignal(finkenCore.fixSignalName('throttle'),50)
 	simSetFloatSignal(finkenCore.fixSignalName('pitch'),0)
 	simSetFloatSignal(finkenCore.fixSignalName('roll'),0)
@@ -121,7 +122,7 @@ function finkenCore.step()
 		local errorHeight = heightTarget - basePosition[3]
 		cumulThrottle = cumulThrottle + errorHeight
 		local l = simGetVelocity(handle_finken)
-		local throttle=5.843*throttleTarget/100 --+ pPthrottle * errorHeight + iPthrottle * cumulThrottle + dPthrottle * (errorHeight - prevEThrottle) + l[3] * (-2) 
+		local throttle=5.843*throttleTarget/100 -- + pPthrottle * errorHeight + iPthrottle * cumulThrottle + dPthrottle * (errorHeight - prevEThrottle) + l[3] * (-2) 
 		prevEThrottle = errorHeight
 
 		local euler=simGetObjectOrientation(handle_FinkenBase,-1)
