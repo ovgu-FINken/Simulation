@@ -58,19 +58,19 @@ parent={},%
 %
 }%
 }%
-\ifglsentryexists{SysML}{}%
+\ifglsentryexists{UAV}{}%
 {%
-\gls@defglossaryentry{SysML}%
+\gls@defglossaryentry{UAV}%
 {%
-name={SysML},%
-sort={SysML},%
+name={UAV},%
+sort={UAV},%
 type={acronym},%
-first={Systems Modeling Language (SysML)},%
-firstplural={Systems Modeling Languages(SysMLs)},%
-text={SysML},%
-plural={SysMLs},%
-description={Systems Modeling Language},%
-descriptionplural={Systems Modeling Language\acrpluralsuffix },%
+first={Unmanned Air Vehicle (UAV)},%
+firstplural={Unmanned Air Vehicles(UAVs)},%
+text={UAV},%
+plural={UAVs},%
+description={Unmanned Air Vehicle},%
+descriptionplural={Unmanned Air Vehicle\acrpluralsuffix },%
 symbol={\relax },%
 symbolplural={\relax },%
 user1={},%
@@ -79,28 +79,28 @@ user3={},%
 user4={},%
 user5={},%
 user6={},%
-long={Systems Modeling Language},%
-longplural={Systems Modeling Languages},%
-short={SysML},%
-shortplural={SysMLs},%
+long={Unmanned Air Vehicle},%
+longplural={Unmanned Air Vehicles},%
+short={UAV},%
+shortplural={UAVs},%
 counter={page},%
 parent={},%
 %
 }%
 }%
-\ifglsentryexists{MDA}{}%
+\ifglsentryexists{PID}{}%
 {%
-\gls@defglossaryentry{MDA}%
+\gls@defglossaryentry{PID}%
 {%
-name={MDA},%
-sort={MDA},%
+name={PID},%
+sort={PID},%
 type={acronym},%
-first={Model Driven Architecture (MDA)},%
-firstplural={Model Driven Architectures(MDAs)},%
-text={MDA},%
-plural={MDAs},%
-description={Model Driven Architecture},%
-descriptionplural={Model Driven Architecture\acrpluralsuffix },%
+first={Proportional-Integral-Derivative (PID)},%
+firstplural={Proportional-Integral-Derivatives(PIDs)},%
+text={PID},%
+plural={PIDs},%
+description={Proportional-Integral-Derivative},%
+descriptionplural={Proportional-Integral-Derivative\acrpluralsuffix },%
 symbol={\relax },%
 symbolplural={\relax },%
 user1={},%
@@ -109,10 +109,40 @@ user3={},%
 user4={},%
 user5={},%
 user6={},%
-long={Model Driven Architecture},%
-longplural={Model Driven Architectures},%
-short={MDA},%
-shortplural={MDAs},%
+long={Proportional-Integral-Derivative},%
+longplural={Proportional-Integral-Derivatives},%
+short={PID},%
+shortplural={PIDs},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{GUI}{}%
+{%
+\gls@defglossaryentry{GUI}%
+{%
+name={GUI},%
+sort={GUI},%
+type={acronym},%
+first={Graphical User Interface (GUI)},%
+firstplural={Graphical User Interfaces(GUIs)},%
+text={GUI},%
+plural={GUIs},%
+description={Graphical User Interface},%
+descriptionplural={Graphical User Interface\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Graphical User Interface},%
+longplural={Graphical User Interfaces},%
+short={GUI},%
+shortplural={GUIs},%
 counter={page},%
 parent={},%
 %

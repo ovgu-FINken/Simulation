@@ -19,7 +19,6 @@ import velinov.java.finken.drone.real.RealFinkenDroneUpdater;
 import velinov.java.finken.drone.virtual.VirtualFinkenDrone;
 import velinov.java.finken.drone.virtual.VirtualFinkenDroneUpdater;
 import velinov.java.finken.ivybus.BusNodesDispatcher;
-import velinov.java.vrep.StandardVrepClient;
 import velinov.java.vrep.VrepClient;
 import velinov.java.vrep.VrepClientUtils;
 import velinov.java.vrep.VrepConnection;
