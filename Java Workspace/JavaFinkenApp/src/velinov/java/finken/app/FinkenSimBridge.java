@@ -1,5 +1,7 @@
 package velinov.java.finken.app;
 
+import javax.swing.SwingUtilities;
+
 
 /**
  * main method of the {@code FinkenSimBridge}.
@@ -17,7 +19,12 @@ public class FinkenSimBridge {
    *          input parameters
    */
   public static void main(String[] _args) {
-    new FinkenSimBridgeController();
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        new FinkenSimBridgeController();
+      }
+    });
   }
 
 }
