@@ -427,9 +427,18 @@ The first layer contains the projects \textit{JavaV-REP}, \textit{JavaIvyBus} an
 The \textit{JavaV-REP} is the implementation of the requirements concerning V-REP, that ware discussed in \ref{sec:requirementsVREP} of \ref{chap:theory}. At the heart of this project is the V-REP Remote-API binding for Java provided by Coppelia. The \textit{JavaVrep} project extends this library and provides further utility methods for establishing connection to remote V-REP servers as well as retrieving and manipulating scene objects. The \textit{JavaV-REP} project is described in more details in \ref{sec:vrepImplementation}.\\
 
 \begin{figure}[h!]
- \begin{center}
-  \includegraphics[scale=0.6]{apiArchitecture.png}
- \end{center}
+	\centering
+	\begin{tikzpicture}[scale=2, node distance = 1mm, auto]
+		\node[draw, rounded corners, rectangle, minimum height = 1.5cm, minimum width = 9.2cm, thick](javaFinkenApp){JavaFinkenApp};
+		\node[draw, rectangle, below =of javaFinkenApp, minimum height = 1.5cm, minimum width = 9.2cm, thick](javaFinkenAPI){JavaFinkenAPI};
+		\node[draw, rounded corners, rectangle, below = of javaFinkenAPI, minimum height = 1.5cm, minimum width = 3cm, thick](javaIvyBusBox){};
+		\node[below = of javaIvyBusBox.north] {JavaIvyBus};
+		\node[draw, rectangle, fill=lightgray,above = of javaIvyBusBox.south, font=\tiny]{Ivy-Bus API};
+		\node[draw,  rounded corners, rectangle, left =of javaIvyBusBox, minimum height = 1.5cm, minimum width = 3cm, thick](javaVrepBox){};
+		\node[below = of javaVrepBox.north] {JavaVREP};
+		\node[draw, rectangle, fill=lightgray, above= of javaVrepBox.south, font=\tiny]{V-REP Remote API};		
+		\node[draw,  rounded corners, rectangle, right =of javaIvyBusBox, minimum height = 1.5cm, minimum width = 3cm, thick](javaXmlSax){JavaXmlSax};
+	\end{tikzpicture}
   \caption{Java-API architecture\label{fig:apiArchitecture}}
 \end{figure}
 
