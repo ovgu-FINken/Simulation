@@ -428,17 +428,7 @@ The \textit{JavaV-REP} is the implementation of the requirements concerning V-RE
 
 \begin{figure}[h!]
 	\centering
-	\begin{tikzpicture}[scale=2, node distance = 1mm, auto]
-		\node[draw, rounded corners, rectangle, minimum height = 1.5cm, minimum width = 9.2cm, thick](javaFinkenApp){JavaFinkenApp};
-		\node[draw, rectangle, below =of javaFinkenApp, minimum height = 1.5cm, minimum width = 9.2cm, thick](javaFinkenAPI){JavaFinkenAPI};
-		\node[draw, rounded corners, rectangle, below = of javaFinkenAPI, minimum height = 1.5cm, minimum width = 3cm, thick](javaIvyBusBox){};
-		\node[below = of javaIvyBusBox.north] {JavaIvyBus};
-		\node[draw, rectangle, fill=lightgray,above = of javaIvyBusBox.south, font=\tiny]{Ivy-Bus API};
-		\node[draw,  rounded corners, rectangle, left =of javaIvyBusBox, minimum height = 1.5cm, minimum width = 3cm, thick](javaVrepBox){};
-		\node[below = of javaVrepBox.north] {JavaVREP};
-		\node[draw, rectangle, fill=lightgray, above= of javaVrepBox.south, font=\tiny]{V-REP Remote API};		
-		\node[draw,  rounded corners, rectangle, right =of javaIvyBusBox, minimum height = 1.5cm, minimum width = 3cm, thick](javaXmlSax){JavaXmlSax};
-	\end{tikzpicture}
+	\includegraphics[scale=0.5]{apiArchitecture.png}
   \caption{Java-API architecture\label{fig:apiArchitecture}}
 \end{figure}
 
