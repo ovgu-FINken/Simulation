@@ -1,20 +1,20 @@
-\chapter{Evaluation}
+makeindex  -s "thesis.ist" -t "thesis.alg" -o "thesis.acr" "thesis.acn"\chapter{Evaluation}
 \label{chap:eval}
 \section{Testing with Joystick}
 \label{sec:evalJoystick}
 
-In order to evaluate, at an early stage, how flyable and responsive to external commands the V-REP Quadcopter was, and how reliable the communication link between the V-REP and the Ivy-Bus system is, a Hardware-in-the-loop (HIL) set-up was build. 
-\ref{fig:finkenHIL} shows the HIL set-up, consisting of a joystick, which is attached on the Ivy-Bus and controls the V-REP Quadcopter.
+In order to evaluate at an early stage, how flyable and responsive to external commands the virtual FINken was, and how reliable the communication link between  V-REP and the Ivy-Bus system is, a test case with an external input was set up. 
+\ref{fig:finkenHIL} shows the  set-up, consisting of a joystick, which is attached on the Ivy-Bus and controls the simulated quadcopter.
 
 
 \begin{figure}[h!]
  \begin{center}
   \includegraphics[scale=0.5]{FinkenHIL.png}
  \end{center}
-  \caption{Finken Hardware-in-the-loop\label{fig:finkenHIL}}
+  \caption{FINken test setup\label{fig:finkenHIL}}
 \end{figure}
 
-The HIL evaluation was implemented as a separate project - \textit{JavaFinkenSimHil}. 
+This evaluation setup was implemented as a separate project --- \textit{JavaFinkenSimHil}. 
 It uses the Java external library \href{https://java.net/projects/jinput}{JInput} for reading the inputs from the joystick. 
 The already created \textit{JavaIvyBus} module, which was discussed in \ref{sec:ivyBusImplementation}, is used to connect the Joystick to the Ivy-Bus. \\
 
@@ -29,7 +29,7 @@ As a result of the evaluation we came to the following conclusions:
 
 \begin{itemize}
 \item{The controlling of the Quadcopter was very precise and accurate. 
-We ware able to make any maneuver and flight path as desired. \\ 
+We were able to make any maneuver and flight path as desired. \\ 
 
 When flying with the Joystick, one can get a real feeling of the Quadcopter flight dynamics and behavior}.
 
@@ -48,8 +48,8 @@ As a result, we decided to tune the throttle response of the virtual Quadcopter 
  The V-REP simulation is quite performant, running even on an old $2.4 GHz$ Core 2 Duo (T8300, 4GB RAM) close to real time.
  On this machine, running OS X, the execution of the Lua scripts takes the most time with typically $32ms - 42ms$.
  The distance sensor handling takes $14ms - 18ms$ and the Bullet physics engine accounts for $10ms — 12ms$.
- A modern computer even with a low-voltage i7 runs the simulation in real time without problems. A second computer, running Windows 10 with a i7-6650U CPU and 16GB RAM computes the Lua scripts in $26ms - 31ms$, the distance sensor handling in $6ms - 7ms$ and the Bullet physics in $6ms - 8ms$.
- These times are obtained by  the V-REP internal profiler.
+ A modern computer even with a low-voltage i7 runs the simulation in real time without problems. A second computer, running Windows 10 with a Core i7-6650U CPU and 16GB RAM computes the Lua scripts in $26ms - 31ms$, the distance sensor handling in $6ms - 7ms$ and the Bullet physics in $6ms - 8ms$.
+ These times were obtained by  the V-REP internal profiler.
  
  Profiling inside the Lua scripts showed, that the quadcopter main script, with the controllers and e.g. logging functions only takes 1-5 ms according to time measurements with  \emph{simGetSystemTimeInMs()}.
  The rotor scripts need $1ms - 5ms$ each, which might be optimizable.
@@ -85,14 +85,14 @@ On \ref{fig:messageLag2} you can see that the graph shows the same pattern as in
  \begin{center}
   \includegraphics[scale=0.5]{messageLag.png}
  \end{center}
-  \caption{message lag with one quadrocopter\label{fig:messageLag}}
+  \caption{Message lag with one quadrocopter\label{fig:messageLag}}
 \end{figure}
 
 \begin{figure}[h!]
  \begin{center}
   \includegraphics[scale=0.8]{messageLag2.png}
  \end{center}
-  \caption{message lag with two quadrocopter\label{fig:messageLag2}}
+  \caption{Message lag with two quadrocopters\label{fig:messageLag2}}
 \end{figure}
 
 
@@ -140,7 +140,7 @@ The graph shows some points, e.g. before $17s$ where movement of the simulated F
 This can have two possible explanations.
 Firstly, as mentioned before, the time base was readjusted manually.
 Thus, it might be possible, that as explained in \ref{sec:commTiming}, the values were sent with a wrong timestamp because of paparazzi's internal buffering.
-If the wrong timestamps weren't corrected during the adjustment, or even made worse by the resampling ,they could shift the logged values.
+If the wrong timestamps weren't corrected during the adjustment, or even made worse by the resampling, they could shift the logged values.
 Secondly,  the controller of the simulated FINken's controller has the same goal as the real FINken, namely to keep the copter stable. 
 In the following, it could be possible, that both controllers are going to apply the same changes and that the virtual one is slightly faster.
  
@@ -153,7 +153,7 @@ In the following, it could be possible, that both controllers are going to apply
 	\end{center}
 \end{figure}
 
-Interestingly, the roll of the FINkens as shown in \ref{pic:rollResponse} doesn't fit as well as the pitch, despite having identical controllers.
+Interestingly, the roll of the FINken as shown in \ref{pic:rollResponse} doesn't fit as well as the pitch, despite having identical controllers.
 In this flight, we observed some logging error in V-REP. 
 The huge spikes in the virtual FINken's roll angle could not be observed in the screen capture of the simulation.
 When comparing the spikes in \ref{pic:rollResponse} with the plot of the pitch in \ref{pic:pitchResponse}, one can notice that the erroneous spikes in the roll correspond to the valid spikes in the pitch.
@@ -170,13 +170,11 @@ Unfortunately, we could not reproduce this error, but it shows that one should b
 
 The plots for the angular responses of the simulation show, that it is possible to let a virtual FINken mimic a real flying one by transmitting the \gls{AHRS} values. 
 The response of the model does not exactly match, but to achieve this, the simulation model needs to be excessively tuned, which is out of scope of this work.
-\todo{plot difference between graphs}
-
 
 
 Eventually we wanted to evaluate to what extend the path of the flying quadrocopter matches the path of the simulated quadcopter. V-REP provides an easy way to plot the two dimensional position of the quadrocopter and draw the flying path, but our real quadrocopter does not have a positioning system and its position estimation is not possible.\\ 
 
-In order to estimate the position we have used the MEDUSA localization system developed in our faculty by Zug, Steup, Dietrich and Brezhnyev\cite{Zug2011RobLoc}. 
+In order to estimate the position, we have used the MEDUSA localization system developed in our faculty by Zug, Steup, Dietrich and Brezhnyev\cite{Zug2011RobLoc}. 
 The system calculates the two dimensional position of a mobile robot moving in a rectangular arena, using eight proximity sensors and a gyroscope. 
 It uses the yaw angle of the robot and the distances to the walls from the proximity sensors to calculate a set of possible positions, where the quadrocopter could be. 
 Then it moves through all possible points and calculates the distances, that the proximity sensors should read at that particular point and angle of rotation. 
@@ -198,7 +196,7 @@ The red fractions of the lines show the actual distance measured by the sensor.
  \begin{center}
   \includegraphics[scale=0.7]{MatlabPositionEstimation.png}
  \end{center}
-  \caption{position estimation\label{fig:matlabPosEstimation}}
+  \caption{Position estimation\label{fig:matlabPosEstimation}}
 \end{figure}
 
 The positioning system relies on accurate sensor readings to provide a precise position estimation. 
@@ -228,18 +226,18 @@ The x and y axes of the plot show the V-REP scene arena and the small rectangle 
 
 The estimated positions on \ref{fig:matlabPosPath} are very scattered, due to the fact that the localization system cannot estimate the position with a big accuracy. 
 In the worst case, as a correct position was assumed one of the calculated possible points, which was far away from the previous estimated position. 
-This creates a big jumps in the path, which does not coincide with the real flight path. 
+This creates  big jumps in the path, which does not coincide with the real flight path. 
 The scattered plot and the jumps are caused by the noisy sensor measurements. 
-A couple of attempts to filter the sensor readings ware made, but the plot still looked scattered to a significant extend. 
+A couple of attempts to filter the sensor readings were made, but the plot still looked scattered to a significant extend. 
 Thereupon, to eliminate the jumps, we limited the distance the copter could move in a single time step.
 This resembles that the real FINken can only move with a limited velocity.
 However, this improved the results slightly but still isn't satisfying for a perfectly accurate positioning system.
 
 
-On the other hand \ref{fig:vrepPosPath} shows a clear flying path, due to the fact that the position is not estimated, but taken directly from the V-REP environment. 
+On the other hand, \ref{fig:vrepPosPath} shows a clear flying path, due to the fact that the position is not estimated, but taken directly from the V-REP environment. 
 The graph shows how the quadcopter drifts and to what extend it flies away from the arena.\\
 
 Eventually we came to the conclusion, that the used approach for position estimation was not good enough for our needs and a detailed comparison between the flying paths of the real and simulated quadcopter could not be done at this stage. 
-However the working group has the intention to build a camera positioning system and track the quadcopter position with a camera mounted on the top of the arena.
+However, the working group has the intention to build a camera positioning system and track the quadcopter position with a camera mounted on the top of the arena.
 
 

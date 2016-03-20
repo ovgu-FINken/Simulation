@@ -20,31 +20,32 @@
 \section{Motivation}
 \label{sec:motivation}
 The work presented in this document was carried out at the Swarm Lab at the Otto-von-Guericke-University Magdeburg. 
-The research focus of the working group lies on implementing and investing swarm algorithms in practice by using small indoor quadcopter. 
-The used FINken quadcopter were developed in association with the working group and are small, but powerful and are highly extensible. 
-As the research focus on swarm intelligence puts an interest on autonomous behaviour, the copter fly without any external reference and rely solely on onboard sensors.
+The research focus of the working group lies on implementing and investing swarm algorithms in practice by using small indoor quadcopters. 
+The used FINken quadcopters were developed in association with the working group and are small, but powerful and highly extensible. 
+As the research focus on swarm intelligence puts an interest on autonomous behavior, the copter fly without any external reference and rely solely on onboard sensors.
 
-The copter were developed in the working group and were designed with a focus on modularity, they are under constant change. 
-Therefore, testing new changes of the copter, e.g. new control or behavioural algorithms alway poses a certain risk to the hardware due to crashes caused by bugs. 
+The copters were developed in the working group and were designed with a focus on modularity.
+They are continuously improved and thus are under constant change. 
+Therefore, testing new changes of the coptesr, e.g. new control or behavioral algorithms always poses a certain risk to the hardware due to crashes caused by bugs. 
 Thus, a simulation tool for the quadcopter to test new software is desirable to be able to do a safe first evaluation of newly implemented ideas. 
-A less abstract solution than a pure simulation could be a mixed reality simulation, where the behaviour of real and simulated quadcopter could be directly compared.
+A less abstract solution than a pure simulation could be a mixed reality simulation, where the behavior of real and simulated quadcopter could be directly compared.
 
 The idea is to build a mixed reality simulation environment where one or multiple real copter can fly together with one or multiple virtual ones. 
-This would provide a testing possibility for new behaviour and enhancements like inter-copter communication models as well as making upscaling of swarms more easy. 
+This would provide a testing possibility for new behavior and enhancements like inter-copter communication models as well as making upscaling of swarms easier. 
 Simulated quadcopter can be added arbitrarily (enough computation power assumed) without increasing cost and damaging risk as with additional real quadcopter. 
 
-In contrast to existing approaches for the use of mixed reality simulation as in \cite{Chen2011}, our focus lies not on hardware development.
+In contrast to existing approaches for the use of mixed reality simulation as in \cite{Chen2011}, our main interest lies not on hardware development.
 Instead, we focus on increasing situation complexity by computation power instead of more cost intensive real hardware.
 
 The authors of  \cite{Honig2015} describe a similar approach, even using similar tools. 
 They as well use mixed reality to enhance quadcopter swarms.
-However, they're implementaion of swarms rely heavily on a precise external camera tracking system. 
-This limits the application to situations were such a tracking system can be provided.
-Our goal is, to provide a setup that can operate independently of a tracking system.
+However, they're implementation of swarms rely heavily on a precise external camera tracking system. 
+This limits the application to situations where such a tracking system can be provided.
+Our goal is to provide a setup that can operate independently of a tracking system.
 Still, if some kind of tracking system is available, it could be used to improve the simulation.
 
-Burgbacher, Steinicke and Hinrichs sketch a possibility to use mixed-reality simulations for the development in real world multi-robot projects in \cite{Burgbacher2011}.
-They describe, how a simulation can be enriched with real elements when the hardware successively becomes available during the progress of the project.
+Burgbacher, Steinicke and Hinrichs sketch a possibility to apply mixed-reality simulations on the development of real world multi-robot projects in \cite{Burgbacher2011}.
+They describe how a simulation can be enriched with real elements when the hardware successively becomes available during the progress of the project.
 
 
        
@@ -54,29 +55,29 @@ They describe, how a simulation can be enriched with real elements when the hard
 \section{Problem Statement}
 \label{sec:problem}
     The goal of the project is to provide a realistic, fast and scalable simulation of the FINken quadcopter.  
-    Simulated quadcopters should be connectable to a real flying FINkens, receiving it's    
-    \gls{IMU} data and behave like it's physical counterpart. 
+    Simulated quadcopters should be connectable to real flying FINkens, receiving its    
+    \gls{IMU} data and behave like its physical counterpart. 
     The communication should work in both ways, so that the real FINken can react to simulated objects.
 
-The physical quadcopter simulation is going to be done in the robotic simulation framework V-REP\cite{vrep}. 
-The FINken Copter run the Paparazzi\cite{pprz} software, which already includes a communication link between a PC and the copter. 
+The physical quadcopter simulation will be done in the robotic simulation framework V-REP\cite{vrep}. 
+The FINken copter run the Paparazzi\cite{pprz} software, which already includes a communication link between a PC and the copter. 
 Paparazzi uses an Ivy-Bus as a communication link, so the missing part between the Ivy-Bus of Paparazzi and V-REP will be handled by a dedicated Java program.
 
-During this project, the FINken needs to be modelled in V-REP, a communication between V-REP and Paparazzi needs to be established and the FINken firmware needs to be extended with a possibility to send data from the simulation to the real Quadcopter.
+During this project, the FINken needs to be modeled in V-REP, a communication between V-REP and Paparazzi needs to be established and the FINken firmware needs to be extended with a possibility to send data from the simulation to the real Quadcopter.
  
          
 \section{Outline}
-    After we stated the motivation and the actual task in \ref{sec:motivation} and \ref{sec:problem}, we will explain the theoretical foundation of the work carried out later.
+    After we stated the motivation and the actual task in \ref{sec:motivation} and \ref{sec:problem}, we explain the theoretical foundation of our project work.
     
     This theoretical part in \ref{chap:theory} consists of the physical model of the FINken in \ref{sec:theoryModel} and \ref{sec:theoryRotor}, followed by a description of the used simulation environment in \ref{sec:theoryVrep} and an explanation of the existing communication interfaces that the Java communication bridge will need to satisfy in \ref{sec:comm}.
     
     In \ref{chap:implementation} we describe how we implemented the virtual FINken (\ref{sec:sceneMod}) and the software structure behind it in \ref{sec:simSoftStruct}. 
     Next, we show the detailed structure and functionality of the Java communication application in \ref{sec:commImplementation}.
-    At the end of \ref{chap:implementation} in \ref{sec:finken} we give an overview over what we needed to do on the real FINken to integrate it into the mixed reality simulation
+    At the end of \ref{chap:implementation} in \ref{sec:finken} we give an overview  what we needed to modify about the real FINken to integrate it into the mixed reality simulation.
     
     The evaluation of our project is done in \ref{chap:eval}, beginning with the results of our first tests of the simulation and communication in \ref{sec:evalJoystick}.
     Subsequently we formulate the findings regarding performance of the simulation and communication link in \ref{sec:performance}.
     We conclude the evaluation in \ref{sec:accuracy} with the most important part, the accuracy of the FINken's position and movements in the simulation.
     
-    Finally, we sum up the achieved goals in \ref{sec:conclusionGoals} and finish with \ref{sec:future} with some ideas for future work based on this project . 
+    Finally, we sum up the achieved goals in \ref{sec:conclusionGoals} and finish with \ref{sec:future} with some ideas for future work based on this project. 
     

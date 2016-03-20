@@ -11,9 +11,9 @@
 \input{tex/tikzstyles}
 
 \input{tex/macros}
-\renewcommand{\lstlistingname}{Quelltext}
+\ifgerman{\renewcommand{\lstlistingname}{Quelltext}}{\renewcommand{\lstlistingname}{Source code}}
 
-%*********************************************************************%
+%*********************************************************************%http://www.coppeliarobotics.com/downloads.html
 % META                                                                %
 %*********************************************************************%
 \ifgerman{
@@ -39,19 +39,16 @@
 %\ifgerman{\newcommand{\thesiskind}{Doktorarbeit}}{\newcommand{\thesiskind}{Dissertation}}
 
 \ifgerman{
-	\newcommand{\theforename}{Lukas}
-	\newcommand{\thesurname}{Mäurer}
-	\newcommand{\thetitle}{Kenngrößenbasiertes Verfahren zur Bewertung von modellbasierten Softwarearchitekturen nach ISO 26262}
-	\newcommand{\thedate}{29. November}
+
 }{
 	\newcommand{\theforename}{Lukas}
 	\newcommand{\thesurname}{Mäurer}
 	\newcommand{\thesecondforename}{Vladimir}
 	\newcommand{\thesecondsurname}{Velinov}
 	\newcommand{\thetitle}{Mixed-reality Simulation of Quadcopter-Swarms}
-	\newcommand{\thedate}{Dezember 15}
+	\newcommand{\thedate}{March 17}
 }
-\newcommand{\theyear}{2015}
+\newcommand{\theyear}{2016}
 
 %*********************************************************************%
 % SETUP                                                               %

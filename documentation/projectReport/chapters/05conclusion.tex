@@ -13,22 +13,22 @@ Additionally, custom functionalities can be implemented in Lua in a custom class
 
 
 A Java API was build, that manages the V-REP scene and communication to the quadcopters. 
-The API is very modular and comprises of several stand alone projects, each of which can be reused for other projects and mixed-reality simulations. The software architecture was build according to the  SOLID \cite{solid} principles.
+The API is very modular and comprises of several stand-alone projects, each of which can be reused for other projects and mixed-reality simulations. The software architecture was build according to the  SOLID \cite{solid} principles.
 The design uses abstraction layers between the modules, which make it possible to benefit from the open-closed principle and add new functionality without changing existing code.
 
-The communication between V-REP and the real FINken is fast enough to send new data for every simulation timestep.
+The communication between V-REP and the real FINken is fast enough to send new data for every simulation time step.
 The controllers of the virtual FINken adapt the new target values quickly and the movements of the real quadcopter can be observed in the virtual one.
 Internal sensor noise and inaccuracies and a missing external reference let the virtual FINken drift away.
 Correctly calibrating the FINken's internal sensor vastly improved the drift by removing sensor offsets.
 However, stable flight is only possible for typically half a minute, then, the cumulated errors let the virtual FINken drift out of the arena.
 
 A major problem for the simulation is the drift around the $z$ axis.
-When starting the FINken, often it starts yawing heavily right after take off.
+When starting the FINken, often it starts yawing heavily right after takeoff.
 This yaw occurs due to sensor errors and resulting wrong correction commands to the motor controllers.
 Hence this error can't be detected and falsifies the simulation.
 With a different yaw angle, the coordinate systems of the real and virtual copter aren't aligned anymore, so pitch and roll commands result in movement into different directions.
-When this behaviour was observed, the experiment was aborted, as no useful results could be obtained.
-Until now, the cause of this behaviour could not be found.
+When this behavior was observed, the experiment was aborted, as no useful results could be obtained.
+Until now, the cause of this behavior could not be found.
 
 
 
@@ -42,17 +42,17 @@ A first step towards this goal could be to include data form the ultrasound sens
 These sensors would provide a reference to the environment and a sensor fusion would have a major positive benefit on the accuracy of the virtual copters position.
 For evaluation purposes, an external reference system by optical tracking the copters could be used to get better internal sensor models by comparing the internal sensor data with the results from the external system.
 
-An other idea would be to use the simulation environment to test the software that runs on the copter, by loading the C-code running on the copter into the simulation.
+Another idea would be to use the simulation environment to test the software that runs on the copter, by loading the C-code running on the copter into the simulation.
 This would most likely need a more detailed physical model, but would have the benefit of detecting problem completely without risking the expensive hardware.
 
 Additionally, in the case described above, the API of the real and virtual copters would be identical. 
-However, this could be achieved more easily, and would make it easier to test scenarios with multiple FINkens without the need do differentiate between real world and simulation.
+However, this could be achieved more easily, and would make it easier to test scenarios with multiple FINkens without the need to differentiate between real world and simulation.
 
 
 The simulation  provides the possibility to implement swarm algorithms that should later be handled by the real FINken.
 This could be started right away, but defining a API first that can be handled by real FINkens and simulation would increase the reuse of this work.
 
-To scale the simulation, it is desireable to split the computation tasks into multiple threads, increasing simulation performance on multi-core computers.
+To scale the simulation, it is desirable to split the computation tasks into multiple threads, increasing simulation performance on multi-core computers.
 
 
 %Die Beurteilung ist einer der wichtigsten Abschnitte der Arbeit

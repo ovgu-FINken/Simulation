@@ -3,22 +3,23 @@
 
 \section{Simulation Environment}
 
-The FINken consists of the body, the rotors and the sensors. The body contains the behavioural and flight control, the thrust simulation is handled by scripts connected to the rotor structure.
+The FINken consists of the body, the rotors and the sensors. 
+The body contains the behavioral and flight control; the thrust simulation is handled by scripts connected to the rotor structure.
 
 \subsection{Scene Modeling}
 \label{sec:sceneMod}
 
-The body consists of multiple objects, while visual representation and the physical behaviour are split. 
+The body consists of multiple objects, while visual representation and the physical behavior are split. 
 For visual representation, a *.stl file from the CAD-Model of the original FINken was imported. 
 This shape is rather complex, which makes the simulation time consuming. 
-To speed up the simulation, the shape of the finken was remodelled in V-REP, using only simple rectangular shapes. 
-Making the complex shape static, establishing a fixed connection and hiding the simple shape, the result is a a visual appealing simulation object with good simulation performance. 
+To speed up the simulation, the shape of the FINken was remodeled in V-REP, using only simple rectangular shapes. 
+Making the complex shape static, establishing a fixed connection and hiding the simple shape, the result is a visual appealing simulation object with good simulation performance. 
 
 A dummy-object is used as a singular measurement reference point in the middle of the FINken. 
 This has to be taken into account when targeting physical objects, as the FINken will not be able to reach the target completely without colliding with the object. 
-This dummy object should always be used when refering to the FINkens position, orientation or movements, as it is aligned to the global coordinate system while especially imported shapes may be rotated in the simulation. 
+This dummy object should always be used when referring to the FINken's position, orientation or movements, as it is aligned to the global coordinate system while especially imported shapes may be rotated in the simulation. 
 
-V-REP provides several pre-configured sensor type, the real FINkens sensors were modeled by using existing ultrasound distance sensors. 
+V-REP provides several pre-configured sensor types, the real FINken's sensors were modeled by using existing ultrasound distance sensors. 
 The FINken is equipped with \href{http://www.maxbotix.com/documents/I2CXL-MaxSonar-EZ_Datasheet.pdf}{Maxbotix MB1232: I2CXL-MaxSonar-EZ3} sensors. 
 According to the datasheet, they have an opening angle of $\ang{30}$ at maximum range when detecting smaller objects and maximum range of $2.65m$ for larger objects as walls. 
 The datasheet states a rather complex beam shape, but for the simulation a cone with an opening angle of $\ang{30}$  and a height of $7.65m$ will be used, as the alternative sensor earlier had a range of $7.65m$ and in the simulation it is very easy to internally cap the values. 
@@ -34,9 +35,9 @@ As the real FINken doesn't have the ability to fly to predefined points, we only
 \end{figure}
 
 The measured weight of the real FINken was applied to the simulation object. 
-As no advanced modelling like calculating moments of inertia was done, the weight of the motor was applied separately to the rotor model in V-REP.  The motor assembly adds significant weight outside the FINkens center of gravity and therefore has a rather large influence on its behaviour. 
+As no advanced modeling like calculating moments of inertia was done, the weight of the motor was applied separately to the rotor model in V-REP.  The motor assembly adds significant weight outside the FINken's center of gravity and therefore has a rather large influence on its behavior. 
 
-\todo{check weights of real finkens}
+
 \begin{table}[h]
 	\centering
 	\begin{tabular}{|l|c|c|c|}
@@ -75,10 +76,10 @@ The linear damping factor of the FINken body material was set to 0.3, to decreas
       	\label{tab:simSettings}
 \end{table}
 
-The rotor model in V-REP handles the thrust simulation and thus a huge part of the physical behaviour of the quadcopter model.  
+The rotor model in V-REP handles the thrust simulation and thus a huge part of the physical behavior of the quadcopter model.  
 Again, visual representation and physical simulation are separated. 
 
-The visualisation is done with a static shape of a rotor, that is connected to a joint and rotates with a fixed speed. 
+The visualization is done with a static shape of a rotor, that is connected to a joint and rotates with a fixed speed. 
 During flight, the rotation speed does not really change visually noticeable, a dynamic adaption of the rotation would only increase computation time without much benefit. 
 Of course, the rotor shape could be made non-static and rotate in a particle stream, and apply the thrust force according to the particle collisions, but again, this would mean a massive increase of computation power and is not needed for our purposes.
 
@@ -91,10 +92,10 @@ Of course, the rotor shape could be made non-static and rotate in a particle str
 
 
 The rotor model is attached to the FINken body via a force sensor which applies the forces and torques calculated in the physical rotor model to the FINken body. 
-The rotor is represented by a cylindrical shape which resembles the area swept by a real rotor and uses a particle simulation to emulate the airstream. The handling of the particle simulation is done inside a lua child script attached to the rotor model.
+The rotor is represented by a cylindrical shape which resembles the area swept by a real rotor and uses a particle simulation to emulate the airstream. The handling of the particle simulation is done inside a Lua child script attached to the rotor model.
  
  
-During simulation, the particle velocity is the parameter used to control the finken. This rotor model was already included in V-REP as an example and was used with slight  modifications, the theory behind it is shortly explained in \ref{sec:theoryRotor}. 
+During simulation, the particle velocity is the parameter used to control the FINken. This rotor model was already included in V-REP as an example and was used with slight  modifications, the theory behind it is shortly explained in \ref{sec:theoryRotor}. 
 
 The particle velocity was calculated as in \ref{equ:velocity} to be $11.077 \frac{m}{s}$ under standard conditions.
 
@@ -107,7 +108,7 @@ The particle velocity was calculated as in \ref{equ:velocity} to be $11.077 \fra
     
     The particle flow rate was initially set to $430 \frac{1}{s}$. 
     Our simulation step size is $50 ms$, so this would mean $21.5$ per simulation step. 
-    As shown in \ref{tab:particleNum}, the maximum step size with a particle object with a capacity of $50$ particles would be $100 ms$ and simulation times below $10 ms$ might pose problems because of to few particles per step. 
+    As shown in \ref{tab:particleNum}, the maximum step size with a particle object with a capacity of $50$ particles would be $100 ms$ and simulation times below $10 ms$ might pose problems because of too few particles per step. 
    The initial flow rote thus shows a good compromise between accuracy and computation time and was further used.
     
     With a particle rate of $\dot n = 430 \frac{1}{s}$ and the final velocity $v_{final} = 11.0774 \frac{m}{s}$, the particle mass can be calculated as in \ref{equ:particleMass}
@@ -157,7 +158,7 @@ The particle velocity was calculated as in \ref{equ:velocity} to be $11.077 \fra
 		\hline
     		Particle Size & $5 mm$ &  $5 mm$\\
     		\hline
-		Particle densitiy & $ 8500 \frac{kg}{m^3} $ & $3020.81 \frac{kg}{m^3} $   \\
+		Particle density & $ 8500 \frac{kg}{m^3} $ & $3020.81 \frac{kg}{m^3} $   \\
     		\hline
 		Initial velocity & $ 4 \frac{m}{s}$ & $11 \frac{m}{s}$  \\
     		\hline
@@ -174,14 +175,16 @@ The particle velocity was calculated as in \ref{equ:velocity} to be $11.077 \fra
 
 Using the particle simulation has the advantage of providing a  random factor that causes noise and it simulates the airstream which will influence other copters in scenarios with multiple quadcopters.
 
-The existing rotor model in V-REP did work, but contained minor inaccuracies. The first issue was the constant particle creation rate. As shown in \ref{equ:mfr}, the mass flow rate also depends on the air velocity. Thus, the air velocity has a quadratic influence on the thrust, when only a linear one was modeled. This was corrected as in \ref{equ:pxrateNum} based on  \ref{equ:pxrate} that was derived in \ref{sec:theoryRotor}.
+The existing rotor model in V-REP did work, but contained minor inaccuracies. 
+The first issue was the constant particle creation rate. As shown in \ref{equ:mfr}, the mass flow rate also depends on the air velocity. Thus, the air velocity has a quadratic influence on the thrust, when only a linear one was modeled. 
+This was corrected as in \ref{equ:pxrateNum} based on  \ref{equ:pxrate} that was derived in \ref{sec:theoryRotor}.
 
   \begin{equation}
     \dot n_{px} = \frac{\rho_{air} A}{2m_{px}} v_{final} = \frac{1.2041 \frac{kg}{m^3} \frac{pi}{4} 0.1274^2 m^2}{2 * 1.9771 * 10^{-4} kg} v_{final} = 38.8180 \frac{1}{m}v_{final}
     \label{equ:pxrateNum}
     \end{equation}
     
-   The torque on the quadcopter was only dependant on the air velocity as well, while \ref{equ:torques} shows it's linear dependance on the thrust. Thus, a torque factor of $k_{torque} = 200$ was introduced to relate torque to thrust. 
+   The torque on the quadcopter was only dependent on the air velocity as well, while \ref{equ:torques} shows its linear dependence on the thrust. Thus, a torque factor of $k_{torque} = 200$ was introduced to relate torque to thrust. 
    As the torque is applied on the rotor model, V-REP's physics engine handles the leverage of the rotor torque on the quadcopter body.
 
 
@@ -195,15 +198,15 @@ As the real FINken does not have an absolute position control, the control of th
 The external input therefore was changed from a position to pitch, roll, yaw and throttle, as it is the case for the real quadcopter.
 Thus, the controllers needed to be restructured and due to a different weight, the gain values had to be adjusted.
 The gain values were only manually tuned. 
-The FINkens reaction to different control inputs were observed and the \gls{PID} gain values were adjusted according to the behaviour.
-In a nutshell, the adjusments can be summed up as follows:
+The FINken's reaction to different control inputs were observed and the \gls{PID} gain values were adjusted according to the behavior.
+In a nutshell, the adjustments can be summed up as follows:
 \begin{itemize}
 	\item{$K_P$: Increase, if the reaction is to slow, decrease if overshooting}
 	\item{$K_I$: Increase to reduce steady state errors, decrease if reaction is to slow}
 	\item{$K_D$: Increase if reaction to changes is to slow, decrease if overshooting for changes}
 \end{itemize}
 
-As previously mentioned in \ref{sec:sceneMod}, the virtual FINkens position and orientation is received from a dummy Object in the middle of the simulation model, comparable to the \gls{AHRS} of the real FINken.
+As previously mentioned in \ref{sec:sceneMod}, the virtual FINken's position and orientation is received from a dummy Object in the middle of the simulation model, comparable to the \gls{AHRS} of the real FINken.
 
 The throttle can be directly controlled, by feeding the command signal directly to the rotors. 
 Then, only a factor is applied, to get the quadcopter to hover at $50 \%$ throttle. 
@@ -241,7 +244,7 @@ The \gls{PID} controller computes the correction, which is subsequently applied 
       	\label{tab:PIDpitchroll}
 \end{table}
 
-The yaw controller's gain parameters was estimated to the values in \ref{tab:PIDyaw}.
+The yaw controller's gain parameters were estimated to the values in \ref{tab:PIDyaw}.
 \begin{table}[h]
 	\centering
 	\begin{tabular}{|l|c|c|}
@@ -262,7 +265,7 @@ The original yaw controller did not take into account, that the same orientation
 To address this issue, it has to be ensured that $-\pi<e_{yaw}<\pi$, as in the following Lua code.
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\small, language={[5.2]Lua}]
+\begin{lstlisting}[basicstyle=\small, language={[5.2]Lua}, caption={Lua yaw error handling}]
 	local errorYaw=euler[3]-yawTarget*(math.pi/180)
 	if errorYaw < -math.pi then
 		errorYaw = 2*math.pi+errorYaw
@@ -329,7 +332,7 @@ To prevent the effect of windup of the integral part of the controller, the inte
 		\node[below=0.3cm of vrep.north]{\underline{V-REP}};
 		\node[vrepObject, below =1.1cm of vrep.north](fink1){finken1};
 		\node[vrepObject, below =0.4cm of fink1.south](fink2){finken2};
-		%lua script part
+		%Lua script part
 		\node[swScript, rectangle split, rectangle split,rectangle split parts=3, right=of vrep.45](finkenMeta){finkenMeta\nodepart{second}
 			public:
 			\nodepart{third}
@@ -368,13 +371,13 @@ To prevent the effect of windup of the integral part of the controller, the inte
 
 The simulation software is written in Lua and runs inside a non-threaded child script of each FINken quadrocopter in V-REP.  
 
-The base class is the finkenCore, which contains the main flight control algorithm and a steering interface as well as an interface to the FINkens sensors.
+The base class is the finkenCore, which contains the main flight control algorithm and a steering interface as well as an interface to the FINken's sensors.
 The input commands for controlling the FINken are set via the signal communication of V-REP. Signals inside V-REP are the most versatile communication possibility which can be accessed from anywhere inside V-REP and any remote API, they can be seen as a kind of global variable. Signals can be of integer, float or string type, where custom data types can be sent in text form as string signals. 
 
 The finkenCore needs to be initialized at simulation start the for each simulated FINken. It starts the V-REP remote API server and creates the API signals. Also, the \gls{PID} controllers for flight control are initialized. 
-During simulation, calling the \textit{FINkenCore.step()} method handles the flight control. The input values are read from the signals \textit{pitch}, \textit{roll}, \textit{yaw} and \textit{throttle}. When the signal \textit{height} has a positive value, the FINkenCore will control the thrust so that the simulated FINken will keep the height provided by the signal, otherwise only the \textit{throttle} signal is used directly. The previously initialized \gls{PID} controllers are used to compute the target air stream velocity for each rotor to move the simulated FINken to the target orientation.
+During simulation, calling the \textit{finkenCore.step()} method handles the flight control. The input values are read from the signals \textit{pitch}, \textit{roll}, \textit{yaw} and \textit{throttle}. When the signal \textit{height} has a positive value, the finkenCore will control the thrust so that the simulated FINken will keep the height provided by the signal, otherwise only the \textit{throttle} signal is used directly. The previously initialized \gls{PID} controllers are used to compute the target air stream velocity for each rotor to move the simulated FINken to the target orientation.
 
-To keep a quadcopter at a certain height without an external reference requires an exact equilibrium between gravity and thrust. The current real FINkens do not compensate the battery voltage, so the same throttle corresponds to different thrust forces during flight. Also, each FINken unit has slightly different base thrust. Therefore, the thrust in the simulation is tuned with a logisitc curve \ref{equ:logistic} to decrease the influence of the throttle close to the hover thrust. 
+To keep a quadcopter at a certain height without an external reference requires an exact equilibrium between gravity and thrust. The current real FINkens do not compensate the battery voltage, so the same throttle corresponds to different thrust forces during flight. Also, each FINken unit has slightly different base thrust. Therefore, the thrust in the simulation is tuned with a logistic curve \ref{equ:logistic} to decrease the influence of the throttle close to the hover thrust. 
 
 \begin{minipage}{0.4\textwidth}
 
@@ -396,35 +399,49 @@ To keep a quadcopter at a certain height without an external reference requires 
 
 The default values for the throttle tuning function are  $a = 1$ and $b = 1$. 
 
-
-
-The simulated FINken is equipped with 4 distance sensors which resemble the 4 ultrasound sensors of the real FINken. The FINkenCore module contains a \textit{sense()} function that reads the 4 distance sensors and writes the values to the signal \textit{sensor\_dist}. As signals only support limited data types, \textit{sensor\_dist} is a string signal containing a packed float array. The array contains the distances in the order \textit{front}, \textit{left}, \textit{back}, \textit{right}.  If the FINken gets more sensors in the future, their evaluation has to be added to this method.
+The simulated FINken is equipped with 4 distance sensors which resemble the 4 ultrasound sensors of the real FINken. The finkenCore module contains a \textit{sense()} function that reads the 4 distance sensors and writes the values to the signal \textit{sensor\_dist}. As signals only support limited data types, \textit{sensor\_dist} is a string signal containing a packed float array. The array contains the distances in the order \textit{front}, \textit{left}, \textit{back}, \textit{right}.  
+If the FINken gets more sensors in the future, their evaluation has to be added to this method.
 By writing the distance values to a signal, they can be propagated to the Ivy-Bus and thus to the real FINken by our Java communication app, which enables the real FINken to detect virtual objects, as simulated FINken or walls that only exist in the Simulation.
 
+While the FINken is normally controlled by setting the pitch, roll, yaw and throttle directly, an alternative is to specify a target object.
+This method was originally used by the example quadcopter model of V-REP, though the function works differently in the finkenCore now. 
+When calling  \textit{setTarget(targetObject)}, the differences in x, y and z coordinates of the FINken base to the target objects are given to three \gls{PID} controllers which calculate the pitch, roll and throttle to move the FINken to the target objects position. 
+Those values are then published via the control signals for the FINken and regularly processed by its internal controls. 
+Therefore, \textit{setTarget(targetObject)} needs to be called every time before \textit{step()}, when a target object should be approached.
 
-While the FINken is normally controlled by setting the pitch, roll, yaw and throttle directly, an alternative is to specify a target object. This method was originally used by the example quadcopter model of V-REP, though the function works differently in the FINkenCore now. When calling  \textit{setTarget(targetObject)}, the differences in x, y and z coordinates of the FINken base to the target objects are given to three \gls{PID} controllers which calculate the pitch, roll and throttle to move the FINken to the target objects position. Those values are then published via the control signals for the FINken and regularly processed by it's internal controls. Therefore, \textit{setTarget(tragetObject)} needs to be called every time before \textit{step()}, when a target object should be approached.
+In the previous sections, only the signal names for the first simulated FINken were used for better readability. 
+As the simulation is scalable, more than one FINken can be added, therefore a naming scheme for signals is needed to prevent collisions of the globally visible signals. 
+The signals corresponding to the first FINken are \textit{pitch}, \textit{roll}, \textit{yaw}, \textit{throttle}, \textit{height} and \textit{sensor\_dist}. 
+For the second FINken, when the first one is copied, V-REP automatically adds "\#0" to its name. 
+Following this convention, but leaving the '\#' to prevent problems with special characters when forwarding the signals through our interface, we add "0" to the signal names for the second FINken and consecutively enumerate following FINkens.
 
-In the previous sections, only the signal names for the first simulated FINken were used for better readability. As the simulation is scalable, more than one FINken can be added, therefore a naming scheme for signals is needed to prevent collisions of the globally visible signals. The signals corresponding to the first FINken are \textit{pitch}, \textit{roll}, \textit{yaw}, \textit{throttle}, \textit{height} and \textit{sensor\_dist}. For the second FINken, when the first one is copied, V-REP automatically adds "\#0" to it's name. Following this convention, but leaving the '\#' to prevent problems with special characters when forwarding the signals through our interface, we add '0' to the signal names for the second FINken and consecutively enumerate following FINkens.
+The finken.lua module provides a basic structure for further enhancements. Its contained functions like \textit{step()} and \textit{sense()} are called  inside V-REP during the appropriate simulation step sections. 
+By calling custom functions inside those functions, the behavior of the FINkens can be customized without any need to change the Lua scripts inside V-REP. 
+If a heterogeneous swarm of FINkens with different functionalities should be implemented, the different finken-scripts have to be imported by the different FINkens in the simulation, which needs to be done in the Lua scripts inside V-REP.
 
-The finken.lua module provides an basic structure for further enhancements. It's contained functions like \textit{step()} and \textit{sense()} are called called inside V-REP during the appropriate simulation step sections. By calling custom functions inside those functions, the behaviour of the FINkens can be customised without any need to change the lua scripts inside V-REP. If a heterogenous swarm of FINkens with different functionalities should be implemented, the different finken-scripts have to be imported by the different FINkens in the simulation, which needs to be done in the lua scripts inside V-REP.
 
-
-FinkenMeta.lua is loaded in the child script of a dummy object in the scene  to have an API to the simulation that is not connected to a single FINken. This can be used to dynamically manipulate the environment during simulation, e.g. by adding objects like other FINkens.
+finkenMeta.lua is loaded in the child script of a dummy object in the scene  to have an API to the simulation that is not connected to a single FINken. 
+This can be used to dynamically manipulate the environment during simulation, e.g. by adding objects like more FINkens.
 
 \section{Communication V-REP - Quadrocopters}
 \label{sec:commImplementation}
 
-This chapter describes the implementation of the requirements on the Java-API, which ware discussed in \ref{sec:communication} of \ref{chap:theory}. It begins with an overview of the software architecture and continues with the explanation of the created projects, classes and their use. It helps understanding how the communication between the V-REP and the quadrocopters is implemented and how to use the API or extend it in order to implement other mixed-reality scenarios.\\
+This chapter describes the implementation of the requirements on the Java-API, which ware discussed in \ref{sec:communication} of \ref{chap:theory}. 
+It begins with an overview of the software architecture and continues with the explanation of the created projects, classes and their use. 
+It helps understanding how the communication between the V-REP and the quadrocopters is implemented and how to use the API or extend it in order to implement other mixed-reality scenarios.\\
 Note that this is just a brief explanation of the Java-API implementation. If you want to go in details refer to the Javadoc which is also provided as an attachment to this paper.
 
 \subsection{Software architecture}
 
-The software architecture of the Java-API, which serves as a communication bridge between the Paparazzi software and the V-REP simulation, is designed to be as modular as possible in order to facilitate the further development of the project. Its reusable components should also serve as a building blocks for the students that want to develop future mixed-reality projects. \\
+The software architecture of the Java-API, which serves as a communication bridge between the Paparazzi software and the V-REP simulation, is designed to be as modular as possible in order to facilitate the further development of the project. 
+Its reusable components should also serve as a building blocks for the students that want to develop future mixed-reality projects. \\
 
-On \ref{fig:apiArchitecture} is depicted an raw overview of the Java-API software architecture.
+On \ref{fig:apiArchitecture} is depicted a raw overview of the Java-API software architecture.
 The final program is assembled from independently developed components. Each part is independent and provide well-defined exported interfaces so that the other parts can use them.
 The first layer contains the projects \textit{JavaV-REP}, \textit{JavaIvyBus} and \textit{JavaXmlSax}.\\
-The \textit{JavaV-REP} is the implementation of the requirements concerning V-REP, that ware discussed in \ref{sec:requirementsVREP} of \ref{chap:theory}. At the heart of this project is the V-REP Remote-API binding for Java provided by Coppelia. The \textit{JavaVrep} project extends this library and provides further utility methods for establishing connection to remote V-REP servers as well as retrieving and manipulating scene objects. The \textit{JavaV-REP} project is described in more details in \ref{sec:vrepImplementation}.\\
+The \textit{JavaV-REP} is the implementation of the requirements concerning V-REP, that ware discussed in \ref{sec:requirementsVREP} of \ref{chap:theory}. 
+At the heart of this project is the V-REP Remote-API binding for Java provided by Coppelia. 
+The \textit{JavaVrep} project extends this library and provides further utility methods for establishing connection to remote V-REP servers as well as retrieving and manipulating scene objects. The \textit{JavaV-REP} project is described in more details in \ref{sec:vrepImplementation}.\\
 
 \begin{figure}[h!]
 	\centering
@@ -433,15 +450,23 @@ The \textit{JavaV-REP} is the implementation of the requirements concerning V-RE
 \end{figure}
 
 \textit{JavaIvyBus} is a Java project, that imports the Ivy-Bus library and implements the requirements regarding Ivy-Bus, which ware discussed in \ref{sec:requirementsIVYBus}.\\ 
-It extends the functionality of the the Ivy-Bus library and provides the programmer with the possibility to create Ivy-Bus nodes by just instantiating an object which takes as constructor parameter the name of the bus-node. It facilitates the connection or disconnection from the bus by just calling a function the the created bus-node object. The abstractions on which this project rely also allow to easily create bus messages or just parse them from xml file and subscribe to them even dynamically. The \textit{JavaIvyBus} project is discussed in more detail in \ref{sec:ivyBusImplementation}. \\
+It extends the functionality of the  Ivy-Bus library and provides the programmer with the possibility to create Ivy-Bus nodes by just instantiating an object which takes as constructor parameter the name of the bus-node. 
+It facilitates the connection or disconnection from the bus by just calling a function the created bus-node object. 
+The abstractions on which this project rely also allow to easily create bus messages or just parse them from xml file and subscribe to them even dynamically. The \textit{JavaIvyBus} project is discussed in more detail in \ref{sec:ivyBusImplementation}. \\
 
 The \textit{JavaXmlSax} project is a small API, that allows the programmer to easily create a custom xml reader that parses any xml document and retrieves the instances of the objects defined by the xml. It consists of several abstract classes, that provide the template for the custom xml readers.\\
 A short explanation of how this API can be used is included in \ref{sec:xmlImplementation}. \\
 
-On the next layer in the hierarchy is the \textit{JavaFinken} API. It uses the APIs from the layer below to provide further abstractions and utilities for our FINKEN project. It consists of classes that describe 
-the aircrafts defined in the paparazzi, defines the basic classes that represent our virtual and real quadrocopters and their sensors, defines a representation of the telemetry and the V-REP signals. With the help of \textit{JavaIvyBus} API, lying on the layer below, the Ivy-Bus nodes, specific for the virtual and real quadrocopters are represented. The abstraction provided by \textit{JavaXmlSax} is used to create a custom Xml readers for parsing the telemetry, messages and aircrafts from the Xml files. A more detailed description of the API is included in \ref{sec:javaFinkenImplementation} \\
+On the next layer in the hierarchy is the \textit{JavaFinken} API. 
+It uses the APIs from the layer below to provide further abstractions and utilities for our FINKEN project. 
+It consists of classes that describe 
+the aircrafts defined in the paparazzi, defines the basic classes that represent our virtual and real quadrocopters and their sensors, defines a representation of the telemetry and the V-REP signals. 
+With the help of \textit{JavaIvyBus} API, lying on the layer below, the Ivy-Bus nodes, specific for the virtual and real quadrocopters are represented. 
+The abstraction provided by \textit{JavaXmlSax} is used to create a custom Xml reader for parsing the telemetry, messages and aircrafts from the Xml files. 
+A more detailed description of the API is included in \ref{sec:javaFinkenImplementation} \\
 
-On the top of the hierarchy is situated the actual application of our project called \textit{JavaFinkenAPP}. It uses \textit{JavaFinken} API to bind the provided utility classes in a specific application meeting our project requirements. The application has a simple \gls{GUI} that facilitates specifying the IP and Port number of the V-REP simulation server, specifying path to the paparazzi software, a button for establishing the connection and other UI elements.
+On the top of the hierarchy is situated the actual application of our project called \textit{JavaFinkenAPP}. It uses \textit{JavaFinken} API to bind the provided utility classes in a specific application meeting our project requirements. 
+The application has a simple \gls{GUI} that facilitates specifying the IP and Port number of the V-REP simulation server, specifying path to the paparazzi software, a button for establishing the connection and other UI elements.
 
 
 
@@ -450,7 +475,7 @@ On the top of the hierarchy is situated the actual application of our project ca
 \label{sec:vrepImplementation}
 
 All the functionality, that concerns V-REP and was discussed in \ref{sec:requirementsVREP} of \ref{chap:theory} is implemented as a single Java project called \textit{JavaVREP}.\\
- The project uses the V-REP Remote-API Java binding - package \textit{coppelia} (containing 12 Java classes) and the \textit{libremoteApiJava.so} or \textit{libremoteApiJava.dll} (depending if the platform is Linux or Windows). The \textit{libremoteApiJava.so} should be placed in the Java home directory, e.g \textit{/usr/lib/jvm/java-8-oracle/jre/lib/amd64}, in order for the project to be compiled.\\
+ The project uses the V-REP Remote-API Java binding - package \textit{coppelia} (containing 12 Java classes) and the \textit{libremoteApiJava.so} or \textit{libremoteApiJava.dll} (depending if the platform is Linux or Windows). The \textit{libremoteApiJava.so} should be placed in the Java home directory, e.g. \textit{/usr/lib/jvm/java-8-oracle/jre/lib/amd64}, in order for the project to be compiled.\\
 The main class is the \textit{VrepConnection.java}, which is a wrapper of the \textit{remoteApi.java} class provided by the V-REP remote API. Its singleton instance can be retrieved by calling:
 
 \begin{center}
@@ -461,7 +486,8 @@ VrepConnection connection = VrepConnectionUtils.getConnection();
 \end{tabular}
 \end{center}
 
-The above expression loads the remote API library and returns the instance of \textit{VrepConnection} on which the Remote API functions are called. For example to retrieve all objects in a scene the following function have to be called on the \textit{VrepConnection} instance:
+The above expression loads the remote API library and returns the instance of \textit{VrepConnection} on which the Remote API functions are called. 
+For example, to retrieve all objects in a scene the following function have to be called on the \textit{VrepConnection} instance:
 
 \begin{center}
 \begin{tabular}{c}
@@ -473,11 +499,11 @@ connection.simxGetObjects();
 \end{tabular}
 \end{center}
 
-The interfaces \textit{VrepServer} and \textit{VrepClient} and their implementations \textit{StandardVrepServer} and \textit{StandardVrepClient} describe the two end-points of the communication. The \textit{VrepServer} describes the IP address and the port number of the machine on which the V-REP is running. In order to connect to a V-REP server we have to create in instance of the \textit{VrepServer} and open the client:
+The interfaces \textit{VrepServer} and \textit{VrepClient} and their implementations \textit{StandardVrepServer} and \textit{StandardVrepClient} describe the two end-points of the communication. The \textit{VrepServer} describes the IP address and the port number of the machine on which  V-REP is running. In order to connect to a V-REP server we have to create in instance of the \textit{VrepServer} and open the client:
 
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\small, language=Java]
+\begin{lstlisting}[basicstyle=\small, language=Java, caption={Open V-REP Remote API connection}]
 VrepConnection connection;
 VrepClient     client;
 VrepServer     server;
@@ -501,15 +527,16 @@ In order to close the connection just the method \textit{client.close()} has to 
 The \textit{VrepClient} conforms to the Java Beans specification and can thus fire events when the connection has been established or disconnected. Any class who is interested in catching these events asynchronously, for example \gls{GUI}, will have to implement \textit{PropertyChangeListener} and register. See
 \url{https://docs.oracle.com/javase/tutorial/javabeans/writing/events.html} for more information. \\
 
-Each V-REP scene object is represented by the interface \textit{VrepObject} and the \textit{AbsVrepObject} represents an abstract scene object from which all types of object derive. The abstract scene object has private properties like \textit{Position}, \textit{Orientation}, \textit{LinearVelocity} and \textit{AngularVelocity}, which represent its inertial parameters taken from the V-REP.
-\textit{VrepObjectType} is an Enum, that specifies the scene object type like Shape, Path, Proximity sensor etc. The name of the scene object is represented by the class \textit{VrepObjectName}, which consists of a base name and an index. If an object is copy-pasted (multiple instances of an object), then
-each instance of the object receives the following name, according to V-REP naming scheme: \textit{\texttt{base\_name\#index}}. For example if we want to have three quadrocopters, their names in V-REP will be represented as follows: \textit{\texttt{Quad\_Lia\_ovgu\_01}}, \textit{\texttt{Quad\_Lia\_ovgu\_02\#0}} and \textit{\texttt{Quad\_Lia\_ovgu\_03\#1}}. \\
+Each V-REP scene object is represented by the interface \textit{VrepObject} and the \textit{AbsVrepObject} represents an abstract scene object from which all types of object derive. The abstract scene object has private properties like \textit{Position}, \textit{Orientation}, \textit{LinearVelocity} and \textit{AngularVelocity}, which represent its inertial parameters taken from  V-REP.
+\textit{VrepObjectType} is an enum, that specifies the scene object type like Shape, Path, Proximity sensor etc. 
+The name of the scene object is represented by the class \textit{VrepObjectName}, which consists of a base name and an index. If an object is copy-pasted (multiple instances of an object), then each instance of the object receives the following name, according to V-REP naming scheme: \textit{\texttt{base\_name\#index}}. 
+For example, if we want to have three quadrocopters, their names in V-REP will be represented as follows: \textit{\texttt{Quad\_Lia\_ovgu\_01}}, \textit{\texttt{Quad\_Lia\_ovgu\_02\#0}} and \textit{\texttt{Quad\_Lia\_ovgu\_03\#1}}. \\
 
 The V-REP scene is represented by the class \textit{VrepScene}, which retrieves all objects and hold a collection of them for further use. Since we always have one V-REP scene the class is designed as a Singleton pattern. The following example shows how this class is used for loading the scene and retrieving all shape objects.
 
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\small, language=Java]
+\begin{lstlisting}[basicstyle=\small, language=Java, caption={Retrieve V-REP scene objects}]
 VrepScene   scene;
 List<Shape> shapeObjects;
 
@@ -530,13 +557,14 @@ The project \textit{JavaVrep} also defines the interface \textit{ObjectUpdator} 
 The requirements regarding the Ivy-Bus, that ware stated in \ref{sec:requirementsIVYBus} of \ref{chap:theory} are implemented in a stand-alone Java project called \textit{JavaIvyBus}. \\
 The project requires the \textit{ivy-java.jar} library to be on its class path in order to be compiled.\\
 The project contains class definitions of the Paparazzi messages that are defined in a Xml file. See listing \ref{lst:MessageXml} of \ref{chap:theory}. The interface \textit{Message} and its abstract implementation \textit{AbsMessage} describe such a message with its name, period at which the message is sent, identifier and \textit{MessageField}s. \\
-The interface \textit{IvyBusNode} represents a single independent node communicating on the common bus. By inheriting from its abstract implementation \textit{AbsIvyBusNode}, one can create a custom bus-node. The methods \textit{IvyBusNode.connect()} and \textit{IvyBusNode.disconnect()} are used to attach the particular node to the bus and disconnect it. The \textit{IvyBusNode} also conforms to the Java Beans specification and and fires asynchronous notifications each time the node joins or leaves the bus.
-After obtaining an instance of a \textit{Message}, parsed from the Xml file or a custom-created, the bus-node can subscribe to this \textit{Message} by invoking the method \textit{IvyBusNode.subscribeToMessage(Message msg)} and thus receive all the messages of this kind or use the method \textit{IvyBusNode.subscribeToIdMessage(Message msg, int id)}, which subscribes to the messages published just by this quadrocopter ehich has the same id. \\
-Once a \textit{Message} to which the bus node has subscribed has been received, the bus node fires an notification and gives the instance of the received \textit{Message}, with all of its \textit{MessageField}s initialized with the actual message values. The following listing shows an example hot to subscribe to a message and get asynchronous notification when the message is received.
+The interface \textit{IvyBusNode} represents a single independent node communicating on the common bus. By inheriting from its abstract implementation \textit{AbsIvyBusNode}, one can create a custom bus-node. The methods \textit{IvyBusNode.connect()} and \textit{IvyBusNode.disconnect()} are used to attach the particular node to the bus and disconnect it. The \textit{IvyBusNode} also conforms to the Java Beans specification and  fires asynchronous notifications each time the node joins or leaves the bus.
+After obtaining an instance of a \textit{Message}, parsed from the Xml file or a custom-created, the bus-node can subscribe to this \textit{Message} by invoking the method \textit{IvyBusNode.subscribeToMessage(Message msg)} and thus receive all the messages of this kind or use the method \textit{IvyBusNode.subscribeToIdMessage(Message msg, int id)}, which subscribes to the messages published just by this quadrocopter which has the same id. \\
+Once a \textit{Message} to which the bus node has subscribed has been received, the bus node fires a notification and gives the instance of the received \textit{Message}, with all of its \textit{MessageField}s initialized with the actual message values. 
+The following listing shows an example hot to subscribe to a message and get asynchronous notification when the message is received.
 
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\small, language=Java]
+\begin{lstlisting}[basicstyle=\small, language=Java, caption={IvyBus subscription}]
 
 class TestBusNode implements PropertyChangeListener {
   
@@ -570,18 +598,25 @@ class TestBusNode implements PropertyChangeListener {
 \subsection{JavaXmlSax}
 \label{sec:xmlImplementation}
 
-The project \textit{JavaXmlSax} was created with the idea in mind to provide a small, modular API, that gives the developer an abstract building block for fast and easy development of custom XML file readers. It uses the \href{http://www.saxproject.org/}{SAX Java API} and extends it in order to provide a template for fast creation of specific XML readers.\\
-The basic class in this module is the abstract class \textit{AbsSaxXmlReader}. It encapsulates all necessary classes needed for creating and handling of the XML parsing and defines abstract methods, which allow its subclasses to provide their specific parsing criteria. Thus the developer can concentrate on the actual parsing logic and don't have to take care of setting up and managing the necessary input streams and files.\
+The project \textit{JavaXmlSax} was created with the idea in mind to provide a small, modular API, that gives the developer an abstract building block for fast and easy development of custom XML file readers. 
+It uses the \href{http://www.saxproject.org/}{SAX Java API} and extends it in order to provide a template for fast creation of specific XML readers.\\
 
-To create a specific XML reader we have to create a class, which extends the \textit{AbsXmlReader} and provides implementation of the abstract methods \textit{onStartElementRead} and \textit{onStopElementRead}.These methods are called when the \textit{AbsSaxXmlReader} encounters start or end XML tag. It is the role of the subclass to fetch the necessary attributes and create an instance of the XML element, when \textit{onStartElementRead} is called and store the instance in some sort of collection, when the closing tag of the element is reached. In order to start the parsing process the method \textit{parseXmlDocument} of the parent class \textit{AbsSaxXmlReader} has to be invoked. \
-A XML parser reads the whole XML file and returns the instances of all elements. In some case not all elements may be required and to save time and memory it would be preferred to stop the parsing after an element of interest has been found. Since the original Java SAX API does not provide the possibility to stop the parser after it has been started, we have implemented an mechanism for this.
+The basic class in this module is the abstract class \textit{AbsSaxXmlReader}. It encapsulates all necessary classes needed for creating and handling of the XML parsing and defines abstract methods, which allow its subclasses to provide their specific parsing criteria. Thus the developer can concentrate on the actual parsing logic and don't have to take care of setting up and managing the necessary input streams and files.
+
+To create a specific XML reader, we have to create a class, which extends the \textit{AbsXmlReader} and provides implementation of the abstract methods \textit{onStartElementRead} and \textit{onStopElementRead}. 
+These methods are called when the \textit{AbsSaxXmlReader} encounters start or end XML tag. 
+It is the role of the subclass to fetch the necessary attributes and create an instance of the XML element, when \textit{onStartElementRead} is called and store the instance in some sort of collection, when the closing tag of the element is reached.
+In order to start the parsing process, the method \textit{parseXmlDocument} of the parent class \textit{AbsSaxXmlReader} has to be invoked. 
+
+A XML parser reads the whole XML file and returns the instances of all elements. In some case not all elements may be required and to save time and memory it would be preferred to stop the parsing after an element of interest has been found. 
+Since the original Java SAX API does not provide the possibility to stop the parser after it has been started, we have implemented a mechanism for this.
 In order to stop the parsing, the method \textit{stopParsing()} has to be invoked. The function throws a custom defined Exception - \textit{StopParsingException}, that is handled in such a way, that the method \textit{parseXmlDocument()} returns immediately.
 
 The code below shows an example of how the XML parser can be used.
 
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\small, language=Java]
+\begin{lstlisting}[basicstyle=\small, language=Java, caption={XML parser example}]
 
 MessageXmlReader msgReader;
 List<Message>    messages;
@@ -596,7 +631,7 @@ messages  = msgReader.getMessages();
 \end{tabular}
 \end{center}
 
-\
+
 
 The \textit{MessageXmlReader} is a class that extends the \textit{AbsXmlSaxReader} and provides implementation of its abstract methods. It returns all instances of messages contained in the \textit{/home/paparazzi/conf/messages.xml} file. The need to retrieve all messages was discussed 
 in \ref{par:messageRetrieval}. \
@@ -618,7 +653,7 @@ The class \textit{FinkenDroneScanner} is used to retrieve the instances of the q
 
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\small, language=Java]
+\begin{lstlisting}[basicstyle=\small, language=Java, caption={Detect virtual FINken in simulation scene}]
 
 List<StandardRealFinkenDrone>    realDrones;
 List<StandardVirtualFinkenDrone> virtualDrones;
@@ -635,8 +670,10 @@ virtualDrones = droneScanner.retrieveVirtualDrones(this.scene, this.client);
 \subsection{JavaFinken App}
 \label{sec:javaFinkenApp}
 
-The final application, that has been created upon the described above modules: \hyperref[sec:vrepImplementation]{Java-VREP}, \hyperref[sec:ivyBusImplementation]{JavaIvyBus}, \hyperref[sec:xmlImplementation]{JavaXmlSax} and \hyperref[sec:javaFinkenImplementation]{JavaFinken}  is the \textit{JavaFinkenApp}. The application has a small \gls{GUI}, that allows to specify an IP address and Port number of the machine, where the V-REP simulation is executed and also the IP address of the PC, where the Paparazzi ground station is running. This allows to distribute the Simulation on different machines like shown in \ref{fig:communication}.
-By default the the local machine IP Address \textit{"1.0.0.127"} is chosen. 
+The final application, that has been created upon the described above modules: \hyperref[sec:vrepImplementation]{Java-VREP}, \hyperref[sec:ivyBusImplementation]{JavaIvyBus}, \hyperref[sec:xmlImplementation]{JavaXmlSax} and \hyperref[sec:javaFinkenImplementation]{JavaFinken}  is the \textit{JavaFinkenApp}. 
+The application has a small \gls{GUI}, that allows to specify an IP address and Port number of the machine, where the V-REP simulation is executed and also the IP address of the PC, where the Paparazzi ground station is running. 
+This allows to distribute the Simulation on different machines like shown in \ref{fig:communication}.
+By default, the local machine IP Address \textit{"1.0.0.127"} is chosen. 
 
 \begin{figure}[h!]
  \begin{center}
@@ -662,7 +699,7 @@ In order to start the communication, the "connect" button has to be clicked. The
 
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\small, language=Java]
+\begin{lstlisting}[basicstyle=\small, language=Java, caption={V-REP server connection}]
 
 void onConnect(VrepServer _server) {
 
@@ -691,7 +728,7 @@ The function is triggered when the connect button is clicked and takes as input 
 
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\small, language=Java]
+\begin{lstlisting}[basicstyle=\small, language=Java, caption={Initializing a mixed-reality FINken}]
 
   private void _initRealDrones() {
     for (RealFinkenDrone drone : this.realDrones) {
@@ -705,7 +742,7 @@ The function is triggered when the connect button is clicked and takes as input 
 \end{tabular}
 \end{center}
 
-First the drone is attached to the Ivy-Bus, then the telemetry data is loaded and the drone subscribes to the messages that reside in the specified telemetry-mode of the telemetry XML file. Eventually the the real drones start to get updated with the proximity-sensor data and to publish it as a message on the Ivy-Bus. The function \textit{initVirtualDrones()} does the same initialization for all the virtual drones retrieved from the V-REP scene.
+First the drone is attached to the Ivy-Bus, then the telemetry data is loaded and the drone subscribes to the messages that reside in the specified telemetry-mode of the telemetry XML file. Eventually the real drones start to get updated with the proximity-sensor data and to publish it as a message on the Ivy-Bus. The function \textit{initVirtualDrones()} does the same initialization for all the virtual drones retrieved from the V-REP scene.
 
 
 
@@ -714,9 +751,14 @@ First the drone is attached to the Ivy-Bus, then the telemetry data is loaded an
 This project was about to build a mixed reality simulation around the FINken quadcopter, so there weren't made many changes to the quadcopter and the firmware itself. A few changes were needed, regarding calibration, the message link and the communication from V-REP to the FINken. At the start of the project, the FINken II was used, but when the FINken III was released, it could directly be used as all our needed functions were compatible. In fact, the new telemetry link of the FINken III made a much faster communication possible, which helped some delay issues with V-REP as put in \ref{sec:messLink}
 \subsection{FINken calibration}
 
-The pitch, yaw and roll angles of the quadrocopter are measured from the Inertial-Measurement-Unit (IMU). The IMU sensor may not be mounted perfectly level to the airframe due to construction issues, imperfect soldering of the sensor on the board or just a factory defect. Such issues will cause a big offset in the sensor readings and will be critical for our simulation.
-This was the case with the very first experiments. The quadrocopter in the V-REP simulation started to drift heavily from the real one at the very beginning of the simulation. As a result the quadrocopter was flying away from the simulated arena, although the real one was flying stable in the physical arena.\\
-Fortunately, the Paparazzi project already provides a \href{http://wiki.paparazziuav.org/wiki/ImuCalibration}{IMU calibration software}, which we used to calibrate the accelerometer. The calibration is implemented as a python script, that has to be run on the log file containing the accelerometer calibration data. The calibration procedure was easy to perform and we had to follow the following procedure:
+The pitch, yaw and roll angles of the quadrocopter are measured from the \gls{IMU}. The \gls{IMU} sensor may not be mounted perfectly level to the airframe due to construction issues, imperfect soldering of the sensor on the board or just a factory defect. Such issues will cause a big offset in the sensor readings and will be critical for our simulation.
+This was the case with the very first experiments. 
+The quadrocopter in the V-REP simulation started to drift heavily from the real one at the very beginning of the simulation. 
+As a result, the quadrocopter was flying away from the simulated arena, although the real one was flying stable in the physical arena.\\
+
+Fortunately, the Paparazzi project already provides a \href{http://wiki.paparazziuav.org/wiki/ImuCalibration}{IMU calibration software}, which we used to calibrate the accelerometer. 
+The calibration is implemented as a python script, that has to be run on the log file containing the accelerometer calibration data. 
+The calibration procedure was easy to perform and we had to follow the following procedure:
 
 \begin{itemize}
 \item{Flash the board with our firmware}
@@ -731,7 +773,7 @@ The listing below shows our airframe file - \textit{/paparazzi/conf/airframes/ov
 
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\small, language=XML]
+\begin{lstlisting}[basicstyle=\small, language=XML, caption={Paparazzi calibration}]
 
  <section name="IMU" prefix="IMU_">
    ...
@@ -749,8 +791,13 @@ The listing below shows our airframe file - \textit{/paparazzi/conf/airframes/ov
 \end{center}
 
 When a new firmware is flashed to the quadrocopter, the paparazzi software also flashes the calibration coefficients from the airframe file so that IMU gets calibrated. \\
-We observed a big improvements in the simulation performance after calibrating the IMU. Although the quadrocopter was still drifting to some extend, the strong drifts have disappeared. \\
-The calibration software also provides calibration for the gyroscope sensor. Although the drift in the gyro sensor is also very critical for the simulation performance, we did not perform any calibration on the gyroscope. The reason was, that the calibration of the gyroscope is very sophisticated and required a moving platform for each sensor axis, which was not present at the time of the project. However we believe, that calibration of the gyroscope will improve the results to a significant extend and should be performed in the future work of the project.
+
+We observed a big improvement in the simulation performance after calibrating the IMU. Although the quadrocopter was still drifting to some extent, the strong drifts have disappeared. \\
+
+The calibration software also provides calibration for the gyroscope sensor. 
+Although the drift in the gyro sensor is also very critical for the simulation performance, we did not perform any calibration on the gyroscope. 
+The reason was, that the calibration of the gyroscope is very sophisticated and required a moving platform for each sensor axis, which was not present at the time of the project. 
+However, we believe, that calibration of the gyroscope will improve the results to a significant extend and should be performed in the future work of the project.
 
 
 \subsection{FINken message link}
@@ -759,27 +806,27 @@ In the beginning of this project, the second iteration of the FINken, the FINken
 There, the telemetry link was implemented with Bluetooth LE.
 It showed, that the data rate was barely sufficient when the quadcopter was next to the computer running the ground station and dropped heavily with more distance.
 The simulation runs with a time step of $50ms$, so it is desirable to get the telemetry message at the same rate to provide new data for each simulation step.
-This was not possible with the bluetooth link.
+This was not possible with the Bluetooth link.
 
 The FINken III that was introduced during this project features 802.15.4 based communication.
 This evolution has two major benefits.
 First, in allows to send telemetry data with every $21ms$, even multiple messages, so it could be ensured that at least on average, a new message would be available for each simulation time step, even if one package is dropped.
-Second, in the new communication, the quadcopter broadcasts it's data.
-This allows to have multiple quadcopter connected to the same groundstation and the groundstation receives data as soon as the FINken is switched on.
-The latter is a valuable improvement over the necessary linking for the bluetooth communication of the FINken II.
+Second, in the new communication, the quadcopter broadcasts its data.
+This allows to have multiple quadcopter connected to the same ground station and the ground station receives data as soon as the FINken is switched on.
+The latter is a valuable improvement over the necessary linking for the Bluetooth communication of the FINken II.
 
 
 
 \subsection{V-REP to FINken communication}
 The focus of the project lied on the communication from the real hardware to the simulation.
-However,to make virtual objects visible to the real FINken, they need to be send somehow from the virtual scene to the real world.
+However, to make virtual objects visible to the real FINken, they need to be send somehow from the virtual scene to the real world.
 The FINken relies on the ultrasound sensors to detect object, therefore especially the virtual distances to objects needs to be transmitted.
-Paparazzi provides a two way communication with the telemetry link.
+Paparazzi provides a two-way communication with the telemetry link.
 Thereby the existing solutions could be used to send the messages, as we as well implemented the communication structure bidirectional.
 
 The modules of the FINken's firmware can subscribe to telemetry messages.
 Since the ultrasound sensors are handled in one module, it is easy to include a subscription to our virtual distance data into the module.
-At the moment, the distance sensor are only used for collision avoidance, so only the closer object is interesting.
+At the moment, the distance sensors are only used for collision avoidance, so only the closer object is interesting.
 Therefore, the integration of the virtual values was done by using the minimum value of the real and virtual distance measurements.
 This ensures, that the real FINken will try to avoid any detected object, be it detected by its own sensors or by the sensors of its virtual counterpart.
 
