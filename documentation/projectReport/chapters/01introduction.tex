@@ -20,13 +20,13 @@
 \section{Motivation}
 \label{sec:motivation}
 The work presented in this document was carried out at the Swarm Lab at the Otto-von-Guericke-University Magdeburg. 
-The research focus of the working group lies on implementing and investing swarm algorithms in practice by using small indoor quadcopters. 
-The used FINken quadcopters were developed in association with the working group and are small, but powerful and highly extensible. 
+The research focus of the working group lies on implementing and investigating swarm algorithms in practice by using small indoor quadcopters. 
+The used FINken quadrocopters were developed in association with the working group and are small, but powerful and highly extensible. 
 As the research focus on swarm intelligence puts an interest on autonomous behavior, the copter fly without any external reference and rely solely on onboard sensors.
 
-The copters were developed in the working group and were designed with a focus on modularity.
+The copters were designed with a focus on modularity.
 They are continuously improved and thus are under constant change. 
-Therefore, testing new changes of the coptesr, e.g. new control or behavioral algorithms always poses a certain risk to the hardware due to crashes caused by bugs. 
+Therefore, testing new changes of the copters, e.g. new control or behavioral algorithms always poses a certain risk to the hardware due to crashes caused by bugs. 
 Thus, a simulation tool for the quadcopter to test new software is desirable to be able to do a safe first evaluation of newly implemented ideas. 
 A less abstract solution than a pure simulation could be a mixed reality simulation, where the behavior of real and simulated quadcopter could be directly compared.
 
@@ -34,18 +34,46 @@ The idea is to build a mixed reality simulation environment where one or multipl
 This would provide a testing possibility for new behavior and enhancements like inter-copter communication models as well as making upscaling of swarms easier. 
 Simulated quadcopter can be added arbitrarily (enough computation power assumed) without increasing cost and damaging risk as with additional real quadcopter. 
 
-In contrast to existing approaches for the use of mixed reality simulation as in \cite{Chen2011}, our main interest lies not on hardware development.
-Instead, we focus on increasing situation complexity by computation power instead of more cost intensive real hardware.
+\section{Related Work}
+\label{sec:relWork}
+Milgram and Kishino explained the concept  of mixed reality very detailed in \cite{milgram1994}.
+They describe, how virtual worlds and reality can be blended into each other in technical scenarios.
+In the broader sense, everything where simulation and reality influence each other can be seen as a mixed reality system.
+This would include e.g. Hardware-in-the-Loop applications, as they are commonly used for the development of embedded control units, or Augmented Reality where virtual  information is added to the perceived reality.
 
-The authors of  \cite{Honig2015} describe a similar approach, even using similar tools. 
-They as well use mixed reality to enhance quadcopter swarms.
-However, they're implementation of swarms rely heavily on a precise external camera tracking system. 
-This limits the application to situations where such a tracking system can be provided.
-Our goal is to provide a setup that can operate independently of a tracking system.
-Still, if some kind of tracking system is available, it could be used to improve the simulation.
+However, in this project, mixed reality comprises equitable virtual and real objects, that can influence each other. 
+
+Chen, MacDonald and Wünsche describe their solution to this approach in \cite{Chen2011}.
+They aim to build a generic mixed reality framework, which can be integrated into different simulation solutions and can handle all scales of virtualization, from mainly simulated to mainly real-world implemented.
+They introduce a function library for gazebo \href{http://gazebosim.org}{gazebo}, which is capable of abstracting sensors, actuators and other objects and routing them either to the simulation or the real world.
+This enables their work to be flexibly used in hardware or software development for robotics. 
+Our approach in contrast doesn't claim to be a generic solution, but is used specifically for the development of swarm robotics with small autonomous robots. 
+We don't want to abstract all included components, creating a need for the re-routing of the data flow, but instead try to use as much of the existing data flow channels as possible.
+Because our main goal is to increase situation complexity by computation power instead of more cost intensive real hardware, the overhead of the abstraction layer proposed by Chen, MacDonald and Wünsche would become enormous. 
 
 Burgbacher, Steinicke and Hinrichs sketch a possibility to apply mixed-reality simulations on the development of real world multi-robot projects in \cite{Burgbacher2011}.
-They describe how a simulation can be enriched with real elements when the hardware successively becomes available during the progress of the project.
+Their focus lies less on the technical challenges of  integrating reality at real-time into a simulation, but on how to include mixed reality simulation into project workflows.
+They describe how a workflow, that relies on data of robots, can be fed by a simulation, which then can be enriched with real elements when the hardware successively becomes available during the progress of the project.
+In their example, they develop and apply image processing algorithms on picture generated by a simulated copter equipped with a virtual camera. 
+In the next step, the simulated quadcopter is swapped for a real one, whereas the camera is still virtual.
+Burgbacher, Steinicke and Hinrichs contribute a neat use case for the use of mixed reality with quadcopter simulation, but their implemented scenario doesn't make high demands on scalability and real-time communication, as their ideas of swarm scenarios are only outlined. 
+Additionally, in contrast to our project, they use GPS and an indoor camera tracking system, which facilitates precise localization of the copters and sidesteps the challenges of inertial positioning.
+
+
+Finally, the authors of  \cite{Honig2015} were working on a similar approach, even using similar tools. 
+They as well use mixed reality to enhance quadcopter swarms.
+Their application include the simulation humans, using game engines and incorporating other robots. 
+In contrast to Chen, MacDonald and Wünsche,  Hönig et al. focus on special scenarios.
+On the simulation side, they rely on available models of the used robots.
+Their implementation of swarms uses very small  and comparatively simple quadcopters and relies heavily on a precise external camera tracking system. 
+This limits the application to situations where such a tracking system can be provided.
+Furthermore, the quality of the information about the real world that is sent to the simulation is massively improved.
+The external camera system provides data with less noise, less drift errors over time and does not need to rely on low energy wireless communication.
+Therefore, a sophisticated simulation can be achieved with less precise models, and simpler quadrocopters with less sensors.
+Our goal on the other hand, is to provide a setup that can operate independently of a tracking system, solely relying on on-board sensors of the quadcopters.
+Still, if some kind of tracking system is available, it could be used to improve the simulation.
+
+
 
 
        

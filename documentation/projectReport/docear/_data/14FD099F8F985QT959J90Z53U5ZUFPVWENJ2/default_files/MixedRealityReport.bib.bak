@@ -23,6 +23,7 @@
   booktitle = {IUI 2011 workshop on location awareness for mixed and dual reality
 	(LAMDa)},
   year = {2011},
+  publisher = {DFKI},
   file = {:/Users/Nanoq/Documents/Uni/OvGU/DigiEng/Semester3/DigiEngProjekt/Simulation/documentation/projectReport/docear/literature_repository/MixedReality/2011Burgacher_MixedRealityMultimodal.pdf:PDF},
   owner = {Nanoq},
   timestamp = {2016.03.08},
@@ -104,6 +105,19 @@
   file = {:/Users/Nanoq/Documents/Uni/OvGU/DigiEng/Semester3/DigiEngProjekt/Simulation/documentation/projectReport/docear/literature_repository/quadcopterControl/Luukkonen2011ModellingAndControlQuadcopter.pdf:PDF},
   owner = {Nanoq},
   timestamp = {2016.01.22}
+}
+
+@ARTICLE{milgram1994,
+  author = {Milgram, Paul and Kishino, Fumio},
+  title = {A taxonomy of mixed reality visual displays},
+  journal = {IEICE TRANSACTIONS on Information and Systems},
+  year = {1994},
+  volume = {77},
+  pages = {1321--1329},
+  number = {12},
+  file = {:/Users/Nanoq/Documents/Uni/OvGU/DigiEng/Semester3/DigiEngProjekt/Simulation/documentation/projectReport/docear/literature_repository/MixedReality/Milgram1994MixedReality.pdf:PDF},
+  owner = {Nanoq},
+  timestamp = {2016.03.21}
 }
 
 @INPROCEEDINGS{Zug2011RobLoc,
