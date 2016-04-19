@@ -160,6 +160,103 @@ function getErrors(orientation, sensors, context, config)
 	local _, leftDistance = simReadProximitySensor(sensors.left)
 	local _, rightDistance = simReadProximitySensor(sensors.right)
 	local _, bottomDistance = simReadProximitySensor(sensors.bottom)
+	
+	-- Sigma to change the density
+	sig = 1
+	
+	-- expected value
+	local e = sig * math.sqrt(math.pi / 2)
+	-- variance
+	local v = ((4 - math.pi)/2) * math.pow(sig,2)
+	-- deviation
+	local s = math.sqrt(((4 - math.pi)/2) * math.pow(sig,2))
+	
+	local u = 0.0
+	local p = 0.0
+	p = math.random()
+	if p > 0.66 then
+		u = math.random()
+		frontDistance = math.sqrt((-1)*math.log(u)*(2* math.pow(sig, 2)))-s
+	else
+		if frontDistance ~= nil then
+			frontDistance = frontDistance / 2
+		else
+			frontDistance = 0.2
+		end
+	end
+	p = math.random()
+	if p > 0.66 then
+		u = math.random()
+		backDistance = math.sqrt((-1)*math.log(u)*(2* math.pow(sig, 2)))-s
+	else
+		if backDistance ~= nil then
+			backDistance = backDistance / 2
+		else
+			backDistance = 0.2
+		end
+	end
+	p = math.random()
+	if p > 0.66 then
+		u = math.random()
+		leftDistance = math.sqrt((-1)*math.log(u)*(2* math.pow(sig, 2)))-s
+	else
+		if leftDistance ~= nil then
+			leftDistance = leftDistance / 2
+		else
+			leftDistance = 0.2
+		end
+	end
+	p = math.random()
+	if p > 0.66 then
+		u = math.random()
+		rightDistance = math.sqrt((-1)*math.log(u)*(2* math.pow(sig, 2)))-s
+	else
+		if rightDistance ~= nil then
+			rightDistance = rightDistance / 2
+		else
+			rightDistance = 0.2
+		end
+	end
+	
+	-- uncomment this to add filter to bottom sensor
+	-- p = math.random()
+	-- if p > 0.5 then
+		-- u = math.random()
+		-- bottomDistance = math.sqrt((-1)*math.log(u)*(2* math.pow(sig, 2)))-s
+	-- else
+		-- if bottomDistance ~= nil then
+			-- bottomDistance = bottomDistance / 2
+		-- else
+			-- bottomDistance = 0.2
+		-- end
+	-- end
+	
+	-- limit the value
+	if frontDistance < 0.2 then
+		frontDistance = 0.2
+	elseif frontDistance > 3.0 then
+		frontDistance = 3.0
+	end
+	if backDistance < 0.2 then
+		backDistance = 0.2
+	elseif backDistance > 3.0 then
+		backDistance = 3.0
+	end
+	if leftDistance < 0.2 then
+		leftDistance = 0.2
+	elseif leftDistance > 3.0 then
+		leftDistance = 3.0
+	end
+	if rightDistance < 0.2 then
+		rightDistance = 0.2
+	elseif rightDistance > 3.0 then
+		rightDistance = 3.0
+	end
+	--if bottomDistance < 0.2 then
+	--	bottomDistance = 0.2
+	--elseif bottomDistance > 3.0 then
+	--	bottomDistance = 3.0
+	--end
 
 	if bottomDistance then
 		local floorDetectedFront = isDistanceToFloor(frontDistance, bottomDistance, -orientation.pitch, config.floor_detection)
