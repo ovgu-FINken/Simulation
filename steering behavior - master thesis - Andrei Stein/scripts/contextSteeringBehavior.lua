@@ -6,9 +6,9 @@ steeringBehaviorCore = require('steeringBehaviorCore')
 
 local COS_45 = 0.707--0,70710678
 local MAX_TARGET_DISTANCE = 7.5
-local MAX_DANGER = 0.5--0.2
+local MAX_DANGER = 0.8--0.2
 local MIN_SAME_DIRECTION = 0.2--0.4
-local MIN_ATTRACTION = 0.2
+local MIN_ATTRACTION = 0.75
 
 function contextSteeringBehavior.init(self)
 	
@@ -26,17 +26,88 @@ function contextSteeringBehavior.init(self)
 		local sameDirectionMap = {1,1,1,1,1,1,1,1}
 		local attractionMap = {0,0,0,0,0,0,0,0}
 		
+		local isTargetAvailible = false;
+		
 		--local ui_handle = simGetUIHandle('UI_Context_Maps')
 		
 		-- calculate danger values for each direction
 		for i=1,8,1 do
-			local danger = 1 - contextData.sensorDistances[i]/7.5
-			dangerMap[i] = danger 
+			--local danger = 1 - contextData.sensorDistances[i]/7.5
+			local danger = contextData.sensorDistances[i]/7.5
+			danger = 0.9* math.exp(-(danger*danger)/0.9)
+			--dangerMap[i] = danger 
 			--simSetUIButtonColor(ui_handle, 14+i, {1-danger, 1-danger, 1-danger})
+			
+			if(i == 1) then -- front
+				attractionMap[1] = 1*danger
+				if(dangerMap[2] < 0.5*danger) then dangerMap[2] = 0.5*danger end
+				if(dangerMap[4] < 0.5*danger) then dangerMap[4] = 0.5*danger end
+				if(dangerMap[5] < 0.75*danger) then dangerMap[5] = 0.75*danger end
+				if(dangerMap[6] < 0.75*danger) then dangerMap[6] = 0.75*danger end
+				if(dangerMap[7] < 0.25*danger) then dangerMap[7] = 0.25*danger end
+				if(dangerMap[8] < 0.25*danger) then dangerMap[8] = 0.25*danger end
+			elseif(i == 2) then -- left
+				if(dangerMap[1] < 0.5*danger) then dangerMap[1] = 0.5*danger end
+				dangerMap[2] = 1*danger
+				if(dangerMap[3] < 0.5*danger) then dangerMap[3] = 0.5*danger end
+				if(dangerMap[5] < 0.75*danger) then dangerMap[5] = 0.75*danger end
+				if(dangerMap[6] < 0.25*danger) then dangerMap[6] = 0.25*danger end
+				if(dangerMap[7] < 0.75*danger) then dangerMap[7] = 0.75*danger end
+				if(dangerMap[8] < 0.25*danger) then dangerMap[8] = 0.25*danger end
+			elseif(i == 3) then -- back
+				if(dangerMap[2] < 0.5*danger) then dangerMap[2] = 0.5*danger end
+				dangerMap[3] = 1*danger
+				if(dangerMap[4] < 0.5*danger) then dangerMap[3] = 0.5*danger end
+				if(dangerMap[5] < 0.25*danger) then dangerMap[5] = 0.25*danger end
+				if(dangerMap[6] < 0.25*danger) then dangerMap[6] = 0.25*danger end
+				if(dangerMap[7] < 0.75*danger) then dangerMap[7] = 0.75*danger end
+				if(dangerMap[8] < 0.75*danger) then dangerMap[8] = 0.75*danger end
+			elseif(i == 4) then -- right
+				if(dangerMap[1] < 0.5*danger) then dangerMap[1] = 0.5*danger end
+				if(dangerMap[3] < 0.5*danger) then dangerMap[3] = 0.5*danger end
+				dangerMap[4] = 1*danger
+				if(dangerMap[5] < 0.25*danger) then dangerMap[5] = 0.25*danger end
+				if(dangerMap[6] < 0.75*danger) then dangerMap[6] = 0.75*danger end
+				if(dangerMap[7] < 0.25*danger) then dangerMap[7] = 0.25*danger end
+				if(dangerMap[8] < 0.75*danger) then dangerMap[8] = 0.75*danger end
+			elseif(i == 5) then -- front_left
+				if(dangerMap[1] < 0.75*danger) then dangerMap[1] = 0.75*danger end
+				if(dangerMap[2] < 0.75*danger) then dangerMap[2] = 0.75*danger end
+				if(dangerMap[3] < 0.25*danger) then dangerMap[3] = 0.25*danger end
+				if(dangerMap[4] < 0.25*danger) then dangerMap[4] = 0.25*danger end
+				dangerMap[5] = 1*danger
+				if(dangerMap[6] < 0.5*danger) then dangerMap[6] = 0.5*danger end
+				if(dangerMap[7] < 0.5*danger) then dangerMap[7] = 0.5*danger end
+			elseif(i == 6) then -- front_right
+				if(dangerMap[1] < 0.75*danger) then dangerMap[1] = 0.75*danger end
+				if(dangerMap[2] < 0.25*danger) then dangerMap[2] = 0.25*danger end
+				if(dangerMap[3] < 0.25*danger) then dangerMap[3] = 0.25*danger end
+				if(dangerMap[4] < 0.75*danger) then dangerMap[4] = 0.75*danger end
+				if(dangerMap[5] < 0.5*danger) then dangerMap[5] = 0.5*danger end
+				dangerMap[6] = 1*danger
+				if(dangerMap[8] < 0.5*danger) then dangerMap[8] = 0.5*danger end
+			elseif(i == 7) then -- back_left
+				if(dangerMap[1] < 0.25*danger) then dangerMap[1] = 0.25*danger end
+				if(dangerMap[2] < 0.75*danger) then dangerMap[2] = 0.75*danger end
+				if(dangerMap[3] < 0.75*danger) then dangerMap[3] = 0.75*danger end
+				if(dangerMap[4] < 0.25*danger) then dangerMap[4] = 0.25*danger end
+				if(dangerMap[5] < 0.5*danger) then dangerMap[5] = 0.5*danger end
+				dangerMap[7] = 1*danger
+				if(dangerMap[8] < 0.5*danger) then dangerMap[8] = 0.5*danger end
+			elseif(i == 8) then -- back_right
+				if(dangerMap[1] < 0.25*danger) then dangerMap[1] = 0.25*danger end
+				if(dangerMap[2] < 0.25*danger) then dangerMap[2] = 0.25*danger end
+				if(dangerMap[3] < 0.75*danger) then dangerMap[3] = 0.75*danger end
+				if(dangerMap[4] < 0.75*danger) then dangerMap[4] = 0.75*danger end
+				if(dangerMap[6] < 0.5*danger) then dangerMap[6] = 0.5*danger end
+				if(dangerMap[7] < 0.5*danger) then dangerMap[7] = 0.5*danger end
+				dangerMap[8] = 1*danger
+			end
 		end
 		
 		-- calculate interest values for each direction
 		for k, target in pairs(contextData.targets) do
+			isTargetAvailible = true
 			local vectorToTarget = TransformToLokalSystem(contextData.objectHandle, target)
 			local lenght = getEuclideanNorm(vectorToTarget)
 			if(lenght < 0.6) then
@@ -287,25 +358,25 @@ function contextSteeringBehavior.init(self)
 											-- contextData.sensorDistances[7],
 											-- contextData.sensorDistances[8]))
 											
-		-- simAddStatusbarMessage(string.format('dangerMap 	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f',
-											-- dangerMap[1],
-											-- dangerMap[2],
-											-- dangerMap[3],
-											-- dangerMap[4],
-											-- dangerMap[5],
-											-- dangerMap[6],
-											-- dangerMap[7],
-											-- dangerMap[8]))
+		simAddStatusbarMessage(string.format('dangerMap 	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f',
+											dangerMap[1],
+											dangerMap[2],
+											dangerMap[3],
+											dangerMap[4],
+											dangerMap[5],
+											dangerMap[6],
+											dangerMap[7],
+											dangerMap[8]))
 											
-		-- simAddStatusbarMessage(string.format('interestMap 	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f',
-											-- interestMap[1],
-											-- interestMap[2],
-											-- interestMap[3],
-											-- interestMap[4],
-											-- interestMap[5],
-											-- interestMap[6],
-											-- interestMap[7],
-											-- interestMap[8]))
+		simAddStatusbarMessage(string.format('interestMap 	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f',
+											interestMap[1],
+											interestMap[2],
+											interestMap[3],
+											interestMap[4],
+											interestMap[5],
+											interestMap[6],
+											interestMap[7],
+											interestMap[8]))
 											
 											
 		-- simAddStatusbarMessage(string.format('sameDirectionMap 	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f	%.2f',
@@ -326,7 +397,11 @@ function contextSteeringBehavior.init(self)
 		-- update character values
 		--self.updateCharacter()
 		
-		return subtractVectors(steering, contextData.currentPosition)--steering
+		if (isTargetAvailible == true) then
+			return subtractVectors(steering, contextData.currentPosition)--steering
+		else
+			return {0,0,0}--steering
+		end 
 	end
 	
 	-- chages the character properties with the ui-sliders
