@@ -6,9 +6,9 @@ steeringBehaviorCore = require('steeringBehaviorCore')
 
 local COS_45 = 0.707--0,70710678
 local MAX_TARGET_DISTANCE = 7.5
-local MAX_DANGER = 0.8--0.2
+local MAX_DANGER = 0.7--0.2
 local MIN_SAME_DIRECTION = 0.2--0.4
-local MIN_ATTRACTION = 0.75
+local MIN_ATTRACTION = 0.35
 
 function contextSteeringBehavior.init(self)
 	
@@ -32,14 +32,14 @@ function contextSteeringBehavior.init(self)
 		
 		-- calculate danger values for each direction
 		for i=1,8,1 do
-			--local danger = 1 - contextData.sensorDistances[i]/7.5
-			local danger = contextData.sensorDistances[i]/7.5
-			danger = 0.9* math.exp(-(danger*danger)/0.9)
+			local danger = 1 - contextData.sensorDistances[i]/7.5
+			--local danger = contextData.sensorDistances[i]/7.5
+			--danger = 0.9* math.exp(-(danger*danger)/0.9)
 			--dangerMap[i] = danger 
 			--simSetUIButtonColor(ui_handle, 14+i, {1-danger, 1-danger, 1-danger})
 			
 			if(i == 1) then -- front
-				attractionMap[1] = 1*danger
+				if(dangerMap[1] < 1*danger) then dangerMap[1] = 1*danger end
 				if(dangerMap[2] < 0.5*danger) then dangerMap[2] = 0.5*danger end
 				if(dangerMap[4] < 0.5*danger) then dangerMap[4] = 0.5*danger end
 				if(dangerMap[5] < 0.75*danger) then dangerMap[5] = 0.75*danger end
@@ -48,7 +48,7 @@ function contextSteeringBehavior.init(self)
 				if(dangerMap[8] < 0.25*danger) then dangerMap[8] = 0.25*danger end
 			elseif(i == 2) then -- left
 				if(dangerMap[1] < 0.5*danger) then dangerMap[1] = 0.5*danger end
-				dangerMap[2] = 1*danger
+				if(dangerMap[2] < 1*danger) then dangerMap[2] = 1*danger end
 				if(dangerMap[3] < 0.5*danger) then dangerMap[3] = 0.5*danger end
 				if(dangerMap[5] < 0.75*danger) then dangerMap[5] = 0.75*danger end
 				if(dangerMap[6] < 0.25*danger) then dangerMap[6] = 0.25*danger end
@@ -56,8 +56,8 @@ function contextSteeringBehavior.init(self)
 				if(dangerMap[8] < 0.25*danger) then dangerMap[8] = 0.25*danger end
 			elseif(i == 3) then -- back
 				if(dangerMap[2] < 0.5*danger) then dangerMap[2] = 0.5*danger end
-				dangerMap[3] = 1*danger
-				if(dangerMap[4] < 0.5*danger) then dangerMap[3] = 0.5*danger end
+				if(dangerMap[3] < 1*danger) then dangerMap[3] = 1*danger end
+				if(dangerMap[4] < 0.5*danger) then dangerMap[4] = 0.5*danger end
 				if(dangerMap[5] < 0.25*danger) then dangerMap[5] = 0.25*danger end
 				if(dangerMap[6] < 0.25*danger) then dangerMap[6] = 0.25*danger end
 				if(dangerMap[7] < 0.75*danger) then dangerMap[7] = 0.75*danger end
@@ -65,7 +65,7 @@ function contextSteeringBehavior.init(self)
 			elseif(i == 4) then -- right
 				if(dangerMap[1] < 0.5*danger) then dangerMap[1] = 0.5*danger end
 				if(dangerMap[3] < 0.5*danger) then dangerMap[3] = 0.5*danger end
-				dangerMap[4] = 1*danger
+				if(dangerMap[4] < 1*danger) then dangerMap[4] = 1*danger end
 				if(dangerMap[5] < 0.25*danger) then dangerMap[5] = 0.25*danger end
 				if(dangerMap[6] < 0.75*danger) then dangerMap[6] = 0.75*danger end
 				if(dangerMap[7] < 0.25*danger) then dangerMap[7] = 0.25*danger end
@@ -75,7 +75,7 @@ function contextSteeringBehavior.init(self)
 				if(dangerMap[2] < 0.75*danger) then dangerMap[2] = 0.75*danger end
 				if(dangerMap[3] < 0.25*danger) then dangerMap[3] = 0.25*danger end
 				if(dangerMap[4] < 0.25*danger) then dangerMap[4] = 0.25*danger end
-				dangerMap[5] = 1*danger
+				if(dangerMap[5] < 1*danger) then dangerMap[5] = 1*danger end
 				if(dangerMap[6] < 0.5*danger) then dangerMap[6] = 0.5*danger end
 				if(dangerMap[7] < 0.5*danger) then dangerMap[7] = 0.5*danger end
 			elseif(i == 6) then -- front_right
@@ -84,7 +84,7 @@ function contextSteeringBehavior.init(self)
 				if(dangerMap[3] < 0.25*danger) then dangerMap[3] = 0.25*danger end
 				if(dangerMap[4] < 0.75*danger) then dangerMap[4] = 0.75*danger end
 				if(dangerMap[5] < 0.5*danger) then dangerMap[5] = 0.5*danger end
-				dangerMap[6] = 1*danger
+				if(dangerMap[6] < 1*danger) then dangerMap[6] = 1*danger end
 				if(dangerMap[8] < 0.5*danger) then dangerMap[8] = 0.5*danger end
 			elseif(i == 7) then -- back_left
 				if(dangerMap[1] < 0.25*danger) then dangerMap[1] = 0.25*danger end
@@ -92,7 +92,7 @@ function contextSteeringBehavior.init(self)
 				if(dangerMap[3] < 0.75*danger) then dangerMap[3] = 0.75*danger end
 				if(dangerMap[4] < 0.25*danger) then dangerMap[4] = 0.25*danger end
 				if(dangerMap[5] < 0.5*danger) then dangerMap[5] = 0.5*danger end
-				dangerMap[7] = 1*danger
+				if(dangerMap[7] < 1*danger) then dangerMap[7] = 1*danger end
 				if(dangerMap[8] < 0.5*danger) then dangerMap[8] = 0.5*danger end
 			elseif(i == 8) then -- back_right
 				if(dangerMap[1] < 0.25*danger) then dangerMap[1] = 0.25*danger end
@@ -101,7 +101,7 @@ function contextSteeringBehavior.init(self)
 				if(dangerMap[4] < 0.75*danger) then dangerMap[4] = 0.75*danger end
 				if(dangerMap[6] < 0.5*danger) then dangerMap[6] = 0.5*danger end
 				if(dangerMap[7] < 0.5*danger) then dangerMap[7] = 0.5*danger end
-				dangerMap[8] = 1*danger
+				if(dangerMap[8] < 1*danger) then dangerMap[8] = 1*danger end
 			end
 		end
 		
@@ -246,7 +246,7 @@ function contextSteeringBehavior.init(self)
 				elseif(i == 3) then -- back
 					if(attractionMap[2] < 0.5) then attractionMap[2] = 0.5 end
 					attractionMap[3] = 1
-					if(attractionMap[4] < 0.5) then attractionMap[3] = 0.5 end
+					if(attractionMap[4] < 0.5) then attractionMap[4] = 0.5 end
 					if(attractionMap[5] < 0.25) then attractionMap[5] = 0.25 end
 					if(attractionMap[6] < 0.25) then attractionMap[6] = 0.25 end
 					if(attractionMap[7] < 0.75) then attractionMap[7] = 0.75 end
@@ -397,7 +397,7 @@ function contextSteeringBehavior.init(self)
 		-- update character values
 		--self.updateCharacter()
 		
-		if (isTargetAvailible == true) then
+		if (isTargetAvailible == true or areCoptersNearby == true) then
 			return subtractVectors(steering, contextData.currentPosition)--steering
 		else
 			return {0,0,0}--steering
