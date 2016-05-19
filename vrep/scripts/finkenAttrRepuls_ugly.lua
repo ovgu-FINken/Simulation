@@ -1,22 +1,24 @@
 local finken = {}
 
 finkenCore = require('finkenCore')
+finkenPID = require('finkenPID')
 
 function finken.init(self)
 
 	thisIDsuffix = simGetNameSuffix(nil)
 	local config = prepareConfig({suffix = thisIDsuffix})
 
+	simAddStatusbarMessage("Ghost "..thisIDsuffix.." appeared")
 
-	local object = getObjectHandle("SimFinken", config.suffix)
+	local object = getObjectHandle("Ghost")
 	local script = simGetScriptAssociatedWithObject(object)
 
 	local sensors = {
-		front = getObjectHandle(fixName("SimFinken_sensor_front")),
-		back = getObjectHandle(fixName("SimFinken_sensor_back")),
-		left = getObjectHandle(fixName("SimFinken_sensor_left")),
-		right = getObjectHandle(fixName("SimFinken_sensor_right")),
-		bottom = getObjectHandle(fixName("SimFinken_sensor_bottom"))
+		front = getObjectHandle("SimFinken_sensor_front"),
+		back = getObjectHandle("SimFinken_sensor_back"),
+		left = getObjectHandle("SimFinken_sensor_left"),
+		right = getObjectHandle("SimFinken_sensor_right"),
+		bottom = getObjectHandle("SimFinken_sensor_bottom")
 	}
 
 	local context = {
@@ -38,10 +40,12 @@ function finken.init(self)
 	}
 
 	local pidControllers = {
-		x = newPIDController(config.pid.x),
-		y = newPIDController(config.pid.y),
-		z = newPIDController(config.pid.z)
+		x = finkenPID.new(),
+		y = finkenPID.new(),
+		z = finkenPID.new(),
 	}
+	pidControllers.x.init(config.pid.x.p, config.pid.x.i, config.pid.x.d)
+	pidControllers.y.init(config.pid.y.p, config.pid.y.i, config.pid.y.d)
 
 
 
@@ -61,12 +65,10 @@ function finken.init(self)
 
 		adjustParameter("pitch", errors.x, pidControllers.x, config.pitch, script)
 		adjustParameter("roll", errors.y, pidControllers.y, config.roll, script)
-		adjustParameter("throttle", errors.z, pidControllers.z, config.throttle, script)
-
-		adjustYaw(errors.yaw, orientation, script)
+		simSetFloatSignal("height"..thisIDsuffix, 1.5)
 
 		context.counters.global = context.counters.global + 1
-
+--		self.printControlValues()
 	end
 
 	function self.customSense()
@@ -95,32 +97,17 @@ end
 
 --@todo convert to setSignal
 function adjustParameter(parameter, error, pidController, config, script)
-	local value = config.default + pidController.adjust(error)
+	local value = config.default + pidController.step(error, simGetSimulationTimeStep())
 
 	if (value > config.max) then
 		value = config.max
 	elseif (value < config.min) then
 		value = config.min
 	end
-	simSetSignal(fixSignalName(parameter,thisIDsuffix),value)
+	simSetFloatSignal(fixSignalName(parameter,thisIDsuffix),value)
 	--simSetScriptSimulationParameter(script, parameter, value)
 
 	return value
-end
-function adjustYaw(error, orientation, script)
-	if error then
-		if error < 0 then
-			simAddStatusbarMessage("ERROR: The parameter error < 0 for adjustYaw(...). It should be positive!")
-		end
-
-		local yaw = orientation.yaw + error
-
-		if yaw > 90 then
-			yaw = yaw - 90
-		end
-
-		simSetSignal(fixSignalName(parameter,thisIDsuffix), yaw)
-	end
 end
 
 function isDistanceToFloor(distance, bottomDistance, angle, config)
@@ -245,7 +232,10 @@ function getAttractionRepulsionPosition(otherObjectPositions, targetPosition, co
 	positionChange = multiplyVectorByScalar(positionChange, config.wCohesion)
 	local targetChange = multiplyVectorByScalar(targetPosition, config.wTarget * config.a)
 
-	return addVectors(positionChange, targetChange)
+
+	result =  addVectors(positionChange, targetChange)
+	simAddStatusbarMessage("["..result[1]..", "..result[2]..", "..result[3].."]")
+	return result
 end
 
 
@@ -293,9 +283,12 @@ end
           return name
       end
   end
-function getObjectHandle(name, suffix)
-
-	return simGetObjectHandle(fixName(name))
+function getObjectHandle(name)
+	id = simGetObjectHandle(fixName(name))
+	if id == -1 then
+		simAddStatusbarMessage(fixName(name).." does not exist in the scene")
+	end
+	return id
 end
 
 function prepareConfig(config)
@@ -313,19 +306,19 @@ function prepareConfig(config)
 	config.pid = config.pid or {}
 
 	config.pid.x = config.pid.x or {}
-	config.pid.x.p = config.pid.x.p or 2
+	config.pid.x.p = config.pid.x.p or 1
 	config.pid.x.i = config.pid.x.i or 0
-	config.pid.x.d = config.pid.x.d or 4
+	config.pid.x.d = config.pid.x.d or 0
 
 	config.pid.y = config.pid.y or {}
-	config.pid.y.p = config.pid.y.p or 2
+	config.pid.y.p = config.pid.y.p or 1
 	config.pid.y.i = config.pid.y.i or 0
-	config.pid.y.d = config.pid.y.d or 4
+	config.pid.y.d = config.pid.y.d or 0
 
 	config.pid.z = config.pid.z or {}
-	config.pid.z.p = config.pid.z.p or 6
+	config.pid.z.p = config.pid.z.p or 1
 	config.pid.z.i = config.pid.z.i or 0
-	config.pid.z.d = config.pid.z.d or 8
+	config.pid.z.d = config.pid.z.d or 0
 
 	config.pitch = config.pitch or {}
 	config.pitch.min = config.pitch.min or -10
@@ -336,11 +329,6 @@ function prepareConfig(config)
 	config.roll.min = config.roll.min or -10
 	config.roll.max = config.roll.max or 10
 	config.roll.default = config.roll.default or 0
-
-	config.throttle = config.throttle or {}
-	config.throttle.min = config.throttle.min or 0
-	config.throttle.max = config.throttle.max or 100
-	config.throttle.default = config.throttle.default or 50
 
 	config.floor_detection = config.floor_detection or {}
 	config.floor_detection.difference_range = config.floor_detection.difference_range or 0.15
@@ -374,7 +362,9 @@ function getErrors(orientation, sensors, context, config)
 	local _, rightDistance = simReadProximitySensor(sensors.right)
 	local _, bottomDistance = simReadProximitySensor(sensors.bottom)
 
+
 	if bottomDistance then
+		simAddStatusbarMessage("Bottom distance "..bottomDistance)
 		local floorDetectedFront = isDistanceToFloor(frontDistance, bottomDistance, -orientation.pitch, config.floor_detection)
 		local floorDetectedBack = isDistanceToFloor(backDistance, bottomDistance, orientation.pitch, config.floor_detection)
 		local floorDetectedLeft = isDistanceToFloor(leftDistance, bottomDistance, -orientation.roll, config.floor_detection)
@@ -384,12 +374,6 @@ function getErrors(orientation, sensors, context, config)
 		local wallDetectedBack, yawChangeRequiredBack = areDistancesToWall(backDistance, leftDistance, rightDistance, context.counters.wallDetectedBack, config.wall_detection)
 		local wallDetectedLeft, yawChangeRequiredLeft = areDistancesToWall(leftDistance, frontDistance, backDistance, context.counters.wallDetectedLeft, config.wall_detection)
 		local wallDetectedRight, yawChangeRequiredRight = areDistancesToWall(rightDistance, frontDistance, backDistance, context.counters.wallDetectedRight, config.wall_detection)
-
-		if yawChangeRequiredFront or yawChangeRequiredBack then
-			errors.yaw = getYawError(leftDistance, rightDistance)
-		elseif yawChangeRequiredLeft or yawChangeRequiredRight then
-			errors.yaw = getYawError(frontDistance, backDistance)
-		end
 
 		local otherObjectPositions = {}
 		context.detectedDistances = {
@@ -416,10 +400,6 @@ function getErrors(orientation, sensors, context, config)
 			context.detectedDistances.right = rightDistance
 		end
 
-		local heightError = config.height.value - bottomDistance
-		local heightStable = math.abs(heightError) < config.height.stability_range
-
-		local finkenStable = heightStable and not (yawChangeRequiredFront or yawChangeRequiredBack or yawChangeRequiredLeft or yawChangeRequiredRight)
 		local objectDetected = frontDistance or backDistance or leftDistance or rightDistance
 		updateContextRandomPosition(finkenStable, objectDetected, context, config.random_position)
 
@@ -427,6 +407,10 @@ function getErrors(orientation, sensors, context, config)
 		errors.x = nextPosition[1]
 		errors.y = nextPosition[2]
 		errors.z = heightError
+	else
+		errors.x = 0
+		errors.y = 0
+		errors.z = 0
 	end
 
 	return errors
