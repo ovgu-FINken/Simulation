@@ -2,10 +2,26 @@
 #include "finkenCoreExt.h"
 #include <string>
 #include <cstring>
+#include <cmath>
+#include <stdlib.h>
+#include <array>
+#include <iostream>
+#include <unistd.h>
+
+#ifdef __APPLE__
+#define _stricmp strcmp
+#endif
+
+#define CONCAT(x,y,z) x y z
+#define strConCat(x,y,z)    CONCAT(x,y,z)
+
+#define PLUGIN_VERSION 4 // 2 since version 3.2.1, 3 since V3.3.1, 4 since V3.4.0
+
+
 
 
 #define _USE_MATH_DEFINES
-
+#define PLUGIN_NAME "FinkenCoreExt"
 
 int thisIDsuffix = 0;
 float sensorDistances[FINKEN_SENSOR_COUNT]  = {7.5,7.5,7.5,7.5};
@@ -42,6 +58,7 @@ struct sFinken
     };
 };
 struct sFinken finken;
+LIBRARY vrepLib;
 
 float tuneThrottle(float throttle, float curveParamNeg, float curveParamPos) {
 	float throttleTarget = throttle - 50;
@@ -54,6 +71,7 @@ float tuneThrottle(float throttle, float curveParamNeg, float curveParamPos) {
 	return throttleTarget;
 }
 
+//TODO: fix for multiple finken IDs
 char* fixSignalName(std::string signalName) {
   if (thisIDsuffix != -1) {
     std::string nameFixed = signalName + std::to_string(thisIDsuffix);
@@ -397,3 +415,89 @@ function finkenCore.getObjectHandle()
 	return handle_finken
 end
 */
+
+
+VREP_DLLEXPORT unsigned char v_repStart(void* reservedPointer,int reservedInt)
+{ // This is called just once, at the start of V-REP.
+    // Dynamically load and bind V-REP functions:
+    std::cout << "Starting FinkenCore";
+    char curDirAndFile[1024];
+#ifdef _WIN32
+    #ifdef QT_COMPIL
+        _getcwd(curDirAndFile, sizeof(curDirAndFile));
+    #else
+        GetModuleFileName(NULL,curDirAndFile,1023);
+        PathRemoveFileSpec(curDirAndFile);
+    #endif
+#elif defined (__linux) || defined (__APPLE__)
+    getcwd(curDirAndFile, sizeof(curDirAndFile));
+#endif
+
+    std::string currentDirAndPath(curDirAndFile);
+    std::string temp(currentDirAndPath);
+
+#ifdef _WIN32
+    temp+="\\v_rep.dll";
+#elif defined (__linux)
+    temp+="/libv_rep.so";
+#elif defined (__APPLE__)
+    temp+="/libv_rep.dylib";
+#endif /* __linux || __APPLE__ */
+
+    vrepLib=loadVrepLibrary(temp.c_str());
+    if (vrepLib==NULL)
+    {
+        std::cout << "Error, could not find or correctly load v_rep.dll. Cannot start 'FinkenCore' plugin.\n";
+        return(0); // Means error, V-REP will unload this plugin
+    }
+    if (getVrepProcAddresses(vrepLib)==0)
+    {
+        std::cout << "Error, could not find all required functions in v_rep.dll. Cannot start 'FinkenCore' plugin.\n";
+        unloadVrepLibrary(vrepLib);
+        return(0); // Means error, V-REP will unload this plugin
+    }
+
+    // Check the V-REP version:
+    int vrepVer;
+    simGetIntegerParameter(sim_intparam_program_version,&vrepVer);
+    if (vrepVer<30200) // if V-REP version is smaller than 3.02.00
+    {
+        std::cout << "Sorry, your V-REP copy is somewhat old, V-REP 3.2.0 or higher is required. Cannot start 'FinkenCore' plugin.\n";
+        unloadVrepLibrary(vrepLib);
+        return(0); // Means error, V-REP will unload this plugin
+    }
+
+    // Register 4 new Lua commands:
+    simRegisterScriptCallbackFunction(strConCat(LUA_INIT_COMMAND,"@",PLUGIN_NAME),strConCat("number finkenHandle=",LUA_INIT_COMMAND,"(number finkenhandle,)"),LUA_INIT_CALLBACK);
+
+
+    return(8); // initialization went fine, we return the version number of this plugin (can be queried with simGetModuleName)
+    // version 1 was for V-REP versions before V-REP 2.5.12
+    // version 2 was for V-REP versions before V-REP 2.6.0
+    // version 5 was for V-REP versions before V-REP 3.1.0
+    // version 6 is for V-REP versions after V-REP 3.1.3
+    // version 7 is for V-REP versions after V-REP 3.2.0 (completely rewritten)
+    // version 8 is for V-REP versions after V-REP 3.3.0 (using stacks for data exchange with scripts)
+}
+
+VREP_DLLEXPORT void v_repEnd()
+{ // This is called just once, at the end of V-REP
+  unloadVrepLibrary(vrepLib); // release the library
+}
+
+VREP_DLLEXPORT void* v_repMessage(int message,int* auxiliaryData,void* customData,int* replyData)
+{ // This is called quite often. Just watch out for messages/events you want to handle
+  // This function should not generate any error messages:
+  int errorModeSaved;
+  simGetIntegerParameter(sim_intparam_error_report_mode,&errorModeSaved);
+  simSetIntegerParameter(sim_intparam_error_report_mode,sim_api_errormessage_ignore);
+
+  void* retVal=NULL;
+
+
+
+  if (message==sim_message_eventcallback_simulationended)
+  { // simulation ended. Destroy all BubbleRob instances:
+
+  }
+}

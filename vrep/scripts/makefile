@@ -1,4 +1,4 @@
-CFLAGS = -I./include -Wall -fPIC -static -std=c++11
+CFLAGS = -I ~/Software/vrep/programming/include -Wall -fPIC -static -std=c++11
 
 OS = $(shell uname -s)
 ifeq ($(OS), Linux)
@@ -9,12 +9,16 @@ else
 	EXT = dylib
 endif
 
-all: 
+VREP_PATH := ~/Software/vrep
+VREP_INCLUDE	:= ${VREP_PATH}/programming/include
+VREP_SRC	:= ${VREP_PATH}/programming/common
+
+all:
 	@rm -f lib/*.$(EXT)
-	@rm -f *.o 
+	@rm -f *.o
 	g++ $(CFLAGS) -c finkenCoreExt.cpp -o finkenCoreExt.o
-	g++ $(CFLAGS) -c ./common/scriptFunctionData.cpp -o scriptFunctionData.o
-	g++ $(CFLAGS) -c ./common/scriptFunctionDataItem.cpp -o scriptFunctionDataItem.o
-	g++ $(CFLAGS) -c ./common/v_repLib.cpp -o v_repLib.o
+	g++ $(CFLAGS) -c ${VREP_SRC}/scriptFunctionData.cpp -o scriptFunctionData.o
+	g++ $(CFLAGS) -c ${VREP_SRC}/scriptFunctionDataItem.cpp -o scriptFunctionDataItem.o
+	g++ $(CFLAGS) -c ${VREP_SRC}/v_repLib.cpp -o v_repLib.o
 	@mkdir -p lib
-	g++ scriptFunctionData.o scriptFunctionDataItem.o finkenCoreExt.o v_repLib.o -o lib/libv_repExtFinkenCore.$(EXT) -lpthread -ldl -shared 
+	g++ scriptFunctionData.o scriptFunctionDataItem.o finkenCoreExt.o v_repLib.o -o lib/libv_repExtFinkenCore.$(EXT) -lpthread -ldl -shared
