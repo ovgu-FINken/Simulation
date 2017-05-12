@@ -380,15 +380,18 @@ end
 --sense() reads all sensors of the finken, and updates the signals
 --@return {float dist_front, float dist_left, float dist_back, float dist_right}
 */
- float* sense() {
-   float detect_vector[4];
-   int detect_handle;
-   float detect_surface[3];
-   int status =0;
+int getSensorData(int handle, std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
+    return simHandleProximitySensor(handle, &detectPoint[0], &detectHandle, &detectSurface[0]);
+}
 
+ float* sense() {
+   std::vector<float> detect_vector;
+   int detect_handle;
+   std::vector<float> detect_surface;
+   int status =0;
    for (int i = 0; i<FINKEN_SENSOR_COUNT; i++) {
      //check sensor status
-     status = simHandleProximitySensor(finken.sensorHandles[i], detect_vector, &detect_handle, detect_surface);
+     status = getSensorData(finken.sensorHandles[i], detect_vector, detect_handle, detect_surface);
      if  (status <0){
        simAddStatusbarMessage("Error handling Proximity Sensors");
      }

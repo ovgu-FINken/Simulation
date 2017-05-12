@@ -1,4 +1,4 @@
-CFLAGS = -I ~/software/vrep/programming/include -Wall -fPIC -static -std=c++11
+CFLAGS = -I ~/Software/vrep/programming/include -Wall -fPIC -static -std=c++11
 
 OS = $(shell uname -s)
 ifeq ($(OS), Linux)
@@ -9,7 +9,7 @@ else
 	EXT = dylib
 endif
 
-VREP_PATH := ~/software/vrep
+VREP_PATH := ~/Software/vrep
 VREP_INCLUDE	:= ${VREP_PATH}/programming/include
 VREP_SRC	:= ${VREP_PATH}/programming/common
 
