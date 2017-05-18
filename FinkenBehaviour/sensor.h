@@ -2,14 +2,15 @@
 #define SENSOR_H
 #include <vector>
 
-class sensor
+class Sensor
 {
-private:
+protected:
     int handle;
 public:
-    sensor(int sensorHandle);
-    virtual void update(float* f, int* i, float* ff)=0;
+    Sensor(int sensorHandle);
+    virtual void update(std::vector<float> &f, int &i, std::vector<float> &ff)=0;
     virtual void get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface)=0;
+    virtual void get(std::vector<float> &vfloat);
     virtual int getHandle();
 };
 

@@ -5,13 +5,12 @@
 
 
 
-class positionSensor: public sensor{
-protected:
-    int handle;
+class PositionSensor: public Sensor{
+
 public:
-    positionSensor(int sensorHandle);
+    PositionSensor(int sensorHandle);
     void get(std::vector<float> &detectPosition);
-    void update(float* f, int* i, float* ff);
+    void update(std::vector<float> &f, int &i, std::vector<float> &ff);
     void get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface);
 };
 

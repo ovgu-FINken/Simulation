@@ -1,6 +1,10 @@
 #include "sensor.h"
 #include <iostream>
 
-sensor::sensor(int sensorHandle) : handle(sensorHandle){}
+Sensor::Sensor(int sensorHandle) : handle(sensorHandle){}
 
-int sensor::getHandle(){return handle;}
+int Sensor::getHandle(){return handle;}
+
+void Sensor::get(std::vector<float> &vfloat) {
+
+}

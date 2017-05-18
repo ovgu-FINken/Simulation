@@ -1,18 +1,23 @@
 #include "positionsensor.h"
-#include "simtestdummy.h"
+#include "v_repLib.h"
 #include <iostream>
 #include <vector>
 
-positionSensor::positionSensor(int sensorHandle) : sensor::sensor(sensorHandle){
+
+PositionSensor::PositionSensor(int sensorHandle) : Sensor::Sensor(sensorHandle){
     std::cout << "creating position sensor with handle " << sensorHandle << '\n';
 }
 
 
-void positionSensor::get(std::vector<float> &detectPosition){
-    simGetObjectPosition(this->getHandle(), -1, &detectPosition[0]);
+void PositionSensor::get(std::vector<float> &detectPosition){
+    std::vector<float> dummyVector;
+    int dummyInt;
+    PositionSensor::get(detectPosition, dummyInt, dummyVector);
 }
 
 
-void positionSensor::update(float* f, int* i, float* ff){}
+void PositionSensor::update(std::vector<float> &f, int &i, std::vector<float> &ff){}
 
-void positionSensor::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){}
+void PositionSensor::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
+    simGetObjectPosition(this->getHandle(), -1, &detectPoint[0]);
+}
