@@ -4,18 +4,22 @@
 #include <memory>
 #include "sonar.h"
 #include "heightsensor.h"
+#include <rotor.h>
 class Finken
 {
 private:
      std::vector<std::unique_ptr<Sensor>> sensors;
+     std::vector<std::unique_ptr<Rotor>> rotors;
 public:
-    Finken();
+    Finken(int fHandle);
     int handle;
     void addSensor(std::unique_ptr<Sensor> &sensor);
-    std::vector<std::unique_ptr<Sensor> > &getSensors();
+    void addRotor(std::unique_ptr<Rotor> &rotor);
+    std::vector<std::unique_ptr<Sensor>> &getSensors();
+    std::vector<std::unique_ptr<Rotor>> &getRotors();
     Finken(const Finken&) = delete;
     Finken& operator=(const Finken&) = delete;
 };
 
-void buildFinken(Finken &finken);
+std::unique_ptr<Finken> buildFinken();
 #endif // FINKEN_H

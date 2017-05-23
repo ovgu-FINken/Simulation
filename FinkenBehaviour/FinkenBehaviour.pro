@@ -7,8 +7,8 @@ LIBS += \
     -ldl\
     -lboost_system\
     -lboost_filesystem
-INCLUDEPATH += "/home/dom/Software/vrep/programming/include/"
-INCLUDEPATH += "/home/dom/Software/vrep/programming/common/"
+INCLUDEPATH += "/home/dom/Software/vrep/programming/include"
+INCLUDEPATH += "/home/dom/Software/vrep/programming/common"
 SOURCES += \
     sensor.cpp \
     simtestdummy.cpp \
@@ -17,11 +17,12 @@ SOURCES += \
     heightsensor.cpp \
     finken.cpp \
     sonar.cpp \
-    v_repLib.cpp \
     vrepplugin.cpp \
     log.cpp \
     finkenplugin.cpp \
-    skeleton.cpp
+    skeleton.cpp \
+    rotor.cpp \
+    v_repLib.cpp
 
 HEADERS += \
     sensor.h \
@@ -32,4 +33,6 @@ HEADERS += \
     finken.h \
     sonar.h \
     vrepplugin.h \
-    log.h
+    log.h \
+    rotor.h \
+    v_repLib.h

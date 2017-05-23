@@ -6,9 +6,10 @@
 #include <iostream>
 #include <positionsensor.h>
 
+static std::vector<std::unique_ptr<Finken>> allFinken;
 class FinkenPlugin: public VREPPlugin {
   public:
-    Finken finken;
+
     FinkenPlugin() {}
     FinkenPlugin& operator=(const FinkenPlugin&) = delete;
     FinkenPlugin(const FinkenPlugin&) = delete;
@@ -32,7 +33,8 @@ class FinkenPlugin: public VREPPlugin {
     {
 
         simAddStatusbarMessage("finken in creation");
-        buildFinken(finken);
+        allFinken.push_back(std::move(buildFinken()));
+
         simAddStatusbarMessage("finken finished");
 
 
@@ -41,30 +43,30 @@ class FinkenPlugin: public VREPPlugin {
     }
 
     void* action(int* auxiliaryData,void* customData,int* replyData)
-    {
+    {   //simple test code, ignore for now
         std::vector<float> f = {1,2,3,4};
         std::vector<float> ff = {1,2,3};
+        std::vector<float> vforce = {0,0,1.5};
+        std::vector<float> vtorque = {0,0,0};
         int i =0;
-        PositionSensor ps = PositionSensor(finken.handle);
+        PositionSensor ps = PositionSensor(allFinken.at(0)->handle);
         ps.get(f);
         std::cout << f.at(0) << "   " << f.at(1) << f.at(2) << '\n';
 
-        finken.getSensors().at(0)->get(f, i, ff);
-        finken.getSensors().at(1)->get(f, i, ff);
-        finken.getSensors().at(2)->get(f, i, ff);
-        finken.getSensors().at(3)->get(f, i, ff);
+        allFinken.at(0)->getSensors().at(0)->get(f, i, ff);
+        allFinken.at(0)->getSensors().at(1)->get(f, i, ff);
+        allFinken.at(0)->getSensors().at(2)->get(f, i, ff);
+        allFinken.at(0)->getSensors().at(3)->get(f, i, ff);
 
         std::cout << f.at(0) << "   " << f.at(1) << f.at(2) << f.at(3) << '\n';
         std::cout << i << '\n';
         std::cout << simGetObjectName(i) <<'\n';
-        /*
-        std::cout << ff.at(0) << "   " << ff.at(1) << '\n';
-        std::cout << i <<'\n';
-        finken.getSensors().at(1)->get(f, i, ff);
-        std::cout << f.at(0) << "   " << f.at(1) << '\n';
-        std::cout << ff.at(0) << "   " << ff.at(1) << '\n';
-        std::cout << i <<'\n';
-        */
+        std::cout << '\n';
+
+        for(int i=0; i<4; i++){
+            allFinken.at(0)->getRotors().at(i)->set(vforce, vtorque);
+        }
+
         return NULL;
     }
 

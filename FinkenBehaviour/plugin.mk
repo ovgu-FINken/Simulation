@@ -9,7 +9,7 @@ VREP_INCLUDE  := ${VREP_PATH}/programming/include
 VREP_SRC      := ${VREP_PATH}/programming/common
 
 VREP_SOURCES  := v_repLib.cpp
-PLUGIN_SOURCES:= skeleton.cpp vrepplugin.cpp log.cpp attitudesensor.cpp finken.cpp heightsensor.cpp log.cpp positionsensor.cpp sensor.cpp skeleton.cpp sonar.cpp 
+PLUGIN_SOURCES:= skeleton.cpp vrepplugin.cpp log.cpp attitudesensor.cpp finken.cpp heightsensor.cpp log.cpp positionsensor.cpp sensor.cpp skeleton.cpp sonar.cpp rotor.cpp
 
 VREP_OBJS     := $(addsuffix .o, $(addprefix ${PLUGIN_BUILD}/, $(basename ${VREP_SOURCES})))
 PLUGIN_OBJS   := $(addsuffix .o, $(addprefix ${PLUGIN_BUILD}/, $(basename ${PLUGIN_SOURCES})))
