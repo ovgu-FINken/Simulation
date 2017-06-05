@@ -22,7 +22,9 @@ SOURCES += \
     finkenplugin.cpp \
     skeleton.cpp \
     rotor.cpp \
-    v_repLib.cpp
+    v_repLib.cpp \
+    finkencontrol.cpp \
+    finkenPID.cpp
 
 HEADERS += \
     sensor.h \
@@ -35,4 +37,6 @@ HEADERS += \
     vrepplugin.h \
     log.h \
     rotor.h \
-    v_repLib.h
+    v_repLib.h \
+    finkencontrol.h \
+    finkenPID.h

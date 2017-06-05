@@ -12,9 +12,9 @@ void Sonar::update(std::vector<float> &f, int &i, std::vector<float> &ff){
     std::cout << "Handling Sonar " << simGetObjectName(this->getHandle()) << '\n';
 }
 
-void Sonar::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
-    simReadProximitySensor(this->getHandle(), &detectPoint[0], &detectHandle, &detectSurface[0]);
+int Sonar::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
     std::cout << "retrieving Sonar" << '\n';
+    return simReadProximitySensor(this->getHandle(), &detectPoint[0], &detectHandle, &detectSurface[0]);
 }
 
 

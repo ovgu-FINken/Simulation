@@ -9,8 +9,8 @@ protected:
 public:
     Sensor(int sensorHandle);
     virtual void update(std::vector<float> &f, int &i, std::vector<float> &ff)=0;
-    virtual void get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface)=0;
-    virtual void get(std::vector<float> &vfloat);
+    virtual int get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface)=0;
+    virtual int get(std::vector<float> &vfloat);
     virtual int getHandle();
 };
 

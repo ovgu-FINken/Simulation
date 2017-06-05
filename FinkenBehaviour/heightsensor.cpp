@@ -11,8 +11,8 @@ void HeightSensor::update(std::vector<float> &f, int &i, std::vector<float> &ff)
     simHandleProximitySensor(this->getHandle(), 0, 0, 0);
 }
 
-void HeightSensor::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
-    simReadProximitySensor(this->getHandle(), &detectPoint[0], &detectHandle, &detectSurface[0]);
+int HeightSensor::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
+    return simReadProximitySensor(this->getHandle(), &detectPoint[0], &detectHandle, &detectSurface[0]);
 }
 
 

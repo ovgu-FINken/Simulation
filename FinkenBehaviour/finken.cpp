@@ -15,8 +15,8 @@ void Finken::addSensor(std::unique_ptr<Sensor> &sensor){
 }
 
 void Finken::addRotor(std::unique_ptr<Rotor> &rotor){
+    std::cout << "Adding rotor with name" << simGetObjectName(rotor->handle) << '\n';
     this->rotors.push_back((std::move(rotor)));
-    std::cout << "Adding rotor to finken" << '\n';
 }
 
 
@@ -34,6 +34,11 @@ std::unique_ptr<Finken> buildFinken(){
     int fHandle = simGetObjectHandle(kFinkenName.c_str());
     std::unique_ptr<Finken> finken (new Finken(fHandle));
     int foundSensorCount = 0;
+
+
+    //create positionsensor and add to the finken:
+    std::unique_ptr<Sensor> posSensor(new PositionSensor (fHandle));
+    finken->addSensor(posSensor);
 
     //Grab all Proximity sensors and add them to the finken:
     int* proxSensorHandles = simGetObjectsInTree(fHandle, sim_object_proximitysensor_type, 1, &foundSensorCount);
@@ -59,6 +64,25 @@ std::unique_ptr<Finken> buildFinken(){
         std::unique_ptr<Rotor> vr(new Rotor(rHandle));
         finken->addRotor(vr);
     }
+
+    //initialize the PIDs
+    finken->pitchController.initPID(0.015, 0, 001);
+    finken->rollController.initPID(0.015, 0, 001);
+    finken->yawController.initPID(0.015, 0, 001);
+    finken->targetXcontroller.initPID(2, 0, 4);
+    finken->targetYcontroller.initPID(2, 0, 4);
+    finken->targetZcontroller.initPID(10, 0, 8);
+
+    //initialize some signals
+    simSetFloatSignal("pitch", 0);
+    simSetFloatSignal("roll", 0);
+    simSetFloatSignal("height", 1);
+    simSetFloatSignal("yaw", 0);
+    simSetFloatSignal("throttle", 0.73);
+    simSetFloatSignal("TARGETX", 0);
+    simSetFloatSignal("TARGETY", 0);
+    simSetFloatSignal("TARGETZ", 1);
+
 
 
 

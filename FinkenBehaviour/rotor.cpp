@@ -4,7 +4,7 @@
 Rotor::Rotor(int rHandle) : handle(rHandle){}
 
 
-void Rotor::set(std::vector<float> &force, std::vector<float> &torque) {
+void Rotor::set(const std::vector<float> &force, const std::vector<float> &torque) {
     simAddForceAndTorque(this->handle, &force[0], &torque[0]);
 
 }

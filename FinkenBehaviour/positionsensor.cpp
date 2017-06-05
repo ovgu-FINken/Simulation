@@ -9,15 +9,15 @@ PositionSensor::PositionSensor(int sensorHandle) : Sensor::Sensor(sensorHandle){
 }
 
 
-void PositionSensor::get(std::vector<float> &detectPosition){
+int PositionSensor::get(std::vector<float> &detectPosition){
     std::vector<float> dummyVector;
     int dummyInt;
-    PositionSensor::get(detectPosition, dummyInt, dummyVector);
+    return PositionSensor::get(detectPosition, dummyInt, dummyVector);
 }
 
 
 void PositionSensor::update(std::vector<float> &f, int &i, std::vector<float> &ff){}
 
-void PositionSensor::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
-    simGetObjectPosition(this->getHandle(), -1, &detectPoint[0]);
+int PositionSensor::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
+    return simGetObjectPosition(this->getHandle(), -1, &detectPoint[0]);
 }

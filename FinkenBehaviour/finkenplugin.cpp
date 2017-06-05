@@ -5,7 +5,9 @@
 #include <unistd.h>
 #include <iostream>
 #include <positionsensor.h>
+#include "finkencontrol.h"
 
+extern float execution_step_size;
 static std::vector<std::unique_ptr<Finken>> allFinken;
 class FinkenPlugin: public VREPPlugin {
   public:
@@ -38,16 +40,15 @@ class FinkenPlugin: public VREPPlugin {
         simAddStatusbarMessage("finken finished");
 
 
-
         return NULL;
     }
 
     void* action(int* auxiliaryData,void* customData,int* replyData)
-    {   //simple test code, ignore for now
+    {   /*simple test code, ignore for now
         std::vector<float> f = {1,2,3,4};
         std::vector<float> ff = {1,2,3};
         std::vector<float> vforce = {0,0,1.5};
-        std::vector<float> vtorque = {0,0,0};
+
         int i =0;
         PositionSensor ps = PositionSensor(allFinken.at(0)->handle);
         ps.get(f);
@@ -66,7 +67,16 @@ class FinkenPlugin: public VREPPlugin {
         for(int i=0; i<4; i++){
             allFinken.at(0)->getRotors().at(i)->set(vforce, vtorque);
         }
+        */
+        execution_step_size = simGetSimulationTimeStep();
+        std::vector<float> vtorque = {0,0,0};
+        std::vector<float> vforce = {0,0,0};
+        float* buffer = steps(allFinken.at(0).get());
+        for (int i = 0; i<4; i++) {
+            vforce[2] = buffer[i];
+            allFinken.at(0)->getRotors().at(i)->set(vforce, vtorque);
 
+        }
         return NULL;
     }
 

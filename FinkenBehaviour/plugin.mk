@@ -7,9 +7,10 @@ PLUGIN_SRC     := $(abspath $(dir $(lastword ${MAKEFILE_LIST}))/../src)
 PLUGIN_BUILD   := $(abspath $(dir $(lastword ${MAKEFILE_LIST}))/../build)
 VREP_INCLUDE  := ${VREP_PATH}/programming/include
 VREP_SRC      := ${VREP_PATH}/programming/common
+EIGEN_INCLUDE := ${VREP_PATH}/programming/include/Eigen
 
 VREP_SOURCES  := v_repLib.cpp
-PLUGIN_SOURCES:= skeleton.cpp vrepplugin.cpp log.cpp attitudesensor.cpp finken.cpp heightsensor.cpp log.cpp positionsensor.cpp sensor.cpp skeleton.cpp sonar.cpp rotor.cpp
+PLUGIN_SOURCES:= skeleton.cpp vrepplugin.cpp log.cpp attitudesensor.cpp finken.cpp heightsensor.cpp log.cpp positionsensor.cpp sensor.cpp skeleton.cpp sonar.cpp rotor.cpp finkencontrol.cpp finkenPID.cpp
 
 VREP_OBJS     := $(addsuffix .o, $(addprefix ${PLUGIN_BUILD}/, $(basename ${VREP_SOURCES})))
 PLUGIN_OBJS   := $(addsuffix .o, $(addprefix ${PLUGIN_BUILD}/, $(basename ${PLUGIN_SOURCES})))
@@ -20,7 +21,7 @@ LDFLAGS       += -shared
 LIBS          := $(addprefix -l, ${LIBS} dl boost_filesystem)
 LDPATHS       := $(addprefix -L, ${LDPATHS})
 SOURCES       := $(addprefix ${SRC}/,${SOURCES})
-INCLUDES      := $(addprefix -I, ${INCLUDES} ${PLUGIN_INCLUDE} ${VREP_INCLUDE})
+INCLUDES      := $(addprefix -I, ${INCLUDES} ${PLUGIN_INCLUDE} ${VREP_INCLUDE} ${EIGEN_INCLUDE})
 SYMBOLS       := $(addprefix -D, ${SYMBOLS})
 TARGET        := ${LIB}/libv_repExt${TARGET}.so
 DEPS          := $(wildcard ${BUILD}/*.o.d) $(wildcard ${PLUGIN_BUILD}/*.o.d)

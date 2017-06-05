@@ -5,6 +5,6 @@ Sensor::Sensor(int sensorHandle) : handle(sensorHandle){}
 
 int Sensor::getHandle(){return handle;}
 
-void Sensor::get(std::vector<float> &vfloat) {
+int Sensor::get(std::vector<float> &vfloat) {
 
 }
