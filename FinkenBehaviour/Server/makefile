@@ -1,8 +1,9 @@
 CC=gcc
 CXX=g++
 RM=rm -f
-CXXFLAGS += -I/${HOME}/Software/boost_1_64_0/boost
-LDFLAGS += -lboost_system -lboost_filesystem -lpthread
+
+CXXFLAGS += -I/${HOME}/Software/boost_1_64_0/boost -std=c++11
+LDFLAGS += -lboost_system -lboost_filesystem -lboost_serialization -lpthread
 
 SOURCES_SERVER=server.cpp
 SOURCES_CLIENT=client.cpp
@@ -14,7 +15,7 @@ OBJECTS_CLIENT=$(subst .cpp,.o,$(SOURCES_CLIENT))
 	$(CXX) -c $@ $< $(CXXFLAGS)
 
 server: $(OBJECTS_SERVER)
-	$(CXX) ${CXXFLAGS} -L/home/dom/Software/boost_1_64_0/stage/lib -lboost_system -lpthread -o server
+	$(CXX) ${CXXFLAGS} $^ -L/home/dom/Software/boost_1_64_0/stage/lib ${LDFLAGS} -o server
 
 client: $(OBJECTS_CLIENT)
 	$(CXX) -o client $(OBJECTS_CLIENT)

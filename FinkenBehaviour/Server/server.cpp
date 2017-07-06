@@ -11,48 +11,49 @@
 #include <cstdlib>
 #include <iostream>
 #include <thread>
+#include <memory>
 #include <utility>
 #include <boost/asio.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 using boost::asio::ip::tcp;
 
-const int max_length = 1024;
-
-void session(tcp::socket sock){
+void session(std::unique_ptr<tcp::iostream> sPtr){
   try  {
+    std::cout << "client connected" << std::endl;
     for (;;)    {
-      char data[max_length];
+      unsigned int seqNr;
+      {
+        boost::archive::text_iarchive in(*sPtr);
+        in >> seqNr;
+      }
+      std::cout << "Query is: " << seqNr++ << std::endl;
+      
+      boost::archive::text_oarchive out(*sPtr);
+      out << seqNr+100;
 
-      boost::system::error_code error;
-      size_t length = sock.read_some(boost::asio::buffer(data), error);
-      if (error == boost::asio::error::eof)
-        break; // Connection closed cleanly by peer.
-      else if (error)
-        throw boost::system::system_error(error); // Some other error.
-      if(std::strcmp(data, "grabbing data")==0) {
-        std::strcpy(data, "sending data");
-      }
-      else {
-        std::strcpy(data, "received data");
-      }
-      boost::asio::write(sock, boost::asio::buffer(data, length));
+      std::cout << "Reply is: " << seqNr+100 << std::endl;
+
     }
   }
   catch (std::exception& e) {
     std::cerr << "Exception in thread: " << e.what() << "\n";
+    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
   }
 }
 
 void server(boost::asio::io_service& io_service, unsigned short port){
   tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
   for (;;)  {
-    tcp::socket sock(io_service);
-    a.accept(sock);
-    std::thread(session, std::move(sock)).detach();
+    std::unique_ptr<tcp::iostream> sPtr;
+    sPtr.reset(new tcp::iostream());
+    a.accept(*sPtr->rdbuf());
+    std::thread(session, std::move(sPtr)).detach();
   }
 }
 
-int main(int argc, char* argv[]){
+int main(int argc, char** argv){
   try{
     boost::asio::io_service io_service;
     server(io_service, 50013);
