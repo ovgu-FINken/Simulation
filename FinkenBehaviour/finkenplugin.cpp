@@ -11,7 +11,7 @@ extern float execution_step_size;
 static std::vector<std::unique_ptr<Finken>> allFinken;
 class FinkenPlugin: public VREPPlugin {
   public:
-
+    boost::asio::io_service io_service;
     FinkenPlugin() {}
     FinkenPlugin& operator=(const FinkenPlugin&) = delete;
     FinkenPlugin(const FinkenPlugin&) = delete;
@@ -36,12 +36,12 @@ class FinkenPlugin: public VREPPlugin {
 
         simAddStatusbarMessage("finken in creation");
         allFinken.push_back(std::move(buildFinken()));
-
         simAddStatusbarMessage("finken finished");
 
 
         return NULL;
     }
+
 
     void* action(int* auxiliaryData,void* customData,int* replyData)
     {   /*simple test code, ignore for now

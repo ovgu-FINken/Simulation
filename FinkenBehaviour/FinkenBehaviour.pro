@@ -9,6 +9,7 @@ LIBS += \
     -lboost_filesystem
 INCLUDEPATH += "/home/dom/Software/vrep/programming/include"
 INCLUDEPATH += "/home/dom/Software/vrep/programming/common"
+INCLUDEPATH += "/home/dom/swarmlab/Simulation/FinkenBehaviour/pprz"
 SOURCES += \
     sensor.cpp \
     simtestdummy.cpp \
@@ -22,9 +23,9 @@ SOURCES += \
     finkenplugin.cpp \
     skeleton.cpp \
     rotor.cpp \
-    v_repLib.cpp \
     finkencontrol.cpp \
-    finkenPID.cpp
+    finkenPID.cpp \
+    pprz/ahrs_float_cmpl.c
 
 HEADERS += \
     sensor.h \
@@ -39,4 +40,5 @@ HEADERS += \
     rotor.h \
     v_repLib.h \
     finkencontrol.h \
-    finkenPID.h
+    finkenPID.h \
+    pprz/ahrs_float_cmpl.h
