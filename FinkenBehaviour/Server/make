@@ -1,0 +1,5 @@
+c++ -I/home/dom/Software/boost_1_64_0 client.cpp -o client -L/home/dom/Software/boost_1_64_0/stage/lib -lboost_system -lpthread
+
+
+c++ -I/home/dom/Software/boost_1_64_0 server.cpp -o server -L/home/dom/Software/boost_1_64_0/stage/lib -lboost_system -lpthread
+
