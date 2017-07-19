@@ -21,20 +21,26 @@ using boost::asio::ip::tcp;
 
 void session(std::unique_ptr<tcp::iostream> sPtr){
   try  {
-    std::cout << "client connected" << std::endl;
+    std::cout << "client connected" << std::endl;%
     for (;;)    {
-      unsigned int seqNr;
+      int commands_nb = 0;
       {
         boost::archive::text_iarchive in(*sPtr);
-        in >> seqNr;
-      }
-      std::cout << "Query is: " << seqNr++ << std::endl;
-      
+        in >> commands_nb;       
+        double commands[commands_nb]={};
+        for(int i = 0; i< commands_nb; i++) {
+            in >> commands[i];    
+        }
+        std::cout << " commands received: [";
+        for(int i=0;i<commands_nb;i++){
+            std::cout << commands[i] << ((i==commands_nb-1)?"":", ");
+        }
+        std:: cout << "]" << std::endl;
+
       boost::archive::text_oarchive out(*sPtr);
-      out << seqNr+100;
-
-      std::cout << "Reply is: " << seqNr+100 << std::endl;
-
+      commands_nb++;
+      out << commands_nb;
+      }
     }
   }
   catch (std::exception& e) {
