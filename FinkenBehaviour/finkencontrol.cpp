@@ -39,12 +39,29 @@ const char* fixSignalName(std::string signalName) {
     return signalName.c_str();
 }
 
+void ecef_from_enu(Eigen::Vector3f& ecef_coord, Eigen::Vector3f& enu_coord) {
+    Eigen::Matrix<float, 3, 3> cMatrix;
 
-float* step(Finken* finken) {
+    cMatrix << -sin(lla.lon), -sin(lla.lat)*cos(lla.lon), cos(lla.lat)*cos(lla.lon),
+                cos(lla.lon), -sin(lla.lat)*sin(lla.lon), cos(lla.lat)*sin(lla.lon),
+                -1,             cos(lla.lat),              sin(lla.lat);
+
+    Eigen::Vector3f ecef_base(ecef.x, ecef.y, ecef.z);
+    
+    ecef_coord = cMatrix * enu_coord + ecef_base;
+}
+
+
+
+/*
+the step function now simply returns the coordinates
+of the copter and target (ENU->ECEF)
+*/
+Eigen::Matrix<float, 3, 2> step(Finken* finken) {
+    
     float xtarget = -1;
     float ytarget = -1;
     float ztarget = 1;
-    float throttle = 0.7;
     float eulerAngles[3] = {0};
 
     std::vector<float> finkenPos = {0,0,0};
@@ -73,54 +90,19 @@ float* step(Finken* finken) {
     }
       else{
       errorYaw = errorYaw - 2*M_PI;    }
-
-
-    float errorX = finkenPos.at(0) - xtarget;
-    float errorY = finkenPos.at(1) - ytarget;
-    float errorZ = finkenPos.at(2) - ztarget;
-
-    Eigen::Vector2f coord(errorX, errorY);
-
-    Eigen::Matrix<float, 2, 2> transMatrix;
-    transMatrix(0,0) = cos(errorYaw);
-    transMatrix(0,1) = sin(errorYaw);
-    transMatrix(1,0) = -sin(errorYaw);
-    transMatrix(1,1) = cos(errorYaw);
-
-    coord = transMatrix*coord;
-    errorX = coord(0);
-    errorY = coord(1);
-
-    float pitchCorr = finken->pitchController.step(-errorX, execution_step_size/defaultStepSize);
-    float rollCorr =  finken ->rollController.step(-errorY, execution_step_size/defaultStepSize);
-
-    float heightCorr = finken->yawController.step(-errorZ, execution_step_size/defaultStepSize);
-
-    std::cout << "pitchCorr: " << pitchCorr << '\n';
-    std::cout << "rollCorr: " << rollCorr << '\n';
-    std::cout << "heightCorr: " << heightCorr << '\n';
-
-
-    // simply holds a heigth of 1m
-    throttles[0]=throttle + heightCorr;
-    throttles[1]=throttle + heightCorr;
-    throttles[2]=throttle + heightCorr;
-    throttles[3]=throttle + heightCorr;
-
-    return throttles;
-
-}
-
-void ecef_from_enu(Eigen::Vector3f& ecef_coord, Eigen::Vector3f& enu_coord) {
-    Eigen::Matrix<float, 3, 3> cMatrix;
-
-    cMatrix << -sin(lla.lon), -sin(lla.lat)*cos(lla.lon), cos(lla.lat)*cos(lla.lon),
-                cos(lla.lon), -sin(lla.lat)*sin(lla.lon), cos(lla.lat)*sin(lla.lon),
-                0,             cos(lla.lat),              sin(lla.lat);
-
-    Eigen::Vector3f ecef_base(ecef.x, ecef.y, ecef.z);
     
-    ecef_coord = cMatrix * enu_coord + ecef_base;
-
+    Eigen::Matrix<float, 3, 2> coords;
+    Eigen::Vector3f ecef_copter(0,0,0);
+    Eigen::Vector3f ecef_target(0,0,0);
+    Eigen::Vector3f enu_copter(finkenPos[0], finkenPos[1], finkenPos[2]);
+    Eigen::Vector3f enu_target(xtarget, ytarget, ztarget);
+    ecef_from_enu(ecef_copter, enu_copter);
+    ecef_from_enu(ecef_target, enu_target);
+    coords << ecef_copter[0], ecef_target[0],
+              ecef_copter[1], ecef_target[1],
+              ecef_copter[2], ecef_target[2];
+    return coords;
 }
+
+
 

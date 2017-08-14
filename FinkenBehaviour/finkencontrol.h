@@ -2,9 +2,9 @@
 #define FINKENCONTROL_H
 #include "finken.h"
 #include "v_repLib.h"
+#include "Eigen/Dense"
 
+Eigen::Matrix<float,3,2> step(Finken *finken);
 
-float* step(Finken *finken);
-float* steps(Finken *finken);
 
 #endif // FINKENCONTROL_H

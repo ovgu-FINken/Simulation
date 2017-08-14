@@ -107,7 +107,8 @@ class FinkenPlugin: public VREPPlugin {
 
 
     void* action(int* auxiliaryData,void* customData,int* replyData)
-    {   /*simple test code, ignore for now
+    {   /*
+        simple test code, ignore for now
         std::vector<float> f = {1,2,3,4};
         std::vector<float> ff = {1,2,3};
         std::vector<float> vforce = {0,0,1.5};
@@ -158,7 +159,7 @@ class FinkenPlugin: public VREPPlugin {
 
         std::vector<float> vtorque = {0,0,0};
         std::vector<std::vector<float>> motorForces= {motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight};
-        float* buffer = steps(allFinken.at(0).get());
+        Eigen::Matrix<float,3,2> coords = step(allFinken.at(0).get());
         for (int i = 0; i<4; i++) {
             allFinken.at(0)->getRotors().at(i)->set(motorForces[i], vtorque);
 
