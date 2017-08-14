@@ -6,9 +6,72 @@
 #include <iostream>
 #include <positionsensor.h>
 #include "finkencontrol.h"
+#include <cstring>
+#include <cstdlib>
+#include <iostream>
+#include <thread>
+#include <memory>
+#include <utility>
+#include <boost/asio.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <Eigen/Dense>
+
+using boost::asio::ip::tcp;
 
 extern float execution_step_size;
 static std::vector<std::unique_ptr<Finken>> allFinken;
+
+class Server{
+    void session(std::unique_ptr<tcp::iostream> sPtr){
+        try  {
+        std::cout << "client connected" << std::endl;
+        for (;;)    {
+            int commands_nb = 0;
+            {
+                boost::archive::text_iarchive in(*sPtr);
+                in >> commands_nb;       
+                double commands[commands_nb]={};
+                for(int i = 0; i< commands_nb; i++) {
+                    in >> commands[i];    
+                }
+                std::cout << " commands received: [";
+                for(int i=0;i<commands_nb;i++){
+                    std::cout << commands[i] << ((i==commands_nb-1)?"":", ");
+                }
+                std:: cout << "]" << std::endl;
+
+            boost::archive::text_oarchive out(*sPtr);
+            commands_nb++;
+            out << commands_nb;
+            }
+        }
+    }
+  catch (std::exception& e) {
+    std::cerr << "Exception in thread: " << e.what() << "\n";
+    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
+  }
+}
+public:
+void server(boost::asio::io_service& io_service, unsigned short port){
+  tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
+  for (;;)  {
+    std::unique_ptr<tcp::iostream> sPtr;
+    sPtr.reset(new tcp::iostream());
+    a.accept(*sPtr->rdbuf());
+    //std::thread(Server::session, std::move(sPtr)).detach();
+  }
+}
+};
+
+
+Server server;
+boost::asio::io_service io_service;
+
+
+
+
+
 class FinkenPlugin: public VREPPlugin {
   public:
     boost::asio::io_service io_service;
@@ -37,7 +100,7 @@ class FinkenPlugin: public VREPPlugin {
         simAddStatusbarMessage("finken in creation");
         allFinken.push_back(std::move(buildFinken()));
         simAddStatusbarMessage("finken finished");
-
+        //server.server(io_service,50013);
 
         return NULL;
     }
@@ -68,13 +131,36 @@ class FinkenPlugin: public VREPPlugin {
             allFinken.at(0)->getRotors().at(i)->set(vforce, vtorque);
         }
         */
+        
+        //do: send position to vrep, get commands
+        
+        Eigen::Vector4f motorCommands(0.0,0.0,0.0,0.0);
+
+        Eigen::Matrix<float, 4, 4> mixingMatrix;
+        /*
+        taken from fink3.xml, paparazzi generated xml says something different 
+        check with https://wiki.paparazziuav.org/wiki/Rotorcraft_Configuration#Motor_Mixing
+        */
+        mixingMatrix << -256, -256,  256, 256,
+                         256, -256, -256, 256,
+                        -256,  256, -256, 256,
+                         256,  256,  256, 256;
+        
+        motorCommands = mixingMatrix * motorCommands;
+
         execution_step_size = simGetSimulationTimeStep();
+        
+        /* this will probably need some scaling */
+        std::vector<float> motorFrontLeft  = {0, 0, motorCommands[0]};
+        std::vector<float> motorFrontRight = {0, 0, motorCommands[1]};
+        std::vector<float> motorBackLeft   = {0, 0, motorCommands[2]};
+        std::vector<float> motorBackRight  = {0, 0, motorCommands[3]};
+
         std::vector<float> vtorque = {0,0,0};
-        std::vector<float> vforce = {0,0,0};
+        std::vector<std::vector<float>> motorForces= {motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight};
         float* buffer = steps(allFinken.at(0).get());
         for (int i = 0; i<4; i++) {
-            vforce[2] = buffer[i];
-            allFinken.at(0)->getRotors().at(i)->set(vforce, vtorque);
+            allFinken.at(0)->getRotors().at(i)->set(motorForces[i], vtorque);
 
         }
         return NULL;
