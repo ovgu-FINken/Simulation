@@ -59,7 +59,7 @@ void server(boost::asio::io_service& io_service, unsigned short port){
     std::unique_ptr<tcp::iostream> sPtr;
     sPtr.reset(new tcp::iostream());
     a.accept(*sPtr->rdbuf());
-    //std::thread(Server::session, std::move(sPtr)).detach();
+    std::thread(std::bind(&Server::session, this, std::placeholders::_1), std::move(sPtr)).detach();
   }
 }
 };
@@ -100,7 +100,7 @@ class FinkenPlugin: public VREPPlugin {
         simAddStatusbarMessage("finken in creation");
         allFinken.push_back(std::move(buildFinken()));
         simAddStatusbarMessage("finken finished");
-        //server.server(io_service,50013);
+        server.server(io_service,50013);
 
         return NULL;
     }
