@@ -24,57 +24,59 @@ using boost::asio::ip::tcp;
 extern float execution_step_size;
 static std::vector<std::unique_ptr<Finken>> allFinken;
 std::condition_variable cv;
-std::mutex cv_m, syncMutex;
+std::mutex cv_m;
 
-struct Sync {
+struct MultiSync {
   private:
+    std::mutex mMutex;
     Eigen::Matrix<bool, Eigen::Dynamic, 1> mData;
 
   public:
     size_t extend() { 
-      std::unique_lock<std::mutex> lk(syncMutex); 
+      std::unique_lock<std::mutex> lk(mMutex); 
       size_t i = mData.rows(); 
       mData.resize(i+1, 1); 
       mData(i) = false; 
       return i;
     }
     void set(size_t i) { 
-      std::unique_lock<std::mutex> lk(syncMutex);
+      std::unique_lock<std::mutex> lk(mMutex);
       mData(i)=true;
     }
     operator bool() const { 
-      std::unique_lock<std::mutex> lk(syncMutex);
+      std::unique_lock<std::mutex> lk(mMutex);
       return mData.prod();
     }
     void clear() {
-      std::unique_lock<std::mutex> lk(syncMutex);
+      std::unique_lock<std::mutex> lk(mMutex);
       mData.resize(0,1);
     }
-  friend std::ostream& operator<<(std::ostream& o, const Sync s);
-};
-Sync read; 
-Sync sent;
+  friend std::ostream& operator<<(std::ostream& o, const MultiSync s);
+} readSync;
 
+std::atomic<bool> sentSync;
 
-
-class Server{
-    void session(std::unique_ptr<tcp::iostream> sPtr){
+class FinkenTemp{
+    void run(std::unique_ptr<tcp::iostream> sPtr){
          std::unique_lock<std::mutex> server_lock(cv_m);
         try  {
         std::cout << "client connected" << std::endl;
+        //todo get finken id
+        //check for existence
+        //reply to paparazzi
+        size_t id = readSync.extend();
         for (;;)    {
             int commands_nb = 0;
             {
                 boost::archive::text_iarchive in(*sPtr);
                 in >> commands_nb;
-                size_t id = read.extend();
                 double commands[commands_nb]={};
                 for(int i = 0; i< commands_nb; i++) {
                     in >> commands[i];    
                 }
                 read.set(id);
                 cv.notify_all();
-                if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return sent;})) 
+                if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return sentSync;})) 
                     std::cerr << "Server Sending" << '\n';
                 else
                     std::cerr << "Server timed out. id == " << id << '\n';
@@ -107,7 +109,8 @@ void server(boost::asio::io_service& io_service, unsigned short port){
     std::unique_ptr<tcp::iostream> sPtr;
     sPtr.reset(new tcp::iostream());
     a.accept(*sPtr->rdbuf());
-    std::thread(std::bind(&Server::session, this, std::placeholders::_1), std::move(sPtr)).detach();
+    allFinken.emplace_back();
+    std::thread(std::bind(&FinkenTemp::run, &allFinken.back(), std::placeholders::_1), std::move(sPtr)).detach();
   }
 }
 };
