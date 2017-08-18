@@ -89,8 +89,7 @@ Eigen::Matrix<float, 3, 2> step(Finken* finken) {
       errorYaw = 2*M_PI+errorYaw;
     }
       else{
-      errorYaw = errorYaw - 2*M_PI;    }
-    
+      errorYaw = errorYaw - 2*M_PI;    } 
     Eigen::Matrix<float, 3, 2> coords;
     Eigen::Vector3f ecef_copter(0,0,0);
     Eigen::Vector3f ecef_target(0,0,0);

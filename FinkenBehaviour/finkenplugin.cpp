@@ -16,30 +16,78 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <Eigen/Dense>
+#include <condition_variable>
+#include <chrono>
 
 using boost::asio::ip::tcp;
 
 extern float execution_step_size;
 static std::vector<std::unique_ptr<Finken>> allFinken;
+std::condition_variable cv;
+std::mutex cv_m, syncMutex;
+
+struct Sync {
+  private:
+    Eigen::Matrix<bool, Eigen::Dynamic, 1> mData;
+
+  public:
+    size_t extend() { 
+      std::unique_lock<std::mutex> lk(syncMutex); 
+      size_t i = mData.rows(); 
+      mData.resize(i+1, 1); 
+      mData(i) = false; 
+      return i;
+    }
+    void set(size_t i) { 
+      std::unique_lock<std::mutex> lk(syncMutex);
+      mData(i)=true;
+    }
+    operator bool() const { 
+      std::unique_lock<std::mutex> lk(syncMutex);
+      return mData.prod();
+    }
+    void clear() {
+      std::unique_lock<std::mutex> lk(syncMutex);
+      mData.resize(0,1);
+    }
+  friend std::ostream& operator<<(std::ostream& o, const Sync s);
+};
+Sync read; 
+Sync sent;
+
+
 
 class Server{
     void session(std::unique_ptr<tcp::iostream> sPtr){
+         std::unique_lock<std::mutex> server_lock(cv_m);
         try  {
         std::cout << "client connected" << std::endl;
         for (;;)    {
             int commands_nb = 0;
             {
                 boost::archive::text_iarchive in(*sPtr);
-                in >> commands_nb;       
+                in >> commands_nb;
+                size_t id = read.extend();
                 double commands[commands_nb]={};
                 for(int i = 0; i< commands_nb; i++) {
                     in >> commands[i];    
                 }
+                read.set(id);
+                cv.notify_all();
+                if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return sent;})) 
+                    std::cerr << "Server Sending" << '\n';
+                else
+                    std::cerr << "Server timed out. id == " << id << '\n';
+
                 std::cout << " commands received: [";
                 for(int i=0;i<commands_nb;i++){
                     std::cout << commands[i] << ((i==commands_nb-1)?"":", ");
                 }
                 std:: cout << "]" << std::endl;
+                sent(i) = false;
+            //std::unique_lock<std::mutex> lk(cv_m);
+            //cv.wait_for(lk, std::chrono::milliseconds(5000));
+            //std::cerr << "Server finished waiting, replying" << '\n';
 
             boost::archive::text_oarchive out(*sPtr);
             commands_nb++;
@@ -74,6 +122,7 @@ boost::asio::io_service io_service;
 
 class FinkenPlugin: public VREPPlugin {
   public:
+    std::unique_lock<std::mutex> vrep_lock(cv_m);    
     boost::asio::io_service io_service;
     FinkenPlugin() {}
     FinkenPlugin& operator=(const FinkenPlugin&) = delete;
@@ -100,8 +149,10 @@ class FinkenPlugin: public VREPPlugin {
         simAddStatusbarMessage("finken in creation");
         allFinken.push_back(std::move(buildFinken()));
         simAddStatusbarMessage("finken finished");
-        server.server(io_service,50013);
-
+        std::thread t1(std::bind(&Server::server, server, std::placeholders::_1, std::placeholders::_2),std::ref(io_service), 50013);
+        t1.detach();
+        //server.server(io_service,50013);
+        std::cout << "we never get this";
         return NULL;
     }
 
@@ -133,6 +184,19 @@ class FinkenPlugin: public VREPPlugin {
         }
         */
         
+        sent.resize(allFinken.size(), 1);
+        sent(0) = true;
+        read(0) = false;
+        cv.notify_all();
+        simPauseSimulation;
+        if(cv.wait_for(vrep_lock, std::chrono::milliseconds(10000), [](){return read;})) {
+            std::cerr << "Server Receiving" <<'\n';
+            simStartSimulation;
+        }
+        else {
+            std::cerr << "Server timed out. (Receiveing)"'\n';
+            simStopSimulation;
+        }
         //do: send position to vrep, get commands
         
         Eigen::Vector4f motorCommands(0.0,0.0,0.0,0.0);

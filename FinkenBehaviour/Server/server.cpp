@@ -16,12 +16,17 @@
 #include <boost/asio.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <condition_variable>
+#include <chrono>
 
 using boost::asio::ip::tcp;
+std::condition_variable cv;
+std::mutex cv_m, syncMutex;
+
 
 void session(std::unique_ptr<tcp::iostream> sPtr){
   try  {
-    std::cout << "client connected" << std::endl;%
+    std::cout << "client connected" << std::endl;
     for (;;)    {
       int commands_nb = 0;
       {
@@ -31,16 +36,20 @@ void session(std::unique_ptr<tcp::iostream> sPtr){
         for(int i = 0; i< commands_nb; i++) {
             in >> commands[i];    
         }
+
         std::cout << " commands received: [";
         for(int i=0;i<commands_nb;i++){
             std::cout << commands[i] << ((i==commands_nb-1)?"":", ");
         }
         std:: cout << "]" << std::endl;
-
-      boost::archive::text_oarchive out(*sPtr);
-      commands_nb++;
-      out << commands_nb;
-      }
+      
+        std::unique_lock<std::mutex> lk(cv_m);
+        cv.wait_for(lk, std::chrono::milliseconds(5000));
+        std::cerr << "Server finished waiting, replying" << '\n';
+        boost::archive::text_oarchive out(*sPtr);
+        commands_nb++;
+        out << commands_nb;
+        }
     }
   }
   catch (std::exception& e) {
@@ -48,6 +57,7 @@ void session(std::unique_ptr<tcp::iostream> sPtr){
     std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
   }
 }
+
 
 void server(boost::asio::io_service& io_service, unsigned short port){
   tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
