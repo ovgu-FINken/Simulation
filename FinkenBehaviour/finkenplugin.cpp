@@ -23,85 +23,10 @@ using boost::asio::ip::tcp;
 
 extern float execution_step_size;
 static std::vector<std::unique_ptr<Finken>> allFinken;
-std::condition_variable cv;
-std::mutex cv_m;
 
-struct MultiSync {
-  private:
-    std::mutex mMutex;
-    Eigen::Matrix<bool, Eigen::Dynamic, 1> mData;
 
-  public:
-    size_t extend() { 
-      std::unique_lock<std::mutex> lk(mMutex); 
-      size_t i = mData.rows(); 
-      mData.resize(i+1, 1); 
-      mData(i) = false; 
-      return i;
-    }
-    void set(size_t i) { 
-      std::unique_lock<std::mutex> lk(mMutex);
-      mData(i)=true;
-    }
-    operator bool() const { 
-      std::unique_lock<std::mutex> lk(mMutex);
-      return mData.prod();
-    }
-    void clear() {
-      std::unique_lock<std::mutex> lk(mMutex);
-      mData.resize(0,1);
-    }
-  friend std::ostream& operator<<(std::ostream& o, const MultiSync s);
-} readSync;
 
-std::atomic<bool> sentSync;
-
-class FinkenTemp{
-    void run(std::unique_ptr<tcp::iostream> sPtr){
-         std::unique_lock<std::mutex> server_lock(cv_m);
-        try  {
-        std::cout << "client connected" << std::endl;
-        //todo get finken id
-        //check for existence
-        //reply to paparazzi
-        size_t id = readSync.extend();
-        for (;;)    {
-            int commands_nb = 0;
-            {
-                boost::archive::text_iarchive in(*sPtr);
-                in >> commands_nb;
-                double commands[commands_nb]={};
-                for(int i = 0; i< commands_nb; i++) {
-                    in >> commands[i];    
-                }
-                read.set(id);
-                cv.notify_all();
-                if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return sentSync;})) 
-                    std::cerr << "Server Sending" << '\n';
-                else
-                    std::cerr << "Server timed out. id == " << id << '\n';
-
-                std::cout << " commands received: [";
-                for(int i=0;i<commands_nb;i++){
-                    std::cout << commands[i] << ((i==commands_nb-1)?"":", ");
-                }
-                std:: cout << "]" << std::endl;
-                sent(i) = false;
-            //std::unique_lock<std::mutex> lk(cv_m);
-            //cv.wait_for(lk, std::chrono::milliseconds(5000));
-            //std::cerr << "Server finished waiting, replying" << '\n';
-
-            boost::archive::text_oarchive out(*sPtr);
-            commands_nb++;
-            out << commands_nb;
-            }
-        }
-    }
-  catch (std::exception& e) {
-    std::cerr << "Exception in thread: " << e.what() << "\n";
-    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
-  }
-}
+class Server{    
 public:
 void server(boost::asio::io_service& io_service, unsigned short port){
   tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
@@ -109,8 +34,12 @@ void server(boost::asio::io_service& io_service, unsigned short port){
     std::unique_ptr<tcp::iostream> sPtr;
     sPtr.reset(new tcp::iostream());
     a.accept(*sPtr->rdbuf());
-    allFinken.emplace_back();
-    std::thread(std::bind(&FinkenTemp::run, &allFinken.back(), std::placeholders::_1), std::move(sPtr)).detach();
+    std::cout << "creating Empty Finken" << '\n';
+    std::unique_ptr<Finken> finken (new Finken());  
+    allFinken.push_back(std::move(finken));
+    std::cout << "creating Finken Server" << '\n';
+    std::thread(std::bind(&Finken::run, allFinken.back().get(), std::placeholders::_1), std::move(sPtr)).detach();
+    std::cout << "finken Server creation finished" << '\n';
   }
 }
 };
@@ -125,7 +54,6 @@ boost::asio::io_service io_service;
 
 class FinkenPlugin: public VREPPlugin {
   public:
-    std::unique_lock<std::mutex> vrep_lock(cv_m);    
     boost::asio::io_service io_service;
     FinkenPlugin() {}
     FinkenPlugin& operator=(const FinkenPlugin&) = delete;
@@ -134,7 +62,7 @@ class FinkenPlugin: public VREPPlugin {
     virtual unsigned char version() const { return 1; }
     virtual bool load() {
       Log::name(name());
-      Log::out() << "loadeda" << std::endl;
+      Log::out() << "loaded v 01-09-17" << std::endl;
       return true;
     }
     virtual bool unload() {
@@ -143,72 +71,39 @@ class FinkenPlugin: public VREPPlugin {
       return true;
     }
     virtual const std::string name() const {
-      return "Finken Plugin";
+      return "Finken Paparazzi Plugin";
     }
 
     void* simStart(int* auxiliaryData,void* customData,int* replyData)
     {
-
-        simAddStatusbarMessage("finken in creation");
-        allFinken.push_back(std::move(buildFinken()));
-        simAddStatusbarMessage("finken finished");
+	std::cout << "starting server" << '\n' ;
         std::thread t1(std::bind(&Server::server, server, std::placeholders::_1, std::placeholders::_2),std::ref(io_service), 50013);
-        t1.detach();
-        //server.server(io_service,50013);
-        std::cout << "we never get this";
-        return NULL;
+	t1.detach();
+	std::cout << "server done" << '\n';
+	return NULL;
     }
 
 
     void* action(int* auxiliaryData,void* customData,int* replyData)
-    {   /*
-        simple test code, ignore for now
-        std::vector<float> f = {1,2,3,4};
-        std::vector<float> ff = {1,2,3};
-        std::vector<float> vforce = {0,0,1.5};
+    {   
+        sendSync = true;
+        while(allFinken.size() == 0){
+		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+		std::cout << "waiting for finken creation" << '\n';
+		//doNothing;
+	}
 
-        int i =0;
-        PositionSensor ps = PositionSensor(allFinken.at(0)->handle);
-        ps.get(f);
-        std::cout << f.at(0) << "   " << f.at(1) << f.at(2) << '\n';
+  	std::cout << "vrep pass done" << '\n';
 
-        allFinken.at(0)->getSensors().at(0)->get(f, i, ff);
-        allFinken.at(0)->getSensors().at(1)->get(f, i, ff);
-        allFinken.at(0)->getSensors().at(2)->get(f, i, ff);
-        allFinken.at(0)->getSensors().at(3)->get(f, i, ff);
-
-        std::cout << f.at(0) << "   " << f.at(1) << f.at(2) << f.at(3) << '\n';
-        std::cout << i << '\n';
-        std::cout << simGetObjectName(i) <<'\n';
-        std::cout << '\n';
-
-        for(int i=0; i<4; i++){
-            allFinken.at(0)->getRotors().at(i)->set(vforce, vtorque);
-        }
-        */
-        
-        sent.resize(allFinken.size(), 1);
-        sent(0) = true;
-        read(0) = false;
-        cv.notify_all();
-        simPauseSimulation;
-        if(cv.wait_for(vrep_lock, std::chrono::milliseconds(10000), [](){return read;})) {
-            std::cerr << "Server Receiving" <<'\n';
-            simStartSimulation;
-        }
-        else {
-            std::cerr << "Server timed out. (Receiveing)"'\n';
-            simStopSimulation;
-        }
-        //do: send position to vrep, get commands
-        
-        Eigen::Vector4f motorCommands(0.0,0.0,0.0,0.0);
+	    
+	/*   
+	Eigen::Vector4f motorCommands(0.0,0.0,0.0,0.0);
 
         Eigen::Matrix<float, 4, 4> mixingMatrix;
-        /*
+        
         taken from fink3.xml, paparazzi generated xml says something different 
         check with https://wiki.paparazziuav.org/wiki/Rotorcraft_Configuration#Motor_Mixing
-        */
+        
         mixingMatrix << -256, -256,  256, 256,
                          256, -256, -256, 256,
                         -256,  256, -256, 256,
@@ -218,7 +113,7 @@ class FinkenPlugin: public VREPPlugin {
 
         execution_step_size = simGetSimulationTimeStep();
         
-        /* this will probably need some scaling */
+        // this will probably need some scaling 
         std::vector<float> motorFrontLeft  = {0, 0, motorCommands[0]};
         std::vector<float> motorFrontRight = {0, 0, motorCommands[1]};
         std::vector<float> motorBackLeft   = {0, 0, motorCommands[2]};
@@ -231,6 +126,7 @@ class FinkenPlugin: public VREPPlugin {
             allFinken.at(0)->getRotors().at(i)->set(motorForces[i], vtorque);
 
         }
+	*/
         return NULL;
     }
 
