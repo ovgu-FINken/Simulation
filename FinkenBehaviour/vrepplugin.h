@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
+extern std::vector<int> simCopters;
 
 class VREPPlugin
 {

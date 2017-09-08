@@ -24,8 +24,6 @@ using boost::asio::ip::tcp;
 extern float execution_step_size;
 static std::vector<std::unique_ptr<Finken>> allFinken;
 
-
-
 class Server{    
 public:
 void server(boost::asio::io_service& io_service, unsigned short port){
@@ -88,12 +86,13 @@ class FinkenPlugin: public VREPPlugin {
     {   
         sendSync = true;
         while(allFinken.size() == 0){
-		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-		std::cout << "waiting for finken creation" << '\n';
+            std::cout << "waiting for finken creation. Available copters for pairing: " << simCopters.size() << '\n';
+	    	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+		
 		//doNothing;
-	}
+	    }
 
-  	std::cout << "vrep pass done" << '\n';
+  	std::cout << "vrep pass done, copter count:" << allFinken.size() <<  '\n';
 
 	    
 	/*   

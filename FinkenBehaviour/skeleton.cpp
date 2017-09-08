@@ -1,6 +1,7 @@
 #include <vrepplugin.h>
 
 #include <v_repLib.h>
+#include <scriptFunctionData.h>
 #include <boost/filesystem.hpp>
 #include <iostream>
 
@@ -11,6 +12,36 @@ const char* libName="libv_rep.dll";
 #else
 const char* libName="libv_rep.so";
 #endif
+
+
+std::vector<int> simCopters;
+
+
+
+#define LUA_REGISTER_COMMAND "simExtPaparazzi_register"
+
+const int inArgs_REGISTER[]={
+    1,
+    sim_script_arg_int32,0,
+};
+
+void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
+{   CScriptFunctionData D;
+    
+    bool success = false;
+    if (D.readDataFromStack(cb->stackID,inArgs_REGISTER,inArgs_REGISTER[0],LUA_REGISTER_COMMAND))
+    {   
+        std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
+        int copterID = inData->at(0).int32Data[0];
+        simCopters.emplace_back(copterID);
+        
+        success = true;
+    }
+    D.pushOutData(CScriptFunctionDataItem(success));
+    D.writeDataToStack(cb->stackID);
+}
+// --------------------------------------------------------------------------------------
+
 
 extern "C" unsigned char v_repStart(void* reservedPointer,int reservedInt)
 {
@@ -38,6 +69,15 @@ extern "C" unsigned char v_repStart(void* reservedPointer,int reservedInt)
         unloadVrepLibrary(vrepLib);
         return(0);
     }
+
+
+    std::string s = "simExtPaparazzi_register@" + plugin.name();
+    const char* cs;
+    cs = s.c_str();
+    std::string t = "boolean result=simExtPaparazzi_register(number copterHandle)";
+    const char* ts;
+    ts = t.c_str();
+    simRegisterScriptCallbackFunction(cs, ts ,LUA_REGISTER_CALLBACK);
 
     simLockInterface(1);
 

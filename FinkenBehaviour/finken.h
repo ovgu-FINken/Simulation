@@ -86,6 +86,6 @@ public:
     finkenPID targetZcontroller;
 };
 
-void buildFinken(Finken& finken);
+void buildFinken(Finken& finken, int handle);
 
 #endif // FINKEN_H
