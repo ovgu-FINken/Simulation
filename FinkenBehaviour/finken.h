@@ -70,14 +70,16 @@ public:
     Finken(); 
     Finken(int fHandle);
     int handle;
+    double commands[4];
     void addSensor(std::unique_ptr<Sensor> &sensor);
     void addRotor(std::unique_ptr<Rotor> &rotor);
     void run(std::unique_ptr<tcp::iostream> sPtr);
+    void setRotorSpeeds(const Eigen::Matrix<float, 4, 4>& mixingMatrix);
     std::vector<std::unique_ptr<Sensor>> &getSensors();
     std::vector<std::unique_ptr<Rotor>> &getRotors();
     Finken(const Finken&) = delete;
     Finken& operator=(const Finken&) = delete;
-	
+    	
     finkenPID pitchController;
     finkenPID rollController;
     finkenPID yawController;

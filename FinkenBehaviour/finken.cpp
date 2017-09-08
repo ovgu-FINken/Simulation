@@ -54,10 +54,10 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 		    std::cout << "first connection" << std::endl;
 		    boost::archive::text_iarchive in(*sPtr);
             in >> commands_nb;
-                	double commands[commands_nb]={};
-                	for(int i = 0; i< commands_nb; i++) {
-                	    in >> commands[i];    
-                    }
+            double cm[commands_nb]={};
+            for(int i = 0; i< commands_nb; i++) {
+               in >> cm[i];    
+            }
     		// check for existence of a free(not associated with a paparazzi client yet) copter
             if(simCopters.size() > 0) {
                 id = readSync.extend();
@@ -75,60 +75,67 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         		
 		    for (;;)    {
             	int commands_nb = 0;
-            	{	std::cout << "second connection" << std::endl;
-
-            	//boost::archive::text_iarchive in(*sPtr);
-                	in >> commands_nb;
-                	double commands[commands_nb]={};
-                	for(int i = 0; i< commands_nb; i++) {
-                	    in >> commands[i];    
-                    }
+                std::cout << "second connection" << std::endl;
+                in >> commands_nb;
+                for(int i = 0; i< commands_nb; i++) {
+                    in >> this->commands[i];    
+                }
                 readSync.set(id);
 				sendSync = false;
                 cv.notify_all();
-				std::cerr << "Finken " << copter_id << " Received commands " << '\n';
+				std::cout << "Finken " << copter_id << " Received commands " << '\n';
                	if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return readSync;})) 
-                    std::cerr << "Every Finken Received commands " << '\n';
-               	else
-                    std::cerr << "Finken "<< copter_id << " timed out. id == " << id << '\n';
-				
-                std::cout << " commands received: [";
-		        for(int i=0;i<commands_nb;i++){
-		            std::cout << commands[i] << ((i==commands_nb-1)?"":", ");
-		        }
-		        std:: cout << "]" << std::endl;
+                    std::cout << "Every Finken Received commands " << '\n';
+               	else {
+                    std::cout << "Finken "<< copter_id << " timed out. id == " << id << '\n';
+				}
 			 	
 				readSync.unSet(id);
-			 	std::cerr << "Finken " << copter_id << " waiting" << '\n';
+			 	std::cout << "Finken " << copter_id << " waiting" << '\n';
 		 	 	while ( !sendSync.load() ){             // (3)
        					std::this_thread::sleep_for(std::chrono::milliseconds(5));
    				}	 
-		        std::cerr << "Finken " << copter_id << " finished waiting, replying" << '\n';
+		        std::cout << "Finken " << copter_id << " finished waiting, replying" << '\n';
 		        //boost::archive::text_oarchive out(*sPtr);
-       			commands_nb++;
+       			commands_nb = 1;
         		out << commands_nb;
-        	}
-        }
-    }
-  	catch (std::exception& e) {
-		std::cerr << "Exception in thread: " << e.what() << "\n";
-		std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
-	}
+        	
+            }
+        }   
+  	    catch (std::exception& e) {
+		    std::cerr << "Exception in thread: " << e.what() << "\n";
+		    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
+	    }
 }
+
+
+void Finken::setRotorSpeeds(const Eigen::Matrix<float, 4, 4>& mixingMatrix) {
+    Eigen::Vector4f motorCommands(this->commands[0], this->commands[1], this->commands[2], this->commands[3]);
+    motorCommands = mixingMatrix * motorCommands;
+
+    std::vector<float> motorFrontLeft  = {0, 0, motorCommands[0]};
+    std::vector<float> motorFrontRight = {0, 0, motorCommands[1]};
+    std::vector<float> motorBackLeft   = {0, 0, motorCommands[2]};
+    std::vector<float> motorBackRight  = {0, 0, motorCommands[3]};
+    std::vector<float> vtorque = {0,0,0};
+    std::vector<std::vector<float>> motorForces= {motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight};
+    
+    for (int i = 0; i<4; i++) {
+        this->getRotors().at(i)->set(motorForces[i], vtorque);
+    }
+}
+
 
 /*
  *Takes a unique_ptr to a Finken and adds
  *the correct handles for the sensors & rotors
  *
- * TODO:Multiple copter support via vrep-register  call(replacing the identification by const string)
  */
 void buildFinken(Finken& finken, int fHandle){
     std::cout << "building finken" << std::endl;
 
     finken.handle = fHandle;
     int foundSensorCount = 0;
-
-
 
     //create positionsensor and add to the finken:
     std::unique_ptr<Sensor> posSensor(new PositionSensor (fHandle));
