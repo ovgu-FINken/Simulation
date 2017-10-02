@@ -5,6 +5,7 @@
 #include <cstring>
 #include "vrepplugin.h"
 #include "dataPacket.h"
+#include "finkencontrol.h"
 
 
 using boost::asio::ip::tcp;
@@ -53,18 +54,22 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	        int copter_id;	
             size_t id;
             int commands_nb = 0;
-	        std::cout << "first connection" << std::endl;
-	        {
+	    std::cout << "first connection" << std::endl;
+	    {	
                 boost::archive::text_iarchive in(*sPtr);
-                in >> packet;  
-            }                       
+                in >> packet;
+		this->commands[0]=packet.x;
+		this->commands[1]=packet.y;	
+		this->commands[2]=packet.z;	
+		this->commands[3]=packet.s;	
+            }                      
     		// check for existence of a free(not associated with a paparazzi client yet) copter
             if(simCopters.size() > 0) {
                 id = readSync.extend();
-		        buildFinken(*this, simCopters.back());
-		        std::cout << "building finken with id " << simCopters.back() << std::endl;
+		buildFinken(*this, simCopters.back());
+		std::cout << "building finken with id " << simCopters.back() << std::endl;
                 simCopters.erase(simCopters.end()-1);
-                std::cout << "recieved: " << packet.x << " | " << packet.y << " | " << packet.z << std::endl;
+                std::cout << "recieved: " << packet.x << " | " << packet.y << " | " << packet.z << " | " << packet.s << std::                      endl;
             }
 
             else {
@@ -72,16 +77,24 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
                 sPtr.get()->close();
             }
             {
-		        boost::archive::text_oarchive out(*sPtr);
-   	    	    packet.x = -1;
+		    boost::archive::text_oarchive out(*sPtr);
+		    std::cout << "1" << std::endl;
+   	    	    this->pos = step(this);
+		    std::cout << "1" << std::endl;
+		    packet.x = this->pos[0];
+		    packet.y = this->pos[1];
+		    packet.z = this->pos[2];
+		    packet.s = 1;
    	    	    out << packet;
             }
         		
-		    for (;;)    {
+	    for (;;)    {
             	int commands_nb = 0;
                 std::cout << "second connection" << std::endl;
                 boost::archive::text_iarchive in(*sPtr);
                 in >> packet;
+		std::cout << "recieved: " << packet.x << " | " << packet.y << " | " << packet.z << " | " << packet.s << std::                      endl;
+
                 
                 readSync.set(id);
 				sendSync = false;
@@ -116,7 +129,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 void Finken::setRotorSpeeds(const Eigen::Matrix<float, 4, 4>& mixingMatrix) {
     Eigen::Vector4f motorCommands(this->commands[0], this->commands[1], this->commands[2], this->commands[3]);
     motorCommands = mixingMatrix * motorCommands;
-
+    std::cout << "commands" << this->commands[0] << "   " << this->commands[1] << "   " << this->commands[2] << "    " << this->commands[3] << std::endl;
     std::vector<float> motorFrontLeft  = {0, 0, motorCommands[0]};
     std::vector<float> motorFrontRight = {0, 0, motorCommands[1]};
     std::vector<float> motorBackLeft   = {0, 0, motorCommands[2]};
@@ -124,6 +137,14 @@ void Finken::setRotorSpeeds(const Eigen::Matrix<float, 4, 4>& mixingMatrix) {
     std::vector<float> vtorque = {0,0,0};
     std::vector<std::vector<float>> motorForces= {motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight};
     
+    for(auto it=motorForces.begin(); it != motorForces.end(); it++) {
+	for (auto it2 = it->begin(); it2 != it->end(); it2++) {
+	    std::cout << (*it2) << " | ";
+	}			
+	std::cout << std::endl;
+    }
+
+    std::cout << "motor forces: " << motorForces[0][2] << " | " << motorForces[1].at(2) << std::endl;
     for (int i = 0; i<4; i++) {
         this->getRotors().at(i)->set(motorForces[i], vtorque);
     }

@@ -60,7 +60,7 @@ class FinkenPlugin: public VREPPlugin {
     virtual unsigned char version() const { return 1; }
     virtual bool load() {
       Log::name(name());
-      Log::out() << "loaded v 01-09-17" << std::endl;
+      Log::out() << "loaded v 02-10-17" << std::endl;
       return true;
     }
     virtual bool unload() {
@@ -94,9 +94,9 @@ class FinkenPlugin: public VREPPlugin {
 
     	//std::cout << "vrep pass done, copter count:" << allFinken.size() <<  '\n';
     
-	    while ( sendSync.load() ){
+	while ( sendSync.load() ){
        		std::this_thread::sleep_for(std::chrono::milliseconds(5));
-   		}	
+   	}
 	   
     	Eigen::Vector4f motorCommands(0.0,0.0,0.0,0.0);
 

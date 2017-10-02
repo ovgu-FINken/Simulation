@@ -4,7 +4,7 @@
 #include "v_repLib.h"
 #include "Eigen/Dense"
 
-Eigen::Matrix<float,3,2> step(Finken *finken);
+std::vector<double> step(Finken *finken);
 
 
 #endif // FINKENCONTROL_H

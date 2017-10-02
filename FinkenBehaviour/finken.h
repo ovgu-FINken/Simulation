@@ -71,6 +71,7 @@ public:
     Finken(int fHandle);
     int handle;
     double commands[4];
+    std::vector<double> pos;
     void addSensor(std::unique_ptr<Sensor> &sensor);
     void addRotor(std::unique_ptr<Rotor> &rotor);
     void run(std::unique_ptr<tcp::iostream> sPtr);

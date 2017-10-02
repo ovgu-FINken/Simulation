@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cmath>
 #include <Eigen/Dense>
+#include <chrono>
+#include <thread>
 
 #define _USE_MATH_DEFINES
 
@@ -55,26 +57,18 @@ void ecef_from_enu(Eigen::Vector3f& ecef_coord, Eigen::Vector3f& enu_coord) {
 
 /*
 the step function now simply returns the coordinates
-of the copter and target (ENU->ECEF)
+of the copter (ENU->ECEF)
 */
-Eigen::Matrix<float, 3, 2> step(Finken* finken) {
-    
-    float xtarget = -1;
-    float ytarget = -1;
-    float ztarget = 1;
-    float eulerAngles[3] = {0};
-
+std::vector<double> step(Finken* finken) {
+    std::cout << "2" << std::endl;
     std::vector<float> finkenPos = {0,0,0};
-
-    simGetFloatSignal("TARGETX", &xtarget);
-    simGetFloatSignal("TARGETY", &ytarget);
-    simGetFloatSignal("TARGETZ", &ztarget);
-
+    float eulerAngles[3] = {0};
     if(finken->getSensors().at(0)->get(finkenPos) >0) {
 
     }
     else {
       simAddStatusbarMessage("Error retrieveing Finken Base Position");
+      std::cout << "Error retrieveing Finken Base Position. Handle:" << finken->handle << std::endl;
     }
 
     if(simGetObjectOrientation(finken->handle, -1, eulerAngles) > 0) {
@@ -88,19 +82,25 @@ Eigen::Matrix<float, 3, 2> step(Finken* finken) {
     if (errorYaw < M_PI){
       errorYaw = 2*M_PI+errorYaw;
     }
-      else{
-      errorYaw = errorYaw - 2*M_PI;    } 
-    Eigen::Matrix<float, 3, 2> coords;
+    else{
+      errorYaw = errorYaw - 2*M_PI;
+    } 
+    
+    std::cout << "3" << std::endl;
     Eigen::Vector3f ecef_copter(0,0,0);
-    Eigen::Vector3f ecef_target(0,0,0);
     Eigen::Vector3f enu_copter(finkenPos[0], finkenPos[1], finkenPos[2]);
-    Eigen::Vector3f enu_target(xtarget, ytarget, ztarget);
+    std::cout << "4" << std::endl;
     ecef_from_enu(ecef_copter, enu_copter);
-    ecef_from_enu(ecef_target, enu_target);
-    coords << ecef_copter[0], ecef_target[0],
-              ecef_copter[1], ecef_target[1],
-              ecef_copter[2], ecef_target[2];
-    return coords;
+    std::cout << "5" << std::endl;
+    std::vector<double> dFinkenPos = {0,0,0};
+    std::cout << "6" << std::endl;
+    dFinkenPos[0] = ecef_copter[0];
+    dFinkenPos[1] = ecef_copter[1];
+    dFinkenPos[2] = ecef_copter[2];
+    std::cout << "7" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::cout << "3" << std::endl;
+    return dFinkenPos;
 }
 
 
