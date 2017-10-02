@@ -4,6 +4,7 @@
 #include <memory>
 #include <cstring>
 #include "vrepplugin.h"
+#include "dataPacket.h"
 
 
 using boost::asio::ip::tcp;
@@ -14,6 +15,7 @@ std::atomic<bool> sendSync(false);
 
 std::condition_variable cv;
 std::mutex cv_m, syncMutex;
+DataPacket packet;
 
 MultiSync readSync;
 
@@ -47,39 +49,40 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         try {
             std::cout << "client connected" << std::endl;
         	
-	        //first connection:
-		    int copter_id;	
+	        //first connection: 
+	        int copter_id;	
             size_t id;
             int commands_nb = 0;
-		    std::cout << "first connection" << std::endl;
-		    boost::archive::text_iarchive in(*sPtr);
-            in >> commands_nb;
-            double cm[commands_nb]={};
-            for(int i = 0; i< commands_nb; i++) {
-               in >> cm[i];    
-            }
+	        std::cout << "first connection" << std::endl;
+	        {
+                boost::archive::text_iarchive in(*sPtr);
+                in >> packet;  
+            }                       
     		// check for existence of a free(not associated with a paparazzi client yet) copter
             if(simCopters.size() > 0) {
                 id = readSync.extend();
 		        buildFinken(*this, simCopters.back());
 		        std::cout << "building finken with id " << simCopters.back() << std::endl;
                 simCopters.erase(simCopters.end()-1);
+                std::cout << "recieved: " << packet.x << " | " << packet.y << " | " << packet.z << std::endl;
             }
+
             else {
                 std::cout << "no finken available, terminating connection" << std::endl;
                 sPtr.get()->close();
             }
-		    boost::archive::text_oarchive out(*sPtr);
-   	    	int response = 1;
-   	    	out << response;
+            {
+		        boost::archive::text_oarchive out(*sPtr);
+   	    	    packet.x = -1;
+   	    	    out << packet;
+            }
         		
 		    for (;;)    {
             	int commands_nb = 0;
                 std::cout << "second connection" << std::endl;
-                in >> commands_nb;
-                for(int i = 0; i< commands_nb; i++) {
-                    in >> this->commands[i];    
-                }
+                boost::archive::text_iarchive in(*sPtr);
+                in >> packet;
+                
                 readSync.set(id);
 				sendSync = false;
                 cv.notify_all();
@@ -98,7 +101,8 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 		        std::cout << "Finken " << copter_id << " finished waiting, replying" << '\n';
 		        //boost::archive::text_oarchive out(*sPtr);
        			commands_nb = 1;
-        		out << commands_nb;
+        		boost::archive::text_oarchive out(*sPtr);
+                out << packet;
         	
             }
         }   
