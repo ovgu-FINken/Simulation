@@ -60,7 +60,6 @@ the step function now simply returns the coordinates
 of the copter (ENU->ECEF)
 */
 std::vector<double> step(Finken* finken) {
-    std::cout << "2" << std::endl;
     std::vector<float> finkenPos = {0,0,0};
     float eulerAngles[3] = {0};
     if(finken->getSensors().at(0)->get(finkenPos) >0) {
@@ -86,20 +85,13 @@ std::vector<double> step(Finken* finken) {
       errorYaw = errorYaw - 2*M_PI;
     } 
     
-    std::cout << "3" << std::endl;
     Eigen::Vector3f ecef_copter(0,0,0);
     Eigen::Vector3f enu_copter(finkenPos[0], finkenPos[1], finkenPos[2]);
-    std::cout << "4" << std::endl;
     ecef_from_enu(ecef_copter, enu_copter);
-    std::cout << "5" << std::endl;
     std::vector<double> dFinkenPos = {0,0,0};
-    std::cout << "6" << std::endl;
     dFinkenPos[0] = ecef_copter[0];
     dFinkenPos[1] = ecef_copter[1];
     dFinkenPos[2] = ecef_copter[2];
-    std::cout << "7" << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
-    std::cout << "3" << std::endl;
     return dFinkenPos;
 }
 

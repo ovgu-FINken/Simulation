@@ -16,7 +16,8 @@ std::atomic<bool> sendSync(false);
 
 std::condition_variable cv;
 std::mutex cv_m, syncMutex;
-DataPacket packet;
+vrepPacket outPacket;
+paparazziPacket inPacket;
 
 MultiSync readSync;
 
@@ -54,22 +55,22 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	        int copter_id;	
             size_t id;
             int commands_nb = 0;
-	    std::cout << "first connection" << std::endl;
-	    {	
+	        std::cout << "first connection" << std::endl;
+	        {	
                 boost::archive::text_iarchive in(*sPtr);
-                in >> packet;
-		this->commands[0]=packet.x;
-		this->commands[1]=packet.y;	
-		this->commands[2]=packet.z;	
-		this->commands[3]=packet.s;	
+                in >> inPacket;
+		        this->commands[0]=inPacket.nw;
+		        this->commands[1]=inPacket.ne;	
+		        this->commands[2]=inPacket.se;	
+		        this->commands[3]=inPacket.sw;	
             }                      
     		// check for existence of a free(not associated with a paparazzi client yet) copter
             if(simCopters.size() > 0) {
                 id = readSync.extend();
-		buildFinken(*this, simCopters.back());
-		std::cout << "building finken with id " << simCopters.back() << std::endl;
+		        buildFinken(*this, simCopters.back());
+		        std::cout << "building finken with id " << simCopters.back() << std::endl;
                 simCopters.erase(simCopters.end()-1);
-                std::cout << "recieved: " << packet.x << " | " << packet.y << " | " << packet.z << " | " << packet.s << std::                      endl;
+                std::cout << "recieved: " << inPacket.nw << " | " << inPacket.ne << " | " << inPacket.se << " | " << inPacket.sw << std::endl;
             }
 
             else {
@@ -77,25 +78,25 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
                 sPtr.get()->close();
             }
             {
-		    boost::archive::text_oarchive out(*sPtr);
-		    std::cout << "1" << std::endl;
+		        boost::archive::text_oarchive out(*sPtr);
    	    	    this->pos = step(this);
-		    std::cout << "1" << std::endl;
-		    packet.x = this->pos[0];
-		    packet.y = this->pos[1];
-		    packet.z = this->pos[2];
-		    packet.s = 1;
-   	    	    out << packet;
+		        outPacket.x = this->pos[0];
+		        outPacket.y = this->pos[1];
+		        outPacket.z = this->pos[2];
+   	    	    out << outPacket;
             }
         		
-	    for (;;)    {
+	        for (;;)    {
             	int commands_nb = 0;
                 std::cout << "second connection" << std::endl;
                 boost::archive::text_iarchive in(*sPtr);
-                in >> packet;
-		std::cout << "recieved: " << packet.x << " | " << packet.y << " | " << packet.z << " | " << packet.s << std::                      endl;
+                in >> inPacket;
+                this->commands[0]=inPacket.nw;
+		        this->commands[1]=inPacket.ne;	
+		        this->commands[2]=inPacket.se;	
+		        this->commands[3]=inPacket.sw;	
+		        std::cout << "recieved: " << inPacket.nw << " | " << inPacket.ne << " | " << inPacket.se << " | " << inPacket.sw << std::endl;
 
-                
                 readSync.set(id);
 				sendSync = false;
                 cv.notify_all();
@@ -115,7 +116,11 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 		        //boost::archive::text_oarchive out(*sPtr);
        			commands_nb = 1;
         		boost::archive::text_oarchive out(*sPtr);
-                out << packet;
+                this->pos = step(this);
+		        outPacket.x = this->pos[0];
+		        outPacket.y = this->pos[1];
+		        outPacket.z = this->pos[2];
+                out << outPacket;
         	
             }
         }   
@@ -128,8 +133,9 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 
 void Finken::setRotorSpeeds(const Eigen::Matrix<float, 4, 4>& mixingMatrix) {
     Eigen::Vector4f motorCommands(this->commands[0], this->commands[1], this->commands[2], this->commands[3]);
+    std::cout << "motorcommands before multiplcation: " << motorCommands[0] << "   " << motorCommands[1] << "   " << motorCommands[2] << "    " << motorCommands[3] << std::endl;
     motorCommands = mixingMatrix * motorCommands;
-    std::cout << "commands" << this->commands[0] << "   " << this->commands[1] << "   " << this->commands[2] << "    " << this->commands[3] << std::endl;
+    std::cout << "motorcommands after multiplication: " << motorCommands[0] << "   " << motorCommands[1] << "   " << motorCommands[2] << "    " << motorCommands[3] << std::endl;
     std::vector<float> motorFrontLeft  = {0, 0, motorCommands[0]};
     std::vector<float> motorFrontRight = {0, 0, motorCommands[1]};
     std::vector<float> motorBackLeft   = {0, 0, motorCommands[2]};
@@ -138,13 +144,12 @@ void Finken::setRotorSpeeds(const Eigen::Matrix<float, 4, 4>& mixingMatrix) {
     std::vector<std::vector<float>> motorForces= {motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight};
     
     for(auto it=motorForces.begin(); it != motorForces.end(); it++) {
-	for (auto it2 = it->begin(); it2 != it->end(); it2++) {
-	    std::cout << (*it2) << " | ";
-	}			
-	std::cout << std::endl;
+    	for (auto it2 = it->begin(); it2 != it->end(); it2++) {
+	        std::cout << (*it2) << " | ";
+	    }			
+	    std::cout << std::endl;
     }
 
-    std::cout << "motor forces: " << motorForces[0][2] << " | " << motorForces[1].at(2) << std::endl;
     for (int i = 0; i<4; i++) {
         this->getRotors().at(i)->set(motorForces[i], vtorque);
     }
