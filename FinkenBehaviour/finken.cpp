@@ -55,16 +55,16 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	    int copter_id;	
             size_t id;
             int commands_nb = 0;
-	        std::cout << "first connection" << std::endl;
-	        {	
+	    std::cout << "first connection" << std::endl;
+	    {	
                 boost::archive::text_iarchive in(*sPtr);
                 in >> inPacket;
-		        this->commands[0]=inPacket.nw;
-		        this->commands[1]=inPacket.ne;	
-		        this->commands[2]=inPacket.se;	
-		        this->commands[3]=inPacket.sw;	
+		this->commands[0]=inPacket.nw;
+		this->commands[1]=inPacket.ne;	
+		this->commands[2]=inPacket.se;	
+		this->commands[3]=inPacket.sw;	
             }                      
-    		// check for existence of a free(not associated with a paparazzi client yet) copter
+    	    // check for existence of a free(not associated with a paparazzi client yet) copter
             if(simCopters.size() > 0) {
                 id = readSync.extend();
 		buildFinken(*this, simCopters.back());
