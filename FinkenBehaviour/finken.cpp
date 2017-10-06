@@ -52,7 +52,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             std::cout << "client connected" << std::endl;
         	
 	        //first connection: 
-	        int copter_id;	
+	    int copter_id;	
             size_t id;
             int commands_nb = 0;
 	        std::cout << "first connection" << std::endl;
@@ -67,8 +67,8 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
     		// check for existence of a free(not associated with a paparazzi client yet) copter
             if(simCopters.size() > 0) {
                 id = readSync.extend();
-		        buildFinken(*this, simCopters.back());
-		        std::cout << "building finken with id " << simCopters.back() << std::endl;
+		buildFinken(*this, simCopters.back());
+		std::cout << "building finken with id " << simCopters.back() << std::endl;
                 simCopters.erase(simCopters.end()-1);
                 std::cout << "recieved: " << inPacket.nw << " | " << inPacket.ne << " | " << inPacket.se << " | " << inPacket.sw << std::endl;
             }
@@ -78,12 +78,12 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
                 sPtr.get()->close();
             }
             {
-		        boost::archive::text_oarchive out(*sPtr);
-   	    	    this->pos = step(this);
-		        outPacket.x = this->pos[0];
-		        outPacket.y = this->pos[1];
-		        outPacket.z = this->pos[2];
-   	    	    out << outPacket;
+		boost::archive::text_oarchive out(*sPtr);
+   	    	this->pos = step(this);
+		outPacket.x = this->pos[0];
+		outPacket.y = this->pos[1];
+		outPacket.z = this->pos[2];
+   	    	out << outPacket;
             }
         		
 	        for (;;)    {
@@ -92,41 +92,40 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
                 boost::archive::text_iarchive in(*sPtr);
                 in >> inPacket;
                 this->commands[0]=inPacket.nw;
-		        this->commands[1]=inPacket.ne;	
-		        this->commands[2]=inPacket.se;	
-		        this->commands[3]=inPacket.sw;	
-		        std::cout << "recieved: " << inPacket.nw << " | " << inPacket.ne << " | " << inPacket.se << " | " << inPacket.sw << std::endl;
+		this->commands[1]=inPacket.ne;	
+	        this->commands[2]=inPacket.se;	
+		this->commands[3]=inPacket.sw;	
+	        std::cout << "recieved: " << inPacket.nw << " | " << inPacket.ne << " | " << inPacket.se << " | " << inPacket.sw << std::endl;
 
                 readSync.set(id);
-				sendSync = false;
+		sendSync = false;
                 cv.notify_all();
-				std::cout << "Finken " << copter_id << " Received commands " << '\n';
+		std::cout << "Finken " << copter_id << " Received commands " << '\n';
                	if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return readSync;})) 
-                    std::cout << "Every Finken Received commands " << '\n';
                	else {
-                    std::cout << "Finken "<< copter_id << " timed out. id == " << id << '\n';
-				}
+               	    std::cout << "Finken "<< copter_id << " timed out. id == " << id << '\n';
+		}
 			 	
-				readSync.unSet(id);
-			 	std::cout << "Finken " << copter_id << " waiting" << '\n';
-		 	 	while ( !sendSync.load() ){             // (3)
-       					std::this_thread::sleep_for(std::chrono::milliseconds(5));
-   				}	 
-		        std::cout << "Finken " << copter_id << " finished waiting, replying" << '\n';
-		        //boost::archive::text_oarchive out(*sPtr);
-       			commands_nb = 1;
-        		boost::archive::text_oarchive out(*sPtr);
+		readSync.unSet(id);
+		std::cout << "Finken " << copter_id << " waiting" << '\n';
+	 	while ( !sendSync.load() ){             // (3)
+		    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+   		}	 
+		std::cout << "Finken " << copter_id << " finished waiting, replying" << '\n';
+		//boost::archive::text_oarchive out(*sPtr);
+       		commands_nb = 1;
+        	boost::archive::text_oarchive out(*sPtr);
                 this->pos = step(this);
-		        outPacket.x = this->pos[0];
-		        outPacket.y = this->pos[1];
-		        outPacket.z = this->pos[2];
+		outPacket.x = this->pos[0];
+		outPacket.y = this->pos[1];
+		outPacket.z = this->pos[2];
                 out << outPacket;
         	
             }
         }   
   	    catch (std::exception& e) {
-		    std::cerr << "Exception in thread: " << e.what() << "\n";
-		    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
+	        std::cerr << "Exception in thread: " << e.what() << "\n";
+	        std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
 	    }
 }
 
@@ -145,9 +144,9 @@ void Finken::setRotorSpeeds(const Eigen::Matrix<float, 4, 4>& mixingMatrix) {
     
     for(auto it=motorForces.begin(); it != motorForces.end(); it++) {
     	for (auto it2 = it->begin(); it2 != it->end(); it2++) {
-	        std::cout << (*it2) << " | ";
-	    }			
-	    std::cout << std::endl;
+	    std::cout << (*it2) << " | ";
+	}			
+	std::cout << std::endl;
     }
 
     for (int i = 0; i<4; i++) {
