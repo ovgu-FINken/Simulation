@@ -13,6 +13,7 @@
 #include <memory>
 #include <utility>
 #include <boost/asio.hpp>
+#include <boost/bind.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <Eigen/Dense>
@@ -23,6 +24,7 @@ using boost::asio::ip::tcp;
 
 extern float execution_step_size;
 static std::vector<std::unique_ptr<Finken>> allFinken;
+
 
 class Server{    
 public:
@@ -40,11 +42,34 @@ void server(boost::asio::io_service& io_service, unsigned short port){
     std::cout << "finken Server creation finished" << '\n';
   }
 }
+}server;
+
+
+class Async_Server{    
+    public:
+    Async_Server(boost::asio::io_service& io_service) : acceptor_(io_service,tcp::endpoint(tcp::v4(), 50013)){
+        start_accept();    
+    }
+    private:
+    void start_accept(){
+        tcp::socket socket(acceptor_.get_io_service());
+        std::unique_ptr<tcp::iostream> sPtr;
+        sPtr.reset(new tcp::iostream());
+        acceptor_.async_accept(socket, boost::bind(&Async_Server::handle_accept, this, _1, boost::asio::placeholders::error), std::move(sPtr));
+      }
+        
+    void handle_accept(std::unique_ptr<tcp::iostream> sPtr, const boost::system::error_code& error){
+        std::cout << "creating Empty Finken" << '\n';
+        std::unique_ptr<Finken> finken (new Finken());  
+        allFinken.push_back(std::move(finken));
+        std::cout << "creating Finken Server" << '\n';
+    
+        //std::thread(std::bind(&Finken::run, allFinken.back().get(), std::placeholders::_1), std::move(sPtr)).detach();
+    }
+
+    tcp::acceptor acceptor_;
 };
 
-
-Server server;
-boost::asio::io_service io_service;
 
 
 

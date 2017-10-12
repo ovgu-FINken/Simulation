@@ -101,7 +101,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 		sendSync = false;
                 cv.notify_all();
 		std::cout << "Finken " << copter_id << " Received commands " << '\n';
-               	if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return readSync;})) 
+               	if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return readSync;})); 
                	else {
                	    std::cout << "Finken "<< copter_id << " timed out. id == " << id << '\n';
 		}
