@@ -47,31 +47,31 @@ void server(boost::asio::io_service& io_service, unsigned short port){
 
 class Async_Server{    
     public:
-    Async_Server(boost::asio::io_service& io_service) : acceptor_(io_service,tcp::endpoint(tcp::v4(), 50013)){
+    Async_Server(boost::asio::io_service& io_service) : 
+      acceptor_(io_service,tcp::endpoint(tcp::v4(), 50013)){
         start_accept();    
     }
+    ~Async_Server() { std::cerr <<  "Server died!" << std::endl; }
     private:
     void start_accept(){
         std::cout << "accepting new connection" << std::endl;
-        tcp::socket socket(acceptor_.get_io_service());
         sPtr.reset(new tcp::iostream());
-        acceptor_.async_accept(socket, boost::bind(&Async_Server::handle_accept, this, boost::asio::placeholders::error));
+        acceptor_.async_accept(*sPtr->rdbuf(), boost::bind(&Async_Server::handle_accept, this, boost::asio::placeholders::error));
       }
         
     void handle_accept(const boost::system::error_code& error){
         if(!error){
-            std::cout << "creating Empty Finken" << '\n';
+            std::cerr << "creating Empty Finken" << '\n';
             std::unique_ptr<Finken> finken (new Finken());  
             allFinken.push_back(std::move(finken));
-            std::cout << "creating Finken Server" << '\n';
+            std::cerr << "creating Finken Server" << '\n';
             std::thread(std::bind(&Finken::run, allFinken.back().get(), std::placeholders::_1), std::move(sPtr)).detach();
-            start_accept();
         }
         else{
             std::cerr << "error in accept handler: " << error << std::endl;
         }
+        start_accept();
     }
-
     tcp::acceptor acceptor_;
 };
 
@@ -83,7 +83,7 @@ class Async_Server{
 class FinkenPlugin: public VREPPlugin {
   public:
     boost::asio::io_service io_service;
-    Async_Server* async_server;
+    std::unique_ptr<Async_Server> async_server;
     FinkenPlugin() {}
     FinkenPlugin& operator=(const FinkenPlugin&) = delete;
     FinkenPlugin(const FinkenPlugin&) = delete;
@@ -91,14 +91,14 @@ class FinkenPlugin: public VREPPlugin {
     virtual unsigned char version() const { return 1; }
     virtual bool load() {
       std::cout << "starting asynchronous vrep server" << '\n' ;
-      async_server = new Async_Server(io_service);
+      async_server.reset(new Async_Server(io_service));
       std::cout << "server done" << '\n';
       Log::name(name());
       Log::out() << "loaded v 13-10-17" << std::endl;
       return true;
     }
     virtual bool unload() {
-      delete async_server;
+      async_server.reset(nullptr);
       Log::out() << "unloaded" << std::endl;
       return true;
     }
