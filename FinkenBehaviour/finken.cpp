@@ -73,10 +73,10 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	    {	
             boost::archive::text_iarchive in(*sPtr);
             in >> inPacket;
-	    	this->commands[0]=inPacket.nw;
-	    	this->commands[1]=inPacket.ne;	
-	    	this->commands[2]=inPacket.se;	
-	    	this->commands[3]=inPacket.sw;	
+	    	this->commands[0]=inPacket.pitch;
+	    	this->commands[1]=inPacket.roll;	
+	    	this->commands[2]=inPacket.yaw;	
+	    	this->commands[3]=inPacket.thrust;	
         }                      
     	// check for existence of a free(not associated with a paparazzi client yet) copter
         if(simCopters.size() > 0) {
@@ -84,7 +84,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 		    buildFinken(*this, simCopters.back());
 		    std::cout << "building finken with id " << simCopters.back() << std::endl;
             simCopters.erase(simCopters.end()-1);
-            std::cout << "recieved: " << inPacket.nw << " | " << inPacket.ne << " | " << inPacket.se << " | " << inPacket.sw << std::endl;
+            std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
         }
         else {
             std::cout << "no finken available, terminating connection" << std::endl;
@@ -104,11 +104,11 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             std::cout << "second connection" << std::endl;
             boost::archive::text_iarchive in(*sPtr);
             in >> inPacket;
-            this->commands[0]=inPacket.nw;
-		    this->commands[1]=inPacket.ne;	
-	        this->commands[2]=inPacket.se;	
-		    this->commands[3]=inPacket.sw;	
-	        std::cout << "recieved: " << inPacket.nw << " | " << inPacket.ne << " | " << inPacket.se << " | " << inPacket.sw << std::endl;
+            this->commands[0]=inPacket.pitch;
+		    this->commands[1]=inPacket.roll;	
+	        this->commands[2]=inPacket.yaw;	
+		    this->commands[3]=inPacket.thrust;	
+	        std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
 
             readSync.set(id);
 		    sendSync = false;
