@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <iostream>
 #include <positionsensor.h>
-#include "finkencontrol.h"
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
@@ -55,10 +54,10 @@ class Async_Server{
         tcp::socket socket(acceptor_.get_io_service());
         std::unique_ptr<tcp::iostream> sPtr;
         sPtr.reset(new tcp::iostream());
-        acceptor_.async_accept(socket, boost::bind(&Async_Server::handle_accept, this, _1, boost::asio::placeholders::error), std::move(sPtr));
+        acceptor_.async_accept(socket, boost::bind(&Async_Server::handle_accept, this, 5013, boost::asio::placeholders::error));
       }
         
-    void handle_accept(std::unique_ptr<tcp::iostream> sPtr, const boost::system::error_code& error){
+    void handle_accept(int i, const boost::system::error_code& error){
         std::cout << "creating Empty Finken" << '\n';
         std::unique_ptr<Finken> finken (new Finken());  
         allFinken.push_back(std::move(finken));
@@ -123,39 +122,15 @@ class FinkenPlugin: public VREPPlugin {
        		std::this_thread::sleep_for(std::chrono::milliseconds(5));
    	}
 	   
-    	Eigen::Vector4f motorCommands(0.0,0.0,0.0,0.0);
 
-        Eigen::Matrix<float, 4, 4> mixingMatrix;
         
-        /*taken from fink3.xml, paparazzi generated xml says something different 
-        *check with https://wiki.paparazziuav.org/wiki/Rotorcraft_Configuration#Motor_Mixing
-        */    
-        mixingMatrix << -256, -256,  256, 256,
-                         256, -256, -256, 256,
-                        -256,  256, -256, 256,
-                         256,  256,  256, 256;
-        
+                
         for(int i = 0; i<allFinken.size(); i++){
-            allFinken.at(i)->setRotorSpeeds(mixingMatrix);
+            allFinken.at(i)->setRotorSpeeds();
         }
-        /* 
-        motorCommands = mixingMatrix * motorCommands;
+         
     
-        execution_step_size = simGetSimulationTimeStep();
-        
-        // this will probably need some scaling 
-        std::vector<float> motorFrontLeft  = {0, 0, motorCommands[0]};
-        std::vector<float> motorFrontRight = {0, 0, motorCommands[1]};
-        std::vector<float> motorBackLeft   = {0, 0, motorCommands[2]};
-        std::vector<float> motorBackRight  = {0, 0, motorCommands[3]};
-    
-        std::vector<float> vtorque = {0,0,0};
-        std::vector<std::vector<float>> motorForces= {motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight};
-        Eigen::Matrix<float,3,2> coords = step(allFinken.at(0).get());
-        for (int i = 0; i<4; i++) {
-            allFinken.at(0)->getRotors().at(i)->set(motorForces[i], vtorque);
-        }
-        */
+       
     return NULL;
     }
 

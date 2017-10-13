@@ -59,6 +59,8 @@ struct MultiSync {
 extern MultiSync readSync;
 
 
+void ecef_from_enu(Eigen::Vector3f& ecef_coord, Eigen::Vector3f& enu_coord);
+
 
 
 class Finken
@@ -75,7 +77,8 @@ public:
     void addSensor(std::unique_ptr<Sensor> &sensor);
     void addRotor(std::unique_ptr<Rotor> &rotor);
     void run(std::unique_ptr<tcp::iostream> sPtr);
-    void setRotorSpeeds(const Eigen::Matrix<float, 4, 4>& mixingMatrix);
+    void setRotorSpeeds();
+    void updatePos(Finken* finken);
     std::vector<std::unique_ptr<Sensor>> &getSensors();
     std::vector<std::unique_ptr<Rotor>> &getRotors();
     Finken(const Finken&) = delete;

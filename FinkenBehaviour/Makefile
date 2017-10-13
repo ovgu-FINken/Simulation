@@ -1,7 +1,7 @@
 VREP_PATH       :=${HOME}/software/vrep
 
 CXXFLAGS        += -O0
-PLUGIN_SOURCES  := attitudesensor.cpp finken.cpp finkenplugin.cpp log.cpp positionsensor.cpp sensor.cpp simtestdummy.cpp sonar.cpp vrepplugin.cpp finkencontrol.cpp finkenPID.cpp heightsensor.cpp rotor.cpp skeleton.cpp v_repLib.cpp
+PLUGIN_SOURCES  := attitudesensor.cpp finken.cpp finkenplugin.cpp log.cpp positionsensor.cpp sensor.cpp simtestdummy.cpp sonar.cpp vrepplugin.cpp finkenPID.cpp heightsensor.cpp rotor.cpp skeleton.cpp v_repLib.cpp
 
 TARGET          := Paparazzi
 INCLUDES        += . /usr/include/eigen3
