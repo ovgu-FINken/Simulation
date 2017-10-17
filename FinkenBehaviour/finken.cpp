@@ -6,8 +6,8 @@
 #include "vrepplugin.h"
 #include "dataPacket.h"
 
-
 using boost::asio::ip::tcp;
+
 
 static int kFinkenSonarCount = 4;
 static int kFinkenHeightSensorCount = 1;
@@ -42,6 +42,11 @@ Eigen::Matrix<float,4,4> mixingMatrix((Eigen::Matrix<float,4,4>() << -1, -1,  1,
 
 Finken::Finken(){}
 Finken::Finken(int fHandle) : handle(fHandle){}
+Finken::~Finken(){
+    std::cout << "deleting finken with id: " << this->handle <<std::endl;
+    simCopters.emplace_back(this->handle);
+}
+
 
 void Finken::addSensor(std::unique_ptr<Sensor> &sensor){
     this->sensors.push_back(std::move(sensor));
@@ -66,7 +71,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         std::cout << "client connected" << std::endl;
     	
 	    //first connection: 
-	    int copter_id;	
+	    int copter_id = simCopters.back();	
         size_t id;
         int commands_nb = 0;
 	    std::cout << "first connection" << std::endl;
@@ -84,15 +89,17 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 		    buildFinken(*this, simCopters.back());
 		    std::cout << "building finken with id " << simCopters.back() << std::endl;
             simCopters.erase(simCopters.end()-1);
+            std::cout << "simcopters size: " << simCopters.size() << std::endl;
             std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
         }
         else {
             std::cout << "no finken available, terminating connection" << std::endl;
             sPtr.get()->close();
         }
-        {
-    		boost::archive::text_oarchive out(*sPtr);
-   	        updatePos(this);
+        {   
+            
+    		boost::archive::text_oarchive out(*sPtr);            
+   	        updatePos(*this);            
 		    outPacket.x = this->pos[0];
 		    outPacket.y = this->pos[1];
 		    outPacket.z = this->pos[2];
@@ -121,14 +128,19 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 			 	
 		    readSync.unSet(id);
 		    std::cout << "Finken " << copter_id << " waiting" << '\n';
+            int simpleTimeout = 0;
 	 	    while ( !sendSync.load() ){             // (3)
-		      std::this_thread::sleep_for(std::chrono::milliseconds(5));
+              if(simpleTimeout > 2000){
+                  throw std::runtime_error("finken timed out waiting for permission to send");
+              }
+              		      std::this_thread::sleep_for(std::chrono::milliseconds(5));
+              simpleTimeout++;
    		    }	 
 		    std::cout << "Finken " << copter_id << " finished waiting, replying" << '\n';
 		    //boost::archive::text_oarchive out(*sPtr);
        		commands_nb = 1;
         	boost::archive::text_oarchive out(*sPtr);
-            updatePos(this);
+            updatePos(*this);
 		    outPacket.x = this->pos[0];
 		    outPacket.y = this->pos[1];
 		    outPacket.z = this->pos[2];
@@ -139,6 +151,11 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
   	catch (std::exception& e) {
 	    std::cerr << "Exception in thread: " << e.what() << "\n";
 	    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
+        std::cerr << "cleaning up... " << std::endl;
+        deleteFinken(this->handle);
+        sPtr.reset();
+        std::cerr <<  "cleanup finished" << std::endl;
+
 	}
 }
 
@@ -213,25 +230,23 @@ void buildFinken(Finken& finken, int fHandle){
 }
 
 
-void Finken::updatePos(Finken* finken) {
+void Finken::updatePos(Finken& finken) {
     std::vector<float> finkenPos = {0,0,0};
     float eulerAngles[3] = {0};
-    if(finken->getSensors().at(0)->get(finkenPos) >0) {
+    if(finken.getSensors().at(0)->get(finkenPos) >0) {
 
     }
     else {
       simAddStatusbarMessage("Error retrieveing Finken Base Position");
-      std::cout << "Error retrieveing Finken Base Position. Handle:" << finken->handle << std::endl;
+      std::cout << "Error retrieveing Finken Base Position. Handle:" << finken.handle << std::endl;
     }
-
-    if(simGetObjectOrientation(finken->handle, -1, eulerAngles) > 0) {
+    if(simGetObjectOrientation(finken.handle, -1, eulerAngles) > 0) {
 
     }
     else {
       simAddStatusbarMessage("error retrieveing Finken Base Orientation");
     }
     float errorYaw = eulerAngles[2];
-
     if (errorYaw < M_PI){
       errorYaw = 2*M_PI+errorYaw;
     }
@@ -240,12 +255,18 @@ void Finken::updatePos(Finken* finken) {
     } 
     
     Eigen::Vector3f ecef_copter(0,0,0);
+    
     Eigen::Vector3f enu_copter(finkenPos[0], finkenPos[1], finkenPos[2]);
+    
     ecef_from_enu(ecef_copter, enu_copter);
+    
     std::vector<double> dFinkenPos = {0,0,0};
-    finken->pos[0] = ecef_copter[0];
-    finken->pos[1] = ecef_copter[1];
-    finken->pos[2] = ecef_copter[2];
+    
+    finken.pos[0] = ecef_copter[0];
+    finken.pos[1] = ecef_copter[1];
+    finken.pos[2] = ecef_copter[2];
+    
+
 }
 
 
@@ -261,3 +282,16 @@ void ecef_from_enu(Eigen::Vector3f& ecef_coord, Eigen::Vector3f& enu_coord) {
     ecef_coord = cMatrix * enu_coord + ecef_base;
 }
 
+
+void deleteFinken(int handle){
+    std::cout << "attempting to erase finken " << handle << std::endl;
+    allFinken.erase(std::remove_if(allFinken.begin(), allFinken.end(), [handle](const std::unique_ptr<Finken> &f){return handle == f->handle;}),allFinken.end());
+}
+/*
+void remove_item(int id) {
+    vec.erase(std::remove_if(
+        vec.begin(), vec.end(), [id](const std::unique_ptr<item>& e) 
+                                    {   return id == e->id; })
+        ,vec.end());
+}
+*/

@@ -13,6 +13,7 @@
 #include <utility>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <boost/thread.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <Eigen/Dense>
@@ -22,45 +23,28 @@
 using boost::asio::ip::tcp;
 
 extern float execution_step_size;
-static std::vector<std::unique_ptr<Finken>> allFinken;
+extern std::vector<std::unique_ptr<Finken>> allFinken;
 std::unique_ptr<tcp::iostream> sPtr;
-
-
-class Server{    
-public:
-void server(boost::asio::io_service& io_service, unsigned short port){
-  tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
-  for (;;)  {
-    std::unique_ptr<tcp::iostream> sPtr;
-    sPtr.reset(new tcp::iostream());
-    a.accept(*sPtr->rdbuf());
-    std::cout << "creating Empty Finken" << '\n';
-    std::unique_ptr<Finken> finken (new Finken());  
-    allFinken.push_back(std::move(finken));
-    std::cout << "creating Finken Server" << '\n';
-    std::thread(std::bind(&Finken::run, allFinken.back().get(), std::placeholders::_1), std::move(sPtr)).detach();
-    std::cout << "finken Server creation finished" << '\n';
-  }
-}
-}server;
 
 
 class Async_Server{    
     public:
     Async_Server(boost::asio::io_service& io_service) : 
       acceptor_(io_service,tcp::endpoint(tcp::v4(), 50013)){
-        start_accept();    
+        simAddStatusbarMessage("Asynchronous server successfully established");
+        start_accept();
     }
     ~Async_Server() { std::cerr <<  "Server died!" << std::endl; }
     private:
     void start_accept(){
-        std::cout << "accepting new connection" << std::endl;
+        simAddStatusbarMessage("Server ready to accept new connection");
         sPtr.reset(new tcp::iostream());
         acceptor_.async_accept(*sPtr->rdbuf(), boost::bind(&Async_Server::handle_accept, this, boost::asio::placeholders::error));
-      }
+    }
         
     void handle_accept(const boost::system::error_code& error){
         if(!error){
+            simAddStatusbarMessage("New copnnection established");
             std::cerr << "creating Empty Finken" << '\n';
             std::unique_ptr<Finken> finken (new Finken());  
             allFinken.push_back(std::move(finken));
@@ -74,9 +58,6 @@ class Async_Server{
     }
     tcp::acceptor acceptor_;
 };
-
-
-
 
 
 
@@ -107,11 +88,22 @@ class FinkenPlugin: public VREPPlugin {
     }
 
     void* simStart(int* auxiliaryData,void* customData,int* replyData)
-    {
-		return NULL;
+    {   
+               boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
+        return NULL;
     }
-
-
+    
+    void* simEnd(int* auxiliaryData,void* customData,int* replyData)
+    {   
+        allFinken.clear();
+        allFinken.shrink_to_fit();
+        simCopters.clear();
+        simCopters.shrink_to_fit();
+        io_service.stop();
+        io_service.reset();
+        return NULL;
+    }
+    
     void* action(int* auxiliaryData,void* customData,int* replyData)
     {   
         sendSync = true;

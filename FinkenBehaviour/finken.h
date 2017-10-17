@@ -26,7 +26,7 @@ using boost::asio::ip::tcp;
 extern std::condition_variable cv;
 extern std::mutex cv_m, syncMutex;
 extern std::atomic<bool> sendSync;
-
+    
 struct MultiSync {
   private:
     Eigen::Matrix<bool, Eigen::Dynamic, 1> mData;
@@ -71,14 +71,15 @@ private:
 public:
     Finken(); 
     Finken(int fHandle);
+    ~Finken();
     int handle;
-    double commands[4];
-    std::vector<double> pos;
+    std::array<double,4> commands = {};
+    std::array<double,6> pos = {};
     void addSensor(std::unique_ptr<Sensor> &sensor);
     void addRotor(std::unique_ptr<Rotor> &rotor);
     void run(std::unique_ptr<tcp::iostream> sPtr);
     void setRotorSpeeds();
-    void updatePos(Finken* finken);
+    void updatePos(Finken& finken);
     std::vector<std::unique_ptr<Sensor>> &getSensors();
     std::vector<std::unique_ptr<Rotor>> &getRotors();
     Finken(const Finken&) = delete;
@@ -93,5 +94,8 @@ public:
 };
 
 void buildFinken(Finken& finken, int handle);
+void deleteFinken(int handle);
+static std::vector<std::unique_ptr<Finken>> allFinken;
+
 
 #endif // FINKEN_H
