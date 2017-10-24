@@ -41,10 +41,10 @@ Eigen::Matrix<float,4,4> mixingMatrix((Eigen::Matrix<float,4,4>() << -1, -1,  1,
 
 
 Finken::Finken(){}
-Finken::Finken(int fHandle) : handle(fHandle){}
+Finken::Finken(int fHandle, int _ac_id) : handle(fHandle), ac_id(_ac_id){}
 Finken::~Finken(){
     std::cout << "deleting finken with id: " << this->handle <<std::endl;
-    simCopters.emplace_back(this->handle);
+    simCopters.emplace_back(std::make_pair(this->ac_id, this->handle));
 }
 
 
@@ -71,13 +71,14 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         std::cout << "client connected" << std::endl;
     	
 	    //first connection: 
-	    int copter_id = simCopters.back();	
+	    int copter_id = simCopters.back().second;
         size_t id;
         int commands_nb = 0;
 	    std::cout << "first connection" << std::endl;
 	    {	
             boost::archive::text_iarchive in(*sPtr);
             in >> inPacket;
+            this->ac_id = inPacket.ac_id;
 	    	this->commands[0]=inPacket.pitch;
 	    	this->commands[1]=inPacket.roll;	
 	    	this->commands[2]=inPacket.yaw;	
@@ -85,16 +86,29 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         }                      
     	// check for existence of a free(not associated with a paparazzi client yet) copter
         if(simCopters.size() > 0) {
-            id = readSync.extend();
-		    buildFinken(*this, simCopters.back());
-		    std::cout << "building finken with id " << simCopters.back() << std::endl;
-            simCopters.erase(simCopters.end()-1);
-            std::cout << "simcopters size: " << simCopters.size() << std::endl;
-            std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
+            for(auto it = simCopters.begin(); it!=simCopters.end();it++){
+                if(it->first==this->ac_id){
+                    std::cout << "copter with correct id " << this->ac_id << " found" << std::endl;
+                    id = readSync.extend();            
+		            buildFinken(*this, it->second);
+		            std::cout << "building finken with id " << it->second << std::endl;
+                    simCopters.erase(it);
+                    std::cout << "simcopters size: " << simCopters.size() << std::endl;
+                    std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
+                    break;
+                }
+                else if(it == simCopters.end()-1){
+                    std::cout << "no copter with id " << this->ac_id << " found, terminating connection" << std::endl;
+                    sPtr.get()->close();
+                    return;
+                }
+
+            }
         }
         else {
             std::cout << "no finken available, terminating connection" << std::endl;
             sPtr.get()->close();
+            return;
         }
         {   
             
@@ -118,22 +132,21 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	        std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
 
             readSync.set(id);
-		    sendSync = false;
-            cv.notify_all();
+		    cv.notify_all();
 		    std::cout << "Finken " << copter_id << " Received commands " << '\n';
             if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return readSync;})); 
             else {
                 std::cout << "Finken "<< copter_id << " timed out. id == " << id << '\n';
 		    }
-			 	
+			sendSync = false; 	
 		    readSync.unSet(id);
 		    std::cout << "Finken " << copter_id << " waiting" << '\n';
             int simpleTimeout = 0;
 	 	    while ( !sendSync.load() ){             // (3)
               if(simpleTimeout > 2000){
-                  throw std::runtime_error("finken timed out waiting for permission to send");
+                  throw std::runtime_error("finken timed out while waiting for permission to send");
               }
-              		      std::this_thread::sleep_for(std::chrono::milliseconds(5));
+              std::this_thread::sleep_for(std::chrono::milliseconds(5));
               simpleTimeout++;
    		    }	 
 		    std::cout << "Finken " << copter_id << " finished waiting, replying" << '\n';
@@ -152,7 +165,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	    std::cerr << "Exception in thread: " << e.what() << "\n";
 	    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
         std::cerr << "cleaning up... " << std::endl;
-        deleteFinken(this->handle);
+        deleteFinken(this->handle, this->ac_id);
         sPtr.reset();
         std::cerr <<  "cleanup finished" << std::endl;
 
@@ -283,9 +296,11 @@ void ecef_from_enu(Eigen::Vector3f& ecef_coord, Eigen::Vector3f& enu_coord) {
 }
 
 
-void deleteFinken(int handle){
+void deleteFinken(int handle, int ac_id){
+    //TODO: this stuff definitely isnt thread safe
     std::cout << "attempting to erase finken " << handle << std::endl;
     allFinken.erase(std::remove_if(allFinken.begin(), allFinken.end(), [handle](const std::unique_ptr<Finken> &f){return handle == f->handle;}),allFinken.end());
+    simCopters.emplace_back(std::make_pair(ac_id, handle));
 }
 /*
 void remove_item(int id) {

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-extern std::vector<int> simCopters;
+extern std::vector<std::pair<int,int>> simCopters;
 
 class VREPPlugin
 {

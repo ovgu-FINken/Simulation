@@ -70,9 +70,10 @@ private:
      std::vector<std::unique_ptr<Rotor>> rotors;
 public:
     Finken(); 
-    Finken(int fHandle);
+    Finken(int fHandle, int _ac_id);
     ~Finken();
     int handle;
+    int ac_id;
     std::array<double,4> commands = {};
     std::array<double,6> pos = {};
     void addSensor(std::unique_ptr<Sensor> &sensor);
@@ -94,7 +95,7 @@ public:
 };
 
 void buildFinken(Finken& finken, int handle);
-void deleteFinken(int handle);
+void deleteFinken(int handle, int ac_id);
 static std::vector<std::unique_ptr<Finken>> allFinken;
 
 

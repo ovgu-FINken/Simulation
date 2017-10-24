@@ -14,14 +14,15 @@ const char* libName="libv_rep.so";
 #endif
 
 
-std::vector<int> simCopters;
+std::vector<std::pair<int,int>> simCopters;
 
 
 
 #define LUA_REGISTER_COMMAND "simExtPaparazzi_register"
 
 const int inArgs_REGISTER[]={
-    1,
+    2,
+    sim_script_arg_int32,0,
     sim_script_arg_int32,0,
 };
 
@@ -33,7 +34,9 @@ void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
     {   
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         int copterID = inData->at(0).int32Data[0];
-        simCopters.emplace_back(copterID);
+        int AC_ID = inData->at(1).int32Data[0];
+        std::pair<int,int> p1 = std::make_pair(AC_ID, copterID);
+        simCopters.emplace_back(p1);
         
         success = true;
     }
@@ -74,7 +77,7 @@ extern "C" unsigned char v_repStart(void* reservedPointer,int reservedInt)
     std::string s = "simExtPaparazzi_register@" + plugin.name();
     const char* cs;
     cs = s.c_str();
-    std::string t = "boolean result=simExtPaparazzi_register(number copterHandle)";
+    std::string t = "boolean result=simExtPaparazzi_register(number copterHandle, number AC_ID)";
     const char* ts;
     ts = t.c_str();
     simRegisterScriptCallbackFunction(cs, ts ,LUA_REGISTER_CALLBACK);
