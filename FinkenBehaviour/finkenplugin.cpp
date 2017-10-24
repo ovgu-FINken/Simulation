@@ -26,6 +26,12 @@ extern float execution_step_size;
 extern std::vector<std::unique_ptr<Finken>> allFinken;
 std::unique_ptr<tcp::iostream> sPtr;
 
+void deleteFinken(std::unique_ptr<Finken>& finken){
+    //TODO: this stuff definitely isnt thread safe
+    std::cout << "attempting to erase finken " <<finken->handle << std::endl;
+    simCopters.emplace_back(std::make_pair(finken->ac_id, finken->handle));
+    allFinken.erase(std::remove(allFinken.begin(), allFinken.end(), finken),allFinken.end());
+}
 
 class Async_Server{    
     public:
@@ -46,10 +52,10 @@ class Async_Server{
         if(!error){
             simAddStatusbarMessage("New copnnection established");
             std::cerr << "creating Empty Finken" << '\n';
-            std::unique_ptr<Finken> finken (new Finken());  
-            allFinken.push_back(std::move(finken));
+            allFinken.emplace_back(new Finken());
             std::cerr << "creating Finken Server" << '\n';
-            std::thread(std::bind(&Finken::run, allFinken.back().get(), std::placeholders::_1), std::move(sPtr)).detach();
+            auto run=[](){auto& finken = allFinken.back(); finken->run(std::move(sPtr)); deleteFinken(finken);};
+            std::thread(run).detach();
         }
         else{
             std::cerr << "error in accept handler: " << error << std::endl;
@@ -94,11 +100,11 @@ class FinkenPlugin: public VREPPlugin {
     }
     
     void* simEnd(int* auxiliaryData,void* customData,int* replyData)
-    {   
-        allFinken.clear();
+    {
+        /*allFinken.clear();
         allFinken.shrink_to_fit();
         simCopters.clear();
-        simCopters.shrink_to_fit();
+        simCopters.shrink_to_fit();*/
         io_service.stop();
         io_service.reset();
         return NULL;

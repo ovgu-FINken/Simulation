@@ -95,7 +95,6 @@ public:
 };
 
 void buildFinken(Finken& finken, int handle);
-void deleteFinken(int handle, int ac_id);
 static std::vector<std::unique_ptr<Finken>> allFinken;
 
 

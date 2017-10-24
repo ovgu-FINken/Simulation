@@ -165,7 +165,6 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	    std::cerr << "Exception in thread: " << e.what() << "\n";
 	    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
         std::cerr << "cleaning up... " << std::endl;
-        deleteFinken(this->handle, this->ac_id);
         sPtr.reset();
         std::cerr <<  "cleanup finished" << std::endl;
 
@@ -296,12 +295,7 @@ void ecef_from_enu(Eigen::Vector3f& ecef_coord, Eigen::Vector3f& enu_coord) {
 }
 
 
-void deleteFinken(int handle, int ac_id){
-    //TODO: this stuff definitely isnt thread safe
-    std::cout << "attempting to erase finken " << handle << std::endl;
-    allFinken.erase(std::remove_if(allFinken.begin(), allFinken.end(), [handle](const std::unique_ptr<Finken> &f){return handle == f->handle;}),allFinken.end());
-    simCopters.emplace_back(std::make_pair(ac_id, handle));
-}
+
 /*
 void remove_item(int id) {
     vec.erase(std::remove_if(
