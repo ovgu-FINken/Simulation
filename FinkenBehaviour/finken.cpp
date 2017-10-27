@@ -9,6 +9,9 @@
 using boost::asio::ip::tcp;
 
 
+std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
+std::array<double,6> thrustvalues = {0, 119,155,197,240,273};
+
 static int kFinkenSonarCount = 4;
 static int kFinkenHeightSensorCount = 1;
 std::atomic<bool> sendSync(false);
@@ -173,13 +176,16 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 
 
 void Finken::setRotorSpeeds() {
-    
-
-
     Eigen::Vector4f motorCommands(this->commands[0], this->commands[1], this->commands[2], this->commands[3]);
     std::cout << "commands before multiplcation: " << motorCommands[0] << "   " << motorCommands[1] << "   " << motorCommands[2] << "    " << motorCommands[3] << std::endl;
     motorCommands = motorCommands.transpose() * mixingMatrix;
     std::cout << "motorcommands after multiplication: " << motorCommands[0] << "   " << motorCommands[1] << "   " << motorCommands[2] << "    " << motorCommands[3] << std::endl;
+
+    motorCommands[0]=thrustFromThrottle(motorCommands[0]);
+    motorCommands[1]=thrustFromThrottle(motorCommands[1]);
+    motorCommands[2]=thrustFromThrottle(motorCommands[2]);
+    motorCommands[3]=thrustFromThrottle(motorCommands[3]);
+    
     std::vector<float> motorFrontLeft  = {0, 0, motorCommands[0]};
     std::vector<float> motorFrontRight = {0, 0, motorCommands[1]};
     std::vector<float> motorBackLeft   = {0, 0, motorCommands[2]};
@@ -304,3 +310,14 @@ void remove_item(int id) {
         ,vec.end());
 }
 */
+
+double thrustFromThrottle(double throttle) {
+    for(int i = 0; i<throttlevalues.size(); i++){
+        if (throttle <= throttlevalues[i]){
+            // y = y_1 + (x-x_1)*(y_2-y_2)/(x_2-x_1)
+            return(thrustvalues[i-1]+((thrustvalues[i]-thrustvalues[i-1])/(throttlevalues[i]-throttlevalues[i-1]))*(throttle-throttlevalues[i]));
+        }
+    }
+    std::cerr << "invalid throttle value (>100%)" <<std::endl;
+    return 0;
+}

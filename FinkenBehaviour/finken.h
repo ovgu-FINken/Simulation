@@ -96,6 +96,6 @@ public:
 
 void buildFinken(Finken& finken, int handle);
 static std::vector<std::unique_ptr<Finken>> allFinken;
-
+double thrustFromThrottle(double throttle);
 
 #endif // FINKEN_H
