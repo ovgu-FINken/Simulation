@@ -312,8 +312,10 @@ void remove_item(int id) {
 */
 
 double thrustFromThrottle(double throttle) {
+    if (throttle == 0) return 0;
     for(int i = 0; i<throttlevalues.size(); i++){
-        if (throttle <= throttlevalues[i]){
+        if(throttle == throttlevalues[i]) return thrustvalues[i];
+        else if (throttle < throttlevalues[i]){
             // y = y_1 + (x-x_1)*(y_2-y_2)/(x_2-x_1)
             return(thrustvalues[i-1]+((thrustvalues[i]-thrustvalues[i-1])/(throttlevalues[i]-throttlevalues[i-1]))*(throttle-throttlevalues[i]));
         }
