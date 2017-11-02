@@ -69,6 +69,7 @@ std::vector<std::unique_ptr<Rotor>> &Finken::getRotors(){
 
 
 void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
+    int connection_nb = 2;
 	std::unique_lock<std::mutex> server_lock(cv_m);
     try {
         std::cout << "client connected" << std::endl;
@@ -125,7 +126,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         		
 	    for (;;){
             int commands_nb = 0;
-            std::cout << "second connection" << std::endl;
+            std::cout << "connection:" << connection_nb++ << std::endl;
             boost::archive::text_iarchive in(*sPtr);
             in >> inPacket;
             this->commands[0]=inPacket.pitch;
@@ -312,7 +313,7 @@ void remove_item(int id) {
 */
 
 double thrustFromThrottle(double throttle) {
-    if (throttle == 0) return 0;
+    if (throttle <= 0) return 0;
     for(int i = 0; i<throttlevalues.size(); i++){
         if(throttle == throttlevalues[i]) return thrustvalues[i];
         else if (throttle < throttlevalues[i]){
