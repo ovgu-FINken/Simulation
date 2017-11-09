@@ -5,6 +5,8 @@
 #include <cstring>
 #include "vrepplugin.h"
 #include "dataPacket.h"
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
 using boost::asio::ip::tcp;
 
@@ -80,7 +82,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         int commands_nb = 0;
 	    std::cout << "first connection" << std::endl;
 	    {	
-            boost::archive::text_iarchive in(*sPtr);
+            boost::archive::binary_iarchive in(*sPtr);
             in >> inPacket;
             this->ac_id = inPacket.ac_id;
 	    	this->commands[0]=inPacket.pitch;
@@ -116,7 +118,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         }
         {   
             
-    		boost::archive::text_oarchive out(*sPtr);            
+    		boost::archive::binary_oarchive out(*sPtr);            
    	        updatePos(*this);            
 		    outPacket.x = this->pos[0];
 		    outPacket.y = this->pos[1];
@@ -125,16 +127,23 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         }
         		
 	    for (;;){
+            
+            auto then = std::chrono::high_resolution_clock::now();
+                   
             int commands_nb = 0;
             std::cout << "connection:" << connection_nb++ << std::endl;
-            boost::archive::text_iarchive in(*sPtr);
+            boost::archive::binary_iarchive in(*sPtr);
             in >> inPacket;
             this->commands[0]=inPacket.pitch;
 		    this->commands[1]=inPacket.roll;	
 	        this->commands[2]=inPacket.yaw;	
 		    this->commands[3]=inPacket.thrust;	
 	        std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
+            
+            auto now = std::chrono::high_resolution_clock::now();
+            std::cout << "recieving data computation time: " << std::chrono::nanoseconds(now-then).count()/999999 << "ms" << std::endl;
 
+            then = std::chrono::high_resolution_clock::now();
             readSync.set(id);
 		    cv.notify_all();
 		    std::cout << "Finken " << copter_id << " Received commands " << '\n';
@@ -147,21 +156,29 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 		    std::cout << "Finken " << copter_id << " waiting" << '\n';
             int simpleTimeout = 0;
 	 	    while ( !sendSync.load() ){             // (3)
-              if(simpleTimeout > 2000){
+              if(simpleTimeout > 4000){
                   throw std::runtime_error("finken timed out while waiting for permission to send");
               }
-              std::this_thread::sleep_for(std::chrono::milliseconds(5));
+              std::this_thread::sleep_for(std::chrono::milliseconds(2));
               simpleTimeout++;
-   		    }	 
+   		    }
+
+            now = std::chrono::high_resolution_clock::now();
+            std::cout << "thread sync computation time: " << std::chrono::nanoseconds(now-then).count()/999999 << "ms" << std::endl;
+            then = std::chrono::high_resolution_clock::now();
 		    std::cout << "Finken " << copter_id << " finished waiting, replying" << '\n';
-		    //boost::archive::text_oarchive out(*sPtr);
+		    //boost::archive::binary_oarchive out(*sPtr);
        		commands_nb = 1;
-        	boost::archive::text_oarchive out(*sPtr);
+        	boost::archive::binary_oarchive out(*sPtr);
             updatePos(*this);
 		    outPacket.x = this->pos[0];
 		    outPacket.y = this->pos[1];
 		    outPacket.z = this->pos[2];
             out << outPacket;
+
+            now = std::chrono::high_resolution_clock::now();
+            std::cout << "sending data computation time: " << std::chrono::nanoseconds(now-then).count()/999999 << "ms" << std::endl;
+
         	
         }
     }   
@@ -193,13 +210,14 @@ void Finken::setRotorSpeeds() {
     std::vector<float> motorBackRight  = {0, 0, motorCommands[3]};
     std::vector<float> vtorque = {0,0,0};
     std::vector<std::vector<float>> motorForces= {motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight};
-    
+    /*
     for(auto it=motorForces.begin(); it != motorForces.end(); it++) {
     	for (auto it2 = it->begin(); it2 != it->end(); it2++) {
 	    std::cout << (*it2) << " | ";
 	}			
 	std::cout << std::endl;
     }
+    */
 
     for (int i = 0; i<4; i++) {
         this->getRotors().at(i)->set(motorForces[i], vtorque);
