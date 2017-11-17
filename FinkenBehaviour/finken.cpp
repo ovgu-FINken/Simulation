@@ -134,10 +134,10 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             std::cout << "connection:" << connection_nb++ << std::endl;
             boost::archive::binary_iarchive in(*sPtr);
             in >> inPacket;
-            this->commands[0]=inPacket.pitch;
-		    this->commands[1]=inPacket.roll;	
-	        this->commands[2]=inPacket.yaw;	
-		    this->commands[3]=inPacket.thrust;	
+            this->commands[1]=inPacket.pitch;
+		    this->commands[2]=inPacket.roll;	
+	        this->commands[3]=inPacket.yaw;	
+		    this->commands[0]=inPacket.thrust;	
 	        std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
             
             auto now = std::chrono::high_resolution_clock::now();
@@ -146,23 +146,27 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             then = std::chrono::high_resolution_clock::now();
             readSync.set(id);
 		    cv.notify_all();
+            
 		    std::cout << "Finken " << copter_id << " Received commands " << '\n';
+            sendSync = false;  
+            
             if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return readSync;})); 
             else {
                 std::cout << "Finken "<< copter_id << " timed out. id == " << id << '\n';
 		    }
-			sendSync = false; 	
+				
 		    readSync.unSet(id);
 		    std::cout << "Finken " << copter_id << " waiting" << '\n';
-            int simpleTimeout = 0;
+            /*
+            int simpleTimeout = 0;            
 	 	    while ( !sendSync.load() ){             // (3)
               if(simpleTimeout > 4000){
                   throw std::runtime_error("finken timed out while waiting for permission to send");
               }
-              std::this_thread::sleep_for(std::chrono::milliseconds(2));
+              std::this_thread::sleep_for(std::chrono::milliseconds(1));
               simpleTimeout++;
    		    }
-
+            */
             now = std::chrono::high_resolution_clock::now();
             std::cout << "thread sync computation time: " << std::chrono::nanoseconds(now-then).count()/999999 << "ms" << std::endl;
             then = std::chrono::high_resolution_clock::now();
