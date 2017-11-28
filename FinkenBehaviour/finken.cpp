@@ -134,10 +134,10 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             std::cout << "connection:" << connection_nb++ << std::endl;
             boost::archive::binary_iarchive in(*sPtr);
             in >> inPacket;
-            this->commands[1]=inPacket.pitch;
-		    this->commands[2]=inPacket.roll;	
+            this->commands[0]=inPacket.pitch;
+		    this->commands[1]=inPacket.roll;	
 	        this->commands[3]=inPacket.yaw;	
-		    this->commands[0]=inPacket.thrust;	
+		    this->commands[2]=inPacket.thrust;	
 	        std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
             
             auto now = std::chrono::high_resolution_clock::now();
@@ -179,6 +179,8 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 		    outPacket.y = this->pos[1];
 		    outPacket.z = this->pos[2];
             out << outPacket;
+            std::cout << "sending " << outPacket.x << " | " << outPacket.y << " | " << outPacket.z  << std::endl;
+
 
             now = std::chrono::high_resolution_clock::now();
             std::cout << "sending data computation time: " << std::chrono::nanoseconds(now-then).count()/999999 << "ms" << std::endl;
@@ -199,9 +201,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 
 void Finken::setRotorSpeeds() {
     Eigen::Vector4f motorCommands(this->commands[0], this->commands[1], this->commands[2], this->commands[3]);
-    std::cout << "commands before multiplcation: " << motorCommands[0] << "   " << motorCommands[1] << "   " << motorCommands[2] << "    " << motorCommands[3] << std::endl;
-    motorCommands = motorCommands.transpose() * mixingMatrix;
-    std::cout << "motorcommands after multiplication: " << motorCommands[0] << "   " << motorCommands[1] << "   " << motorCommands[2] << "    " << motorCommands[3] << std::endl;
+    std::cout << "commands " << motorCommands[0] << "   " << motorCommands[1] << "   " << motorCommands[2] << "    " << motorCommands[3] << std::endl;
 
     motorCommands[0]=thrustFromThrottle(motorCommands[0]);
     motorCommands[1]=thrustFromThrottle(motorCommands[1]);
@@ -303,9 +303,9 @@ void Finken::updatePos(Finken& finken) {
     
     std::vector<double> dFinkenPos = {0,0,0};
     
-    finken.pos[0] = ecef_copter[0];
-    finken.pos[1] = ecef_copter[1];
-    finken.pos[2] = ecef_copter[2];
+    finken.pos[0] = enu_copter[0];
+    finken.pos[1] = enu_copter[1];
+    finken.pos[2] = enu_copter[2];
     
 
 }
