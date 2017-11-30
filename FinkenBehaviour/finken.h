@@ -73,7 +73,12 @@ public:
     int handle;
     int ac_id;
     std::array<double,4> commands = {};
-    std::array<double,6> pos = {};
+    std::vector<double> pos = {0,0,0};
+    std::vector<double> euler = {0,0,0};
+    std::vector<double> vel = {0,0,0};
+    std::vector<double> rotVel ={0,0,0};
+    std::vector<double> accel = {0,0,0};
+    std::vector<double> rotAccel ={0,0,0};
     void addSensor(std::unique_ptr<Sensor> &sensor);
     void addRotor(std::unique_ptr<Rotor> &rotor);
     void run(std::unique_ptr<tcp::iostream> sPtr);

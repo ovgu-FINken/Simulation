@@ -120,9 +120,12 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             
     		boost::archive::binary_oarchive out(*sPtr);            
    	        updatePos(*this);            
-		    outPacket.x = this->pos[0];
-		    outPacket.y = this->pos[1];
-		    outPacket.z = this->pos[2];
+		    outPacket.pos = this->pos;
+            outPacket.euler = this->euler;
+            outPacket.vel = this->vel;
+            outPacket.rotVel = this->rotVel;
+            outPacket.accel = this->accel;
+            outPacket.rotAccel = this->rotAccel;
    	    	out << outPacket;
         }
         		
@@ -169,17 +172,22 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             */
             now = std::chrono::high_resolution_clock::now();
             std::cout << "thread sync computation time: " << std::chrono::nanoseconds(now-then).count()/999999 << "ms" << std::endl;
+            
             then = std::chrono::high_resolution_clock::now();
 		    std::cout << "Finken " << copter_id << " finished waiting, replying" << '\n';
 		    //boost::archive::binary_oarchive out(*sPtr);
        		commands_nb = 1;
         	boost::archive::binary_oarchive out(*sPtr);
             updatePos(*this);
-		    outPacket.x = this->pos[0];
-		    outPacket.y = this->pos[1];
-		    outPacket.z = this->pos[2];
-            out << outPacket;
-            std::cout << "sending " << outPacket.x << " | " << outPacket.y << " | " << outPacket.z  << std::endl;
+            outPacket.pos = this->pos;
+            outPacket.euler = this->euler;
+            outPacket.vel = this->vel;
+            outPacket.rotVel = this->rotVel;
+            outPacket.accel = this->accel;
+            outPacket.rotAccel = this->rotAccel;
+
+		    out << outPacket;
+            std::cout << "sending " << outPacket.pos[0] << " | " << outPacket.pos[1] << " | " << outPacket.pos[2]  << std::endl;
 
 
             now = std::chrono::high_resolution_clock::now();
@@ -272,40 +280,45 @@ void buildFinken(Finken& finken, int fHandle){
 
 
 void Finken::updatePos(Finken& finken) {
-    std::vector<float> finkenPos = {0,0,0};
-    float eulerAngles[3] = {0};
-    if(finken.getSensors().at(0)->get(finkenPos) >0) {
-
+    std::vector<float> temp = {0,0,0};
+    std::vector<float> temp2 = {0,0,0};
+    std::vector<double> oldVel = {0,0,0};
+    std::vector<double> oldRotVel ={0,0,0};
+    if(finken.getSensors().at(0)->get(temp) >0) {
+        finken.pos[0] = temp[0];
+        finken.pos[1] = temp[1];
+        finken.pos[2] = temp[2];
     }
     else {
       simAddStatusbarMessage("Error retrieveing Finken Base Position");
       std::cout << "Error retrieveing Finken Base Position. Handle:" << finken.handle << std::endl;
     }
-    if(simGetObjectOrientation(finken.handle, -1, eulerAngles) > 0) {
-
+    if(simGetObjectOrientation(finken.handle, -1, &temp[0]) > 0) {
+        finken.euler[0] = temp[0];
+        finken.euler[1] = temp[1];
+        finken.euler[2] = temp[2];
     }
     else {
       simAddStatusbarMessage("error retrieveing Finken Base Orientation");
     }
-    float errorYaw = eulerAngles[2];
-    if (errorYaw < M_PI){
-      errorYaw = 2*M_PI+errorYaw;
+    
+    if(simGetObjectVelocity(finken.handle, &temp[0], &temp2[0]) > 0) {
+        finken.vel[0] = temp[0];
+        finken.vel[1] = temp[1];
+        finken.vel[2] = temp[2];
+        finken.rotVel[0] = temp[0];
+        finken.rotVel[1] = temp[1];
+        finken.rotVel[2] = temp[2];
+        std::transform(finken.vel.begin(), finken.vel.end(), oldVel.end(), finken.accel.begin(),
+            [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});
+        std::transform(finken.rotVel.begin(), finken.rotVel.end(), oldRotVel.end(), finken.rotAccel.begin(),
+            [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});       
+
     }
-    else{
-      errorYaw = errorYaw - 2*M_PI;
-    } 
-    
-    Eigen::Vector3f ecef_copter(0,0,0);
-    
-    Eigen::Vector3f enu_copter(finkenPos[0], finkenPos[1], finkenPos[2]);
-    
-    ecef_from_enu(ecef_copter, enu_copter);
-    
-    std::vector<double> dFinkenPos = {0,0,0};
-    
-    finken.pos[0] = enu_copter[0];
-    finken.pos[1] = enu_copter[1];
-    finken.pos[2] = enu_copter[2];
+    else {
+        simAddStatusbarMessage("error retrieving finken velocity");
+    }
+
     
 
 }
