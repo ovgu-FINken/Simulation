@@ -282,8 +282,8 @@ void buildFinken(Finken& finken, int fHandle){
 void Finken::updatePos(Finken& finken) {
     std::vector<float> temp = {0,0,0};
     std::vector<float> temp2 = {0,0,0};
-    std::vector<double> oldVel = {0,0,0};
-    std::vector<double> oldRotVel ={0,0,0};
+    std::vector<float> oldVel = {0,0,0};
+    std::vector<float> oldRotVel ={0,0,0};
     if(finken.getSensors().at(0)->get(temp) >0) {
         finken.pos[0] = temp[0];
         finken.pos[1] = temp[1];
@@ -309,11 +309,12 @@ void Finken::updatePos(Finken& finken) {
         finken.rotVel[0] = temp[0];
         finken.rotVel[1] = temp[1];
         finken.rotVel[2] = temp[2];
-        std::transform(finken.vel.begin(), finken.vel.end(), oldVel.end(), finken.accel.begin(),
+        std::transform(finken.vel.begin(), finken.vel.end(), oldVel.begin(), finken.accel.begin(),
             [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});
-        std::transform(finken.rotVel.begin(), finken.rotVel.end(), oldRotVel.end(), finken.rotAccel.begin(),
+        std::transform(finken.rotVel.begin(), finken.rotVel.end(), oldRotVel.begin(), finken.rotAccel.begin(),
             [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});       
-
+        oldVel = temp;
+        oldRotVel = temp2;
     }
     else {
         simAddStatusbarMessage("error retrieving finken velocity");
