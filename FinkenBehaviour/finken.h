@@ -74,7 +74,7 @@ public:
     int ac_id;
     std::array<double,4> commands = {};
     std::vector<double> pos = {0,0,0};
-    std::vector<double> euler = {0,0,0};
+    std::vector<double> quat = {0,0,0,0};
     std::vector<double> vel = {0,0,0};
     std::vector<double> rotVel ={0,0,0};
     std::vector<double> accel = {0,0,0};

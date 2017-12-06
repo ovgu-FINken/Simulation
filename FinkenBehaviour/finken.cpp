@@ -121,7 +121,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
     		boost::archive::binary_oarchive out(*sPtr);            
    	        updatePos(*this);            
 		    outPacket.pos = this->pos;
-            outPacket.euler = this->euler;
+            outPacket.quat = this->quat;
             outPacket.vel = this->vel;
             outPacket.rotVel = this->rotVel;
             outPacket.accel = this->accel;
@@ -180,7 +180,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         	boost::archive::binary_oarchive out(*sPtr);
             updatePos(*this);
             outPacket.pos = this->pos;
-            outPacket.euler = this->euler;
+            outPacket.quat = this->quat;
             outPacket.vel = this->vel;
             outPacket.rotVel = this->rotVel;
             outPacket.accel = this->accel;
@@ -293,10 +293,11 @@ void Finken::updatePos(Finken& finken) {
       simAddStatusbarMessage("Error retrieveing Finken Base Position");
       std::cout << "Error retrieveing Finken Base Position. Handle:" << finken.handle << std::endl;
     }
-    if(simGetObjectOrientation(finken.handle, -1, &temp[0]) > 0) {
-        finken.euler[0] = temp[0];
-        finken.euler[1] = temp[1];
-        finken.euler[2] = temp[2];
+    if(simGetObjectQuaternion(finken.handle, -1, &temp[0]) > 0) {
+        finken.quat[0] = temp[0];
+        finken.quat[1] = temp[1];
+        finken.quat[2] = temp[2];
+        finken.quat[3] = temp[3];
     }
     else {
       simAddStatusbarMessage("error retrieveing Finken Base Orientation");
