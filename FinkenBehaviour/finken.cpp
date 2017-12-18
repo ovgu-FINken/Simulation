@@ -12,7 +12,7 @@ using boost::asio::ip::tcp;
 
 
 std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
-std::array<double,6> thrustvalues = {0, 119,155,197,240,273};
+std::array<double,6> thrustvalues = {0, 1.19,1.55,1.97,2.40,2.73};
 
 static int kFinkenSonarCount = 4;
 static int kFinkenHeightSensorCount = 1;
@@ -280,7 +280,7 @@ void buildFinken(Finken& finken, int fHandle){
 
 
 void Finken::updatePos(Finken& finken) {
-    std::vector<float> temp = {0,0,0};
+    std::vector<float> temp = {0,0,0,0};
     std::vector<float> temp2 = {0,0,0};
     std::vector<float> oldVel = {0,0,0};
     std::vector<float> oldRotVel ={0,0,0};
