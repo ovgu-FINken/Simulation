@@ -18,25 +18,30 @@
 #include <chrono>
 #include <Eigen/Dense>
 #include <atomic>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 
+using boost::filesystem::ofstream;
+using boost::filesystem::current_path;
 using boost::asio::ip::tcp;
 
 extern std::condition_variable cv;
 extern std::mutex cv_m, syncMutex;
 extern std::atomic<bool> sendSync;
-    
+extern ofstream vrepLog;
+
 struct MultiSync {
   private:
     Eigen::Matrix<bool, Eigen::Dynamic, 1> mData;
   public:
-    size_t extend() { 
-      std::unique_lock<std::mutex> lk(syncMutex); 
-      size_t i = mData.rows(); 
-      mData.resize(i+1, 1); 
-      mData(i) = false; 
-      return i;	
+    size_t extend() {
+      std::unique_lock<std::mutex> lk(syncMutex);
+      size_t i = mData.rows();
+      mData.resize(i+1, 1);
+      mData(i) = false;
+      return i;
     }
-    void set(size_t i) { 
+    void set(size_t i) {
       std::unique_lock<std::mutex> lk(syncMutex);
       mData(i)=true;
     }
@@ -44,7 +49,7 @@ struct MultiSync {
       std::unique_lock<std::mutex> lk(syncMutex);
       mData(i)=false;
     }
-    operator bool() const { 
+    operator bool() const {
       std::unique_lock<std::mutex> lk(syncMutex);
       return mData.prod();
     }
@@ -67,7 +72,7 @@ private:
      std::vector<std::unique_ptr<Sensor>> sensors;
      std::vector<std::unique_ptr<Rotor>> rotors;
 public:
-    Finken(); 
+    Finken();
     Finken(int fHandle, int _ac_id);
     ~Finken();
     int handle;
@@ -88,7 +93,7 @@ public:
     std::vector<std::unique_ptr<Rotor>> &getRotors();
     Finken(const Finken&) = delete;
     Finken& operator=(const Finken&) = delete;
-    	
+
     finkenPID pitchController;
     finkenPID rollController;
     finkenPID yawController;

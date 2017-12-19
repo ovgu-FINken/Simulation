@@ -7,8 +7,17 @@
 #include "dataPacket.h"
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/asio.hpp>
+#include <chrono>
 
+using std::endl;
+using std::ostream;
+using boost::filesystem::ofstream;
+using boost::filesystem::current_path;
 using boost::asio::ip::tcp;
+using Clock = std::chrono::high_resolution_clock;
 
 
 std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
@@ -37,8 +46,8 @@ struct lla_coords {
     float height = 50;
 }lla;
 
-    
-Eigen::Matrix<float,4,4> mixingMatrix((Eigen::Matrix<float,4,4>() << -1, -1,  1, 1, 
+
+Eigen::Matrix<float,4,4> mixingMatrix((Eigen::Matrix<float,4,4>() << -1, -1,  1, 1,
                                                                       1, -1, -1, 1,
                                                                      -1,  1, -1, 1,
                                                                       1,  1,  1, 1).finished());
@@ -48,18 +57,18 @@ Eigen::Matrix<float,4,4> mixingMatrix((Eigen::Matrix<float,4,4>() << -1, -1,  1,
 Finken::Finken(){}
 Finken::Finken(int fHandle, int _ac_id) : handle(fHandle), ac_id(_ac_id){}
 Finken::~Finken(){
-    std::cout << "deleting finken with id: " << this->handle <<std::endl;
+    vrepLog << "deleting finken with id: " << this->handle <<std::endl;
     simCopters.emplace_back(std::make_pair(this->ac_id, this->handle));
 }
 
 
 void Finken::addSensor(std::unique_ptr<Sensor> &sensor){
     this->sensors.push_back(std::move(sensor));
-    std::cout << "Adding sensor to finken" << '\n';
+    vrepLog << "Adding sensor to finken" << '\n';
 }
 
 void Finken::addRotor(std::unique_ptr<Rotor> &rotor){
-    std::cout << "Adding rotor with name" << simGetObjectName(rotor->handle) << '\n';
+    vrepLog << "Adding rotor with name" << simGetObjectName(rotor->handle) << '\n';
     this->rotors.push_back((std::move(rotor)));
 }
 std::vector<std::unique_ptr<Sensor>> &Finken::getSensors(){
@@ -71,40 +80,41 @@ std::vector<std::unique_ptr<Rotor>> &Finken::getRotors(){
 
 
 void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
-    int connection_nb = 2;
+  auto runStart = Clock::now();
+  int connection_nb = 2;
 	std::unique_lock<std::mutex> server_lock(cv_m);
     try {
-        std::cout << "client connected" << std::endl;
-    	
-	    //first connection: 
+        vrepLog << "client connected" << std::endl;
+
+	    //first connection:
 	    int copter_id = simCopters.back().second;
         size_t id;
         int commands_nb = 0;
-	    std::cout << "first connection" << std::endl;
-	    {	
+	    vrepLog << "first connection" << std::endl;
+	    {
             boost::archive::binary_iarchive in(*sPtr);
             in >> inPacket;
             this->ac_id = inPacket.ac_id;
 	    	this->commands[0]=inPacket.pitch;
-	    	this->commands[1]=inPacket.roll;	
-	    	this->commands[2]=inPacket.yaw;	
-	    	this->commands[3]=inPacket.thrust;	
-        }                      
+	    	this->commands[1]=inPacket.roll;
+	    	this->commands[2]=inPacket.yaw;
+	    	this->commands[3]=inPacket.thrust;
+        }
     	// check for existence of a free(not associated with a paparazzi client yet) copter
         if(simCopters.size() > 0) {
             for(auto it = simCopters.begin(); it!=simCopters.end();it++){
                 if(it->first==this->ac_id){
-                    std::cout << "copter with correct id " << this->ac_id << " found" << std::endl;
-                    id = readSync.extend();            
+                    vrepLog << "copter with correct id " << this->ac_id << " found" << std::endl;
+                    id = readSync.extend();
 		            buildFinken(*this, it->second);
-		            std::cout << "building finken with id " << it->second << std::endl;
+		            vrepLog << "building finken with id " << it->second << std::endl;
                     simCopters.erase(it);
-                    std::cout << "simcopters size: " << simCopters.size() << std::endl;
-                    std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
+                    vrepLog << "simcopters size: " << simCopters.size() << std::endl;
+                    vrepLog << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
                     break;
                 }
                 else if(it == simCopters.end()-1){
-                    std::cout << "no copter with id " << this->ac_id << " found, terminating connection" << std::endl;
+                    vrepLog << "no copter with id " << this->ac_id << " found, terminating connection" << std::endl;
                     sPtr.get()->close();
                     return;
                 }
@@ -112,14 +122,14 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             }
         }
         else {
-            std::cout << "no finken available, terminating connection" << std::endl;
+            vrepLog << "no finken available, terminating connection" << std::endl;
             sPtr.get()->close();
             return;
         }
-        {   
-            
-    		boost::archive::binary_oarchive out(*sPtr);            
-   	        updatePos(*this);            
+        {
+
+    		boost::archive::binary_oarchive out(*sPtr);
+   	        updatePos(*this);
 		    outPacket.pos = this->pos;
             outPacket.quat = this->quat;
             outPacket.vel = this->vel;
@@ -128,53 +138,54 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             outPacket.rotAccel = this->rotAccel;
    	    	out << outPacket;
         }
-        		
+
 	    for (;;){
-            
+            auto runStart = Clock::now();
             auto then = std::chrono::high_resolution_clock::now();
-                   
+
             int commands_nb = 0;
-            std::cout << "connection:" << connection_nb++ << std::endl;
+            vrepLog << "connection:" << connection_nb++ << std::endl;
             boost::archive::binary_iarchive in(*sPtr);
             in >> inPacket;
             this->commands[0]=inPacket.pitch;
-		    this->commands[1]=inPacket.roll;	
-	        this->commands[3]=inPacket.yaw;	
-		    this->commands[2]=inPacket.thrust;	
-	        std::cout << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
-            
+		        this->commands[1]=inPacket.roll;
+	          this->commands[3]=inPacket.yaw;
+		        this->commands[2]=inPacket.thrust;
+	          vrepLog << "recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl;
+
             auto now = std::chrono::high_resolution_clock::now();
-            std::cout << "recieving data computation time: " << std::chrono::nanoseconds(now-then).count()/999999 << "ms" << std::endl;
+            vrepLog << "recieving data computation time: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
 
             then = std::chrono::high_resolution_clock::now();
             readSync.set(id);
-		    cv.notify_all();
-            
-		    std::cout << "Finken " << copter_id << " Received commands " << '\n';
-            sendSync = false;  
-            
-            if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return readSync;})); 
+		        cv.notify_all();
+
+		        vrepLog << "Finken " << copter_id << " Received commands " << '\n';
+            sendSync = false;
+
+            if(cv.wait_for(server_lock, std::chrono::milliseconds(10000), [](){return readSync;}));
             else {
-                std::cout << "Finken "<< copter_id << " timed out. id == " << id << '\n';
+                vrepLog << "Finken "<< copter_id << " timed out. id == " << id << '\n';
 		    }
-				
+
 		    readSync.unSet(id);
-		    std::cout << "Finken " << copter_id << " waiting" << '\n';
+		    vrepLog << "Finken " << copter_id << " waiting" << '\n';
             /*
-            int simpleTimeout = 0;            
-	 	    while ( !sendSync.load() ){             // (3)
+            int simpleTimeout = 0;
+	 	         while ( !sendSync.load() ){             // (3)
               if(simpleTimeout > 4000){
                   throw std::runtime_error("finken timed out while waiting for permission to send");
               }
               std::this_thread::sleep_for(std::chrono::milliseconds(1));
               simpleTimeout++;
-   		    }
+   		       }
             */
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
             now = std::chrono::high_resolution_clock::now();
-            std::cout << "thread sync computation time: " << std::chrono::nanoseconds(now-then).count()/999999 << "ms" << std::endl;
-            
+            vrepLog << "thread sync computation time: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
+
             then = std::chrono::high_resolution_clock::now();
-		    std::cout << "Finken " << copter_id << " finished waiting, replying" << '\n';
+		    vrepLog << "Finken " << copter_id << " finished waiting, replying" << '\n';
 		    //boost::archive::binary_oarchive out(*sPtr);
        		commands_nb = 1;
         	boost::archive::binary_oarchive out(*sPtr);
@@ -186,16 +197,18 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             outPacket.accel = this->accel;
             outPacket.rotAccel = this->rotAccel;
 
-		    out << outPacket;
-            std::cout << "sending " << outPacket.pos[0] << " | " << outPacket.pos[1] << " | " << outPacket.pos[2]  << std::endl;
+		        out << outPacket;
+            vrepLog << "sending " << outPacket.pos[0] << " | " << outPacket.pos[1] << " | " << outPacket.pos[2]  << std::endl;
 
 
             now = std::chrono::high_resolution_clock::now();
-            std::cout << "sending data computation time: " << std::chrono::nanoseconds(now-then).count()/999999 << "ms" << std::endl;
+            vrepLog << "sending data computation time: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
 
-        	
+            auto runEnd = Clock::now();
+            vrepLog << "total Finken::run() time: " << std::chrono::nanoseconds(runEnd - runStart).count()/1000000 << "ms" << std::endl;
+
         }
-    }   
+    }
   	catch (std::exception& e) {
 	    std::cerr << "Exception in thread: " << e.what() << "\n";
 	    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
@@ -209,13 +222,13 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 
 void Finken::setRotorSpeeds() {
     Eigen::Vector4f motorCommands(this->commands[0], this->commands[1], this->commands[2], this->commands[3]);
-    std::cout << "commands " << motorCommands[0] << "   " << motorCommands[1] << "   " << motorCommands[2] << "    " << motorCommands[3] << std::endl;
+    vrepLog << "commands " << motorCommands[0] << "   " << motorCommands[1] << "   " << motorCommands[2] << "    " << motorCommands[3] << std::endl;
 
     motorCommands[0]=thrustFromThrottle(motorCommands[0]);
     motorCommands[1]=thrustFromThrottle(motorCommands[1]);
     motorCommands[2]=thrustFromThrottle(motorCommands[2]);
     motorCommands[3]=thrustFromThrottle(motorCommands[3]);
-    
+
     std::vector<float> motorFrontLeft  = {0, 0, motorCommands[0]};
     std::vector<float> motorFrontRight = {0, 0, motorCommands[1]};
     std::vector<float> motorBackLeft   = {0, 0, motorCommands[2]};
@@ -225,9 +238,9 @@ void Finken::setRotorSpeeds() {
     /*
     for(auto it=motorForces.begin(); it != motorForces.end(); it++) {
     	for (auto it2 = it->begin(); it2 != it->end(); it2++) {
-	    std::cout << (*it2) << " | ";
-	}			
-	std::cout << std::endl;
+	    vrepLog << (*it2) << " | ";
+	}
+	vrepLog << std::endl;
     }
     */
 
@@ -243,7 +256,7 @@ void Finken::setRotorSpeeds() {
  *
  */
 void buildFinken(Finken& finken, int fHandle){
-    std::cout << "building finken" << std::endl;
+    vrepLog << "building finken" << std::endl;
 
     finken.handle = fHandle;
     int foundSensorCount = 0;
@@ -291,7 +304,7 @@ void Finken::updatePos(Finken& finken) {
     }
     else {
       simAddStatusbarMessage("Error retrieveing Finken Base Position");
-      std::cout << "Error retrieveing Finken Base Position. Handle:" << finken.handle << std::endl;
+      vrepLog << "Error retrieveing Finken Base Position. Handle:" << finken.handle << std::endl;
     }
     if(simGetObjectQuaternion(finken.handle, -1, &temp[0]) > 0) {
         finken.quat[0] = temp[0];
@@ -302,7 +315,7 @@ void Finken::updatePos(Finken& finken) {
     else {
       simAddStatusbarMessage("error retrieveing Finken Base Orientation");
     }
-    
+
     if(simGetObjectVelocity(finken.handle, &temp[0], &temp2[0]) > 0) {
         finken.vel[0] = temp[0];
         finken.vel[1] = temp[1];
@@ -313,7 +326,7 @@ void Finken::updatePos(Finken& finken) {
         std::transform(finken.vel.begin(), finken.vel.end(), oldVel.begin(), finken.accel.begin(),
             [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});
         std::transform(finken.rotVel.begin(), finken.rotVel.end(), oldRotVel.begin(), finken.rotAccel.begin(),
-            [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});       
+            [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});
         oldVel = temp;
         oldRotVel = temp2;
     }
@@ -321,7 +334,7 @@ void Finken::updatePos(Finken& finken) {
         simAddStatusbarMessage("error retrieving finken velocity");
     }
 
-    
+
 
 }
 
@@ -334,7 +347,7 @@ void ecef_from_enu(Eigen::Vector3f& ecef_coord, Eigen::Vector3f& enu_coord) {
                 -1,             cos(lla.lat),              sin(lla.lat);
 
     Eigen::Vector3f ecef_base(ecef.x, ecef.y, ecef.z);
-    
+
     ecef_coord = cMatrix * enu_coord + ecef_base;
 }
 
@@ -343,7 +356,7 @@ void ecef_from_enu(Eigen::Vector3f& ecef_coord, Eigen::Vector3f& enu_coord) {
 /*
 void remove_item(int id) {
     vec.erase(std::remove_if(
-        vec.begin(), vec.end(), [id](const std::unique_ptr<item>& e) 
+        vec.begin(), vec.end(), [id](const std::unique_ptr<item>& e)
                                     {   return id == e->id; })
         ,vec.end());
 }

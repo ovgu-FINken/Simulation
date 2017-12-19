@@ -19,23 +19,34 @@
 #include <Eigen/Dense>
 #include <condition_variable>
 #include <chrono>
+#include <boost/asio.hpp>
+
+
+using std::endl;
+using std::ostream;
+using boost::filesystem::ofstream;
+using boost::filesystem::current_path;
+using boost::asio::ip::tcp;
+using Clock = std::chrono::high_resolution_clock;
 
 using boost::asio::ip::tcp;
 
 extern float execution_step_size;
 extern std::vector<std::unique_ptr<Finken>> allFinken;
 std::unique_ptr<tcp::iostream> sPtr;
+ofstream vrepLog(current_path()/"vrep.log");
+
 
 void deleteFinken(std::unique_ptr<Finken>& finken){
     //TODO: this stuff definitely isnt thread safe
-    std::cout << "attempting to erase finken " <<finken->handle << std::endl;
+    vrepLog << "attempting to erase finken " <<finken->handle << std::endl;
     simCopters.emplace_back(std::make_pair(finken->ac_id, finken->handle));
     allFinken.erase(std::remove(allFinken.begin(), allFinken.end(), finken),allFinken.end());
 }
 
-class Async_Server{    
+class Async_Server{
     public:
-    Async_Server(boost::asio::io_service& io_service) : 
+    Async_Server(boost::asio::io_service& io_service) :
       acceptor_(io_service,tcp::endpoint(tcp::v4(), 50013)){
         simAddStatusbarMessage("Asynchronous server successfully established");
         start_accept();
@@ -47,7 +58,7 @@ class Async_Server{
         sPtr.reset(new tcp::iostream());
         acceptor_.async_accept(*sPtr->rdbuf(), boost::bind(&Async_Server::handle_accept, this, boost::asio::placeholders::error));
     }
-        
+
     void handle_accept(const boost::system::error_code& error){
         if(!error){
             simAddStatusbarMessage("New copnnection established");
@@ -77,9 +88,9 @@ class FinkenPlugin: public VREPPlugin {
     virtual ~FinkenPlugin() {}
     virtual unsigned char version() const { return 1; }
     virtual bool load() {
-      std::cout << "starting asynchronous vrep server" << '\n' ;
+      vrepLog << "starting asynchronous vrep server" << '\n' ;
       async_server.reset(new Async_Server(io_service));
-      std::cout << "server done" << '\n';
+      vrepLog << "server done" << '\n';
       Log::name(name());
       Log::out() << "loaded v 13-10-17" << std::endl;
       return true;
@@ -94,11 +105,11 @@ class FinkenPlugin: public VREPPlugin {
     }
 
     void* simStart(int* auxiliaryData,void* customData,int* replyData)
-    {   
+    {
                boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
         return NULL;
     }
-    
+
     void* simEnd(int* auxiliaryData,void* customData,int* replyData)
     {
         /*allFinken.clear();
@@ -109,33 +120,35 @@ class FinkenPlugin: public VREPPlugin {
         io_service.reset();
         return NULL;
     }
-    
+
     void* action(int* auxiliaryData,void* customData,int* replyData)
-    {   
+    {
+        auto then = Clock::now();
         sendSync = true;
         while(allFinken.size() == 0){
-            std::cout << "waiting for finken creation. Available copters for pairing: " << simCopters.size() << '\n';
+            vrepLog << "waiting for finken creation. Available copters for pairing: " << simCopters.size() << '\n';
 	    	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-		
+
 		//doNothing;
-	    }
+	      }
 
-    	//std::cout << "vrep pass done, copter count:" << allFinken.size() <<  '\n';
-    
-	while ( sendSync.load() ){
+    	//vrepLog << "vrep pass done, copter count:" << allFinken.size() <<  '\n';
+
+	     while ( sendSync.load() ){
        		std::this_thread::sleep_for(std::chrono::milliseconds(5));
-   	}
-	   
+   	    }
 
-        
-                
+
+
+
         for(int i = 0; i<allFinken.size(); i++){
             allFinken.at(i)->setRotorSpeeds();
         }
-         
-    
-       
-    return NULL;
+
+        auto now = Clock::now();
+        vrepLog << "finkenplugin action() time: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
+
+        return NULL;
     }
 
 } plugin;
