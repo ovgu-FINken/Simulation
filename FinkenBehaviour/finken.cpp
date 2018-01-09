@@ -21,7 +21,7 @@ using Clock = std::chrono::high_resolution_clock;
 
 
 std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
-std::array<double,6> thrustvalues = {0, 1.19,1.55,1.97,2.40,2.73};
+std::array<double,6> thrustvalues = {0, 1.19/2,1.55/2,1.97/2,2.40/2,2.73/2};
 
 static int kFinkenSonarCount = 4;
 static int kFinkenHeightSensorCount = 1;
@@ -228,13 +228,13 @@ void Finken::setRotorSpeeds() {
     motorCommands[1]=thrustFromThrottle(motorCommands[1]);
     motorCommands[2]=thrustFromThrottle(motorCommands[2]);
     motorCommands[3]=thrustFromThrottle(motorCommands[3]);
-
-    std::vector<float> motorFrontLeft  = {0, 0, motorCommands[0]};
-    std::vector<float> motorFrontRight = {0, 0, motorCommands[1]};
-    std::vector<float> motorBackLeft   = {0, 0, motorCommands[2]};
-    std::vector<float> motorBackRight  = {0, 0, motorCommands[3]};
+    //pprz: NW->NE->SE->SW:
+    std::vector<float> motorNW  = {0, 0, motorCommands[0]};
+    std::vector<float> motorNE = {0, 0, motorCommands[1]};
+    std::vector<float> motorSE   = {0, 0, motorCommands[2]};
+    std::vector<float> motorSW  = {0, 0, motorCommands[3]};
     std::vector<float> vtorque = {0,0,0};
-    std::vector<std::vector<float>> motorForces= {motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight};
+    std::vector<std::vector<float>> motorForces= {motorNW, motorNE, motorSW, motorSE};
     /*
     for(auto it=motorForces.begin(); it != motorForces.end(); it++) {
     	for (auto it2 = it->begin(); it2 != it->end(); it2++) {
@@ -245,7 +245,7 @@ void Finken::setRotorSpeeds() {
     */
 
     for (int i = 0; i<4; i++) {
-        this->getRotors().at(i)->set(motorForces[i], vtorque);
+        //this->getRotors().at(i)->set(motorForces[i], vtorque);
     }
 }
 
