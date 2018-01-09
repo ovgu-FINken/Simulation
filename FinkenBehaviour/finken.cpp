@@ -245,7 +245,7 @@ void Finken::setRotorSpeeds() {
     */
 
     for (int i = 0; i<4; i++) {
-        //this->getRotors().at(i)->set(motorForces[i], vtorque);
+        this->getRotors().at(i)->set(motorForces[i], vtorque);
     }
 }
 
