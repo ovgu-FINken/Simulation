@@ -21,7 +21,7 @@ using Clock = std::chrono::high_resolution_clock;
 
 
 std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
-std::array<double,6> thrustvalues = {0, 1.19/2,1.55/2,1.97/2,2.40/2,2.73/2};
+std::array<double,6> thrustvalues = {0, 1.19,1.55,1.97,2.40,2.73};
 
 static int kFinkenSonarCount = 4;
 static int kFinkenHeightSensorCount = 1;
