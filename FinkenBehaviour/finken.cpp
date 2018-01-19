@@ -259,13 +259,15 @@ void buildFinken(Finken& finken, int fHandle){
     vrepLog << "building finken" << std::endl;
 
     finken.handle = fHandle;
-    int foundSensorCount = 0;
+    finken.baseHandle = fHandle;
+    int foundSensorCount = 0, foundBaseCount = 0;
 
     //create positionsensor and add to the finken:
     std::unique_ptr<Sensor> posSensor(new PositionSensor (fHandle));
     finken.addSensor(posSensor);
 
     //Grab all Proximity sensors and add them to the finken:
+    int* baseHandles = simGetObjectsInTree(fHandle, sim_object_dummy_type, 1, &foundBaseCount);
     int* proxSensorHandles = simGetObjectsInTree(fHandle, sim_object_proximitysensor_type, 1, &foundSensorCount);
     for(int i = 0; i<foundSensorCount; i++){
         //we have kFinkenSonarCount sonars:
@@ -280,7 +282,18 @@ void buildFinken(Finken& finken, int fHandle){
         }
 
     }
-
+    for(unsigned int i=0;i<foundBaseCount;i++) {
+      char* dummyNameTemp = simGetObjectName(baseHandles[i]);
+      std::string dummyName  = dummyNameTemp;
+      simReleaseBuffer(dummyNameTemp);
+      ssize_t endPos = dummyName.rfind('#');
+      vrepLog  << "Found dummy element with name: "  << dummyName << endl;
+      if(dummyName.substr(0, endPos)=="SimFinken_base") {
+        finken.baseHandle=baseHandles[i];
+        vrepLog  << "Found copter base with handle: "  << finken.baseHandle  << endl;
+        break;
+      }
+    }
     //Grab all Rotors and add them to the finken:
 
     for(int i = 1; i<5; i++){
@@ -289,6 +302,7 @@ void buildFinken(Finken& finken, int fHandle){
         finken.addRotor(vr);
     }
     simReleaseBuffer((char *) proxSensorHandles);
+    simReleaseBuffer((char *) baseHandles);
 }
 
 
@@ -306,7 +320,7 @@ void Finken::updatePos(Finken& finken) {
       simAddStatusbarMessage("Error retrieveing Finken Base Position");
       vrepLog << "Error retrieveing Finken Base Position. Handle:" << finken.handle << std::endl;
     }
-    if(simGetObjectQuaternion(finken.handle, -1, &temp[0]) > 0) {
+    if(simGetObjectQuaternion(finken.baseHandle, -1, &temp[0]) > 0) {
         finken.quat[0] = temp[0];
         finken.quat[1] = temp[1];
         finken.quat[2] = temp[2];
@@ -316,7 +330,7 @@ void Finken::updatePos(Finken& finken) {
       simAddStatusbarMessage("error retrieveing Finken Base Orientation");
     }
 
-    if(simGetObjectVelocity(finken.handle, &temp[0], &temp2[0]) > 0) {
+    if(simGetObjectVelocity(finken.baseHandle, &temp[0], &temp2[0]) > 0) {
         finken.vel[0] = temp[0];
         finken.vel[1] = temp[1];
         finken.vel[2] = temp[2];

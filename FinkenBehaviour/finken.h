@@ -75,7 +75,7 @@ public:
     Finken();
     Finken(int fHandle, int _ac_id);
     ~Finken();
-    int handle;
+    int handle, baseHandle;
     int ac_id;
     std::array<double,4> commands = {};
     std::vector<double> pos = {0,0,0};
