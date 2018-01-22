@@ -21,7 +21,7 @@ using Clock = std::chrono::high_resolution_clock;
 
 
 std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
-std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1,77,2.03};
+std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
 
 static int kFinkenSonarCount = 4;
 static int kFinkenHeightSensorCount = 1;
@@ -196,9 +196,17 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             outPacket.rotVel = this->rotVel;
             outPacket.accel = this->accel;
             outPacket.rotAccel = this->rotAccel;
+            vrepLog << "sending position/attitude data: "<< std::endl 
+            << "pos: " << outPacket.pos[0] << " | "  << outPacket.pos[1] << " | " << outPacket.pos[2] << std::endl
+            << "quat-xyzw: " << outPacket.quat[0] << " | "  << outPacket.quat[1] << " | " << outPacket.quat[2] << " | " << outPacket.quat[4] << std::endl
+            << "vel: " << outPacket.vel[0] << " | "  << outPacket.vel[1] << " | " << outPacket.vel[2] << std::endl
+            << "rotVel: " << outPacket.rotVel[0] << " | "  << outPacket.rotVel[1] << " | " << outPacket.rotVel[2] << std::endl
+            << "accel: " << outPacket.accel[0] << " | "  << outPacket.accel[1] << " | " << outPacket.accel[2] << std::endl
+            << "rotAccel: " << outPacket.rotAccel[0] << " | "  << outPacket.rotAccel[1] << " | " << outPacket.rotAccel[2] << std::endl;
 
-		        out << outPacket;
-            vrepLog << "sending " << outPacket.pos[0] << " | " << outPacket.pos[1] << " | " << outPacket.pos[2]  << std::endl;
+
+
+		    out << outPacket;
 
 
             now = std::chrono::high_resolution_clock::now();
@@ -321,6 +329,7 @@ void Finken::updatePos(Finken& finken) {
       vrepLog << "Error retrieveing Finken Base Position. Handle:" << finken.handle << std::endl;
     }
     if(simGetObjectQuaternion(finken.baseHandle, -1, &temp[0]) > 0) {
+        //returns quat as x,y,z,w
         finken.quat[0] = temp[0];
         finken.quat[1] = temp[1];
         finken.quat[2] = temp[2];
