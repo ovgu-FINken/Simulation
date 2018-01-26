@@ -315,7 +315,8 @@ void buildFinken(Finken& finken, int fHandle){
 
 
 void Finken::updatePos(Finken& finken) {
-    std::vector<float> temp = {0,0,0,0};
+    std::vector<float> tempquat = {0,0,0,0};
+    std::vector<float> temp = {0,0,0};
     std::vector<float> temp2 = {0,0,0};
     std::vector<float> oldVel = {0,0,0};
     std::vector<float> oldRotVel ={0,0,0};
@@ -330,10 +331,10 @@ void Finken::updatePos(Finken& finken) {
     }
     if(simGetObjectQuaternion(finken.baseHandle, -1, &temp[0]) > 0) {
         //returns quat as x,y,z,w
-        finken.quat[0] = temp[0];
-        finken.quat[1] = temp[1];
-        finken.quat[2] = temp[2];
-        finken.quat[3] = temp[3];
+        finken.quat[0] = tempquat[0];
+        finken.quat[1] = tempquat[1];
+        finken.quat[2] = tempquat[2];
+        finken.quat[3] = tempquat[3];
     }
     else {
       simAddStatusbarMessage("error retrieveing Finken Base Orientation");
