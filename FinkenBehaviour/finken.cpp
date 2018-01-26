@@ -198,7 +198,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             outPacket.rotAccel = this->rotAccel;
             vrepLog << "sending position/attitude data: "<< std::endl 
             << "pos: " << outPacket.pos[0] << " | "  << outPacket.pos[1] << " | " << outPacket.pos[2] << std::endl
-            << "quat-xyzw: " << outPacket.quat[0] << " | "  << outPacket.quat[1] << " | " << outPacket.quat[2] << " | " << outPacket.quat[4] << std::endl
+            << "quat-xyzw: " << outPacket.quat[0] << " | "  << outPacket.quat[1] << " | " << outPacket.quat[2] << " | " << outPacket.quat[3] << std::endl
             << "vel: " << outPacket.vel[0] << " | "  << outPacket.vel[1] << " | " << outPacket.vel[2] << std::endl
             << "rotVel: " << outPacket.rotVel[0] << " | "  << outPacket.rotVel[1] << " | " << outPacket.rotVel[2] << std::endl
             << "accel: " << outPacket.accel[0] << " | "  << outPacket.accel[1] << " | " << outPacket.accel[2] << std::endl
@@ -329,7 +329,7 @@ void Finken::updatePos(Finken& finken) {
       simAddStatusbarMessage("Error retrieveing Finken Base Position");
       vrepLog << "Error retrieveing Finken Base Position. Handle:" << finken.handle << std::endl;
     }
-    if(simGetObjectQuaternion(finken.baseHandle, -1, &temp[0]) > 0) {
+    if(simGetObjectQuaternion(finken.baseHandle, -1, &tempquat[0]) > 0) {
         //returns quat as x,y,z,w
         finken.quat[0] = tempquat[0];
         finken.quat[1] = tempquat[1];
