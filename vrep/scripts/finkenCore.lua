@@ -15,6 +15,7 @@ local sensorDistances = {7.5,7.5,7.5,7.5}
 
 local handle_FinkenBase = nil
 local handle_finken = nil
+local handle_target = nil
 
 local execution_last_time = 0
 local execution_step_size = 0
@@ -26,7 +27,21 @@ local dPthrottle=0
 local vPthrottle=-2
 local cumulThrottle=0
 local prevEThrottle =0
+local maxPitchRoll = 5 
 
+function saturate(value, minThreshold, maxThreshold)
+	if minThreshold then
+		if value < minThreshold then
+			value = minThreshold
+		end
+	end
+	if maxThreshold then
+		if value > maxThreshold then
+			value = maxThreshold
+		end
+	end
+	return value
+end
 
 local function tuneThrottle(throttle, curveParamNeg, curveParamPos)
 	local throttleTarget =  throttle - 50
@@ -73,14 +88,14 @@ function finkenCore.init()
 	handle_finken = simGetObjectAssociatedWithScript(sim_handle_self)
 	execution_step_size = simGetSimulationTimeStep()
 	--local apiStatus, apiInfo, _ = simExtRemoteApiStatus(19999)
-	local apiInfo = apiInfo or simExtRemoteApiStart(19999)
+	-- local apiInfo = apiInfo or simExtRemoteApiStart(19999)
 	--if not apiStatus then apiStatus = simExtRemoteApiStart(19999) end
-	simAddStatusbarMessage("apiStatus "..apiInfo )
+	--simAddStatusbarMessage("apiStatus "..apiInfo )
 	pitchController.init(0.2, 0.1, 1.5)
 	rollController.init(0.2, 0.1, 1.5)
 	yawController.init(0.4, 0.001, 1.91) --(0.1, , )
-	targetXcontroller.init(2, 0, 4)
-	targetYcontroller.init(2, 0, 4)
+	targetXcontroller.init(2, 0, 0.75)
+	targetYcontroller.init(2, 0, 0.75)
 	targetZcontroller.init(6, 0, 8)
 	simSetFloatSignal(fixSignalName('throttle'),50)
 	simSetFloatSignal(fixSignalName('pitch'),0)
@@ -191,6 +206,7 @@ function finkenCore.step()
 end
 
 function finkenCore.setTarget(targetObject)
+	handle_target = targetObject
 	local targetPosition = simGetObjectPosition(targetObject,-1) 
 	local basePosition = simGetObjectPosition(handle_FinkenBase,-1)
 	local errorX = targetPosition[1] - basePosition[1]
@@ -200,11 +216,18 @@ function finkenCore.setTarget(targetObject)
 	local corrY = targetYcontroller.stepResetIonTarget(errorY, execution_step_size / defaultStepSize)
 	local corrZ = targetZcontroller.stepResetIonTarget(errorZ, execution_step_size / defaultStepSize)
 	-- @ToDo limit the signal to maximum functioning value
+	corrX = saturate(corrX, -maxPitchRoll, maxPitchRoll)
+	corrY = saturate(corrY, -maxPitchRoll, maxPitchRoll)
 	simSetFloatSignal(fixSignalName('pitch'), corrX)
 	simSetFloatSignal(fixSignalName('roll'), corrY)
 	simSetFloatSignal(fixSignalName('throttle'), 50+corrZ)
 	simSetFloatSignal(fixSignalName('height'),targetPosition[3])
 end
+
+function finkenCore.getTarget()
+	return handle_target
+end
+
 --[[
 --sense() reads all sensors of the finken, and updates the signals
 --@return {float dist_front, float dist_left, float dist_back, float dist_right}

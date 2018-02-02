@@ -1,0 +1,382 @@
+** Initializing network
+Initializing module net, stage 0
+net.channelControl: Initializing module net.channelControl, stage 0
+net.IEEE802154Nodes[0]: Initializing module net.IEEE802154Nodes[0], stage 0
+net.IEEE802154Nodes[0].application: Initializing module net.IEEE802154Nodes[0].application, stage 0
+net.IEEE802154Nodes[0].notificationBoard: Initializing module net.IEEE802154Nodes[0].notificationBoard, stage 0
+net.IEEE802154Nodes[0].battery: Initializing module net.IEEE802154Nodes[0].battery, stage 0
+net.IEEE802154Nodes[0].battery: capacity = 3800mA-h (nominal = 3800) at 12V
+net.IEEE802154Nodes[0].battery: publishDelta = 100%, publishTime = 0s, resolution = 100sec
+net.IEEE802154Nodes[0].mobility: Initializing module net.IEEE802154Nodes[0].mobility, stage 0
+net.IEEE802154Nodes[0].mobility: TRACE: initializing MobilityBase stage 0
+net.IEEE802154Nodes[0].Network: Initializing module net.IEEE802154Nodes[0].Network, stage 0
+net.IEEE802154Nodes[0].Network.sscs: Initializing module net.IEEE802154Nodes[0].Network.sscs, stage 0
+net.IEEE802154Nodes[0].Network.stdLLC: Initializing module net.IEEE802154Nodes[0].Network.stdLLC, stage 0
+net.IEEE802154Nodes[0].NIC: Initializing module net.IEEE802154Nodes[0].NIC, stage 0
+net.IEEE802154Nodes[0].NIC.MAC: Initializing module net.IEEE802154Nodes[0].NIC.MAC, stage 0
+net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac: Initializing module net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac, stage 0
+net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac: [802154_MAC]: Initialization for MacDSN = 2 and MacBSN = 2
+net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac: [802154_MAC]: myMacAddr is unspecified -> assigning user set address (macAddr in omnetpp.ini) = 0A:AA:00:00:00:00:00:00
+net.IEEE802154Nodes[0].NIC.MAC.Buffer: Initializing module net.IEEE802154Nodes[0].NIC.MAC.Buffer, stage 0
+net.IEEE802154Nodes[0].NIC.PHY: Initializing module net.IEEE802154Nodes[0].NIC.PHY, stage 0
+net.IEEE802154Nodes[0].NIC.radioInterface: Initializing module net.IEEE802154Nodes[0].NIC.radioInterface, stage 0
+net.IEEE802154Nodes[1]: Initializing module net.IEEE802154Nodes[1], stage 0
+net.IEEE802154Nodes[1].application: Initializing module net.IEEE802154Nodes[1].application, stage 0
+net.IEEE802154Nodes[1].notificationBoard: Initializing module net.IEEE802154Nodes[1].notificationBoard, stage 0
+net.IEEE802154Nodes[1].battery: Initializing module net.IEEE802154Nodes[1].battery, stage 0
+net.IEEE802154Nodes[1].battery: capacity = 3800mA-h (nominal = 3800) at 12V
+net.IEEE802154Nodes[1].battery: publishDelta = 100%, publishTime = 0s, resolution = 100sec
+net.IEEE802154Nodes[1].mobility: Initializing module net.IEEE802154Nodes[1].mobility, stage 0
+net.IEEE802154Nodes[1].mobility: TRACE: initializing MobilityBase stage 0
+net.IEEE802154Nodes[1].Network: Initializing module net.IEEE802154Nodes[1].Network, stage 0
+net.IEEE802154Nodes[1].Network.sscs: Initializing module net.IEEE802154Nodes[1].Network.sscs, stage 0
+net.IEEE802154Nodes[1].Network.stdLLC: Initializing module net.IEEE802154Nodes[1].Network.stdLLC, stage 0
+net.IEEE802154Nodes[1].NIC: Initializing module net.IEEE802154Nodes[1].NIC, stage 0
+net.IEEE802154Nodes[1].NIC.MAC: Initializing module net.IEEE802154Nodes[1].NIC.MAC, stage 0
+net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac: Initializing module net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac, stage 0
+net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac: [802154_MAC]: Initialization for MacDSN = 94 and MacBSN = 94
+net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac: [802154_MAC]: myMacAddr is unspecified -> assigning user set address (macAddr in omnetpp.ini) = 0A:AA:00:00:00:00:00:01
+net.IEEE802154Nodes[1].NIC.MAC.Buffer: Initializing module net.IEEE802154Nodes[1].NIC.MAC.Buffer, stage 0
+net.IEEE802154Nodes[1].NIC.PHY: Initializing module net.IEEE802154Nodes[1].NIC.PHY, stage 0
+net.IEEE802154Nodes[1].NIC.radioInterface: Initializing module net.IEEE802154Nodes[1].NIC.radioInterface, stage 0
+net.IEEE802154Nodes[2]: Initializing module net.IEEE802154Nodes[2], stage 0
+net.IEEE802154Nodes[2].application: Initializing module net.IEEE802154Nodes[2].application, stage 0
+net.IEEE802154Nodes[2].notificationBoard: Initializing module net.IEEE802154Nodes[2].notificationBoard, stage 0
+net.IEEE802154Nodes[2].battery: Initializing module net.IEEE802154Nodes[2].battery, stage 0
+net.IEEE802154Nodes[2].battery: capacity = 3800mA-h (nominal = 3800) at 12V
+net.IEEE802154Nodes[2].battery: publishDelta = 100%, publishTime = 0s, resolution = 100sec
+net.IEEE802154Nodes[2].mobility: Initializing module net.IEEE802154Nodes[2].mobility, stage 0
+net.IEEE802154Nodes[2].mobility: TRACE: initializing MobilityBase stage 0
+net.IEEE802154Nodes[2].Network: Initializing module net.IEEE802154Nodes[2].Network, stage 0
+net.IEEE802154Nodes[2].Network.sscs: Initializing module net.IEEE802154Nodes[2].Network.sscs, stage 0
+net.IEEE802154Nodes[2].Network.stdLLC: Initializing module net.IEEE802154Nodes[2].Network.stdLLC, stage 0
+net.IEEE802154Nodes[2].NIC: Initializing module net.IEEE802154Nodes[2].NIC, stage 0
+net.IEEE802154Nodes[2].NIC.MAC: Initializing module net.IEEE802154Nodes[2].NIC.MAC, stage 0
+net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac: Initializing module net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac, stage 0
+net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac: [802154_MAC]: Initialization for MacDSN = 114 and MacBSN = 114
+net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac: [802154_MAC]: myMacAddr is unspecified -> assigning user set address (macAddr in omnetpp.ini) = 0A:AA:00:00:00:00:00:02
+net.IEEE802154Nodes[2].NIC.MAC.Buffer: Initializing module net.IEEE802154Nodes[2].NIC.MAC.Buffer, stage 0
+net.IEEE802154Nodes[2].NIC.PHY: Initializing module net.IEEE802154Nodes[2].NIC.PHY, stage 0
+net.IEEE802154Nodes[2].NIC.radioInterface: Initializing module net.IEEE802154Nodes[2].NIC.radioInterface, stage 0
+net.IEEE802154Nodes[0].battery: Initializing module net.IEEE802154Nodes[0].battery, stage 1
+net.IEEE802154Nodes[0].mobility: Initializing module net.IEEE802154Nodes[0].mobility, stage 1
+net.IEEE802154Nodes[0].mobility: TRACE: initializing MobilityBase stage 1
+net.IEEE802154Nodes[0].mobility: current position = (10.0261, 28.0208, 0)
+net.IEEE802154Nodes[0].Network.stdLLC: Initializing module net.IEEE802154Nodes[0].Network.stdLLC, stage 1
+net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac: Initializing module net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac, stage 1
+net.IEEE802154Nodes[0].NIC.PHY: Initializing module net.IEEE802154Nodes[0].NIC.PHY, stage 1
+net.IEEE802154Nodes[0].NIC.radioInterface: Initializing module net.IEEE802154Nodes[0].NIC.radioInterface, stage 1
+net.IEEE802154Nodes[1].application: Initializing module net.IEEE802154Nodes[1].application, stage 1
+net.IEEE802154Nodes[1].battery: Initializing module net.IEEE802154Nodes[1].battery, stage 1
+net.IEEE802154Nodes[1].mobility: Initializing module net.IEEE802154Nodes[1].mobility, stage 1
+net.IEEE802154Nodes[1].mobility: TRACE: initializing MobilityBase stage 1
+net.IEEE802154Nodes[1].mobility: current position = (19.1341, 16.6586, 0)
+net.IEEE802154Nodes[1].Network.stdLLC: Initializing module net.IEEE802154Nodes[1].Network.stdLLC, stage 1
+net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac: Initializing module net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac, stage 1
+net.IEEE802154Nodes[1].NIC.PHY: Initializing module net.IEEE802154Nodes[1].NIC.PHY, stage 1
+net.IEEE802154Nodes[1].NIC.radioInterface: Initializing module net.IEEE802154Nodes[1].NIC.radioInterface, stage 1
+net.IEEE802154Nodes[2].application: Initializing module net.IEEE802154Nodes[2].application, stage 1
+net.IEEE802154Nodes[2].battery: Initializing module net.IEEE802154Nodes[2].battery, stage 1
+net.IEEE802154Nodes[2].mobility: Initializing module net.IEEE802154Nodes[2].mobility, stage 1
+net.IEEE802154Nodes[2].mobility: TRACE: initializing MobilityBase stage 1
+net.IEEE802154Nodes[2].mobility: current position = (27.0619, 29.6565, 0)
+net.IEEE802154Nodes[2].Network.stdLLC: Initializing module net.IEEE802154Nodes[2].Network.stdLLC, stage 1
+net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac: Initializing module net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac, stage 1
+net.IEEE802154Nodes[2].NIC.PHY: Initializing module net.IEEE802154Nodes[2].NIC.PHY, stage 1
+net.IEEE802154Nodes[2].NIC.radioInterface: Initializing module net.IEEE802154Nodes[2].NIC.radioInterface, stage 1
+net.IEEE802154Nodes[0].mobility: Initializing module net.IEEE802154Nodes[0].mobility, stage 2
+net.IEEE802154Nodes[0].mobility: TRACE: initializing MobilityBase stage 2
+net.IEEE802154Nodes[0].Network.stdLLC: Initializing module net.IEEE802154Nodes[0].Network.stdLLC, stage 2
+net.IEEE802154Nodes[0].Network.stdLLC: [802154_LLC]: LLC is operating in transparent forwarding / non-converting mode
+net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac: Initializing module net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac, stage 2
+net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac: [802154_MAC]: startNow==true -> Starting up immediately
+net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac: [802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+net.IEEE802154Nodes[0].NIC.PHY: Initializing module net.IEEE802154Nodes[0].NIC.PHY, stage 2
+net.IEEE802154Nodes[0].NIC.radioInterface: Initializing module net.IEEE802154Nodes[0].NIC.radioInterface, stage 2
+net.IEEE802154Nodes[1].application: Initializing module net.IEEE802154Nodes[1].application, stage 2
+net.IEEE802154Nodes[1].mobility: Initializing module net.IEEE802154Nodes[1].mobility, stage 2
+net.IEEE802154Nodes[1].mobility: TRACE: initializing MobilityBase stage 2
+net.IEEE802154Nodes[1].Network.stdLLC: Initializing module net.IEEE802154Nodes[1].Network.stdLLC, stage 2
+net.IEEE802154Nodes[1].Network.stdLLC: [802154_LLC]: LLC is operating in transparent forwarding / non-converting mode
+net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac: Initializing module net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac, stage 2
+net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac: [802154_MAC]: startNow==true -> Starting up immediately
+net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac: [802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+net.IEEE802154Nodes[1].NIC.PHY: Initializing module net.IEEE802154Nodes[1].NIC.PHY, stage 2
+net.IEEE802154Nodes[1].NIC.radioInterface: Initializing module net.IEEE802154Nodes[1].NIC.radioInterface, stage 2
+net.IEEE802154Nodes[2].application: Initializing module net.IEEE802154Nodes[2].application, stage 2
+net.IEEE802154Nodes[2].mobility: Initializing module net.IEEE802154Nodes[2].mobility, stage 2
+net.IEEE802154Nodes[2].mobility: TRACE: initializing MobilityBase stage 2
+net.IEEE802154Nodes[2].Network.stdLLC: Initializing module net.IEEE802154Nodes[2].Network.stdLLC, stage 2
+net.IEEE802154Nodes[2].Network.stdLLC: [802154_LLC]: LLC is operating in transparent forwarding / non-converting mode
+net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac: Initializing module net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac, stage 2
+net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac: [802154_MAC]: startNow==true -> Starting up immediately
+net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac: [802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+net.IEEE802154Nodes[2].NIC.PHY: Initializing module net.IEEE802154Nodes[2].NIC.PHY, stage 2
+net.IEEE802154Nodes[2].NIC.radioInterface: Initializing module net.IEEE802154Nodes[2].NIC.radioInterface, stage 2
+** Event #2  t=0  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-SET-TRX-STATE.request' (cMessage, id=54)
+** Event #1  t=0  net.IEEE802154Nodes[0].NIC.PHY (IEEE802154Phy, id=15), on `PLME-SET-TRX-STATE.request' (cMessage, id=51)
+** Event #3  t=0  net.IEEE802154Nodes[2].NIC.PHY (IEEE802154Phy, id=41), on `PLME-SET-TRX-STATE.request' (cMessage, id=57)
+** Event #4  t=0  net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=17), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=59)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_SUCCESS received from PHY, the requested state is phy_RX_ON
+** Event #5  t=0  net.IEEE802154Nodes[0].NIC.radioInterface (Ieee802154Radio, id=16), on `PLME-SET-TRX-STATE.request' (cMessage, id=51)
+** Event #6  t=0  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=62)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_SUCCESS received from PHY, the requested state is phy_RX_ON
+** Event #7  t=0  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PLME-SET-TRX-STATE.request' (cMessage, id=54)
+** Event #8  t=0  net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=43), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=65)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_SUCCESS received from PHY, the requested state is phy_RX_ON
+** Event #9  t=0  net.IEEE802154Nodes[2].NIC.radioInterface (Ieee802154Radio, id=42), on `PLME-SET-TRX-STATE.request' (cMessage, id=57)
+** Event #10  t=10  net.IEEE802154Nodes[1].application (Ieee802154TrafficGenerator, id=19), on selfmsg `sendTimer' (cMessage, id=53)
+[802154_TRAFFIC]: Packet generated: (cPacket)MAC-Payload-0
+[802154_TRAFFIC]: Destination Address is: 0A:AA:00:00:00:00:00:00 | MSDU Handle: 152
+[802154_TRAFFIC]: MSDU Length: 20 bytes
+** Event #11  t=10  net.IEEE802154Nodes[2].application (Ieee802154TrafficGenerator, id=32), on selfmsg `sendTimer' (cMessage, id=56)
+[802154_TRAFFIC]: Packet generated: (cPacket)MAC-Payload-0
+[802154_TRAFFIC]: Destination Address is: 0A:AA:00:00:00:00:00:00 | MSDU Handle: 201
+[802154_TRAFFIC]: MSDU Length: 20 bytes
+** Event #12  t=10  net.IEEE802154Nodes[1].Network.stdLLC (llc, id=26), on `MCPS-DATA.request' (mcpsDataReq, id=69)
+[802154_LLC]: Got Message in LLC - MCPS-DATA.request
+** Event #13  t=10  net.IEEE802154Nodes[2].Network.stdLLC (llc, id=39), on `MCPS-DATA.request' (mcpsDataReq, id=72)
+[802154_LLC]: Got Message in LLC - MCPS-DATA.request
+** Event #14  t=10  net.IEEE802154Nodes[1].NIC.MAC.Buffer (msgBuffer, id=31), on `MCPS-DATA.request' (mcpsDataReq, id=69)
+** Event #15  t=10  net.IEEE802154Nodes[2].NIC.MAC.Buffer (msgBuffer, id=44), on `MCPS-DATA.request' (mcpsDataReq, id=72)
+** Event #16  t=10  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `MCPS-DATA.request' (mcpsDataReq, id=69)
+[802154_MAC]: Got Message MCPS-DATA.request
+[802154_MAC]: MCPS-DATA.request arrived on MCPS_SAP for 0A:AA:00:00:00:00:00:00
+[802154_MAC]: Calculating size of DATA.indication
+[802154_MAC]: Header size is 23 Bytes
+[802154_MAC]: MAC frame size is 63 Bytes
+[802154_MAC]: [CSMA]: Starting CSMA-CA for DATA.indication:#152
+[802154_MAC]: [CSMA]: Choosing random number of backoff periods: 3
+[802154_MAC]: [CSMA]: Backoff time before adjusting: 0.96 ms
+[802154_MAC]: [CSMA]: Backoff time after adjusting: 0.96 ms
+[802154_MAC]: [CSMA]: #152: starting backoff for 0.00096 sec
+** Event #17  t=10  net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=43), on `MCPS-DATA.request' (mcpsDataReq, id=72)
+[802154_MAC]: Got Message MCPS-DATA.request
+[802154_MAC]: MCPS-DATA.request arrived on MCPS_SAP for 0A:AA:00:00:00:00:00:00
+[802154_MAC]: Calculating size of DATA.indication
+[802154_MAC]: Header size is 23 Bytes
+[802154_MAC]: MAC frame size is 63 Bytes
+[802154_MAC]: [CSMA]: Starting CSMA-CA for DATA.indication:#201
+[802154_MAC]: [CSMA]: Choosing random number of backoff periods: 1
+[802154_MAC]: [CSMA]: Backoff time before adjusting: 0.32 ms
+[802154_MAC]: [CSMA]: Backoff time after adjusting: 0.32 ms
+[802154_MAC]: [CSMA]: #201: starting backoff for 0.00032 sec
+** Event #18  t=10.00032  net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=43), on selfmsg `backoffTimer' (cMessage, id=36)
+[802154_MAC]: Got Message backoffTimer
+[802154_MAC]: [CSMA]: Before sending CCA primitive, tell PHY to turn on the receiver
+[802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+** Event #19  t=10.00032  net.IEEE802154Nodes[2].NIC.PHY (IEEE802154Phy, id=41), on `PLME-SET-TRX-STATE.request' (cMessage, id=84)
+** Event #20  t=10.00032  net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=43), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=86)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_RX_ON received from PHY, the requested state is phy_RX_ON
+[802154_MAC]: [CSMA]: PHY_RX_ON --> Ok, radio is set to RX_ON
+[802154_MAC]: [CSMA]: [MAC-TASK]: TP_CCA_CSMACA = true
+[802154_MAC]: Sending CCARequest to PLME
+** Event #21  t=10.00032  net.IEEE802154Nodes[2].NIC.radioInterface (Ieee802154Radio, id=42), on `PLME-SET-TRX-STATE.request' (cMessage, id=84)
+** Event #22  t=10.00032  net.IEEE802154Nodes[2].NIC.PHY (IEEE802154Phy, id=41), on `PLME-CCA.request' (cMessage, id=89)
+** Event #23  t=10.00032  net.IEEE802154Nodes[2].NIC.radioInterface (Ieee802154Radio, id=42), on `PLME-CCA.request' (cMessage, id=91)
+** Event #24  t=10.00044  net.IEEE802154Nodes[2].NIC.radioInterface (Ieee802154Radio, id=42), on selfmsg `CCA-Timer' (cMessage, id=49)
+** Event #25  t=10.00044  net.IEEE802154Nodes[2].NIC.PHY (IEEE802154Phy, id=41), on `PLME-CCA.confirm' (cMessage, id=93)
+** Event #26  t=10.00044  net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=43), on `PLME-CCA.confirm' (cMessage, id=93)
+[802154_MAC]: Got Message PLME-CCA.confirm
+[802154_MAC]: PLME-CCA.confirm with phyState phy_IDLE received from PHY
+[802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_TX_ON
+** Event #27  t=10.00044  net.IEEE802154Nodes[2].NIC.PHY (IEEE802154Phy, id=41), on `PLME-SET-TRX-STATE.request' (cMessage, id=96)
+** Event #28  t=10.00044  net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=43), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=98)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_SUCCESS received from PHY, the requested state is phy_TX_ON
+[802154_MAC]: Sending frame DATA.indication (63 Bytes | Seq #201) to PHY layer
+[802154_MAC]: The estimated transmission time is 0.002208 sec
+** Event #29  t=10.00044  net.IEEE802154Nodes[2].NIC.radioInterface (Ieee802154Radio, id=42), on `PLME-SET-TRX-STATE.request' (cMessage, id=96)
+** Event #30  t=10.00044  net.IEEE802154Nodes[2].NIC.PHY (IEEE802154Phy, id=41), on `DATA.indication' (mpdu, id=101)
+** Event #31  t=10.00044  net.IEEE802154Nodes[2].NIC.radioInterface (Ieee802154Radio, id=42), on `PD-DATA' (ppdu, id=103)
+** Event #32  t=10.000440050784  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PD-DATA' (AirFrame, id=109)
+** Event #33  t=10.000440057086  net.IEEE802154Nodes[0].NIC.radioInterface (Ieee802154Radio, id=16), on `PD-DATA' (AirFrame, id=107)
+** Event #34  t=10.00096  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on selfmsg `backoffTimer' (cMessage, id=19)
+[802154_MAC]: Got Message backoffTimer
+[802154_MAC]: [CSMA]: Before sending CCA primitive, tell PHY to turn on the receiver
+[802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+** Event #35  t=10.00096  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-SET-TRX-STATE.request' (cMessage, id=113)
+** Event #36  t=10.00096  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=115)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_RX_ON received from PHY, the requested state is phy_RX_ON
+[802154_MAC]: [CSMA]: PHY_RX_ON --> Ok, radio is set to RX_ON
+[802154_MAC]: [CSMA]: [MAC-TASK]: TP_CCA_CSMACA = true
+[802154_MAC]: Sending CCARequest to PLME
+** Event #37  t=10.00096  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PLME-SET-TRX-STATE.request' (cMessage, id=113)
+** Event #38  t=10.00096  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-CCA.request' (cMessage, id=118)
+** Event #39  t=10.00096  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PLME-CCA.request' (cMessage, id=120)
+** Event #40  t=10.00096  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-CCA.confirm' (cMessage, id=122)
+** Event #41  t=10.00096  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `PLME-CCA.confirm' (cMessage, id=122)
+[802154_MAC]: Got Message PLME-CCA.confirm
+[802154_MAC]: PLME-CCA.confirm with phyState phy_BUSY received from PHY
+[802154_MAC]: [CSMA]: Choosing random number of backoff periods: 4
+[802154_MAC]: [CSMA]: Backoff time before adjusting: 1.28 ms
+[802154_MAC]: [CSMA]: Backoff time after adjusting: 1.28 ms
+[802154_MAC]: [CSMA]: #152: starting backoff for 0.00128 sec
+** Event #42  t=10.00224  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on selfmsg `backoffTimer' (cMessage, id=19)
+[802154_MAC]: Got Message backoffTimer
+[802154_MAC]: [CSMA]: Before sending CCA primitive, tell PHY to turn on the receiver
+[802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+** Event #43  t=10.00224  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-SET-TRX-STATE.request' (cMessage, id=125)
+** Event #44  t=10.00224  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=127)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_RX_ON received from PHY, the requested state is phy_RX_ON
+[802154_MAC]: [CSMA]: PHY_RX_ON --> Ok, radio is set to RX_ON
+[802154_MAC]: [CSMA]: [MAC-TASK]: TP_CCA_CSMACA = true
+[802154_MAC]: Sending CCARequest to PLME
+** Event #45  t=10.00224  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PLME-SET-TRX-STATE.request' (cMessage, id=125)
+** Event #46  t=10.00224  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-CCA.request' (cMessage, id=130)
+** Event #47  t=10.00224  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PLME-CCA.request' (cMessage, id=132)
+** Event #48  t=10.00224  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-CCA.confirm' (cMessage, id=134)
+** Event #49  t=10.00224  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `PLME-CCA.confirm' (cMessage, id=134)
+[802154_MAC]: Got Message PLME-CCA.confirm
+[802154_MAC]: PLME-CCA.confirm with phyState phy_BUSY received from PHY
+[802154_MAC]: [CSMA]: Choosing random number of backoff periods: 20
+[802154_MAC]: [CSMA]: Backoff time before adjusting: 6.4 ms
+[802154_MAC]: [CSMA]: Backoff time after adjusting: 6.4 ms
+[802154_MAC]: [CSMA]: #152: starting backoff for 0.0064 sec
+** Event #50  t=10.004664  net.IEEE802154Nodes[2].NIC.radioInterface (Ieee802154Radio, id=42), on selfmsg `{}' (cMessage, id=106)
+** Event #51  t=10.004664  net.IEEE802154Nodes[2].NIC.PHY (IEEE802154Phy, id=41), on `PD-DATA.confirm' (cMessage, id=137)
+** Event #52  t=10.004664  net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=43), on `PD-DATA.confirm' (cMessage, id=137)
+[802154_MAC]: Got Message PD-DATA.confirm
+[802154_MAC]: [MAC-TASK-SUCCESS]: reset TP_MCPS_DATA_REQUEST
+[802154_MAC]: Reset radio state after a task has completed
+[802154_MAC]: Non-beacon, whether go to sleep depends on parameter macRxOnWhenIdle
+[802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+[802154_MAC]: taskSuccess for sending : DATA.indication:#201
+** Event #53  t=10.004664  net.IEEE802154Nodes[2].NIC.PHY (IEEE802154Phy, id=41), on `PLME-SET-TRX-STATE.request' (cMessage, id=140)
+** Event #54  t=10.004664  net.IEEE802154Nodes[2].NIC.MAC.Buffer (msgBuffer, id=44), on `MCPS-Data.confirm' (mcpsDataConf, id=142)
+** Event #55  t=10.004664  net.IEEE802154Nodes[2].NIC.MAC.Buffer (msgBuffer, id=44), on `getElem' (cMessage, id=144)
+** Event #56  t=10.004664  net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=43), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=146)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_SUCCESS received from PHY, the requested state is phy_RX_ON
+** Event #57  t=10.004664  net.IEEE802154Nodes[2].NIC.radioInterface (Ieee802154Radio, id=42), on `PLME-SET-TRX-STATE.request' (cMessage, id=140)
+** Event #58  t=10.004664  net.IEEE802154Nodes[2].Network.stdLLC (llc, id=39), on `MCPS-Data.confirm' (mcpsDataConf, id=142)
+[802154_LLC]: Got Message in LLC - MCPS-Data.confirm
+[802154_LLC]: Forwarding MCPS-Data to the higher layer -> MCPS-Data.confirm
+** Event #59  t=10.004664  net.IEEE802154Nodes[2].application (Ieee802154TrafficGenerator, id=32), on `MCPS-Data.confirm' (mcpsDataConf, id=142)
+[802154_TRAFFIC]: Got MCPS-Data.confirm for Message #201 with status: SUCCESS
+** Event #60  t=10.004664050784  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on selfmsg `endRx' (cMessage, id=111)
+packet was received correctly, it is now handed to upper layer...
+** Event #61  t=10.004664050784  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PD-DATA.indication' (pdDataInd, id=152)
+** Event #62  t=10.004664050784  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `DATA.indication' (mpdu, id=155)
+[802154_MAC]: Got Message DATA.indication
+[802154_MAC]: Further Filtering for frmType != Beacon & has Long Addr -> not the designated receiver --> packet filtered
+[802154_MAC]: The received frame is filtered, frame dropped
+** Event #63  t=10.004664057086  net.IEEE802154Nodes[0].NIC.radioInterface (Ieee802154Radio, id=16), on selfmsg `endRx' (cMessage, id=112)
+packet was received correctly, it is now handed to upper layer...
+** Event #64  t=10.004664057086  net.IEEE802154Nodes[0].NIC.PHY (IEEE802154Phy, id=15), on `PD-DATA.indication' (pdDataInd, id=158)
+** Event #65  t=10.004664057086  net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=17), on `DATA.indication' (mpdu, id=161)
+[802154_MAC]: Got Message DATA.indication
+[802154_MAC]: Further Filtering for frmType == Data || Command --> okay, NOT filtered
+[802154_MAC]: Data frame received from PHY, start filtering now
+[802154_MAC]: Checking if received data frame requires ACK
+[802154_MAC]: Reset radio state after a task has completed
+[802154_MAC]: Non-beacon, whether go to sleep depends on parameter macRxOnWhenIdle
+[802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+[802154_MAC]: Continue with processing received DATA packet
+[802154_MAC]: startIfsTimer for IFS Type: LIFS with wtime: 0.00064
+** Event #66  t=10.004664057086  net.IEEE802154Nodes[0].NIC.PHY (IEEE802154Phy, id=15), on `PLME-SET-TRX-STATE.request' (cMessage, id=163)
+** Event #67  t=10.004664057086  net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=17), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=166)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_RX_ON received from PHY, the requested state is phy_RX_ON
+** Event #68  t=10.004664057086  net.IEEE802154Nodes[0].NIC.radioInterface (Ieee802154Radio, id=16), on `PLME-SET-TRX-STATE.request' (cMessage, id=163)
+** Event #69  t=10.005304057086  net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=17), on selfmsg `ifsTimer' (cMessage, id=9)
+[802154_MAC]: Got Message ifsTimer
+** Event #70  t=10.005304057086  net.IEEE802154Nodes[0].NIC.MAC.Buffer (msgBuffer, id=18), on `MCPS-DATA.indication' (mcpsDataInd, id=169)
+** Event #71  t=10.005304057086  net.IEEE802154Nodes[0].Network.stdLLC (llc, id=13), on `MCPS-DATA.indication' (mcpsDataInd, id=169)
+[802154_LLC]: Got Message in LLC - MCPS-DATA.indication
+[802154_LLC]: Forwarding MCPS-Data to the higher layer -> MCPS-DATA.indication
+** Event #72  t=10.005304057086  net.IEEE802154Nodes[0].application (Ieee802154TrafficSink, id=6), on `MCPS-DATA.indication' (mcpsDataInd, id=169)
+[802154_TRAFFIC]: Got MCPS-Data.indication for Message #201 from 0A:AA:00:00:00:00:00:02
+[802154_TRAFFIC]: Received payload: (cPacket)MAC-Payload-0
+** Event #73  t=10.00864  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on selfmsg `backoffTimer' (cMessage, id=19)
+[802154_MAC]: Got Message backoffTimer
+[802154_MAC]: [CSMA]: Before sending CCA primitive, tell PHY to turn on the receiver
+[802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+** Event #74  t=10.00864  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-SET-TRX-STATE.request' (cMessage, id=175)
+** Event #75  t=10.00864  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=177)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_RX_ON received from PHY, the requested state is phy_RX_ON
+[802154_MAC]: [CSMA]: PHY_RX_ON --> Ok, radio is set to RX_ON
+[802154_MAC]: [CSMA]: [MAC-TASK]: TP_CCA_CSMACA = true
+[802154_MAC]: Sending CCARequest to PLME
+** Event #76  t=10.00864  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PLME-SET-TRX-STATE.request' (cMessage, id=175)
+** Event #77  t=10.00864  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-CCA.request' (cMessage, id=180)
+** Event #78  t=10.00864  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PLME-CCA.request' (cMessage, id=182)
+** Event #79  t=10.00876  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on selfmsg `CCA-Timer' (cMessage, id=32)
+** Event #80  t=10.00876  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-CCA.confirm' (cMessage, id=184)
+** Event #81  t=10.00876  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `PLME-CCA.confirm' (cMessage, id=184)
+[802154_MAC]: Got Message PLME-CCA.confirm
+[802154_MAC]: PLME-CCA.confirm with phyState phy_IDLE received from PHY
+[802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_TX_ON
+** Event #82  t=10.00876  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-SET-TRX-STATE.request' (cMessage, id=187)
+** Event #83  t=10.00876  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=189)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_SUCCESS received from PHY, the requested state is phy_TX_ON
+[802154_MAC]: Sending frame DATA.indication (63 Bytes | Seq #152) to PHY layer
+[802154_MAC]: The estimated transmission time is 0.002208 sec
+** Event #84  t=10.00876  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PLME-SET-TRX-STATE.request' (cMessage, id=187)
+** Event #85  t=10.00876  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `DATA.indication' (mpdu, id=192)
+** Event #86  t=10.00876  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PD-DATA' (ppdu, id=194)
+** Event #87  t=10.008760048574  net.IEEE802154Nodes[0].NIC.radioInterface (Ieee802154Radio, id=16), on `PD-DATA' (AirFrame, id=198)
+** Event #88  t=10.008760050784  net.IEEE802154Nodes[2].NIC.radioInterface (Ieee802154Radio, id=42), on `PD-DATA' (AirFrame, id=200)
+** Event #89  t=10.012984  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on selfmsg `{}' (cMessage, id=197)
+** Event #90  t=10.012984  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PD-DATA.confirm' (cMessage, id=204)
+** Event #91  t=10.012984  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `PD-DATA.confirm' (cMessage, id=204)
+[802154_MAC]: Got Message PD-DATA.confirm
+[802154_MAC]: [MAC-TASK-SUCCESS]: reset TP_MCPS_DATA_REQUEST
+[802154_MAC]: Reset radio state after a task has completed
+[802154_MAC]: Non-beacon, whether go to sleep depends on parameter macRxOnWhenIdle
+[802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+[802154_MAC]: taskSuccess for sending : DATA.indication:#152
+** Event #92  t=10.012984  net.IEEE802154Nodes[1].NIC.PHY (IEEE802154Phy, id=28), on `PLME-SET-TRX-STATE.request' (cMessage, id=207)
+** Event #93  t=10.012984  net.IEEE802154Nodes[1].NIC.MAC.Buffer (msgBuffer, id=31), on `MCPS-Data.confirm' (mcpsDataConf, id=209)
+** Event #94  t=10.012984  net.IEEE802154Nodes[1].NIC.MAC.Buffer (msgBuffer, id=31), on `getElem' (cMessage, id=211)
+** Event #95  t=10.012984  net.IEEE802154Nodes[1].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=30), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=213)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_SUCCESS received from PHY, the requested state is phy_RX_ON
+** Event #96  t=10.012984  net.IEEE802154Nodes[1].NIC.radioInterface (Ieee802154Radio, id=29), on `PLME-SET-TRX-STATE.request' (cMessage, id=207)
+** Event #97  t=10.012984  net.IEEE802154Nodes[1].Network.stdLLC (llc, id=26), on `MCPS-Data.confirm' (mcpsDataConf, id=209)
+[802154_LLC]: Got Message in LLC - MCPS-Data.confirm
+[802154_LLC]: Forwarding MCPS-Data to the higher layer -> MCPS-Data.confirm
+** Event #98  t=10.012984  net.IEEE802154Nodes[1].application (Ieee802154TrafficGenerator, id=19), on `MCPS-Data.confirm' (mcpsDataConf, id=209)
+[802154_TRAFFIC]: Got MCPS-Data.confirm for Message #152 with status: SUCCESS
+** Event #99  t=10.012984048574  net.IEEE802154Nodes[0].NIC.radioInterface (Ieee802154Radio, id=16), on selfmsg `endRx' (cMessage, id=202)
+packet was received correctly, it is now handed to upper layer...
+** Event #100  t=10.012984048574  net.IEEE802154Nodes[0].NIC.PHY (IEEE802154Phy, id=15), on `PD-DATA.indication' (pdDataInd, id=219)
+** Event #101  t=10.012984048574  net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=17), on `DATA.indication' (mpdu, id=222)
+[802154_MAC]: Got Message DATA.indication
+[802154_MAC]: Further Filtering for frmType == Data || Command --> okay, NOT filtered
+[802154_MAC]: Data frame received from PHY, start filtering now
+[802154_MAC]: Checking if received data frame requires ACK
+[802154_MAC]: Reset radio state after a task has completed
+[802154_MAC]: Non-beacon, whether go to sleep depends on parameter macRxOnWhenIdle
+[802154_MAC]: Sending SET-TRX-STATE.request to PLME with Transceiver_State=phy_RX_ON
+[802154_MAC]: Continue with processing received DATA packet
+[802154_MAC]: startIfsTimer for IFS Type: LIFS with wtime: 0.00064
+** Event #102  t=10.012984048574  net.IEEE802154Nodes[0].NIC.PHY (IEEE802154Phy, id=15), on `PLME-SET-TRX-STATE.request' (cMessage, id=224)
+** Event #103  t=10.012984048574  net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=17), on `PLME-SET-TRX-STATE.confirm' (cMessage, id=227)
+[802154_MAC]: Got Message PLME-SET-TRX-STATE.confirm
+[802154_MAC]: PLME_SET_TRX_STATE_confirm with phyState phy_RX_ON received from PHY, the requested state is phy_RX_ON
+** Event #104  t=10.012984048574  net.IEEE802154Nodes[0].NIC.radioInterface (Ieee802154Radio, id=16), on `PLME-SET-TRX-STATE.request' (cMessage, id=224)
+** Event #105  t=10.012984050784  net.IEEE802154Nodes[2].NIC.radioInterface (Ieee802154Radio, id=42), on selfmsg `endRx' (cMessage, id=203)
+packet was received correctly, it is now handed to upper layer...
+** Event #106  t=10.012984050784  net.IEEE802154Nodes[2].NIC.PHY (IEEE802154Phy, id=41), on `PD-DATA.indication' (pdDataInd, id=231)
+** Event #107  t=10.012984050784  net.IEEE802154Nodes[2].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=43), on `DATA.indication' (mpdu, id=234)
+[802154_MAC]: Got Message DATA.indication
+[802154_MAC]: Further Filtering for frmType != Beacon & has Long Addr -> not the designated receiver --> packet filtered
+[802154_MAC]: The received frame is filtered, frame dropped
+** Event #108  t=10.013624048574  net.IEEE802154Nodes[0].NIC.MAC.IEEE802154Mac (IEEE802154Mac, id=17), on selfmsg `ifsTimer' (cMessage, id=9)
+[802154_MAC]: Got Message ifsTimer
+** Event #109  t=10.013624048574  net.IEEE802154Nodes[0].NIC.MAC.Buffer (msgBuffer, id=18), on `MCPS-DATA.indication' (mcpsDataInd, id=236)
+** Event #110  t=10.013624048574  net.IEEE802154Nodes[0].Network.stdLLC (llc, id=13), on `MCPS-DATA.indication' (mcpsDataInd, id=236)
+[802154_LLC]: Got Message in LLC - MCPS-DATA.indication
+[802154_LLC]: Forwarding MCPS-Data to the higher layer -> MCPS-DATA.indication
+** Event #111  t=10.013624048574  net.IEEE802154Nodes[0].application (Ieee802154TrafficSink, id=6), on `MCPS-DATA.indication' (mcpsDataInd, id=236)
+[802154_TRAFFIC]: Got MCPS-Data.indication for Message #152 from 0A:AA:00:00:00:00:00:01
+[802154_TRAFFIC]: Received payload: (cPacket)MAC-Payload-0
