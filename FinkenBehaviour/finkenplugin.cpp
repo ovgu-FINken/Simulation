@@ -92,7 +92,8 @@ class FinkenPlugin: public VREPPlugin {
       async_server.reset(new Async_Server(io_service));
       vrepLog << "server done" << '\n';
       Log::name(name());
-      Log::out() << "loaded v 13-10-17" << std::endl;
+      std::string date = __DATE__;
+      Log::out() << "loaded v " << date << std::endl;
       return true;
     }
     virtual bool unload() {
@@ -123,30 +124,30 @@ class FinkenPlugin: public VREPPlugin {
 
     void* action(int* auxiliaryData,void* customData,int* replyData)
     {
-        auto then = Clock::now();
-        sendSync = true;
+        auto actionStart = Clock::now();
         while(allFinken.size() == 0){
-            vrepLog << "waiting for finken creation. Available copters for pairing: " << simCopters.size() << '\n';
+            vrepLog << "[VREP] waiting for finken creation. Available copters for pairing: " << simCopters.size() << '\n';
 	    	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
-		//doNothing;
-	      }
-
+		    //doNothing;
+	    }
     	//vrepLog << "vrep pass done, copter count:" << allFinken.size() <<  '\n';
-
-	     while ( sendSync.load() ){
-       		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        auto then = Clock::now();
+        while (!readSync.load()){
+       		std::this_thread::sleep_for(std::chrono::milliseconds(1));
    	    }
-
-
-
-
+        auto now = Clock::now();
+        vrepLog << "[VREP] time vrep is waiting for finken: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
+        then =Clock::now();
         for(int i = 0; i<allFinken.size(); i++){
             allFinken.at(i)->setRotorSpeeds();
         }
-
-        auto now = Clock::now();
-        vrepLog << "finkenplugin action() time: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
+        //position data can be sent now
+        sendSync=true;
+        readSync = false;
+        now = Clock::now();
+        vrepLog << "[VREP] time setting rotor forces: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << 
+        std::endl;
+        vrepLog << "[VREP] time total finkenplugin action(): " << std::chrono::nanoseconds(now - actionStart).count()/1000000 << "ms" << std::endl;
 
         return NULL;
     }
