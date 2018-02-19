@@ -34,7 +34,7 @@ using boost::asio::ip::tcp;
 extern float execution_step_size;
 extern std::vector<std::unique_ptr<Finken>> allFinken;
 std::unique_ptr<tcp::iostream> sPtr;
-ofstream vrepLog(current_path()/"vrep.log");
+VrepLog vrepLog;
 
 
 void deleteFinken(std::unique_ptr<Finken>& finken){

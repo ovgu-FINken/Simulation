@@ -24,10 +24,45 @@
 using boost::filesystem::ofstream;
 using boost::filesystem::current_path;
 using boost::asio::ip::tcp;
+using Clock = std::chrono::high_resolution_clock;
 
 extern std::atomic<bool> sendSync;
 extern std::atomic<bool> readSync;
-extern ofstream vrepLog;
+
+class LogLine {
+  private:
+    std::ostream& o;
+
+  public:
+    LogLine(std::ostream& o) : o(o) {}
+    ~LogLine(){
+      o <<  ";";
+    }
+    LogLine& operator<<(std::ostream&(*pf)(std::ostream&)) {
+      o << pf;
+      return *this;
+    }
+    template<typename T>
+    LogLine& operator<<(T t) {
+      o << t;
+      return *this;
+    }
+  friend class VrepLog;
+};
+
+class VrepLog {
+  private:
+    std::ofstream log;
+  public:
+    VrepLog() {
+      log.open((current_path() / "vrep.log").c_str());
+    }
+    template<typename T>
+    LogLine operator<<(T& t) {
+      return log << Clock::now().time_since_epoch().count() << ", " << t;
+    }
+};
+extern VrepLog  vrepLog;
 
 class Finken
 {
