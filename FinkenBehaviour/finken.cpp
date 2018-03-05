@@ -134,6 +134,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             outPacket.rotVel = this->rotVel;
             outPacket.accel = this->accel;
             outPacket.rotAccel = this->rotAccel;
+            outPacket.dt = simGetSimulationTimeStep();
    	    	out << outPacket;
         }
         
