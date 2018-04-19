@@ -158,9 +158,9 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             boost::archive::binary_iarchive in(*sPtr);
             in >> inPacket;
             this->commands[0]=inPacket.pitch;
-		    this->commands[1]=inPacket.roll;
-	        this->commands[3]=inPacket.yaw;
-		this->commands[2]=inPacket.thrust;
+	    this->commands[1]=inPacket.roll;
+	    this->commands[3]=inPacket.yaw;
+	    this->commands[2]=inPacket.thrust;
 	    vrepLog << "[FINK] recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl << std::endl;
             auto now = Clock::now();
             vrepLog << "[FINK] time receiving data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
@@ -179,7 +179,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             sendSync = false;
             updatePos(*this);
        	    //send position data
-        	boost::archive::binary_oarchive out(*sPtr);
+            boost::archive::binary_oarchive out(*sPtr);
             outPacket.pos = this->pos;
             outPacket.quat = this->quat;
             outPacket.vel = this->vel;
@@ -188,14 +188,15 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             outPacket.rotAccel = this->rotAccel;
             outPacket.simTime = simGetSimulationTime();
 
-            vrepLog << "[FINK] sending position/attitude data: "<< std::endl 
+            vrepLog << "[FINK] sending position/attitude data: "<< std::endl
+            << "time: " << outPacket.simTime << std::endl 
             << "pos: " << outPacket.pos[0] << " | "  << outPacket.pos[1] << " | " << outPacket.pos[2] << std::endl
             << "quat-xyzw: " << outPacket.quat[0] << " | "  << outPacket.quat[1] << " | " << outPacket.quat[2] << " | " << outPacket.quat[3] << std::endl
             << "vel: " << outPacket.vel[0] << " | "  << outPacket.vel[1] << " | " << outPacket.vel[2] << std::endl
             << "rotVel: " << outPacket.rotVel[0] << " | "  << outPacket.rotVel[1] << " | " << outPacket.rotVel[2] << std::endl
             << "accel: " << outPacket.accel[0] << " | "  << outPacket.accel[1] << " | " << outPacket.accel[2] << std::endl
             << "rotAccel: " << outPacket.rotAccel[0] << " | "  << outPacket.rotAccel[1] << " | " << outPacket.rotAccel[2] << std::endl << std::endl;
-		out << outPacket;
+	    out << outPacket;
 
             now = Clock::now();
             vrepLog << "[FINK] time sending data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
