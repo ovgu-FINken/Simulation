@@ -135,6 +135,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             outPacket.accel = this->accel;
             outPacket.rotAccel = this->rotAccel;
             outPacket.dt = simGetSimulationTimeStep();
+            outPacket.simTime = simGetSimulationTime();
    	    	out << outPacket;
         }
         
@@ -178,6 +179,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             outPacket.rotVel = this->rotVel;
             outPacket.accel = this->accel;
             outPacket.rotAccel = this->rotAccel;
+            outPacket.simTime = simGetSimulationTime();
 
             vrepLog << "[FINK] sending position/attitude data: "<< std::endl 
             << "pos: " << outPacket.pos[0] << " | "  << outPacket.pos[1] << " | " << outPacket.pos[2] << std::endl
@@ -223,8 +225,10 @@ void Finken::setRotorSpeeds() {
     
     for (int i=0; i<4; i++) {
         simGetObjectQuaternion(this->getRotors().at(i)->handle, -1, &rotorQuat.x());
+        vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
         Eigen::Vector3f force(motorForces.at(i).data());
         force = rotorQuat * force;
+        vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;
         std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
         vrepLog << "[FINK] adding force to rotor " << i << ": " << simForce[0] << " | " << simForce[1] << " | " << simForce[2] << std::endl;
 
