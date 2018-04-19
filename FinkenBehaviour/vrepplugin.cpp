@@ -88,6 +88,11 @@ void* VREPPlugin::save(int* auxiliaryData,void* customData,int* replyData)
     return NULL;
 }
 
+void* VREPPlugin::sceneLoad(int* auxiliaryData,void* customData,int* replyData)
+{
+    return NULL;
+}
+
 void* VREPPlugin::render(int* auxiliaryData,void* customData,int* replyData)
 {
     return NULL;

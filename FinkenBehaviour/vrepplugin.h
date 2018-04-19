@@ -28,6 +28,7 @@ class VREPPlugin
         virtual void* mainScriptCall(int* auxiliaryData,void* customData,int* replyData);
         virtual void* simStart(int* auxiliaryData,void* customData,int* replyData);
         virtual void* simEnd(int* auxiliaryData,void* customData,int* replyData);
+        virtual void* sceneLoad(int* auxiliaryData,void* customData,int* replyData);
         virtual void* open(int* auxiliaryData,void* customData,int* replyData);
         virtual void* action(int* auxiliaryData,void* customData,int* replyData);
         virtual void* close(int* auxiliaryData,void* customData,int* replyData);

@@ -28,7 +28,7 @@ const int inArgs_REGISTER[]={
 
 void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
 {   CScriptFunctionData D;
-    
+    std::cout << "finken registering" << '\n';
     bool success = false;
     if (D.readDataFromStack(cb->stackID,inArgs_REGISTER,inArgs_REGISTER[0],LUA_REGISTER_COMMAND))
     {   
@@ -42,6 +42,8 @@ void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
     }
     D.pushOutData(CScriptFunctionDataItem(success));
     D.writeDataToStack(cb->stackID);
+    std::cout << "finken done registering" << '\n';
+
 }
 // --------------------------------------------------------------------------------------
 
@@ -170,6 +172,10 @@ extern "C" void* v_repMessage(int message,int* auxiliaryData,void* customData,in
     case(sim_message_eventcallback_scenesave):
       retVal=plugin.save(auxiliaryData, customData, replyData);
       break;
+
+    case(sim_message_eventcallback_sceneloaded):
+      retVal=plugin.sceneLoad(auxiliaryData, customData, replyData);
+      break;    
 
     case(sim_message_eventcallback_guipass):
       if(refreshDlgFlag)

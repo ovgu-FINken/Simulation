@@ -57,6 +57,8 @@ class Async_Server{
         simAddStatusbarMessage("Server ready to accept new connection");
         sPtr.reset(new tcp::iostream());
         acceptor_.async_accept(*sPtr->rdbuf(), boost::bind(&Async_Server::handle_accept, this, boost::asio::placeholders::error));
+        simAddStatusbarMessage("Server ready to accept new connection");
+
     }
 
     void handle_accept(const boost::system::error_code& error){
@@ -88,9 +90,6 @@ class FinkenPlugin: public VREPPlugin {
     virtual ~FinkenPlugin() {}
     virtual unsigned char version() const { return 1; }
     virtual bool load() {
-      vrepLog << "starting asynchronous vrep server" << '\n' ;
-      async_server.reset(new Async_Server(io_service));
-      vrepLog << "server done" << '\n';
       Log::name(name());
       std::string date = __DATE__;
       Log::out() << "loaded v " << date << std::endl;
@@ -104,10 +103,34 @@ class FinkenPlugin: public VREPPlugin {
     virtual const std::string name() const {
       return "Finken Paparazzi Plugin";
     }
+    
+    void* sceneLoad(int* auxiliaryData, void* customData, int* replyData)
+    {   
+        
+        std::cout << "checking sceneload" << '\n';
+        vrepLog << "ScriptLoader check" << '\n' ;
+        std::string dummyName = "ScriptLoader";
+        int handle = simGetObjectHandle(dummyName.c_str());
+        std::cout << handle << '\n';
+        if (handle > 0){
+            std::cout << "1" << '\n';
+            vrepLog << "ScriptLoader found, starting asynchronous vrep server" << '\n' ;
+            std::cout << "2" << '\n';
+            async_server.reset(new Async_Server(io_service));
+            boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
+            std::cout << "3" << '\n';
+            vrepLog << "server done" << '\n';
+        }
+        else {
+            std::cout << "4" << '\n';
+            vrepLog << "ScriptLoader not found, not starting server" << '\n';
+        }
+
+
+    }
 
     void* simStart(int* auxiliaryData,void* customData,int* replyData)
     {
-               boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
         return NULL;
     }
 
@@ -119,6 +142,7 @@ class FinkenPlugin: public VREPPlugin {
         simCopters.shrink_to_fit();*/
         io_service.stop();
         io_service.reset();
+        boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
         return NULL;
     }
 
