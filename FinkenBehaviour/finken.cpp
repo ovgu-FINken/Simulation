@@ -47,6 +47,8 @@ Finken::Finken(int fHandle, int _ac_id) : handle(fHandle), ac_id(_ac_id){}
 Finken::~Finken(){
     vrepLog << "deleting finken with id: " << this->handle <<std::endl;
     simCopters.emplace_back(std::make_pair(this->ac_id, this->handle));
+    simStopSimulation();
+    simAdvanceSimulationByOneStep();
 }
 
 void Finken::addSensor(std::unique_ptr<Sensor> &sensor){
@@ -69,9 +71,14 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
   auto runStart = Clock::now();
     try {
         vrepLog << "[FINK] client connected" << std::endl;
-
-	    //first connection:
-	    int copter_id = simCopters.back().second;
+	int simState = simGetSimulationState();
+	vrepLog << "[FINK] simulation state: " << simState << std::endl;
+	if (simState == 0 || simState == 1) {
+		simStartSimulation();
+	}
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	//first connection:
+	int copter_id = simCopters.back().second;
         size_t id;
         int connection_nb =1;
         int commands_nb = 0;
@@ -153,8 +160,8 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             this->commands[0]=inPacket.pitch;
 		    this->commands[1]=inPacket.roll;
 	        this->commands[3]=inPacket.yaw;
-		    this->commands[2]=inPacket.thrust;
-	        vrepLog << "[FINK] recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl << std::endl;
+		this->commands[2]=inPacket.thrust;
+	    vrepLog << "[FINK] recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl << std::endl;
             auto now = Clock::now();
             vrepLog << "[FINK] time receiving data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
             
@@ -171,7 +178,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             then = Clock::now();
             sendSync = false;
             updatePos(*this);
-       		//send position data
+       	    //send position data
         	boost::archive::binary_oarchive out(*sPtr);
             outPacket.pos = this->pos;
             outPacket.quat = this->quat;
@@ -188,7 +195,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             << "rotVel: " << outPacket.rotVel[0] << " | "  << outPacket.rotVel[1] << " | " << outPacket.rotVel[2] << std::endl
             << "accel: " << outPacket.accel[0] << " | "  << outPacket.accel[1] << " | " << outPacket.accel[2] << std::endl
             << "rotAccel: " << outPacket.rotAccel[0] << " | "  << outPacket.rotAccel[1] << " | " << outPacket.rotAccel[2] << std::endl << std::endl;
-		    out << outPacket;
+		out << outPacket;
 
             now = Clock::now();
             vrepLog << "[FINK] time sending data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
@@ -199,9 +206,11 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
   	catch (std::exception& e) {
 	    std::cerr << "Exception in thread: " << e.what() << "\n";
 	    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
-        std::cerr << "cleaning up... " << std::endl;
-        sPtr.reset();
-        std::cerr <<  "cleanup finished" << std::endl;
+            std::cerr << "cleaning up... " << std::endl;
+            sPtr.reset();
+            std::cerr <<  "cleanup finished, stopping sim" << std::endl;
+	    simStopSimulation();
+    	    simAdvanceSimulationByOneStep();
 
 	}
 }

@@ -126,28 +126,29 @@ class FinkenPlugin: public VREPPlugin {
             vrepLog << "ScriptLoader not found, not starting server" << '\n';
         }
 
-
+	return NULL;
     }
 
     void* simStart(int* auxiliaryData,void* customData,int* replyData)
-    {
-        return NULL;
+    {	
+	return NULL;
     }
 
     void* simEnd(int* auxiliaryData,void* customData,int* replyData)
     {
-        /*allFinken.clear();
-        allFinken.shrink_to_fit();
+        allFinken.clear();
         simCopters.clear();
-        simCopters.shrink_to_fit();*/
+	vrepLog << "[VREP] ending sim, resetting server" << std::endl;
         io_service.stop();
         io_service.reset();
         boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
+	vrepLog << "[VREP] successfully resetted server" << std::endl;
         return NULL;
     }
 
     void* action(int* auxiliaryData,void* customData,int* replyData)
-    {
+    {   
+	vrepLog << "[VREP] connected copters: " << allFinken.size() << " still available copters: " <<  simCopters.size() << std::endl;
         auto actionStart = Clock::now();
         while(allFinken.size() == 0){
             vrepLog << "[VREP] waiting for finken creation. Available copters for pairing: " << simCopters.size() << '\n';
