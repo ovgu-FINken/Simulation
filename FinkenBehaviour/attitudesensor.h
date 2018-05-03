@@ -4,7 +4,12 @@
 #include "sensor.h"
 
 
-
+/**
+ * currently unused class for an attitude sensor.
+ * currently the attitude is grabbed directly from the copter base object in vrep
+ * (which is the same as would be done in this class with more overhead)
+ * may be extended for use later for extending sensor functionality, e.g. implementing inaccuacies and noise
+ */
 class AttitudeSensor: public Sensor{
 
 public:

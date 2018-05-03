@@ -1,0 +1,104 @@
+\hypertarget{classSensor}{}\section{Sensor Class Reference}
+\label{classSensor}\index{Sensor@{Sensor}}
+
+
+{\ttfamily \#include $<$sensor.\+h$>$}
+
+
+
+Inheritance diagram for Sensor\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classSensor__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSensor_aec15220e0b38da37e43b0525ac689499}{Sensor} (int sensor\+Handle)
+\item 
+virtual void \hyperlink{classSensor_abb6c93c88529bc392d129443b3d352f3}{update} (std\+::vector$<$ float $>$ \&f, int \&i, std\+::vector$<$ float $>$ \&ff)=0
+\item 
+virtual int \hyperlink{classSensor_a997a8679d48c4fa346e6ac43c1e6219a}{get} (std\+::vector$<$ float $>$ \&detect\+Point, int \&detect\+Handle, std\+::vector$<$ float $>$ \&detect\+Surface)=0
+\item 
+virtual int \hyperlink{classSensor_a24f11619b11d5effc4066546629179ae}{get} (std\+::vector$<$ float $>$ \&vfloat)=0
+\item 
+virtual int {\bfseries get\+Handle} ()\hypertarget{classSensor_ac647e98897da5ffcc9711ba27ec45abd}{}\label{classSensor_ac647e98897da5ffcc9711ba27ec45abd}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{classSensor_ad31f2503e8a1cc7888e5eefbeede8f3b}{handle}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Basic \hyperlink{classSensor}{Sensor} class from which specialized sensors are derived 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Sensor@{Sensor}!Sensor@{Sensor}}
+\index{Sensor@{Sensor}!Sensor@{Sensor}}
+\subsubsection[{\texorpdfstring{Sensor(int sensor\+Handle)}{Sensor(int sensorHandle)}}]{\setlength{\rightskip}{0pt plus 5cm}Sensor\+::\+Sensor (
+\begin{DoxyParamCaption}
+\item[{int}]{sensor\+Handle}
+\end{DoxyParamCaption}
+)}\hypertarget{classSensor_aec15220e0b38da37e43b0525ac689499}{}\label{classSensor_aec15220e0b38da37e43b0525ac689499}
+Constructor 
+\begin{DoxyParams}{Parameters}
+{\em sensor\+Handle} & the handle of the sensor in vrep \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Sensor@{Sensor}!get@{get}}
+\index{get@{get}!Sensor@{Sensor}}
+\subsubsection[{\texorpdfstring{get(std\+::vector$<$ float $>$ \&detect\+Point, int \&detect\+Handle, std\+::vector$<$ float $>$ \&detect\+Surface)=0}{get(std::vector< float > &detectPoint, int &detectHandle, std::vector< float > &detectSurface)=0}}]{\setlength{\rightskip}{0pt plus 5cm}virtual int Sensor\+::get (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Point, }
+\item[{int \&}]{detect\+Handle, }
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Surface}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}\hypertarget{classSensor_a997a8679d48c4fa346e6ac43c1e6219a}{}\label{classSensor_a997a8679d48c4fa346e6ac43c1e6219a}
+retrieves the sensor information, including any detected object information; see specific sensor documentation for paramter information 
+
+Implemented in \hyperlink{classAttitudeSensor_a29d069767d7b3b36a998ae70764134dd}{Attitude\+Sensor}, \hyperlink{classHeightSensor_abd4b7d4cc5906a971da402757989f5da}{Height\+Sensor}, \hyperlink{classPositionSensor_a0b8c45d846d3442d94e2ef767fddf31d}{Position\+Sensor}, and \hyperlink{classSonar_a6881d0c104c0fafad95ad1aea917b6f3}{Sonar}.
+
+\index{Sensor@{Sensor}!get@{get}}
+\index{get@{get}!Sensor@{Sensor}}
+\subsubsection[{\texorpdfstring{get(std\+::vector$<$ float $>$ \&vfloat)=0}{get(std::vector< float > &vfloat)=0}}]{\setlength{\rightskip}{0pt plus 5cm}virtual int Sensor\+::get (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{vfloat}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}\hypertarget{classSensor_a24f11619b11d5effc4066546629179ae}{}\label{classSensor_a24f11619b11d5effc4066546629179ae}
+retrieves the sensor information, limited to the position of a detected object; see specific sensor documentation for parameter information 
+
+Implemented in \hyperlink{classAttitudeSensor_a354f56cfccea6f60b4822b9e2603afc8}{Attitude\+Sensor}, \hyperlink{classHeightSensor_a90a19e600e5b89a503366da0f0c35590}{Height\+Sensor}, \hyperlink{classPositionSensor_a99c4b37f9f16912b15603d79dda386bc}{Position\+Sensor}, and \hyperlink{classSonar_af77f9c5b9db42276b06b3b044c738284}{Sonar}.
+
+\index{Sensor@{Sensor}!update@{update}}
+\index{update@{update}!Sensor@{Sensor}}
+\subsubsection[{\texorpdfstring{update(std\+::vector$<$ float $>$ \&f, int \&i, std\+::vector$<$ float $>$ \&ff)=0}{update(std::vector< float > &f, int &i, std::vector< float > &ff)=0}}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Sensor\+::update (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{f, }
+\item[{int \&}]{i, }
+\item[{std\+::vector$<$ float $>$ \&}]{ff}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}\hypertarget{classSensor_abb6c93c88529bc392d129443b3d352f3}{}\label{classSensor_abb6c93c88529bc392d129443b3d352f3}
+calls for Vrep to update the sensor information; see specific sensor documentation for parameter information 
+
+Implemented in \hyperlink{classAttitudeSensor_a035c43c2ae16df0dedbbc7ae4cb575d9}{Attitude\+Sensor}, \hyperlink{classHeightSensor_a6966090886a414a6213125c91a31e128}{Height\+Sensor}, \hyperlink{classPositionSensor_a4fb083aa0462a73627b11b7c0e408f09}{Position\+Sensor}, and \hyperlink{classSonar_ab32f714b0c5412e64ec60997467074bc}{Sonar}.
+
+
+
+\subsection{Member Data Documentation}
+\index{Sensor@{Sensor}!handle@{handle}}
+\index{handle@{handle}!Sensor@{Sensor}}
+\subsubsection[{\texorpdfstring{handle}{handle}}]{\setlength{\rightskip}{0pt plus 5cm}int Sensor\+::handle\hspace{0.3cm}{\ttfamily [protected]}}\hypertarget{classSensor_ad31f2503e8a1cc7888e5eefbeede8f3b}{}\label{classSensor_ad31f2503e8a1cc7888e5eefbeede8f3b}
+Handle to access the sensor in vrep 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+sensor.\+h\item 
+sensor.\+cpp\end{DoxyCompactItemize}

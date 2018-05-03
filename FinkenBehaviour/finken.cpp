@@ -262,12 +262,27 @@ void buildFinken(Finken& finken, int fHandle){
     finken.baseHandle = fHandle;
     int foundSensorCount = 0, foundBaseCount = 0;
 
-    //create positionsensor and add to the finken:
-    std::unique_ptr<Sensor> posSensor(new PositionSensor (fHandle));
-    finken.addSensor(posSensor);
-
+    
     //Grab all Proximity sensors and add them to the finken:
     int* baseHandles = simGetObjectsInTree(fHandle, sim_object_dummy_type, 1, &foundBaseCount);
+    
+    for(unsigned int i=0;i<foundBaseCount;i++) {
+      char* dummyNameTemp = simGetObjectName(baseHandles[i]);
+      std::string dummyName  = dummyNameTemp;
+      simReleaseBuffer(dummyNameTemp);
+      ssize_t endPos = dummyName.rfind('#');
+      vrepLog  << "Found dummy element with name: "  << dummyName << endl;
+      if(dummyName.substr(0, endPos)=="SimFinken_base") {
+        finken.baseHandle=baseHandles[i];
+        vrepLog  << "Found copter base with handle: "  << finken.baseHandle  << endl;
+        break;
+      }
+    }
+    //create positionsensor and add to the finken:
+    std::unique_ptr<Sensor> posSensor(new PositionSensor (finken.baseHandle));
+    finken.addSensor(posSensor);
+
+    
     int* proxSensorHandles = simGetObjectsInTree(fHandle, sim_object_proximitysensor_type, 1, &foundSensorCount);
     for(int i = 0; i<foundSensorCount; i++){
         //we have kFinkenSonarCount sonars:
@@ -282,18 +297,8 @@ void buildFinken(Finken& finken, int fHandle){
         }
 
     }
-    for(unsigned int i=0;i<foundBaseCount;i++) {
-      char* dummyNameTemp = simGetObjectName(baseHandles[i]);
-      std::string dummyName  = dummyNameTemp;
-      simReleaseBuffer(dummyNameTemp);
-      ssize_t endPos = dummyName.rfind('#');
-      vrepLog  << "Found dummy element with name: "  << dummyName << endl;
-      if(dummyName.substr(0, endPos)=="SimFinken_base") {
-        finken.baseHandle=baseHandles[i];
-        vrepLog  << "Found copter base with handle: "  << finken.baseHandle  << endl;
-        break;
-      }
-    }
+    
+   
     //Grab all Rotors and add them to the finken:
 
     for(int i = 1; i<5; i++){

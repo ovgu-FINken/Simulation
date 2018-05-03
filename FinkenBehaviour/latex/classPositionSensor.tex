@@ -1,0 +1,79 @@
+\hypertarget{classPositionSensor}{}\section{Position\+Sensor Class Reference}
+\label{classPositionSensor}\index{Position\+Sensor@{Position\+Sensor}}
+
+
+Inheritance diagram for Position\+Sensor\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=163pt]{classPositionSensor__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Position\+Sensor\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=163pt]{classPositionSensor__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Position\+Sensor} (int sensor\+Handle)\hypertarget{classPositionSensor_a1bc5cb93c92c04eef26d406dbb304ead}{}\label{classPositionSensor_a1bc5cb93c92c04eef26d406dbb304ead}
+
+\item 
+int \hyperlink{classPositionSensor_a99c4b37f9f16912b15603d79dda386bc}{get} (std\+::vector$<$ float $>$ \&detect\+Position)
+\item 
+void \hyperlink{classPositionSensor_a4fb083aa0462a73627b11b7c0e408f09}{update} (std\+::vector$<$ float $>$ \&f, int \&i, std\+::vector$<$ float $>$ \&ff)
+\item 
+int \hyperlink{classPositionSensor_a0b8c45d846d3442d94e2ef767fddf31d}{get} (std\+::vector$<$ float $>$ \&detect\+Point, int \&detect\+Handle, std\+::vector$<$ float $>$ \&detect\+Surface)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\index{Position\+Sensor@{Position\+Sensor}!get@{get}}
+\index{get@{get}!Position\+Sensor@{Position\+Sensor}}
+\subsubsection[{\texorpdfstring{get(std\+::vector$<$ float $>$ \&detect\+Position)}{get(std::vector< float > &detectPosition)}}]{\setlength{\rightskip}{0pt plus 5cm}int Position\+Sensor\+::get (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{vfloat}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\hypertarget{classPositionSensor_a99c4b37f9f16912b15603d79dda386bc}{}\label{classPositionSensor_a99c4b37f9f16912b15603d79dda386bc}
+retrieves the sensor information, limited to the position of a detected object; see specific sensor documentation for parameter information 
+
+Implements \hyperlink{classSensor_a24f11619b11d5effc4066546629179ae}{Sensor}.
+
+\index{Position\+Sensor@{Position\+Sensor}!get@{get}}
+\index{get@{get}!Position\+Sensor@{Position\+Sensor}}
+\subsubsection[{\texorpdfstring{get(std\+::vector$<$ float $>$ \&detect\+Point, int \&detect\+Handle, std\+::vector$<$ float $>$ \&detect\+Surface)}{get(std::vector< float > &detectPoint, int &detectHandle, std::vector< float > &detectSurface)}}]{\setlength{\rightskip}{0pt plus 5cm}int Position\+Sensor\+::get (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Point, }
+\item[{int \&}]{detect\+Handle, }
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Surface}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\hypertarget{classPositionSensor_a0b8c45d846d3442d94e2ef767fddf31d}{}\label{classPositionSensor_a0b8c45d846d3442d94e2ef767fddf31d}
+retrieves the sensor information, including any detected object information; see specific sensor documentation for paramter information 
+
+Implements \hyperlink{classSensor_a997a8679d48c4fa346e6ac43c1e6219a}{Sensor}.
+
+\index{Position\+Sensor@{Position\+Sensor}!update@{update}}
+\index{update@{update}!Position\+Sensor@{Position\+Sensor}}
+\subsubsection[{\texorpdfstring{update(std\+::vector$<$ float $>$ \&f, int \&i, std\+::vector$<$ float $>$ \&ff)}{update(std::vector< float > &f, int &i, std::vector< float > &ff)}}]{\setlength{\rightskip}{0pt plus 5cm}void Position\+Sensor\+::update (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{f, }
+\item[{int \&}]{i, }
+\item[{std\+::vector$<$ float $>$ \&}]{ff}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\hypertarget{classPositionSensor_a4fb083aa0462a73627b11b7c0e408f09}{}\label{classPositionSensor_a4fb083aa0462a73627b11b7c0e408f09}
+calls for Vrep to update the sensor information; see specific sensor documentation for parameter information 
+
+Implements \hyperlink{classSensor_abb6c93c88529bc392d129443b3d352f3}{Sensor}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+positionsensor.\+h\item 
+positionsensor.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,104 @@
+\hypertarget{classHeightSensor}{}\section{Height\+Sensor Class Reference}
+\label{classHeightSensor}\index{Height\+Sensor@{Height\+Sensor}}
+
+
+{\ttfamily \#include $<$heightsensor.\+h$>$}
+
+
+
+Inheritance diagram for Height\+Sensor\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=156pt]{classHeightSensor__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Height\+Sensor\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=156pt]{classHeightSensor__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Height\+Sensor} (int sensor\+Handle)\hypertarget{classHeightSensor_adce900c49d253c6e9cd85db00c2f0708}{}\label{classHeightSensor_adce900c49d253c6e9cd85db00c2f0708}
+
+\item 
+int \hyperlink{classHeightSensor_abd4b7d4cc5906a971da402757989f5da}{get} (std\+::vector$<$ float $>$ \&detect\+Point, int \&detect\+Handle, std\+::vector$<$ float $>$ \&detect\+Surface)
+\item 
+int \hyperlink{classHeightSensor_a90a19e600e5b89a503366da0f0c35590}{get} (std\+::vector$<$ float $>$ \&detect\+Point)
+\item 
+void \hyperlink{classHeightSensor_a6966090886a414a6213125c91a31e128}{update} (std\+::vector$<$ float $>$ \&f, int \&i, std\+::vector$<$ float $>$ \&ff)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Class implementing a heightsensor 
+
+\subsection{Member Function Documentation}
+\index{Height\+Sensor@{Height\+Sensor}!get@{get}}
+\index{get@{get}!Height\+Sensor@{Height\+Sensor}}
+\subsubsection[{\texorpdfstring{get(std\+::vector$<$ float $>$ \&detect\+Point, int \&detect\+Handle, std\+::vector$<$ float $>$ \&detect\+Surface)}{get(std::vector< float > &detectPoint, int &detectHandle, std::vector< float > &detectSurface)}}]{\setlength{\rightskip}{0pt plus 5cm}int Height\+Sensor\+::get (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Point, }
+\item[{int \&}]{detect\+Handle, }
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Surface}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\hypertarget{classHeightSensor_abd4b7d4cc5906a971da402757989f5da}{}\label{classHeightSensor_abd4b7d4cc5906a971da402757989f5da}
+simply reads the sensor information with no additional call to handle the sensor in vrep 
+\begin{DoxyParams}{Parameters}
+{\em \&detect\+Point} & vector reference to store the coordinates of the closest point \\
+\hline
+{\em \&detect\+Handle} & integer reference to store the handle of the found object \\
+\hline
+{\em \&detect\+Surface} & vector reference to store the normal vector of the detected surface \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classSensor_a997a8679d48c4fa346e6ac43c1e6219a}{Sensor}.
+
+\index{Height\+Sensor@{Height\+Sensor}!get@{get}}
+\index{get@{get}!Height\+Sensor@{Height\+Sensor}}
+\subsubsection[{\texorpdfstring{get(std\+::vector$<$ float $>$ \&detect\+Point)}{get(std::vector< float > &detectPoint)}}]{\setlength{\rightskip}{0pt plus 5cm}int Height\+Sensor\+::get (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Point}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\hypertarget{classHeightSensor_a90a19e600e5b89a503366da0f0c35590}{}\label{classHeightSensor_a90a19e600e5b89a503366da0f0c35590}
+same as the previous get, but all parameters except the coordinates of a detected point are omitted 
+
+Implements \hyperlink{classSensor_a24f11619b11d5effc4066546629179ae}{Sensor}.
+
+\index{Height\+Sensor@{Height\+Sensor}!update@{update}}
+\index{update@{update}!Height\+Sensor@{Height\+Sensor}}
+\subsubsection[{\texorpdfstring{update(std\+::vector$<$ float $>$ \&f, int \&i, std\+::vector$<$ float $>$ \&ff)}{update(std::vector< float > &f, int &i, std::vector< float > &ff)}}]{\setlength{\rightskip}{0pt plus 5cm}void Height\+Sensor\+::update (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Point, }
+\item[{int \&}]{detect\+Handle, }
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Surface}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\hypertarget{classHeightSensor_a6966090886a414a6213125c91a31e128}{}\label{classHeightSensor_a6966090886a414a6213125c91a31e128}
+calls for vrep to update the sensor information 
+\begin{DoxyParams}{Parameters}
+{\em \&detect\+Point} & vector reference to store the coordinates of the closest point \\
+\hline
+{\em \&detect\+Handle} & integer reference to store the handle of the found object \\
+\hline
+{\em \&detect\+Surface} & vector reference to store the normal vector of the detected surface \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classSensor_abb6c93c88529bc392d129443b3d352f3}{Sensor}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+heightsensor.\+h\item 
+heightsensor.\+cpp\end{DoxyCompactItemize}

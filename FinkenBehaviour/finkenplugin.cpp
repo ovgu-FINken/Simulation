@@ -43,24 +43,34 @@ void deleteFinken(std::unique_ptr<Finken>& finken){
     simCopters.emplace_back(std::make_pair(finken->ac_id, finken->handle));
     allFinken.erase(std::remove(allFinken.begin(), allFinken.end(), finken),allFinken.end());
 }
-
+/**
+ * Asynchronous (boost::Asio) Server class to accept new paparazzi connections and pair them with a vrep copter.
+ * @see Finken::run()
+ */
 class Async_Server{
     public:
+    /** Server constructor */	    
     Async_Server(boost::asio::io_service& io_service) :
       acceptor_(io_service,tcp::endpoint(tcp::v4(), 50013)){
         simAddStatusbarMessage("Asynchronous server successfully established");
         start_accept();
     }
+    /** Basic destructor */
     ~Async_Server() { std::cerr <<  "Server died!" << std::endl; }
     private:
+    /** Function waiting for new connections to accept*/
     void start_accept(){
         simAddStatusbarMessage("Server ready to accept new connection");
         sPtr.reset(new tcp::iostream());
         acceptor_.async_accept(*sPtr->rdbuf(), boost::bind(&Async_Server::handle_accept, this, boost::asio::placeholders::error));
         simAddStatusbarMessage("Server ready to accept new connection");
-
     }
 
+    /** 
+     * Function handling any new connection.
+     * This then runs Finken::run() in a new separate thread.
+     * @see Finken::run() 
+     */
     void handle_accept(const boost::system::error_code& error){
         if(!error){
             simAddStatusbarMessage("New copnnection established");
