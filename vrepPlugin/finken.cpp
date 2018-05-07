@@ -237,8 +237,8 @@ void Finken::setRotorSpeeds() {
     for (int i=0; i<4; i++) {
         simGetObjectQuaternion(this->getRotors().at(i)->handle, -1, &rotorQuat.x());
         vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
-        //Eigen::Vector3f force(motorForces.at(i).data());
-        Eigen::Vector3f force(0,0,0.9);
+        Eigen::Vector3f force(motorForces.at(i).data());
+        //Eigen::Vector3f force(0,0,0.9); //for testing
         force = rotorQuat * force;
         vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;
         std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
