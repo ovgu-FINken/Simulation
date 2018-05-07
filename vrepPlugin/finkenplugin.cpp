@@ -16,11 +16,13 @@
 #include <boost/thread.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include <Eigen/Dense>
 #include <condition_variable>
 #include <chrono>
 #include <boost/asio.hpp>
 
+#pragma GCC diagnostic ignored "-Wint-in-bool-context"
+#include <Eigen/Dense>
+#pragma GCC diagnostic pop
 
 using std::endl;
 using std::ostream;
