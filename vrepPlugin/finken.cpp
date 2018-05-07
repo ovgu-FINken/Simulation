@@ -19,9 +19,9 @@ using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
 
 /** Throttlevalues for the motors built into the FINken */
-std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
+std::array<double,7> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85,0.99999999, 1};
 /** Thrust values in Newton coressponding to the trottle values */
-std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
+std::array<double,7> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.029999999, 2.03};
 
 static int kFinkenSonarCount = 4;
 static int kFinkenHeightSensorCount = 1;
@@ -218,38 +218,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 }
 
 
-void Finken::setRotorSpeeds() {
-    Eigen::Vector4f motorCommands(this->commands[0], this->commands[1], this->commands[2], this->commands[3]);
-    motorCommands[0]=thrustFromThrottle(motorCommands[0]);
-    motorCommands[1]=thrustFromThrottle(motorCommands[1]);
-    motorCommands[2]=thrustFromThrottle(motorCommands[2]);
-    motorCommands[3]=thrustFromThrottle(motorCommands[3]);
 
-    //pprz: NW->NE->SE->SW:
-    std::vector<float> motorNW  = {0, 0, motorCommands[0]};
-    std::vector<float> motorNE = {0, 0, motorCommands[1]};
-    std::vector<float> motorSE   = {0, 0, motorCommands[2]};
-    std::vector<float> motorSW  = {0, 0, motorCommands[3]};
-    std::vector<float> vtorque = {0,0,0};
-    std::vector<std::vector<float>> motorForces= {motorNW, motorNE, motorSW, motorSE};
-    Eigen::Quaternionf rotorQuat;
-    
-    for (int i=0; i<4; i++) {
-        simGetObjectQuaternion(this->getRotors().at(i)->handle, -1, &rotorQuat.x());
-        vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
-        Eigen::Vector3f force(motorForces.at(i).data());
-        //Eigen::Vector3f force(0,0,0.9); //for testing
-        force = rotorQuat * force;
-        vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;
-        std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
-        vrepLog << "[FINK] adding force to rotor " << i << ": " << simForce[0] << " | " << simForce[1] << " | " << simForce[2] << std::endl;
-    
-        this->getRotors().at(i)->set(simForce, vtorque);
-        
-    }
-
-
-}
 
 
 /*
@@ -387,14 +356,48 @@ void remove_item(int id) {
 
 double thrustFromThrottle(double throttle) {
     if (throttle <= 0) return 0;
+    else if (throttle ==1) return 2.03;
     for(int i = 0; i<throttlevalues.size()-1; i++){
         if(throttle == throttlevalues[i]) return thrustvalues[i];
         else if (throttle < throttlevalues[i]){
             // y = y_1 + (x-x_1)*(y_2-y_2)/(x_2-x_1)
-            return(thrustvalues[i]+((thrustvalues[i+1]-thrustvalues[i])/(throttlevalues[i+1]-throttlevalues[i]))*(throttlevalues[i+1]-throttle));
+            return(thrustvalues.at(i)+((thrustvalues.at(i+1)-thrustvalues.at(i))/(throttlevalues.at(i+1)-throttlevalues.at(i)))*(throttlevalues.at(i+1)-throttle));
             
         }
     }
     std::cerr << "invalid throttle value (>100%)" <<std::endl;
     return 0;
+}
+
+void Finken::setRotorSpeeds() {
+    Eigen::Vector4f motorCommands(this->commands[0], this->commands[1], this->commands[2], this->commands[3]);
+    motorCommands[0]=thrustFromThrottle(motorCommands[0]);
+    motorCommands[1]=thrustFromThrottle(motorCommands[1]);
+    motorCommands[2]=thrustFromThrottle(motorCommands[2]);
+    motorCommands[3]=thrustFromThrottle(motorCommands[3]);
+
+    //pprz: [NE, SE, SW, NW]
+    std::vector<float> motorNW  = {0, 0, motorCommands[3]};
+    std::vector<float> motorNE = {0, 0, motorCommands[0]};
+    std::vector<float> motorSE   = {0, 0, motorCommands[1]};
+    std::vector<float> motorSW  = {0, 0, motorCommands[2]};
+    std::vector<float> vtorque = {0,0,0};
+    std::vector<std::vector<float>> motorForces= {motorNW, motorNE, motorSE, motorSW};
+    Eigen::Quaternionf rotorQuat;
+    
+    for (int i=0; i<4; i++) {
+        simGetObjectQuaternion(this->getRotors().at(i)->handle, -1, &rotorQuat.x());
+        vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
+        Eigen::Vector3f force(motorForces.at(i).data());
+        //Eigen::Vector3f force(0,0,0); //for testing
+        force = rotorQuat * force;
+        vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;
+        std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
+        vrepLog << "[FINK] adding force to rotor " << i << ": " << simForce[0] << " | " << simForce[1] << " | " << simForce[2] << std::endl;
+    
+        this->getRotors().at(i)->set(simForce, vtorque);
+        
+    }
+
+
 }
