@@ -19,9 +19,9 @@ using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
 
 /** Throttlevalues for the motors built into the FINken */
-std::array<double,7> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85,0.99999999, 1};
+std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
 /** Thrust values in Newton coressponding to the trottle values */
-std::array<double,7> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.029999999, 2.03};
+std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
 
 static int kFinkenSonarCount = 4;
 static int kFinkenHeightSensorCount = 1;
@@ -361,7 +361,7 @@ double thrustFromThrottle(double throttle) {
         if(throttle == throttlevalues[i]) return thrustvalues[i];
         else if (throttle < throttlevalues[i]){
             // y = y_1 + (x-x_1)*(y_2-y_2)/(x_2-x_1)
-            return(thrustvalues.at(i)+((thrustvalues.at(i+1)-thrustvalues.at(i))/(throttlevalues.at(i+1)-throttlevalues.at(i)))*(throttlevalues.at(i+1)-throttle));
+            return(thrustvalues[i]+((thrustvalues[i+1]-thrustvalues[i])/(throttlevalues[i+1]-throttlevalues[i]))*(throttlevalues[i+1]-throttle));
             
         }
     }
@@ -382,7 +382,7 @@ void Finken::setRotorSpeeds() {
     std::vector<float> motorSE   = {0, 0, motorCommands[1]};
     std::vector<float> motorSW  = {0, 0, motorCommands[2]};
     std::vector<float> vtorque = {0,0,0};
-    std::vector<std::vector<float>> motorForces= {motorNW, motorNE, motorSE, motorSW};
+    std::vector<std::vector<float>> motorForces= {motorNW, motorNE, motorSW, motorSE};
     Eigen::Quaternionf rotorQuat;
     
     for (int i=0; i<4; i++) {
