@@ -79,7 +79,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	//first connection:
 	vrepLog << "[FINK] checking for copter id in simCopters" << std::endl;
-    int copter_id = simCopters.back().second;
+        int copter_id = simCopters.back().second;
         size_t id;
         int connection_nb =1;
         int commands_nb = 0;
@@ -357,15 +357,14 @@ void remove_item(int id) {
 double thrustFromThrottle(double throttle) {
     if (throttle <= 0) return 0;
     else if (throttle ==1) return 2.03;
-    for(int i = 0; i<throttlevalues.size()-1; i++){
+    for(int i = 0; i<throttlevalues.size(); i++){
         if(throttle == throttlevalues[i]) return thrustvalues[i];
         else if (throttle < throttlevalues[i]){
             // y = y_1 + (x-x_1)*(y_2-y_2)/(x_2-x_1)
-            return(thrustvalues[i]+((thrustvalues[i+1]-thrustvalues[i])/(throttlevalues[i+1]-throttlevalues[i]))*(throttlevalues[i+1]-throttle));
-            
+            return(thrustvalues.at(i-1)+((thrustvalues.at(i)-thrustvalues.at(i-1))/(throttlevalues.at(i)-throttlevalues.at(i-1)))*(throttle-throttlevalues.at(i-1)));         
         }
     }
-    std::cerr << "invalid throttle value (>100%)" <<std::endl;
+    std::cerr << "invalid throttle value (>100%): " << throttle <<std::endl;
     return 0;
 }
 
