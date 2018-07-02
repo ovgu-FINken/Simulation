@@ -93,7 +93,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 >>>>>>> 2f88814eb1e4df786224bce1aa3648c96c0c59fe
         size_t id;
         int connection_nb =1;
-        int commands_nb = 0;
+        int commands_nb = 4;
 	    vrepLog << "[FINK] first connection" << std::endl;
         //read commands
 	    {
