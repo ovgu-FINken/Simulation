@@ -18,10 +18,13 @@
 #include <boost/asio.hpp>
 #include <condition_variable>
 #include <chrono>
-#include <Eigen/Dense>
 #include <atomic>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+
+#pragma GCC diagnostic ignored "-Wint-in-bool-context"
+#include <Eigen/Dense>
+#pragma GCC diagnostic pop
 
 using boost::filesystem::ofstream;
 using boost::filesystem::current_path;
