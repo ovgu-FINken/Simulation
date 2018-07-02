@@ -2,7 +2,9 @@
 #include <iostream>
 #include "v_repLib.h"
 #include <cstring>
+#include <cstdlib>
 #include "vrepplugin.h"
+#include <fstream>
 #include "dataPacket.h"
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
@@ -10,6 +12,8 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/asio.hpp>
 #include <chrono>
+
+ofstream csvdata;
 
 using std::endl;
 using std::ostream;
@@ -79,10 +83,13 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	//first connection:
 	vrepLog << "[FINK] checking for copter id in simCopters" << std::endl;
+    csvdata.open("log.csv");
+    csvdata << "TIME,NE,SE,SW,NW,Quat.x,Quat.y,Quat.z,Quat.w" << "\n";
+
     int copter_id = simCopters.back().second;
         size_t id;
         int connection_nb =1;
-        int commands_nb = 0;
+        int commands_nb = 4;
 	    vrepLog << "[FINK] first connection" << std::endl;
         //read commands
 	    {
@@ -93,6 +100,12 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	    	this->commands[1]=inPacket.roll;
 	    	this->commands[2]=inPacket.yaw;
 	    	this->commands[3]=inPacket.thrust;
+            csvdata << simGetSimulationTime() << ",";
+            for(int i=0;i<commands_nb;i++) {
+                vrepLog << commands[i] << ((i==commands_nb-1)?"":", ");
+                csvdata << commands[i] << ((i==commands_nb-1)?",":",");
+            }
+
         }
     	/*
          *check for existence of a free(not associated with a paparazzi client yet) copter
@@ -146,7 +159,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             outPacket.simTime = simGetSimulationTime();
    	    	out << outPacket;
         }
-        
+        csvdata << std::to_string(this->quat[0]) << "," << std::to_string(this->quat[1]) << "," << std::to_string(this->quat[2]) << "," << std::to_string(this->quat[3]) << std::endl;
         /*
          *paparazzi-vrep loop
          */
@@ -203,6 +216,13 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             vrepLog << "[FINK] time sending data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
             auto runEnd = Clock::now();
             vrepLog << "[FINK] time total Finken::run() loop: " << std::chrono::nanoseconds(runEnd - runStart).count()/1000000 << "ms" << std::endl << "-------------------------------------------------------------------" << std::endl;;
+            csvdata << simGetSimulationTime() << ",";
+            for(int i=0;i<commands_nb;i++) {
+                csvdata << commands[i] << ((i==commands_nb-1)?",":",");
+            }
+
+            csvdata << std::to_string(this->quat[0]) << "," << std::to_string(this->quat[1]) << "," << std::to_string(this->quat[2]) << "," << std::to_string(this->quat[3]) << std::endl;
+
         }
     }
   	catch (std::exception& e) {
@@ -237,8 +257,8 @@ void Finken::setRotorSpeeds() {
     for (int i=0; i<4; i++) {
         simGetObjectQuaternion(this->getRotors().at(i)->handle, -1, &rotorQuat.x());
         vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
-        //Eigen::Vector3f force(motorForces.at(i).data());
-        Eigen::Vector3f force(0,0,0.9);
+        Eigen::Vector3f force(motorForces.at(i).data());
+        //Eigen::Vector3f force(0,0,0.9);
         force = rotorQuat * force;
         vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;
         std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
