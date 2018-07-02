@@ -83,14 +83,10 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	//first connection:
 	vrepLog << "[FINK] checking for copter id in simCopters" << std::endl;
-<<<<<<< HEAD
     csvdata.open("log.csv");
     csvdata << "TIME,NE,SE,SW,NW,Quat.x,Quat.y,Quat.z,Quat.w" << "\n";
 
     int copter_id = simCopters.back().second;
-=======
-        int copter_id = simCopters.back().second;
->>>>>>> 2f88814eb1e4df786224bce1aa3648c96c0c59fe
         size_t id;
         int connection_nb =1;
         int commands_nb = 4;
@@ -240,42 +236,6 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 
 	}
 }
-
-
-<<<<<<< HEAD
-void Finken::setRotorSpeeds() {
-    Eigen::Vector4f motorCommands(this->commands[0], this->commands[1], this->commands[2], this->commands[3]);
-    motorCommands[0]=thrustFromThrottle(motorCommands[0]);
-    motorCommands[1]=thrustFromThrottle(motorCommands[1]);
-    motorCommands[2]=thrustFromThrottle(motorCommands[2]);
-    motorCommands[3]=thrustFromThrottle(motorCommands[3]);
-
-    //pprz: NW->NE->SE->SW:
-    std::vector<float> motorNW  = {0, 0, motorCommands[0]};
-    std::vector<float> motorNE = {0, 0, motorCommands[1]};
-    std::vector<float> motorSE   = {0, 0, motorCommands[2]};
-    std::vector<float> motorSW  = {0, 0, motorCommands[3]};
-    std::vector<float> vtorque = {0,0,0};
-    std::vector<std::vector<float>> motorForces= {motorNW, motorNE, motorSW, motorSE};
-    Eigen::Quaternionf rotorQuat;
-    
-    for (int i=0; i<4; i++) {
-        simGetObjectQuaternion(this->getRotors().at(i)->handle, -1, &rotorQuat.x());
-        vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
-        Eigen::Vector3f force(motorForces.at(i).data());
-        //Eigen::Vector3f force(0,0,0.9);
-        force = rotorQuat * force;
-        vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;
-        std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
-        vrepLog << "[FINK] adding force to rotor " << i << ": " << simForce[0] << " | " << simForce[1] << " | " << simForce[2] << std::endl;
-    
-        this->getRotors().at(i)->set(simForce, vtorque);
-        
-    }
-=======
->>>>>>> 2f88814eb1e4df786224bce1aa3648c96c0c59fe
-
-
 
 /*
  *Takes a unique_ptr to a Finken and adds
