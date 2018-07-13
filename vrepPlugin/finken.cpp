@@ -12,6 +12,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/asio.hpp>
 #include <chrono>
+#include <mutex>
 
 ofstream csvdata;
 
@@ -29,8 +30,9 @@ std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
 
 static int kFinkenSonarCount = 4;
 static int kFinkenHeightSensorCount = 1;
-std::atomic<bool> sendSync(false);
-std::atomic<bool> readSync(false);
+//std::atomic<bool> sendSync(false);
+std::timed_mutex sendSync;
+std::timed_mutex readSync;
 vrepPacket outPacket;
 paparazziPacket inPacket;
 /*
@@ -144,12 +146,14 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             sPtr.get()->close();
             return;
         }
-        readSync = true;
-        while (!sendSync.load()){
+        readSync.unlock();
+        if(!sendSync.try_lock_for(std::chrono::seconds(10)))
+          throw std::runtime_error("Server blocked for more then 2 seconds");
+        /*while (!sendSync.load());{
             //wait for vrep to actually apply the motor forces
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        }
-        sendSync = false;
+        }*/
+        //sendSync = false;
 
         //update position
         updatePos(*this);
@@ -198,16 +202,18 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 
             //vrep sim loop
             then = Clock::now();
-            readSync = true;
-            while (!sendSync.load()){
+            readSync.unlock();
+            if(!sendSync.try_lock_for(std::chrono::seconds(10)))
+              throw std::runtime_error("Server blocked for more then 10 seconds");
+            /*while (!sendSync.load());{
                 //wait for vrep to actually apply the motor forces
                 std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            }
+            }*/
             now = Clock::now();
             vrepLog << "[FINK] time finken is waiting for vrep: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl << std::endl;
 
             then = Clock::now();
-            sendSync = false;
+            //sendSync = false;
             updatePos(*this);
        	    //send position data
             boost::archive::binary_oarchive out(*sPtr);
@@ -238,7 +244,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
                 csvdata << commands[i] << ((i==commands_nb-1)?",":",");
             }
 
-            csvdata << this->quat[0] << "," << this->quat[1] << "," << this->quat[2] << "," << this->quat[3] << this->pos[0] <<"," << this->pos[1] << "," << this->pos[2] << std::endl;
+            csvdata << this->quat[0] << "," << this->quat[1] << "," << this->quat[2] << "," << this->quat[3] << ", " <<  this->pos[0] <<"," << this->pos[1] << "," << this->pos[2] << std::endl;
 
         }
     }
@@ -428,7 +434,7 @@ void Finken::setRotorSpeeds() {
         std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
         vrepLog << "[FINK] adding force to rotor " << i << ": " << simForce[0] << " | " << simForce[1] << " | " << simForce[2] << std::endl;
 	
-        //this->getRotors().at(i)->set(simForce, vtorque);
+        this->getRotors().at(i)->set(simForce, vtorque);
 
     }
 

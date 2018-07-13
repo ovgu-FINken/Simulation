@@ -114,6 +114,8 @@ class FinkenPlugin: public VREPPlugin {
       Log::name(name());
       std::string date = __DATE__;
       Log::out() << "loaded v " << date << std::endl;
+      sendSync.lock();
+      readSync.lock();
       return true;
     }
     /** unloads the plugin */
@@ -176,15 +178,16 @@ class FinkenPlugin: public VREPPlugin {
         // if there is no finken connected to paparazzi yet, we do nothing:
         while(allFinken.size() == 0){
             vrepLog << "[VREP] waiting for finken creation. Available copters for pairing: " << simCopters.size() << '\n';
-	    	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	    	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 		    //doNothing;
 	    }
     	//vrepLog << "vrep pass done, copter count:" << allFinken.size() <<  '\n';
         auto then = Clock::now();
         //we wait for paparazzi to send us some commands:
-        while (!readSync.load()){
-       		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-   	    }
+        if(!readSync.try_lock_for(std::chrono::seconds(10))) {
+          vrepLog << "[VREP] waiting for finken timed out (10 seconds)" << endl;;
+          return NULL;
+        }
         auto now = Clock::now();
         vrepLog << "[VREP] time vrep is waiting for finken: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
         then =Clock::now();
@@ -194,9 +197,8 @@ class FinkenPlugin: public VREPPlugin {
             allFinken.at(i)->setRotorSpeeds();
         }
         //position data can be sent now
-        sendSync=true;
+        sendSync.unlock();//=true;
         //command data is outdated now
-        readSync = false;
         now = Clock::now();
         vrepLog << "[VREP] time setting rotor forces: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << 
         std::endl;

@@ -21,6 +21,7 @@
 #include <atomic>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <mutex>
 
 #pragma GCC diagnostic ignored "-Wint-in-bool-context"
 #include <Eigen/Dense>
@@ -31,8 +32,8 @@ using boost::filesystem::current_path;
 using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
 
-extern std::atomic<bool> sendSync;
-extern std::atomic<bool> readSync;
+extern std::timed_mutex sendSync;
+extern std::timed_mutex readSync;
 
 
 /**
