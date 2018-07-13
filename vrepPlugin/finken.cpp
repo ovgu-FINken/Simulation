@@ -46,6 +46,10 @@ struct lla_coords {
 }lla;
 */
 
+std::string vrepHome=std::getenv("VREP_ROOT");
+
+
+
 Finken::Finken(){}
 Finken::Finken(int fHandle, int _ac_id) : handle(fHandle), ac_id(_ac_id){}
 Finken::~Finken(){
@@ -101,7 +105,8 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	    	    this->commands[3]=inPacket.thrust;
             nav_block = inPacket.block_ID;
             curBlock = nav_block;
-            csvdata.open(("navBlock" + std::to_string(nav_block) + ".csv").c_str());
+	    std::cout << "setting block to " << std::to_string(nav_block) << std::endl;
+            csvdata.open((vrepHome + "/vreplogs/navBlock" + std::to_string(nav_block) + ".csv").c_str());
             csvdata << "TIME,NE,SE,SW,NW,Quat.x,Quat.y,Quat.z,Quat.w" << "\n";
             csvdata << simGetSimulationTime() << ",";
             for(int i=0;i<commands_nb;i++) {
@@ -184,7 +189,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         curBlock = nav_block;
         std::cout << "switching block to " << std::to_string(nav_block);
         csvdata.close();
-        csvdata.open(("navBlock" + std::to_string(nav_block) + ".csv").c_str());
+        csvdata.open((vrepHome + "/vreplogs/navBlock" + std::to_string(nav_block) + ".csv").c_str());
         csvdata << "TIME,NE,SE,SW,NW,Quat.x,Quat.y,Quat.z,Quat.w" << "\n";
       }
 	    vrepLog << "[FINK] recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl << std::endl;
