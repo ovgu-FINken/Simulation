@@ -107,7 +107,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             curBlock = nav_block;
 	    std::cout << "setting block to " << std::to_string(nav_block) << std::endl;
             csvdata.open((vrepHome + "/vreplogs/navBlock" + std::to_string(nav_block) + ".csv").c_str());
-            csvdata << "TIME,NE,SE,SW,NW,Quat.x,Quat.y,Quat.z,Quat.w" << "\n";
+            csvdata << "TIME,NE,SE,SW,NW,Quat.x,Quat.y,Quat.z,Quat.w,EAST,NORTH,UP" << "\n";
             csvdata << simGetSimulationTime() << ",";
             for(int i=0;i<commands_nb;i++) {
                 vrepLog << commands[i] << ((i==commands_nb-1)?"":", ");
@@ -165,9 +165,9 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             outPacket.rotAccel = this->rotAccel;
             outPacket.dt = simGetSimulationTimeStep();
             outPacket.simTime = simGetSimulationTime();
-   	    	out << outPacket;
+   	    out << outPacket;
         }
-        csvdata << this->quat[0] << "," << this->quat[1] << "," << this->quat[2] << "," << this->quat[3] << "\n";
+        csvdata << this->quat[0] << "," << this->quat[1] << "," << this->quat[2] << "," << this->quat[3] << "," << this->pos[0] <<"," << this->pos[1] << "," << this->pos[2] << "\n";
         /*
          *paparazzi-vrep loop
          */
@@ -182,15 +182,15 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             in >> inPacket;
             this->commands[0]=inPacket.pitch;
 	    this->commands[1]=inPacket.roll;
-	    this->commands[3]=inPacket.yaw;
-	    this->commands[2]=inPacket.thrust;
+	    this->commands[2]=inPacket.yaw;
+	    this->commands[3]=inPacket.thrust;
       nav_block=inPacket.block_ID;
       if (curBlock != nav_block) {
         curBlock = nav_block;
         std::cout << "switching block to " << std::to_string(nav_block);
         csvdata.close();
         csvdata.open((vrepHome + "/vreplogs/navBlock" + std::to_string(nav_block) + ".csv").c_str());
-        csvdata << "TIME,NE,SE,SW,NW,Quat.x,Quat.y,Quat.z,Quat.w" << "\n";
+        csvdata << "TIME,NE,SE,SW,NW,Quat.x,Quat.y,Quat.z,Quat.w,EAST,NORTH,UP" << "\n";
       }
 	    vrepLog << "[FINK] recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl << std::endl;
             auto now = Clock::now();
@@ -238,7 +238,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
                 csvdata << commands[i] << ((i==commands_nb-1)?",":",");
             }
 
-            csvdata << this->quat[0] << "," << this->quat[1] << "," << this->quat[2] << "," << this->quat[3] << std::endl;
+            csvdata << this->quat[0] << "," << this->quat[1] << "," << this->quat[2] << "," << this->quat[3] << this->pos[0] <<"," << this->pos[1] << "," << this->pos[2] << std::endl;
 
         }
     }
@@ -427,8 +427,8 @@ void Finken::setRotorSpeeds() {
         vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;
         std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
         vrepLog << "[FINK] adding force to rotor " << i << ": " << simForce[0] << " | " << simForce[1] << " | " << simForce[2] << std::endl;
-
-        this->getRotors().at(i)->set(simForce, vtorque);
+	
+        //this->getRotors().at(i)->set(simForce, vtorque);
 
     }
 
