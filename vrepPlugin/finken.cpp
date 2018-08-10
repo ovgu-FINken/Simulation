@@ -56,6 +56,7 @@ Finken::Finken(){}
 Finken::Finken(int fHandle, int _ac_id) : handle(fHandle), ac_id(_ac_id){}
 Finken::~Finken(){
     vrepLog << "deleting finken with id: " << this->handle <<std::endl;
+    std::cout << "[FINK] erasing finken and placing in simcopters" << std::endl;
     simCopters.emplace_back(std::make_pair(this->ac_id, this->handle));
     simStopSimulation();
     simAdvanceSimulationByOneStep();
@@ -191,7 +192,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
       nav_block=inPacket.block_ID;
       if (curBlock != nav_block) {
         curBlock = nav_block;
-        std::cout << "switching block to " << std::to_string(nav_block);
+        std::cout << "switching block to " << std::to_string(nav_block) << std::endl;
         csvdata.close();
         csvdata.open((vrepHome + "/vreplogs/navBlock" + std::to_string(nav_block) + ".csv").c_str());
         csvdata << "TIME,NE,SE,SW,NW,Quat.x,Quat.y,Quat.z,Quat.w,EAST,NORTH,UP" << "\n";

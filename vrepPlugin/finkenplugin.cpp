@@ -46,7 +46,6 @@ VrepLog vrepLog;
 */
 void deleteFinken(std::unique_ptr<Finken>& finken){
     vrepLog << "attempting to erase finken " <<finken->handle << std::endl;
-    simCopters.emplace_back(std::make_pair(finken->ac_id, finken->handle));
     allFinken.erase(std::remove(allFinken.begin(), allFinken.end(), finken),allFinken.end());
 }
 /**
@@ -161,6 +160,7 @@ class FinkenPlugin: public VREPPlugin {
     {
         allFinken.clear();
         simCopters.clear();
+	std::cerr << "[VREP] ending sim, resetting server" << std::endl;
 	vrepLog << "[VREP] ending sim, resetting server" << std::endl;
         io_service.stop();
         io_service.reset();
@@ -173,38 +173,45 @@ class FinkenPlugin: public VREPPlugin {
      */
     void* action(int* auxiliaryData,void* customData,int* replyData)
     {   
-	vrepLog << "[VREP] connected copters: " << allFinken.size() << " still available copters: " <<  simCopters.size() << std::endl;
-        auto actionStart = Clock::now();
-        // if there is no finken connected to paparazzi yet, we do nothing:
-        while(allFinken.size() == 0){
-            vrepLog << "[VREP] waiting for finken creation. Available copters for pairing: " << simCopters.size() << '\n';
-	    	//std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-		    //doNothing;
-	    }
-    	//vrepLog << "vrep pass done, copter count:" << allFinken.size() <<  '\n';
-        auto then = Clock::now();
-        //we wait for paparazzi to send us some commands:
-        if(!readSync.try_lock_for(std::chrono::seconds(10))) {
-          vrepLog << "[VREP] waiting for finken timed out (10 seconds)" << endl;;
-          return NULL;
-        }
-        auto now = Clock::now();
-        vrepLog << "[VREP] time vrep is waiting for finken: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
-        then =Clock::now();
-
-        //we apply those commands
-        for(int i = 0; i<allFinken.size(); i++){
-            allFinken.at(i)->setRotorSpeeds();
-        }
-        //position data can be sent now
-        sendSync.unlock();//=true;
-        //command data is outdated now
-        now = Clock::now();
-        vrepLog << "[VREP] time setting rotor forces: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << 
-        std::endl;
-        vrepLog << "[VREP] time total finkenplugin action(): " << std::chrono::nanoseconds(now - actionStart).count()/1000000 << "ms" << std::endl;
-
-        return NULL;
+	try {
+	
+		vrepLog << "[VREP] connected copters: " << allFinken.size() << " still available copters: " <<  simCopters.size() << std::endl;
+        	auto actionStart = Clock::now();
+	        // if there is no finken connected to paparazzi yet, we do nothing:
+	        while(allFinken.size() == 0){
+	            //vrepLog << "[VREP] waiting for finken creation. Available copters for pairing: " << simCopters.size() << '\n';
+		    }
+	    	//vrepLog << "vrep pass done, copter count:" << allFinken.size() <<  '\n';
+	        auto then = Clock::now();
+	        //we wait for paparazzi to send us some commands:
+	        if(!readSync.try_lock_for(std::chrono::seconds(3))) {
+	          vrepLog << "[VREP] waiting for finken timed out (10 seconds)" << endl;;
+	          throw std::runtime_error("Vrep waiting for more than 10 seconds");
+	        }
+	        auto now = Clock::now();
+	        vrepLog << "[VREP] time vrep is waiting for finken: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
+	        then =Clock::now();
+	
+	        //we apply those commands
+	        for(int i = 0; i<allFinken.size(); i++){
+	            allFinken.at(i)->setRotorSpeeds();
+	        }
+	        //position data can be sent now
+	        sendSync.unlock();//=true;
+	        //command data is outdated now
+	        now = Clock::now();
+	        vrepLog << "[VREP] time setting rotor forces: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << 
+	        std::endl;
+	        vrepLog << "[VREP] time total finkenplugin action(): " << std::chrono::nanoseconds(now - actionStart).count()/1000000 << "ms" << std::endl;
+	
+        	return NULL;
+	}
+	catch (std::exception& e) {
+	    std::cerr << "[FINK] Exception in thread: " << e.what() << "\n";
+	    simStopSimulation();
+    	    simAdvanceSimulationByOneStep();
+	    return NULL;
+	}
     }
 
 } plugin;
