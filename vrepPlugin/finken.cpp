@@ -353,9 +353,9 @@ void Finken::updatePos(Finken& finken) {
         finken.vel[0] = temp[0];
         finken.vel[1] = temp[1];
         finken.vel[2] = temp[2];
-        finken.rotVel[0] = temp[0];
-        finken.rotVel[1] = temp[1];
-        finken.rotVel[2] = temp[2];
+        finken.rotVel[0] = temp2[0];
+        finken.rotVel[1] = temp2[1];
+        finken.rotVel[2] = temp2[2];
         std::transform(finken.vel.begin(), finken.vel.end(), oldVel.begin(), finken.accel.begin(),
             [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});
         std::transform(finken.rotVel.begin(), finken.rotVel.end(), oldRotVel.begin(), finken.rotAccel.begin(),
@@ -422,7 +422,7 @@ void Finken::setRotorSpeeds() {
     std::vector<float> motorSE   = {0, 0, motorCommands[1]};
     std::vector<float> motorSW  = {0, 0, motorCommands[2]};
     std::vector<float> vtorque = {0,0,0};
-    std::vector<std::vector<float>> motorForces= {motorNW, motorNE, motorSW, motorSE};
+    std::vector<std::vector<float>> motorForces= {motorNW, motorNE, motorSE, motorSW};
     Eigen::Quaternionf rotorQuat;
 
     for (int i=0; i<4; i++) {
@@ -433,7 +433,7 @@ void Finken::setRotorSpeeds() {
         vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
         Eigen::Vector3f force(motorForces.at(i).data());
         force = rotorQuat * force;
-	Eigen::Vector3f torque = (pow(-1, (i)))*0.1*force;
+	Eigen::Vector3f torque = (pow(-1, (i)))*0*force;
 
         vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;	
 	vrepLog << "[FINK] Rotor #" << i << " torque: " << torque[0] << " | "  << torque[1] << " | " << torque[2] <<  std::endl;	
