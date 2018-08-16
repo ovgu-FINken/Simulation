@@ -426,16 +426,29 @@ void Finken::setRotorSpeeds() {
     Eigen::Quaternionf rotorQuat;
 
     for (int i=0; i<4; i++) {
+	/* for each rotor,
+	   get the quaternion for each rotor, rotate the corresponding force 
+           and apply to the rotor */
         simGetObjectQuaternion(this->getRotors().at(i)->handle, -1, &rotorQuat.x());
         vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
         Eigen::Vector3f force(motorForces.at(i).data());
-        //Eigen::Vector3f force(0,0,0); //for testing
         force = rotorQuat * force;
-        vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;
-        std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
+	Eigen::Vector3f torque = (pow(-1, (i)))*0.1*force;
+
+        vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;	
+	vrepLog << "[FINK] Rotor #" << i << " torque: " << torque[0] << " | "  << torque[1] << " | " << torque[2] <<  std::endl;	
+
+	//convert Eigen-style vectors to std	
+	std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
         vrepLog << "[FINK] adding force to rotor " << i << ": " << simForce[0] << " | " << simForce[1] << " | " << simForce[2] << std::endl;
+	std::vector<float> simTorque(&torque[0], torque.data() + torque.rows() * torque.cols());
+        vrepLog << "[FINK] adding torque to rotor " << i << ": " << simTorque[0] << " | " << simTorque[1] << " | " << simTorque[2] << std::endl;		
 	
-        this->getRotors().at(i)->set(simForce, vtorque);
+	
+
+	//std::fill(simForce.begin(), simForce.end(), 0);
+		
+        this->getRotors().at(i)->set(simForce, simTorque);
 
     }
 

@@ -14,10 +14,11 @@
 {\ttfamily \#include $<$boost/asio.\+hpp$>$}\\*
 {\ttfamily \#include $<$condition\+\_\+variable$>$}\\*
 {\ttfamily \#include $<$chrono$>$}\\*
-{\ttfamily \#include $<$Eigen/\+Dense$>$}\\*
 {\ttfamily \#include $<$atomic$>$}\\*
 {\ttfamily \#include $<$boost/filesystem.\+hpp$>$}\\*
 {\ttfamily \#include $<$boost/filesystem/fstream.\+hpp$>$}\\*
+{\ttfamily \#include $<$mutex$>$}\\*
+{\ttfamily \#include $<$Eigen/\+Dense$>$}\\*
 Include dependency graph for finken.\+h\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
@@ -50,10 +51,10 @@ double \hyperlink{finken_8h_a4e838d73ad5e098825ef4c227f6369b6}{thrust\+From\+Thr
 \subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-std\+::atomic$<$ bool $>$ {\bfseries send\+Sync}\hypertarget{finken_8h_a97b68c87771b50f85a0c43bdb8410cbe}{}\label{finken_8h_a97b68c87771b50f85a0c43bdb8410cbe}
+std\+::timed\+\_\+mutex {\bfseries send\+Sync}\hypertarget{finken_8h_a2a73f6002f1b82b5ec6dbfd59171dfd7}{}\label{finken_8h_a2a73f6002f1b82b5ec6dbfd59171dfd7}
 
 \item 
-std\+::atomic$<$ bool $>$ {\bfseries read\+Sync}\hypertarget{finken_8h_a539cb20630c9a9a2583f643c0d6f36fa}{}\label{finken_8h_a539cb20630c9a9a2583f643c0d6f36fa}
+std\+::timed\+\_\+mutex {\bfseries read\+Sync}\hypertarget{finken_8h_ac4e20dfb154981b9dee8ab3b24dd1778}{}\label{finken_8h_ac4e20dfb154981b9dee8ab3b24dd1778}
 
 \item 
 \hyperlink{classVrepLog}{Vrep\+Log} {\bfseries vrep\+Log}\hypertarget{finken_8h_a89deba42952826c303251a9d4d45afda}{}\label{finken_8h_a89deba42952826c303251a9d4d45afda}
