@@ -33,21 +33,22 @@ using Clock = std::chrono::high_resolution_clock;
 
 using boost::asio::ip::tcp;
 
+bool serverLoaded = false;
+bool connectionEstablished = false;
 extern float execution_step_size;
-extern std::vector<std::unique_ptr<Finken>> allFinken;
+extern std::vector<std::unique_ptr<Finken>> simFinken;
 std::unique_ptr<tcp::iostream> sPtr;
 VrepLog vrepLog;
+paparazziPacket firstPacket;
 
-
+/*
 /**
 * Deletes a Finken object and stores the corresponding handle
 *
 * @param finken
+
+
 */
-void deleteFinken(std::unique_ptr<Finken>& finken){
-    vrepLog << "attempting to erase finken " <<finken->handle << std::endl;
-    allFinken.erase(std::remove(allFinken.begin(), allFinken.end(), finken),allFinken.end());
-}
 /**
  * Asynchronous (boost::Asio) Server class to accept new paparazzi connections and pair them with a vrep copter.
  * @see Finken::run()
@@ -65,7 +66,6 @@ class Async_Server{
     private:
     /** Function waiting for new connections to accept*/
     void start_accept(){
-        simAddStatusbarMessage("Server ready to accept new connection");
         sPtr.reset(new tcp::iostream());
         acceptor_.async_accept(*sPtr->rdbuf(), boost::bind(&Async_Server::handle_accept, this, boost::asio::placeholders::error));
         simAddStatusbarMessage("Server ready to accept new connection");
@@ -78,11 +78,33 @@ class Async_Server{
     void handle_accept(const boost::system::error_code& error){
         if(!error){
             simAddStatusbarMessage("New connection established");
-            std::cerr << "creating Empty Finken" << '\n';
-            allFinken.emplace_back(new Finken());
-            std::cerr << "creating Finken Server" << '\n';
-            auto run=[](){auto& finken = allFinken.back(); finken->run(std::move(sPtr)); deleteFinken(finken);};
-            std::thread(run).detach();
+            int ac_id=0;
+            bool matchingCopterFound = false;
+            {
+                boost::archive::binary_iarchive in(*sPtr, boost::archive::no_header);
+                in >> firstPacket;
+                ac_id=firstPacket.ac_id;
+            }
+            
+            simAddStatusbarMessage("reveived ac_id");
+            std::cout << ac_id << std::endl;
+            std::cout << "simFinken: " << simFinken.size() << std::endl;
+            for(auto&& pFinken : simFinken) {
+                if (pFinken->ac_id == ac_id) {
+                    if (pFinken->connected) {
+                        std::cerr << "finken with ac_id " << ac_id << "already connected" << std::endl;
+                        break;
+                    }
+                    matchingCopterFound = true;
+                    pFinken->connected =true;
+                    auto run=[&pFinken](){pFinken->run(std::move(sPtr));};
+                    std::thread(run).detach();
+                    std::cout << "started a finken" << std::endl;
+                    connectionEstablished = true;
+                }
+            } 
+            if(matchingCopterFound == false) {std::cerr << "no matching copter was found" <<std::endl;}
+                        
         }
         else{
             std::cerr << "error in accept handler: " << error << std::endl;
@@ -119,7 +141,7 @@ class FinkenPlugin: public VREPPlugin {
     }
     /** unloads the plugin */
     virtual bool unload() {
-      async_server.reset(nullptr);
+      if (serverLoaded){io_service.stop();}
       Log::out() << "unloaded" << std::endl;
       return true;
     }
@@ -134,18 +156,19 @@ class FinkenPlugin: public VREPPlugin {
     {   
         
         std::cout << "checking sceneload" << '\n';
-        vrepLog << "ScriptLoader check" << '\n' ;
+        vrepLog << "[VREP] ScriptLoader check" << '\n' ;
         std::string dummyName = "ScriptLoader";
         int handle = simGetObjectHandle(dummyName.c_str());
         std::cout << handle << '\n';
         if (handle > 0){
-            vrepLog << "ScriptLoader found, starting asynchronous vrep server" << '\n' ;
+            vrepLog << "[VREP] ScriptLoader found, starting asynchronous vrep server" << '\n';
             async_server.reset(new Async_Server(io_service));
             boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
-            vrepLog << "server done" << '\n';
+            serverLoaded = true;
+            vrepLog << "[VREP] server done" << '\n';
         }
         else {
-            vrepLog << "ScriptLoader not found, not starting server" << '\n';
+            vrepLog << "[VREP] ScriptLoader not found, not starting server" << '\n';
         }
     std::cout << "sceneload done" << '\n';
 	return NULL;
@@ -158,14 +181,13 @@ class FinkenPlugin: public VREPPlugin {
 
     void* simEnd(int* auxiliaryData,void* customData,int* replyData)
     {
-        allFinken.clear();
-        simCopters.clear();
-	std::cerr << "[VREP] ending sim, resetting server" << std::endl;
-	vrepLog << "[VREP] ending sim, resetting server" << std::endl;
+        simFinken.clear();
+        std::cerr << "[VREP] ending sim, resetting server" << std::endl;
+	    vrepLog << "[VREP] ending sim, resetting server" << std::endl;
         io_service.stop();
         io_service.reset();
         boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
-	vrepLog << "[VREP] successfully resetted server" << std::endl;
+	    vrepLog << "[VREP] successfully reset server" << std::endl;
         return NULL;
     }
     /**
@@ -175,27 +197,33 @@ class FinkenPlugin: public VREPPlugin {
     {   
 	try {
 	
-		vrepLog << "[VREP] connected copters: " << allFinken.size() << " still available copters: " <<  simCopters.size() << std::endl;
+		vrepLog << "[VREP] simulated copters: " << simFinken.size() << std::endl;
         	auto actionStart = Clock::now();
 	        // if there is no finken connected to paparazzi yet, we do nothing:
-	        while(allFinken.size() == 0){
-	            //vrepLog << "[VREP] waiting for finken creation. Available copters for pairing: " << simCopters.size() << '\n';
-		    }
-	    	//vrepLog << "vrep pass done, copter count:" << allFinken.size() <<  '\n';
+	        while(!connectionEstablished){
+	            //vrepLog << "[VREP] waiting for finken creation. '\n';
+		    }	    	
 	        auto then = Clock::now();
 	        //we wait for paparazzi to send us some commands:
-	        if(!readSync.try_lock_for(std::chrono::seconds(3))) {
-	          vrepLog << "[VREP] waiting for finken timed out (10 seconds)" << endl;;
-	          throw std::runtime_error("Vrep waiting for more than 10 seconds");
+	        if(!readSync.try_lock_for(std::chrono::seconds(2))) {
+              if(simGetSimulationState()==0) {
+                  vrepLog << "sim was already stopped, ending vrep main loop" << std::endl;
+                  return NULL;
+              }
+              else {               
+	            throw std::runtime_error("Vrep waiting for more than 2 seconds");
+              }
 	        }
 	        auto now = Clock::now();
 	        vrepLog << "[VREP] time vrep is waiting for finken: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
 	        then =Clock::now();
 	
 	        //we apply those commands
-	        for(int i = 0; i<allFinken.size(); i++){
-	            allFinken.at(i)->setRotorSpeeds();
-	        }
+	        for(auto&& pFinken : simFinken) {
+                if (pFinken->connected) {
+                    pFinken->setRotorSpeeds();
+                }
+            }
 	        //position data can be sent now
 	        sendSync.unlock();//=true;
 	        //command data is outdated now
@@ -207,9 +235,10 @@ class FinkenPlugin: public VREPPlugin {
         	return NULL;
 	}
 	catch (std::exception& e) {
-	    std::cerr << "[FINK] Exception in thread: " << e.what() << "\n";
+	    std::cerr << "[VREP] Exception in thread: " << e.what() << "\n";
+        simAddStatusbarMessage("stopping sim from plugin::action");
 	    simStopSimulation();
-    	    simAdvanceSimulationByOneStep();
+    	//simAdvanceSimulationByOneStep();
 	    return NULL;
 	}
     }

@@ -3,9 +3,6 @@
 #include <string>
 #include <vector>
 
-/** Vector storing copter handles. @ref simCopters */
- 
-extern std::vector<std::pair<int,int>> simCopters;
 
 /**
  * Base vrepplugin class. Finkenplugin inherits from this class

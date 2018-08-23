@@ -97,6 +97,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &lt;scriptFunctionData.h&gt;</code><br />
 <code>#include &lt;boost/filesystem.hpp&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;<a class="el" href="finken_8h_source.html">finken.h</a>&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for skeleton.cpp:</div>
 <div class="dyncontent">
@@ -137,8 +138,8 @@ LIBRARY&#160;</td><td class="memItemRight" valign="bottom"><b>vrepLib</b></td></
 <tr class="memitem:a089f78fbca1c19d7d6fcd2a3669f79d2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a089f78fbca1c19d7d6fcd2a3669f79d2"></a>
 const char *&#160;</td><td class="memItemRight" valign="bottom"><b>libName</b> =&quot;libv_rep.so&quot;</td></tr>
 <tr class="separator:a089f78fbca1c19d7d6fcd2a3669f79d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf73bf9f630fc80f50297f54ad0f8495"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; int, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="skeleton_8cpp.html#acf73bf9f630fc80f50297f54ad0f8495">simCopters</a></td></tr>
-<tr class="separator:acf73bf9f630fc80f50297f54ad0f8495"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb23cb5abeeb0dfc99c4382ba7d4eebd"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::unique_ptr&lt; <a class="el" href="classFinken.html">Finken</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="skeleton_8cpp.html#afb23cb5abeeb0dfc99c4382ba7d4eebd">simFinken</a></td></tr>
+<tr class="separator:afb23cb5abeeb0dfc99c4382ba7d4eebd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a148b31424ba0940f7b48221aedd08fad"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><b>inArgs_REGISTER</b> []</td></tr>
 <tr class="separator:a148b31424ba0940f7b48221aedd08fad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -158,7 +159,7 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>libName</b> =
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Function to register any FINken present in the vrep scene with the plugin. Every copter needs to call this in its child script to be accesible by the plugin. Stores the handle and aricraft ID in <a class="el" href="vrepplugin_8h.html#simCopters">a vector for all unused copters</a> </p>
+<p>Function to register any FINken present in the vrep scene with the plugin. Every copter needs to call this in its child script to be accesible by the plugin. Stores the handle and aricraft ID in <a class="el" href="skeleton_8cpp.html#simFinken">simFinken</a> </p>
 
 </div>
 </div>
@@ -172,19 +173,19 @@ const char *&#160;</td><td class="memItemRight" valign="bottom"><b>libName</b> =
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">={</div><div class="line">    2,</div><div class="line">    sim_script_arg_int32,0,</div><div class="line">    sim_script_arg_int32,0,</div><div class="line">}</div></div><!-- fragment -->
+<b>Initial value:</b><div class="fragment"><div class="line">={</div><div class="line">    </div><div class="line">    4,</div><div class="line">    sim_script_arg_int32,0,</div><div class="line">    sim_script_arg_int32,0,</div><div class="line">    sim_script_arg_int32,0,</div><div class="line">    sim_script_arg_int32,0,</div><div class="line"></div><div class="line">}</div></div><!-- fragment -->
 </div>
 </div>
-<a class="anchor" id="acf73bf9f630fc80f50297f54ad0f8495"></a>
+<a class="anchor" id="afb23cb5abeeb0dfc99c4382ba7d4eebd"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;std::pair&lt;int,int&gt; &gt; simCopters</td>
+          <td class="memname">std::vector&lt;std::unique_ptr&lt;<a class="el" href="classFinken.html">Finken</a>&gt; &gt; simFinken</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p><a class="anchor" id="simCopters"></a>Vector for all available (e.g. present in the plugin and not coupled with paparazzi yet) copter handles and their aricraft IDs (which will match a vrep copter with a paparazzi copter) </p>
+<p><a class="anchor" id="simFinken"></a>Vector for all available (e.g. present in the plugin) copters </p>
 
 </div>
 </div>

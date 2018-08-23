@@ -98,8 +98,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr class="memitem:afb256567ee9aa96c409fdb0529b4f228"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinken.html#afb256567ee9aa96c409fdb0529b4f228">Finken</a> ()</td></tr>
 <tr class="separator:afb256567ee9aa96c409fdb0529b4f228"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f27a92dd8f76167a9766323267d5b46"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinken.html#a3f27a92dd8f76167a9766323267d5b46">Finken</a> (int fHandle, int _ac_id)</td></tr>
-<tr class="separator:a3f27a92dd8f76167a9766323267d5b46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26a9cd42385ec3ae010e2ad1387d9ce6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinken.html#a26a9cd42385ec3ae010e2ad1387d9ce6">Finken</a> (int fHandle, int _ac_id, int rotorCount, int sonarCount)</td></tr>
+<tr class="separator:a26a9cd42385ec3ae010e2ad1387d9ce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94e6a3b5b14ec7ee351d219eb17be45b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinken.html#a94e6a3b5b14ec7ee351d219eb17be45b">~Finken</a> ()</td></tr>
 <tr class="separator:a94e6a3b5b14ec7ee351d219eb17be45b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3c3abbf571407e210f4b03b68cada9d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinken.html#ae3c3abbf571407e210f4b03b68cada9d">run</a> (std::unique_ptr&lt; tcp::iostream &gt; sPtr)</td></tr>
@@ -126,8 +126,17 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a96990553bc26c8bf26effe8edd6e6369"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef4736605ea21831e5340f66a931f8ac"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinken.html#aef4736605ea21831e5340f66a931f8ac">baseHandle</a></td></tr>
 <tr class="separator:aef4736605ea21831e5340f66a931f8ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f40217a024b5e912d6741ee5c206b19"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinken.html#a5f40217a024b5e912d6741ee5c206b19">ac_id</a></td></tr>
-<tr class="separator:a5f40217a024b5e912d6741ee5c206b19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a496f5024f0876710ca1cfd55a2924e85"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinken.html#a496f5024f0876710ca1cfd55a2924e85">ac_id</a></td></tr>
+<tr class="separator:a496f5024f0876710ca1cfd55a2924e85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2de6be70e0baaf63641df0214bf1f7a2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2de6be70e0baaf63641df0214bf1f7a2"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>rotorCount</b></td></tr>
+<tr class="separator:a2de6be70e0baaf63641df0214bf1f7a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92ae4d32222c44c17a4cea91055569d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a92ae4d32222c44c17a4cea91055569d9"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>sonarCount</b></td></tr>
+<tr class="separator:a92ae4d32222c44c17a4cea91055569d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83131e08852cbcebaffa1eef80164a6e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83131e08852cbcebaffa1eef80164a6e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>connected</b> = 0</td></tr>
+<tr class="separator:a83131e08852cbcebaffa1eef80164a6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4fe546d88b52ff92990bd67ced70567"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinken.html#aa4fe546d88b52ff92990bd67ced70567">commands</a> = {0,0,0,0}</td></tr>
 <tr class="separator:aa4fe546d88b52ff92990bd67ced70567"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Copter state</div></td></tr>
@@ -165,7 +174,7 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3f27a92dd8f76167a9766323267d5b46"></a>
+<a class="anchor" id="a26a9cd42385ec3ae010e2ad1387d9ce6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -179,7 +188,19 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>_ac_id</em>&#160;</td>
+          <td class="paramname"><em>_ac_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>rotorCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sonarCount</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -345,12 +366,12 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a5f40217a024b5e912d6741ee5c206b19"></a>
+<a class="anchor" id="a496f5024f0876710ca1cfd55a2924e85"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int Finken::ac_id</td>
+          <td class="memname">const int Finken::ac_id</td>
         </tr>
       </table>
 </div><div class="memdoc">

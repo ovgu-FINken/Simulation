@@ -3,6 +3,7 @@
 
 #ifndef FINKEN_H
 #define FINKEN_H
+#include "dataPacket.h"
 #include "sensor.h"
 #include <memory>
 #include "sonar.h"
@@ -21,6 +22,8 @@
 #include <atomic>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 #include <mutex>
 
 #pragma GCC diagnostic ignored "-Wint-in-bool-context"
@@ -95,7 +98,7 @@ public:
      * @param fHandle the handle used to identify the finken in vrep
      * @param _ac_id the Aircraft ID used to identify the copter in paparazzi
      */
-    Finken(int fHandle, int _ac_id);
+    Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount);
     /** Basic destructor */
     ~Finken();    
     /** Integer representing the handle of the copter object in vrep */
@@ -105,7 +108,10 @@ public:
      */
     int baseHandle;    
     /** Integer representing the Aircraft ID to match copters in vrep and paparazzz */
-    int ac_id;
+    const int ac_id;
+    const int rotorCount;
+    const int sonarCount;
+    bool connected = 0;
     /** Vector storing the commands provided by paparazzi */
     std::vector<double> commands = {0,0,0,0};
     /** 
@@ -175,7 +181,7 @@ public:
  * @see Finken::addRotor()
  * @see Finken::addSensor()
  */
-void buildFinken(Finken& finken, int handle);
+void buildFinken(Finken& finken);
 
 /** static vector containing all built finken */
 static std::vector<std::unique_ptr<Finken>> allFinken;

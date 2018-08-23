@@ -10,6 +10,7 @@ this provides the basic functionality for communication with the running vrep Si
 {\ttfamily \#include $<$script\+Function\+Data.\+h$>$}\\*
 {\ttfamily \#include $<$boost/filesystem.\+hpp$>$}\\*
 {\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$finken.\+h$>$}\\*
 Include dependency graph for skeleton.\+cpp\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
@@ -50,7 +51,7 @@ L\+I\+B\+R\+A\+RY {\bfseries vrep\+Lib}\hypertarget{skeleton_8cpp_a547ddb2140854
 const char $\ast$ {\bfseries lib\+Name} =\char`\"{}libv\+\_\+rep.\+so\char`\"{}\hypertarget{skeleton_8cpp_a089f78fbca1c19d7d6fcd2a3669f79d2}{}\label{skeleton_8cpp_a089f78fbca1c19d7d6fcd2a3669f79d2}
 
 \item 
-std\+::vector$<$ std\+::pair$<$ int, int $>$ $>$ \hyperlink{skeleton_8cpp_acf73bf9f630fc80f50297f54ad0f8495}{sim\+Copters}
+std\+::vector$<$ std\+::unique\+\_\+ptr$<$ \hyperlink{classFinken}{Finken} $>$ $>$ \hyperlink{skeleton_8cpp_afb23cb5abeeb0dfc99c4382ba7d4eebd}{sim\+Finken}
 \item 
 const int {\bfseries in\+Args\+\_\+\+R\+E\+G\+I\+S\+T\+ER} \mbox{[}$\,$\mbox{]}
 \end{DoxyCompactItemize}
@@ -69,7 +70,7 @@ this provides the basic functionality for communication with the running vrep Si
 \item[{S\+Script\+Call\+Back $\ast$}]{cb}
 \end{DoxyParamCaption}
 )}\hypertarget{skeleton_8cpp_a8b710f83dc7306a1f10184e7c50cc921}{}\label{skeleton_8cpp_a8b710f83dc7306a1f10184e7c50cc921}
-Function to register any F\+I\+Nken present in the vrep scene with the plugin. Every copter needs to call this in its child script to be accesible by the plugin. Stores the handle and aricraft ID in \hyperlink{vrepplugin_8h_simCopters}{a vector for all unused copters} 
+Function to register any F\+I\+Nken present in the vrep scene with the plugin. Every copter needs to call this in its child script to be accesible by the plugin. Stores the handle and aricraft ID in \hyperlink{skeleton_8cpp_simFinken}{sim\+Finken} 
 
 \subsection{Variable Documentation}
 \index{skeleton.\+cpp@{skeleton.\+cpp}!in\+Args\+\_\+\+R\+E\+G\+I\+S\+T\+ER@{in\+Args\+\_\+\+R\+E\+G\+I\+S\+T\+ER}}
@@ -78,14 +79,18 @@ Function to register any F\+I\+Nken present in the vrep scene with the plugin. E
 {\bfseries Initial value\+:}
 \begin{DoxyCode}
 =\{
-    2,
+    
+    4,
     sim\_script\_arg\_int32,0,
     sim\_script\_arg\_int32,0,
+    sim\_script\_arg\_int32,0,
+    sim\_script\_arg\_int32,0,
+
 \}
 \end{DoxyCode}
-\index{skeleton.\+cpp@{skeleton.\+cpp}!sim\+Copters@{sim\+Copters}}
-\index{sim\+Copters@{sim\+Copters}!skeleton.\+cpp@{skeleton.\+cpp}}
-\subsubsection[{\texorpdfstring{sim\+Copters}{simCopters}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$std\+::pair$<$int,int$>$ $>$ sim\+Copters}\hypertarget{skeleton_8cpp_acf73bf9f630fc80f50297f54ad0f8495}{}\label{skeleton_8cpp_acf73bf9f630fc80f50297f54ad0f8495}
-\label{vrepplugin_8h_simCopters}%
-\hypertarget{vrepplugin_8h_simCopters}{}%
-Vector for all available (e.\+g. present in the plugin and not coupled with paparazzi yet) copter handles and their aricraft I\+Ds (which will match a vrep copter with a paparazzi copter) 
+\index{skeleton.\+cpp@{skeleton.\+cpp}!sim\+Finken@{sim\+Finken}}
+\index{sim\+Finken@{sim\+Finken}!skeleton.\+cpp@{skeleton.\+cpp}}
+\subsubsection[{\texorpdfstring{sim\+Finken}{simFinken}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$std\+::unique\+\_\+ptr$<${\bf Finken}$>$ $>$ sim\+Finken}\hypertarget{skeleton_8cpp_afb23cb5abeeb0dfc99c4382ba7d4eebd}{}\label{skeleton_8cpp_afb23cb5abeeb0dfc99c4382ba7d4eebd}
+\label{skeleton_8cpp_simFinken}%
+\hypertarget{skeleton_8cpp_simFinken}{}%
+Vector for all available (e.\+g. present in the plugin) copters 

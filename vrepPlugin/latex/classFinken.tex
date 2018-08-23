@@ -9,7 +9,7 @@
 \item 
 \hyperlink{classFinken_afb256567ee9aa96c409fdb0529b4f228}{Finken} ()
 \item 
-\hyperlink{classFinken_a3f27a92dd8f76167a9766323267d5b46}{Finken} (int f\+Handle, int \+\_\+ac\+\_\+id)
+\hyperlink{classFinken_a26a9cd42385ec3ae010e2ad1387d9ce6}{Finken} (int f\+Handle, int \+\_\+ac\+\_\+id, int rotor\+Count, int sonar\+Count)
 \item 
 \hyperlink{classFinken_a94e6a3b5b14ec7ee351d219eb17be45b}{$\sim$\+Finken} ()
 \item 
@@ -41,7 +41,16 @@ int \hyperlink{classFinken_a96990553bc26c8bf26effe8edd6e6369}{handle}
 \item 
 int \hyperlink{classFinken_aef4736605ea21831e5340f66a931f8ac}{base\+Handle}
 \item 
-int \hyperlink{classFinken_a5f40217a024b5e912d6741ee5c206b19}{ac\+\_\+id}
+const int \hyperlink{classFinken_a496f5024f0876710ca1cfd55a2924e85}{ac\+\_\+id}
+\item 
+const int {\bfseries rotor\+Count}\hypertarget{classFinken_a2de6be70e0baaf63641df0214bf1f7a2}{}\label{classFinken_a2de6be70e0baaf63641df0214bf1f7a2}
+
+\item 
+const int {\bfseries sonar\+Count}\hypertarget{classFinken_a92ae4d32222c44c17a4cea91055569d9}{}\label{classFinken_a92ae4d32222c44c17a4cea91055569d9}
+
+\item 
+bool {\bfseries connected} = 0\hypertarget{classFinken_a83131e08852cbcebaffa1eef80164a6e}{}\label{classFinken_a83131e08852cbcebaffa1eef80164a6e}
+
 \item 
 std\+::vector$<$ double $>$ \hyperlink{classFinken_aa4fe546d88b52ff92990bd67ced70567}{commands} = \{0,0,0,0\}
 \end{DoxyCompactItemize}
@@ -78,12 +87,14 @@ std\+::vector$<$ double $>$ \hyperlink{classFinken_ab1b738a1b691879be240b1b9488f
 )}\hypertarget{classFinken_afb256567ee9aa96c409fdb0529b4f228}{}\label{classFinken_afb256567ee9aa96c409fdb0529b4f228}
 Basic Empty Constructor \index{Finken@{Finken}!Finken@{Finken}}
 \index{Finken@{Finken}!Finken@{Finken}}
-\subsubsection[{\texorpdfstring{Finken(int f\+Handle, int \+\_\+ac\+\_\+id)}{Finken(int fHandle, int _ac_id)}}]{\setlength{\rightskip}{0pt plus 5cm}Finken\+::\+Finken (
+\subsubsection[{\texorpdfstring{Finken(int f\+Handle, int \+\_\+ac\+\_\+id, int rotor\+Count, int sonar\+Count)}{Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount)}}]{\setlength{\rightskip}{0pt plus 5cm}Finken\+::\+Finken (
 \begin{DoxyParamCaption}
 \item[{int}]{f\+Handle, }
-\item[{int}]{\+\_\+ac\+\_\+id}
+\item[{int}]{\+\_\+ac\+\_\+id, }
+\item[{int}]{rotor\+Count, }
+\item[{int}]{sonar\+Count}
 \end{DoxyParamCaption}
-)}\hypertarget{classFinken_a3f27a92dd8f76167a9766323267d5b46}{}\label{classFinken_a3f27a92dd8f76167a9766323267d5b46}
+)}\hypertarget{classFinken_a26a9cd42385ec3ae010e2ad1387d9ce6}{}\label{classFinken_a26a9cd42385ec3ae010e2ad1387d9ce6}
 Constructor for creating a uniquely identifiable finken 
 \begin{DoxyParams}{Parameters}
 {\em f\+Handle} & the handle used to identify the finken in vrep \\
@@ -173,7 +184,7 @@ updates the values for copter position and attitude, namely the \hyperlink{class
 \subsection{Member Data Documentation}
 \index{Finken@{Finken}!ac\+\_\+id@{ac\+\_\+id}}
 \index{ac\+\_\+id@{ac\+\_\+id}!Finken@{Finken}}
-\subsubsection[{\texorpdfstring{ac\+\_\+id}{ac_id}}]{\setlength{\rightskip}{0pt plus 5cm}int Finken\+::ac\+\_\+id}\hypertarget{classFinken_a5f40217a024b5e912d6741ee5c206b19}{}\label{classFinken_a5f40217a024b5e912d6741ee5c206b19}
+\subsubsection[{\texorpdfstring{ac\+\_\+id}{ac_id}}]{\setlength{\rightskip}{0pt plus 5cm}const int Finken\+::ac\+\_\+id}\hypertarget{classFinken_a496f5024f0876710ca1cfd55a2924e85}{}\label{classFinken_a496f5024f0876710ca1cfd55a2924e85}
 Integer representing the Aircraft ID to match copters in vrep and paparazzz \index{Finken@{Finken}!accel@{accel}}
 \index{accel@{accel}!Finken@{Finken}}
 \subsubsection[{\texorpdfstring{accel}{accel}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$double$>$ Finken\+::accel = \{-\/1,-\/1,-\/1\}}\hypertarget{classFinken_a6f9723479baee5573447036270a2a722}{}\label{classFinken_a6f9723479baee5573447036270a2a722}

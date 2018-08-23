@@ -8,6 +8,7 @@
 #include <scriptFunctionData.h>
 #include <boost/filesystem.hpp>
 #include <iostream>
+#include <finken.h>
 
 LIBRARY vrepLib;
 
@@ -18,41 +19,43 @@ const char* libName="libv_rep.so";
 #endif
 
 /**
- * \anchor simCopters
- * Vector for all available (e.g. present in the plugin and not coupled with paparazzi yet) copter handles and their 
- * aricraft IDs (which will match a vrep copter with a paparazzi copter)
+ * \anchor simFinken
+ * Vector for all available (e.g. present in the plugin) copters
  */
-std::vector<std::pair<int,int>> simCopters;
+std::vector<std::unique_ptr<Finken>> simFinken;
 
 
 
 #define LUA_REGISTER_COMMAND "simExtPaparazzi_register"
 
 const int inArgs_REGISTER[]={
-    2,
+    //4 arguments: handle, aircraftID, rotor count, sonar count 
+    4,
     sim_script_arg_int32,0,
     sim_script_arg_int32,0,
+    sim_script_arg_int32,0,
+    sim_script_arg_int32,0,
+
 };
-
-
 /**
  * Function to register any FINken present in the vrep scene with the plugin.
  * Every copter needs to call this in its child script to be accesible by the plugin.
- * Stores the handle and aricraft ID in \ref simCopters "a vector for all unused copters"
+ * Stores the handle and aricraft ID in \ref simFinken
  *
  */
 void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
 {   CScriptFunctionData D;
+    simAddStatusbarMessage("lua callback");
     std::cout << "finken registering" << '\n';
     bool success = false;
     if (D.readDataFromStack(cb->stackID,inArgs_REGISTER,inArgs_REGISTER[0],LUA_REGISTER_COMMAND))
     {   
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
-        int copterID = inData->at(0).int32Data[0];
+        int handle = inData->at(0).int32Data[0];
         int AC_ID = inData->at(1).int32Data[0];
-        std::pair<int,int> p1 = std::make_pair(AC_ID, copterID);
-        simCopters.emplace_back(p1);
-        
+        int rotorCount = inData->at(2).int32Data[0];
+	    int sonarCount = inData->at(3).int32Data[0];
+        simFinken.emplace_back(new Finken(handle, AC_ID, rotorCount, sonarCount));        
         success = true;
     }
     D.pushOutData(CScriptFunctionDataItem(success));
@@ -98,7 +101,7 @@ extern "C" unsigned char v_repStart(void* reservedPointer,int reservedInt)
     std::string s = "simExtPaparazzi_register@" + plugin.name();
     const char* cs;
     cs = s.c_str();
-    std::string t = "boolean result=simExtPaparazzi_register(number copterHandle, number AC_ID)";
+    std::string t = "boolean result=simExtPaparazzi_register(number copterHandle, number AC_ID, number rotorCount, number sonarCount)";
     const char* ts;
     ts = t.c_str();
     simRegisterScriptCallbackFunction(cs, ts ,LUA_REGISTER_CALLBACK);
