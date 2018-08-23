@@ -100,7 +100,7 @@ public:
      */
     Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount);
     /** Basic destructor */
-    ~Finken();    
+    ~Finken() { runThread.join(); }
     /** Integer representing the handle of the copter object in vrep */
     int handle;
     /** Integer representing the handle of the copter base in Vrep.
@@ -112,6 +112,7 @@ public:
     const int rotorCount;
     const int sonarCount;
     bool connected = 0;
+    std::thread runThread;
     /** Vector storing the commands provided by paparazzi */
     std::vector<double> commands = {0,0,0,0};
     /** 
@@ -144,6 +145,12 @@ public:
     /** Adding rotors to the copter. */
     void addRotor(std::unique_ptr<Rotor> &rotor);
     ///@}    
+
+    void connect(std::unique_ptr<tcp::iostream>&& sPtr) {
+      connected=1;
+      auto helper=[this,&sPtr](){run(std::move(sPtr));};
+      runThread=std::move(std::thread(helper));
+    }
 
     /**
      * Main function containing the paparazzi-vrep communication loop.

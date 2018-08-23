@@ -158,8 +158,8 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             //vrep sim loop
             then = Clock::now();
             readSync.unlock();
-            if(!sendSync.try_lock_for(std::chrono::seconds(10)))
-                throw std::runtime_error("Server blocked for more then 10 seconds");
+            if(!sendSync.try_lock_for(std::chrono::seconds(2)))
+                throw std::runtime_error("Server blocked for more then 2 seconds");
             /*while (!sendSync.load());{
                 //wait for vrep to actually apply the motor forces
                 std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -212,10 +212,12 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 	    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
         vrepLog << "[FINK] Exception in thread: " << e.what() << "\n";
         std::cerr << "cleaning up... " << std::endl;
+        sPtr->close();
         sPtr.reset();
+        connected=0;
         std::cerr <<  "cleanup finished, stopping sim" << std::endl;
-        simAddStatusbarMessage("stopping sim from finken::run");
-	    simStopSimulation();
+      //simAddStatusbarMessage("stopping sim from finken::run");
+	    //simStopSimulation();
     	//simAdvanceSimulationByOneStep();
 
 	}
