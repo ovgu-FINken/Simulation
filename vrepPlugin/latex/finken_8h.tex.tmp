@@ -1,12 +1,6 @@
 \hypertarget{finken_8h}{}\section{finken.\+h File Reference}
 \label{finken_8h}\index{finken.\+h@{finken.\+h}}
-{\ttfamily \#include \char`\"{}sensor.\+h\char`\"{}}\\*
 {\ttfamily \#include $<$memory$>$}\\*
-{\ttfamily \#include \char`\"{}sonar.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}heightsensor.\+h\char`\"{}}\\*
-{\ttfamily \#include $<$rotor.\+h$>$}\\*
-{\ttfamily \#include \char`\"{}positionsensor.\+h\char`\"{}}\\*
-{\ttfamily \#include $<$v\+\_\+rep\+Lib.\+h$>$}\\*
 {\ttfamily \#include $<$cstdlib$>$}\\*
 {\ttfamily \#include $<$iostream$>$}\\*
 {\ttfamily \#include $<$thread$>$}\\*
@@ -17,7 +11,17 @@
 {\ttfamily \#include $<$atomic$>$}\\*
 {\ttfamily \#include $<$boost/filesystem.\+hpp$>$}\\*
 {\ttfamily \#include $<$boost/filesystem/fstream.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/archive/binary\+\_\+oarchive.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/archive/binary\+\_\+iarchive.\+hpp$>$}\\*
 {\ttfamily \#include $<$mutex$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$v\+\_\+rep\+Lib.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}data\+Packet.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}sensor.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}sonar.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}heightsensor.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rotor.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}positionsensor.\+h\char`\"{}}\\*
 {\ttfamily \#include $<$Eigen/\+Dense$>$}\\*
 Include dependency graph for finken.\+h\+:\nopagebreak
 \begin{figure}[H]
@@ -46,7 +50,7 @@ using {\bfseries Clock} = std\+::chrono\+::high\+\_\+resolution\+\_\+clock\hyper
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \hyperlink{finken_8h_a5810da3d23510cfe71d23902cddb8b51}{build\+Finken} (\hyperlink{classFinken}{Finken} \&finken, int handle)
+void \hyperlink{finken_8h_ab8920c514423348469521fe0063534c4}{build\+Finken} (\hyperlink{classFinken}{Finken} \&finken)
 \item 
 double \hyperlink{finken_8h_a4e838d73ad5e098825ef4c227f6369b6}{thrust\+From\+Throttle} (double throttle)
 \end{DoxyCompactItemize}
@@ -69,12 +73,11 @@ static std\+::vector$<$ std\+::unique\+\_\+ptr$<$ \hyperlink{classFinken}{Finken
 \subsection{Function Documentation}
 \index{finken.\+h@{finken.\+h}!build\+Finken@{build\+Finken}}
 \index{build\+Finken@{build\+Finken}!finken.\+h@{finken.\+h}}
-\subsubsection[{\texorpdfstring{build\+Finken(\+Finken \&finken, int handle)}{buildFinken(Finken &finken, int handle)}}]{\setlength{\rightskip}{0pt plus 5cm}void build\+Finken (
+\subsubsection[{\texorpdfstring{build\+Finken(\+Finken \&finken)}{buildFinken(Finken &finken)}}]{\setlength{\rightskip}{0pt plus 5cm}void build\+Finken (
 \begin{DoxyParamCaption}
-\item[{{\bf Finken} \&}]{finken, }
-\item[{int}]{handle}
+\item[{{\bf Finken} \&}]{finken}
 \end{DoxyParamCaption}
-)}\hypertarget{finken_8h_a5810da3d23510cfe71d23902cddb8b51}{}\label{finken_8h_a5810da3d23510cfe71d23902cddb8b51}
+)}\hypertarget{finken_8h_ab8920c514423348469521fe0063534c4}{}\label{finken_8h_ab8920c514423348469521fe0063534c4}
 identifies a copter in the vrep scene using its handle and constructs it. Built finken are stored in \hyperlink{finken_8h_a16b7d4cd1197380860ab987e034385eb}{all\+Finken} \begin{DoxySeeAlso}{See also}
 \hyperlink{classFinken_a4ac9d9b37fba41147a83a36286fbe91b}{Finken\+::add\+Rotor()} 
 

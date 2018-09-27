@@ -1,16 +1,12 @@
-/** @file finken.h */
+/** 
+ * @file finken.h 
+ * @brief header for the finken implementation
+ */
 
 
 #ifndef FINKEN_H
 #define FINKEN_H
-#include "dataPacket.h"
-#include "sensor.h"
 #include <memory>
-#include "sonar.h"
-#include "heightsensor.h"
-#include <rotor.h>
-#include "positionsensor.h"
-#include <v_repLib.h>
 #include <cstdlib>
 #include <iostream>
 #include <thread>
@@ -25,6 +21,16 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <mutex>
+#include <vector>
+#include <v_repLib.h>
+#include "dataPacket.h"
+#include "sensor.h"
+#include "sonar.h"
+#include "heightsensor.h"
+#include "rotor.h"
+#include "positionsensor.h"
+
+
 
 #pragma GCC diagnostic ignored "-Wint-in-bool-context"
 #include <Eigen/Dense>
@@ -107,10 +113,17 @@ public:
      * Copter base, not the copter object is used for the calculation of the copter state.
      */
     int baseHandle;    
-    /** Integer representing the Aircraft ID to match copters in vrep and paparazzz */
+    /** Integer representing the Aircraft ID to match copters in vrep and paparazzi */
     const int ac_id;
+    /**Integer representing the amount for rotors, used in automatic finken construction
+     * @see buildFinken()
+     */
     const int rotorCount;
+    /**Integer representing the amount for sonars, used in automatic finken construction**
+     * @see buildFinken
+     * /
     const int sonarCount;
+    /** current connection status of the copter **/
     bool connected = 0;
     std::thread runThread;
     /** Vector storing the commands provided by paparazzi */
@@ -146,6 +159,10 @@ public:
     void addRotor(std::unique_ptr<Rotor> &rotor);
     ///@}    
 
+    /**
+     * Called in the accept handler, this function passes the incoming connection 
+     * to the corresponding finken in a new thread
+     */
     void connect(std::unique_ptr<tcp::iostream>&& sPtr) {
       connected=1;
       auto helper=[this,&sPtr](){run(std::move(sPtr));};

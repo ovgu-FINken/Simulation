@@ -1,3 +1,8 @@
+/** 
+ * @file finkenplugin.cpp 
+ * @brief implementation of the baseline functionality for the plugin and the communication, including the server class
+ */
+
 #include <vrepplugin.h>
 #include <log.h>
 #include "finken.h"
@@ -41,14 +46,7 @@ std::unique_ptr<tcp::iostream> sPtr;
 VrepLog vrepLog;
 paparazziPacket firstPacket;
 
-/*
-/**
-* Deletes a Finken object and stores the corresponding handle
-*
-* @param finken
 
-
-*/
 /**
  * Asynchronous (boost::Asio) Server class to accept new paparazzi connections and pair them with a vrep copter.
  * @see Finken::run()
@@ -73,8 +71,9 @@ class Async_Server{
     }
     /** 
      * Function handling any new connection.
-     * This then runs Finken::run() in a new separate thread.
-     * @see Finken::run() 
+     * If a free copter with matching aricraft ID to the connecting paparazzi copter is found,
+     * this calls the connect function on the corresponding copter
+     * @see Finken::connect() 
      */
     void handle_accept(const boost::system::error_code& error){
         if(!error){
@@ -177,15 +176,20 @@ class FinkenPlugin: public VREPPlugin {
     {	
 	return NULL;
     }
-
+    /**
+     * Ends the simulation run and cleans up the server and Finken
+     */
     void* simEnd(int* auxiliaryData,void* customData,int* replyData)
     {
         std::cerr << "[VREP] ending sim, resetting server" << std::endl;
 	    vrepLog << "[VREP] ending sim, resetting server" << std::endl;
+        //stopping and resetting the ioservice cleans up the server and any connections
         io_service.stop();
         io_service.reset();
+        //reset the mutex to pre-Sim status
         sendSync.unlock();
         simFinken.clear();
+        //restart the ioservice to prepare for a new simulation
         boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
 	    vrepLog << "[VREP] successfully reset server" << std::endl;
         return NULL;
@@ -225,8 +229,7 @@ class FinkenPlugin: public VREPPlugin {
                 }
             }
 	        //position data can be sent now
-	        sendSync.unlock();//=true;
-	        //command data is outdated now
+	        sendSync.unlock();
 	        now = Clock::now();
 	        vrepLog << "[VREP] time setting rotor forces: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << 
 	        std::endl;
@@ -236,9 +239,6 @@ class FinkenPlugin: public VREPPlugin {
 	}
 	catch (std::exception& e) {
 	    std::cerr << "[VREP] Exception in thread: " << e.what() << "\n";
-      //simAddStatusbarMessage("stopping sim from plugin::action");
-	    //simStopSimulation();
-    	//simAdvanceSimulationByOneStep();
 	    return NULL;
 	}
     }

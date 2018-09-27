@@ -1,0 +1,82 @@
+\hypertarget{finkenplugin_8cpp}{}\section{finkenplugin.\+cpp File Reference}
+\label{finkenplugin_8cpp}\index{finkenplugin.\+cpp@{finkenplugin.\+cpp}}
+
+
+implementation of the baseline functionality for the plugin and the communication, including the server class  
+
+
+{\ttfamily \#include $<$vrepplugin.\+h$>$}\\*
+{\ttfamily \#include $<$log.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}finken.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}v\+\_\+rep\+Lib.\+h\char`\"{}}\\*
+{\ttfamily \#include $<$unistd.\+h$>$}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$positionsensor.\+h$>$}\\*
+{\ttfamily \#include $<$cstring$>$}\\*
+{\ttfamily \#include $<$cstdlib$>$}\\*
+{\ttfamily \#include $<$thread$>$}\\*
+{\ttfamily \#include $<$memory$>$}\\*
+{\ttfamily \#include $<$utility$>$}\\*
+{\ttfamily \#include $<$boost/asio.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/bind.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/thread.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/archive/text\+\_\+oarchive.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/archive/text\+\_\+iarchive.\+hpp$>$}\\*
+{\ttfamily \#include $<$condition\+\_\+variable$>$}\\*
+{\ttfamily \#include $<$chrono$>$}\\*
+{\ttfamily \#include $<$Eigen/\+Dense$>$}\\*
+Include dependency graph for finkenplugin.\+cpp\+:
+% FIG 0
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classAsync__Server}{Async\+\_\+\+Server}
+\item 
+class \hyperlink{classFinkenPlugin}{Finken\+Plugin}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries Clock} = std\+::chrono\+::high\+\_\+resolution\+\_\+clock\hypertarget{finkenplugin_8cpp_accf829b29dcee7a09273bd9101f04e89}{}\label{finkenplugin_8cpp_accf829b29dcee7a09273bd9101f04e89}
+
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool {\bfseries server\+Loaded} = false\hypertarget{finkenplugin_8cpp_a648687a718c8aefc5299af32cfc58c3a}{}\label{finkenplugin_8cpp_a648687a718c8aefc5299af32cfc58c3a}
+
+\item 
+bool {\bfseries connection\+Established} = false\hypertarget{finkenplugin_8cpp_aa5ac184beede4085dca63f64e6406ead}{}\label{finkenplugin_8cpp_aa5ac184beede4085dca63f64e6406ead}
+
+\item 
+float {\bfseries execution\+\_\+step\+\_\+size}\hypertarget{finkenplugin_8cpp_a88a0adfc978c2e320204dcfd93415429}{}\label{finkenplugin_8cpp_a88a0adfc978c2e320204dcfd93415429}
+
+\item 
+std\+::vector$<$ std\+::unique\+\_\+ptr$<$ \hyperlink{classFinken}{Finken} $>$ $>$ \hyperlink{finkenplugin_8cpp_afb23cb5abeeb0dfc99c4382ba7d4eebd}{sim\+Finken}
+\item 
+std\+::unique\+\_\+ptr$<$ tcp\+::iostream $>$ {\bfseries s\+Ptr}\hypertarget{finkenplugin_8cpp_ac7413237502a08f3a3cb45e20174e71d}{}\label{finkenplugin_8cpp_ac7413237502a08f3a3cb45e20174e71d}
+
+\item 
+\hyperlink{classVrepLog}{Vrep\+Log} {\bfseries vrep\+Log}\hypertarget{finkenplugin_8cpp_a89deba42952826c303251a9d4d45afda}{}\label{finkenplugin_8cpp_a89deba42952826c303251a9d4d45afda}
+
+\item 
+paparazzi\+Packet {\bfseries first\+Packet}\hypertarget{finkenplugin_8cpp_a8e45d67c7cca60311773160c7ea56eee}{}\label{finkenplugin_8cpp_a8e45d67c7cca60311773160c7ea56eee}
+
+\item 
+\hyperlink{classFinkenPlugin}{Finken\+Plugin} {\bfseries plugin}\hypertarget{finkenplugin_8cpp_a4152403e715dc2efffb6d1393f654c17}{}\label{finkenplugin_8cpp_a4152403e715dc2efffb6d1393f654c17}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+implementation of the baseline functionality for the plugin and the communication, including the server class 
+
+
+
+\subsection{Variable Documentation}
+\index{finkenplugin.\+cpp@{finkenplugin.\+cpp}!sim\+Finken@{sim\+Finken}}
+\index{sim\+Finken@{sim\+Finken}!finkenplugin.\+cpp@{finkenplugin.\+cpp}}
+\subsubsection[{\texorpdfstring{sim\+Finken}{simFinken}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$std\+::unique\+\_\+ptr$<${\bf Finken}$>$ $>$ sim\+Finken}\hypertarget{finkenplugin_8cpp_afb23cb5abeeb0dfc99c4382ba7d4eebd}{}\label{finkenplugin_8cpp_afb23cb5abeeb0dfc99c4382ba7d4eebd}
+\label{skeleton_8cpp_simFinken}%
+\hypertarget{skeleton_8cpp_simFinken}{}%
+Vector for all available (e.\+g. present in the plugin) copters 

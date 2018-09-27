@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['vel',['vel',['../classFinken.html#a4dd260e6384e7cfb8040bd53fe1c2d62',1,'Finken']]]
+  ['throttlevalues',['throttlevalues',['../finken_8cpp.html#a6c6484ebb2a49ce506297ca334add2c4',1,'finken.cpp']]],
+  ['thrustvalues',['thrustvalues',['../finken_8cpp.html#a6b9ebe9dad3979425b54b2f62bf0017d',1,'finken.cpp']]]
 ];

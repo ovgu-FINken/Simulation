@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['run',['run',['../classFinken.html#ae3c3abbf571407e210f4b03b68cada9d',1,'Finken']]]
+  ['load',['load',['../classFinkenPlugin.html#afbe5d82635afe4b0c407de4724e8ee14',1,'FinkenPlugin']]],
+  ['lua_5fregister_5fcallback',['LUA_REGISTER_CALLBACK',['../skeleton_8cpp.html#a8b710f83dc7306a1f10184e7c50cc921',1,'skeleton.cpp']]]
 ];

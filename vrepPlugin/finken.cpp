@@ -1,6 +1,9 @@
+/** 
+ * @file finken.cpp 
+ * @brief implementation of a Finken rotorcraft for the vrep-paparazzi simulation framework
+ */
 #include "finken.h"
 #include <iostream>
-#include "v_repLib.h"
 #include <cstring>
 #include <cstdlib>
 #include "vrepplugin.h"

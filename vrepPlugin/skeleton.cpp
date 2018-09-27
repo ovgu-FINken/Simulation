@@ -40,7 +40,7 @@ const int inArgs_REGISTER[]={
 /**
  * Function to register any FINken present in the vrep scene with the plugin.
  * Every copter needs to call this in its child script to be accesible by the plugin.
- * Stores the handle and aricraft ID in \ref simFinken
+ * Stores the handle, aricraftID, rotor and sonar counts in \ref simFinken
  *
  */
 void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
