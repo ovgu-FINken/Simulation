@@ -54,7 +54,7 @@ void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
         int handle = inData->at(0).int32Data[0];
         int AC_ID = inData->at(1).int32Data[0];
         int rotorCount = inData->at(2).int32Data[0];
-	    int sonarCount = inData->at(3).int32Data[0];
+	int sonarCount = inData->at(3).int32Data[0];
         simFinken.emplace_back(new Finken(handle, AC_ID, rotorCount, sonarCount));        
         success = true;
     }

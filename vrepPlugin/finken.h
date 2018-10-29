@@ -115,13 +115,14 @@ public:
     int baseHandle;    
     /** Integer representing the Aircraft ID to match copters in vrep and paparazzi */
     const int ac_id;
-    /**Integer representing the amount for rotors, used in automatic finken construction
+    /**Integer representing the amount of rotors, used in automatic finken construction
      * @see buildFinken()
      */
     const int rotorCount;
-    /**Integer representing the amount for sonars, used in automatic finken construction**
+    /**Integer representing the amount of sonars, used in automatic finken construction**
      * @see buildFinken
      * /
+    **/
     const int sonarCount;
     /** current connection status of the copter **/
     bool connected = 0;
