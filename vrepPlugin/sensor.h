@@ -1,15 +1,11 @@
-#ifndef SENSOR_H
-#define SENSOR_H
+#pragma once 
 #include <vector>
 
-/**
- * Basic Sensor class from which specialized sensors are derived
- */
+/** Basic Sensor class from which specialized sensors are derived */
 class Sensor
 {
 protected:
-    /** Handle to access the sensor in vrep*/
-    int handle;
+    int handle;  ///< Handle to access the sensor in vrep
 public:
     /** 
      * Constructor 
@@ -32,10 +28,6 @@ public:
      */
     virtual int get(std::vector<float> &vfloat)=0;
     
-    /*
-     * retrieves the sensor handle
-     */
+    /** Retrieves the sensor handle. */
     virtual int getHandle();
 };
-
-#endif // SENSOR_H
