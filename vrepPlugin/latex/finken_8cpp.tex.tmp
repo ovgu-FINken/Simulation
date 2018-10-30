@@ -1,11 +1,16 @@
 \hypertarget{finken_8cpp}{}\section{finken.\+cpp File Reference}
 \label{finken_8cpp}\index{finken.\+cpp@{finken.\+cpp}}
-
-
-implementation of a \hyperlink{classFinken}{Finken} rotorcraft for the vrep-\/paparazzi simulation framework  
-
-
 {\ttfamily \#include \char`\"{}finken.\+h\char`\"{}}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$cstring$>$}\\*
+{\ttfamily \#include $<$cstdlib$>$}\\*
+{\ttfamily \#include \char`\"{}vrepplugin.\+h\char`\"{}}\\*
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$boost/filesystem.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/filesystem/fstream.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/asio.\+hpp$>$}\\*
+{\ttfamily \#include $<$chrono$>$}\\*
+{\ttfamily \#include $<$mutex$>$}\\*
 Include dependency graph for finken.\+cpp\+:
 % FIG 0
 \subsection*{Typedefs}
@@ -49,14 +54,9 @@ vrep\+Packet {\bfseries out\+Packet}\hypertarget{finken_8cpp_a76246e9f84792114d7
 paparazzi\+Packet {\bfseries in\+Packet}\hypertarget{finken_8cpp_a542e7c91dce952d4c1abe4387d0ddb12}{}\label{finken_8cpp_a542e7c91dce952d4c1abe4387d0ddb12}
 
 \item 
-std\+::string {\bfseries vrep\+Home} =std\+::getenv(\char`\"{}V\+R\+E\+P\+\_\+\+R\+O\+OT\char`\"{})\hypertarget{finken_8cpp_ad8e794da472697af916fedd286d28e33}{}\label{finken_8cpp_ad8e794da472697af916fedd286d28e33}
+std\+::string {\bfseries vrep\+Home} =std\+::getenv(\char`\"{}V\+R\+E\+P\+\_\+\+H\+O\+ME\char`\"{})\hypertarget{finken_8cpp_ad8e794da472697af916fedd286d28e33}{}\label{finken_8cpp_ad8e794da472697af916fedd286d28e33}
 
 \end{DoxyCompactItemize}
-
-
-\subsection{Detailed Description}
-implementation of a \hyperlink{classFinken}{Finken} rotorcraft for the vrep-\/paparazzi simulation framework 
-
 
 
 \subsection{Function Documentation}

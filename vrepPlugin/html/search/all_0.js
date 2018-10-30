@@ -7,5 +7,7 @@ var searchData=
   ['addsensor',['addSensor',['../classFinken.html#a2f2adb211e80a689f580b87730aeb9d1',1,'Finken']]],
   ['allfinken',['allFinken',['../finken_8h.html#a16b7d4cd1197380860ab987e034385eb',1,'finken.h']]],
   ['async_5fserver',['Async_Server',['../classAsync__Server.html',1,'Async_Server'],['../classAsync__Server.html#a33e192d098956111828840a354da0891',1,'Async_Server::Async_Server()']]],
-  ['attitudesensor',['AttitudeSensor',['../classAttitudeSensor.html',1,'']]]
+  ['attitudesensor',['AttitudeSensor',['../classAttitudeSensor.html',1,'']]],
+  ['attitudesensor_2ecpp',['attitudesensor.cpp',['../attitudesensor_8cpp.html',1,'']]],
+  ['attitudesensor_2eh',['attitudesensor.h',['../attitudesensor_8h.html',1,'']]]
 ];

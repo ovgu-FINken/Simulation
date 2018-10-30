@@ -2,6 +2,11 @@
 \label{classFinken}\index{Finken@{Finken}}
 
 
+implementation of a \hyperlink{classFinken}{Finken} rotorcraft, includes communication loop  
+
+
+
+
 {\ttfamily \#include $<$finken.\+h$>$}
 
 \subsection*{Public Member Functions}
@@ -9,7 +14,7 @@
 \item 
 \hyperlink{classFinken_afb256567ee9aa96c409fdb0529b4f228}{Finken} ()
 \item 
-\hyperlink{classFinken_a26a9cd42385ec3ae010e2ad1387d9ce6}{Finken} (int f\+Handle, int \+\_\+ac\+\_\+id, int \hyperlink{classFinken_a2de6be70e0baaf63641df0214bf1f7a2}{rotor\+Count}, int sonar\+Count)
+\hyperlink{classFinken_a26a9cd42385ec3ae010e2ad1387d9ce6}{Finken} (int f\+Handle, int \+\_\+ac\+\_\+id, int \hyperlink{classFinken_a2de6be70e0baaf63641df0214bf1f7a2}{rotor\+Count}, int \hyperlink{classFinken_a92ae4d32222c44c17a4cea91055569d9}{sonar\+Count})
 \item 
 \hyperlink{classFinken_a94e6a3b5b14ec7ee351d219eb17be45b}{$\sim$\+Finken} ()
 \item 
@@ -47,6 +52,8 @@ const int \hyperlink{classFinken_a496f5024f0876710ca1cfd55a2924e85}{ac\+\_\+id}
 \item 
 const int \hyperlink{classFinken_a2de6be70e0baaf63641df0214bf1f7a2}{rotor\+Count}
 \item 
+const int \hyperlink{classFinken_a92ae4d32222c44c17a4cea91055569d9}{sonar\+Count}
+\item 
 bool \hyperlink{classFinken_a83131e08852cbcebaffa1eef80164a6e}{connected} = 0
 \item 
 std\+::thread {\bfseries run\+Thread}\hypertarget{classFinken_a490f025c596b5c87d1c583124b53e34b}{}\label{classFinken_a490f025c596b5c87d1c583124b53e34b}
@@ -75,6 +82,8 @@ std\+::vector$<$ double $>$ \hyperlink{classFinken_ab1b738a1b691879be240b1b9488f
 
 
 \subsection{Detailed Description}
+implementation of a \hyperlink{classFinken}{Finken} rotorcraft, includes communication loop 
+
 \hyperlink{classFinken}{Finken} class for handling any data exchanges between a F\+I\+Nken and paparazzi. Also handles the application of rotor mixing commands to the F\+I\+Nken. 
 
 \subsection{Constructor \& Destructor Documentation}
@@ -204,10 +213,7 @@ Integer representing the handle of the copter base in Vrep. Copter base, not the
 Vector storing the commands provided by paparazzi \index{Finken@{Finken}!connected@{connected}}
 \index{connected@{connected}!Finken@{Finken}}
 \subsubsection[{\texorpdfstring{connected}{connected}}]{\setlength{\rightskip}{0pt plus 5cm}bool Finken\+::connected = 0}\hypertarget{classFinken_a83131e08852cbcebaffa1eef80164a6e}{}\label{classFinken_a83131e08852cbcebaffa1eef80164a6e}
-Integer representing the amount for sonars, used in automatic finken construction$\ast$$\ast$ \begin{DoxySeeAlso}{See also}
-\hyperlink{finken_8h_ab8920c514423348469521fe0063534c4}{build\+Finken} / const int sonar\+Count; /$\ast$$\ast$ current connection status of the copter 
-\end{DoxySeeAlso}
-\index{Finken@{Finken}!handle@{handle}}
+current connection status of the copter \index{Finken@{Finken}!handle@{handle}}
 \index{handle@{handle}!Finken@{Finken}}
 \subsubsection[{\texorpdfstring{handle}{handle}}]{\setlength{\rightskip}{0pt plus 5cm}int Finken\+::handle}\hypertarget{classFinken_a96990553bc26c8bf26effe8edd6e6369}{}\label{classFinken_a96990553bc26c8bf26effe8edd6e6369}
 Integer representing the handle of the copter object in vrep \index{Finken@{Finken}!pos@{pos}}
@@ -222,13 +228,19 @@ Copter Quaternion \index{Finken@{Finken}!rot\+Accel@{rot\+Accel}}
 Copter rotational acceleration (aka angular acceleration) \index{Finken@{Finken}!rotor\+Count@{rotor\+Count}}
 \index{rotor\+Count@{rotor\+Count}!Finken@{Finken}}
 \subsubsection[{\texorpdfstring{rotor\+Count}{rotorCount}}]{\setlength{\rightskip}{0pt plus 5cm}const int Finken\+::rotor\+Count}\hypertarget{classFinken_a2de6be70e0baaf63641df0214bf1f7a2}{}\label{classFinken_a2de6be70e0baaf63641df0214bf1f7a2}
-Integer representing the amount for rotors, used in automatic finken construction \begin{DoxySeeAlso}{See also}
+Integer representing the amount of rotors, used in automatic finken construction \begin{DoxySeeAlso}{See also}
 \hyperlink{finken_8cpp_ab8920c514423348469521fe0063534c4}{build\+Finken()} 
 \end{DoxySeeAlso}
 \index{Finken@{Finken}!rot\+Vel@{rot\+Vel}}
 \index{rot\+Vel@{rot\+Vel}!Finken@{Finken}}
 \subsubsection[{\texorpdfstring{rot\+Vel}{rotVel}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$double$>$ Finken\+::rot\+Vel =\{-\/1,-\/1,-\/1\}}\hypertarget{classFinken_a518ab8ab8ac8cf54c0b79cbc1ec2075f}{}\label{classFinken_a518ab8ab8ac8cf54c0b79cbc1ec2075f}
-Copter rotational velocity (aka angular velocity) \index{Finken@{Finken}!vel@{vel}}
+Copter rotational velocity (aka angular velocity) \index{Finken@{Finken}!sonar\+Count@{sonar\+Count}}
+\index{sonar\+Count@{sonar\+Count}!Finken@{Finken}}
+\subsubsection[{\texorpdfstring{sonar\+Count}{sonarCount}}]{\setlength{\rightskip}{0pt plus 5cm}const int Finken\+::sonar\+Count}\hypertarget{classFinken_a92ae4d32222c44c17a4cea91055569d9}{}\label{classFinken_a92ae4d32222c44c17a4cea91055569d9}
+Integer representing the amount of sonars, used in automatic finken construction$\ast$$\ast$ \begin{DoxySeeAlso}{See also}
+\hyperlink{finken_8h_ab8920c514423348469521fe0063534c4}{build\+Finken} / 
+\end{DoxySeeAlso}
+\index{Finken@{Finken}!vel@{vel}}
 \index{vel@{vel}!Finken@{Finken}}
 \subsubsection[{\texorpdfstring{vel}{vel}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$double$>$ Finken\+::vel = \{-\/1,-\/1,-\/1\}}\hypertarget{classFinken_a4dd260e6384e7cfb8040bd53fe1c2d62}{}\label{classFinken_a4dd260e6384e7cfb8040bd53fe1c2d62}
 Copter velocity 

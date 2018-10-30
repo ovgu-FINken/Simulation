@@ -1,6 +1,6 @@
 /**
  * @file skeleton.cpp
- * @brief this provides the basic functionality for communication with the running vrep Simulation"
+ * \brief provides the basic functionality for communication with the running vrep Simulation"
  */
 
 #include <vrepplugin.h>

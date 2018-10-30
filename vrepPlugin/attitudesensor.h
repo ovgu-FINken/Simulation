@@ -1,3 +1,11 @@
+/** 
+ * @file attitudesensor.h
+ * \class AttitudeSensor
+ * \brief Implementation of an attitudesensor
+ * 
+ * \todo actually use this for attitude calculation.
+ */
+
 #ifndef ATTITUDESENSOR_H
 #define ATTITUDESENSOR_H
 

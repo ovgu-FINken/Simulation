@@ -1,3 +1,9 @@
+/** 
+ * @file positionsensor.cpp 
+ * \class PositionSensor
+ * \brief wrapper to disguise vrep API calls as a position sensor
+ * \todo actually use this in the sim
+ */
 #include "positionsensor.h"
 #include "v_repLib.h"
 #include <iostream>

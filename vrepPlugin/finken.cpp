@@ -1,6 +1,7 @@
 /** 
  * @file finken.cpp 
- * @brief implementation of a Finken rotorcraft for the vrep-paparazzi simulation framework
+ * \class Finken
+ * \brief implementation of a Finken rotorcraft, includes communication loop
  */
 #include "finken.h"
 #include <iostream>
@@ -33,7 +34,7 @@ std::timed_mutex readSync;
 vrepPacket outPacket;
 paparazziPacket inPacket;
 
-std::string vrepHome=std::getenv("VREP_ROOT");
+std::string vrepHome=std::getenv("VREP_HOME");
 
 
 

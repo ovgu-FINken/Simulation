@@ -1,0 +1,10 @@
+\hypertarget{attitudesensor_8h}{}\section{attitudesensor.\+h File Reference}
+\label{attitudesensor_8h}\index{attitudesensor.\+h@{attitudesensor.\+h}}
+{\ttfamily \#include \char`\"{}sensor.\+h\char`\"{}}\\*
+Include dependency graph for attitudesensor.\+h\+:
+% FIG 0
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classAttitudeSensor}{Attitude\+Sensor}
+\end{DoxyCompactItemize}

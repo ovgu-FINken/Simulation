@@ -1,3 +1,12 @@
+/** 
+ * @file attitudesensor.cpp 
+ * \class AttitudeSensor
+ * \brief Implementation of an attitudesensor
+ * 
+ * \todo actually use this for attitude calculation.
+ */
+
+
 #include "attitudesensor.h"
 #include "v_repLib.h"
 #include <iostream>

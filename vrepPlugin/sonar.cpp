@@ -1,3 +1,11 @@
+/** 
+ * @file sonar.cpp 
+ * \class Sonar
+ * \brief implementation of a proximitysensor as sonar
+ * \todo actually use this in the sim
+ */
+
+
 #include "sonar.h"
 #include "v_repLib.h"
 #include <iostream>

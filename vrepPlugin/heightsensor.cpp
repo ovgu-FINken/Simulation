@@ -1,3 +1,10 @@
+/** 
+ * @file heightsensor.cpp 
+ * \class HeightSensor
+ * \brief Implementation of a proximitysensor as height sensor
+ */
+
+
 #include "heightsensor.h"
 #include "v_repLib.h"
 #include <iostream>

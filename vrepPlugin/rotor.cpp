@@ -1,3 +1,10 @@
+/** 
+ * @file rotor.cpp 
+ * \class Rotor
+ * \brief Implementation of a force sensor as a rotor
+ */
+
+
 #include "rotor.h"
 #include "v_repLib.h"
 

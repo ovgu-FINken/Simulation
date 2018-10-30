@@ -1,6 +1,6 @@
 /** 
  * @file finken.h 
- * @brief header for the finken implementation
+ * \brief header for the finken implementation
  */
 
 
@@ -46,7 +46,8 @@ extern std::timed_mutex readSync;
 
 
 /**
- *  Class for annotating log with time points
+ *  \brief Class for annotating log with time points
+ *  \todo cleanup code from superfluous debug logging
  */
 class LogLine {
   private:
@@ -70,7 +71,8 @@ class LogLine {
 };
 
 /**
- * Class for creating a log file
+ * \brief Class for creating a log file
+ * \todo cleanup code from superfluous debug logging
  */
 class VrepLog {
   private:

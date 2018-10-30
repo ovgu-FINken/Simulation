@@ -1,0 +1,35 @@
+/*! \mainpage VREP Integrated paparazzi simulation (VIPSIM?)
+ *
+ * \section intro_sec Introduction
+ *
+ * This vrep-plugin provides a framework for integrating
+ * the native paparazzi control-loop for UAVs into the 3D virtual-
+ * robot experimentation platform v-rep, created for the simulation
+ * of the quadricopters in the Otto-Von-Guericke University swarm-
+ * lab.<br>
+ * It works by feeding the paparazzi flight dynamics model data obtained from 
+ * the 3D simulation environment provided by vrep, and then exectuing the commands
+ * paparazzi provides based on that data.
+ *  
+ * \section install_sec Installation and usage
+  
+ \subsection step1 Step 1: Repositories and vrep
+Install vrep and paparazzi. <br>
+Clone https://github.com/ovgu-FINken/Simulation/tree/paparazziSimSingle for the vrep code(branch paparazziSimSingle) <br>
+and https://github.com/ovgu-FINken/paparazzi (branch vrepSimOrig).
+
+
+ \subsection step2 Step 2: Dependencies and libraries
+Install boost and eigen3.
+Make sure to add the variables PAPARAZZI_HOME and VREP_HOME to you environment variables,
+pointing to the respective root folders.
+
+ \subsection step2 Step 3: Running the simulation
+To run the simulation, open vrep and load the scene finkenRotated.ccc provided in the simulation repository.
+If you wish to build your own scene, make sure to include the "scriptloader" object in as in the example scene
+or the plugin will not work.<br>
+In paparazzi, select the aircraft "test" and build the target nps.
+
+Then press play on the vrep simulation, followed by executing the paparazzi simulation.
+
+ */

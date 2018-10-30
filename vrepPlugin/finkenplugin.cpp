@@ -1,7 +1,12 @@
 /** 
  * @file finkenplugin.cpp 
- * @brief implementation of the baseline functionality for the plugin and the communication, including the server class
+ * \class FinkenPlugin
+ * \brief implementation of the baseline functionality for the plugin and the communication, including the server class
+ *
+ * 
+ * 
  */
+ 
 
 #include <vrepplugin.h>
 #include <log.h>
@@ -48,8 +53,10 @@ paparazziPacket firstPacket;
 
 
 /**
- * Asynchronous (boost::Asio) Server class to accept new paparazzi connections and pair them with a vrep copter.
+ * \class Async_Server
+ * \brief Asynchronous (boost::Asio) Server class to accept new paparazzi connections and pair them with a vrep copter.
  * @see Finken::run()
+ * \todo move to separate.cpp file
  */
 class Async_Server{
     public:
