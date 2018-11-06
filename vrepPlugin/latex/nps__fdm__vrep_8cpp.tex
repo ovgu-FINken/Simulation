@@ -1,0 +1,167 @@
+\hypertarget{nps__fdm__vrep_8cpp}{}\section{nps\+\_\+fdm\+\_\+vrep.\+cpp File Reference}
+\label{nps__fdm__vrep_8cpp}\index{nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}}
+{\ttfamily \#include \char`\"{}nps\+\_\+fdm.\+h\char`\"{}}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$boost/filesystem.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/filesystem/fstream.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/asio.\+hpp$>$}\\*
+Include dependency graph for nps\+\_\+fdm\+\_\+vrep.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{nps__fdm__vrep_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+ofstream \hyperlink{nps__fdm__vrep_8cpp_a639b4d0f122df7ae9ed51e2d81fb58ed}{vrep\+Log} (current\+\_\+path()/\char`\"{}vrep.\+log\char`\"{})
+\item 
+void \hyperlink{nps__fdm__vrep_8cpp_a17ec5b69b110d046f9db5b67d2b08779}{nps\+\_\+fdm\+\_\+init} (double dt)
+\item 
+void \hyperlink{nps__fdm__vrep_8cpp_a1cf64ff46ec2e8373552f181459a31df}{nps\+\_\+fdm\+\_\+run\+\_\+step} (bool\+\_\+t launch, double $\ast$commands, int commands\+\_\+nb)
+\item 
+void \hyperlink{nps__fdm__vrep_8cpp_ae4550df0adab6dedcc57ae3d67205479}{nps\+\_\+fdm\+\_\+set\+\_\+wind} (double speed, double dir)
+\item 
+void \hyperlink{nps__fdm__vrep_8cpp_a05c90019f11f90f6855e9b0c3224b4a3}{nps\+\_\+fdm\+\_\+set\+\_\+wind\+\_\+ned} (double wind\+\_\+north, double wind\+\_\+east, double wind\+\_\+down)
+\item 
+void \hyperlink{nps__fdm__vrep_8cpp_ac07a0f8dffd889c21a81979e521a8d97}{nps\+\_\+fdm\+\_\+set\+\_\+turbulence} (double wind\+\_\+speed, int turbulence\+\_\+severity)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+struct Nps\+Fdm \hyperlink{nps__fdm__vrep_8cpp_ae64a4e3a8d8202a279b0d36c7a415c84}{fdm}
+\item 
+struct Ltp\+Def\+\_\+d \hyperlink{nps__fdm__vrep_8cpp_a81d7667e3b1dc8f0b6c1b6d46a191981}{ltp\+Ref}
+\item 
+boost\+::asio\+::io\+\_\+service \hyperlink{nps__fdm__vrep_8cpp_af0835c134db68beb99f0121111982625}{io\+\_\+service}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}!nps\+\_\+fdm\+\_\+init@{nps\+\_\+fdm\+\_\+init}}
+\index{nps\+\_\+fdm\+\_\+init@{nps\+\_\+fdm\+\_\+init}!nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}}
+\subsubsection[{\texorpdfstring{nps\+\_\+fdm\+\_\+init(double dt)}{nps_fdm_init(double dt)}}]{\setlength{\rightskip}{0pt plus 5cm}void nps\+\_\+fdm\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{double}]{dt}
+\end{DoxyParamCaption}
+)}\hypertarget{nps__fdm__vrep_8cpp_a17ec5b69b110d046f9db5b67d2b08779}{}\label{nps__fdm__vrep_8cpp_a17ec5b69b110d046f9db5b67d2b08779}
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=239pt]{nps__fdm__vrep_8cpp_a17ec5b69b110d046f9db5b67d2b08779_cgraph}
+\end{center}
+\end{figure}
+
+
+\index{nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}!nps\+\_\+fdm\+\_\+run\+\_\+step@{nps\+\_\+fdm\+\_\+run\+\_\+step}}
+\index{nps\+\_\+fdm\+\_\+run\+\_\+step@{nps\+\_\+fdm\+\_\+run\+\_\+step}!nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}}
+\subsubsection[{\texorpdfstring{nps\+\_\+fdm\+\_\+run\+\_\+step(bool\+\_\+t launch, double $\ast$commands, int commands\+\_\+nb)}{nps_fdm_run_step(bool_t launch, double *commands, int commands_nb)}}]{\setlength{\rightskip}{0pt plus 5cm}void nps\+\_\+fdm\+\_\+run\+\_\+step (
+\begin{DoxyParamCaption}
+\item[{bool\+\_\+t}]{launch, }
+\item[{double $\ast$}]{commands, }
+\item[{int}]{commands\+\_\+nb}
+\end{DoxyParamCaption}
+)}\hypertarget{nps__fdm__vrep_8cpp_a1cf64ff46ec2e8373552f181459a31df}{}\label{nps__fdm__vrep_8cpp_a1cf64ff46ec2e8373552f181459a31df}
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=264pt]{nps__fdm__vrep_8cpp_a1cf64ff46ec2e8373552f181459a31df_cgraph}
+\end{center}
+\end{figure}
+
+
+\index{nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}!nps\+\_\+fdm\+\_\+set\+\_\+turbulence@{nps\+\_\+fdm\+\_\+set\+\_\+turbulence}}
+\index{nps\+\_\+fdm\+\_\+set\+\_\+turbulence@{nps\+\_\+fdm\+\_\+set\+\_\+turbulence}!nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}}
+\subsubsection[{\texorpdfstring{nps\+\_\+fdm\+\_\+set\+\_\+turbulence(double wind\+\_\+speed, int turbulence\+\_\+severity)}{nps_fdm_set_turbulence(double wind_speed, int turbulence_severity)}}]{\setlength{\rightskip}{0pt plus 5cm}void nps\+\_\+fdm\+\_\+set\+\_\+turbulence (
+\begin{DoxyParamCaption}
+\item[{double}]{wind\+\_\+speed, }
+\item[{int}]{turbulence\+\_\+severity}
+\end{DoxyParamCaption}
+)}\hypertarget{nps__fdm__vrep_8cpp_ac07a0f8dffd889c21a81979e521a8d97}{}\label{nps__fdm__vrep_8cpp_ac07a0f8dffd889c21a81979e521a8d97}
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=290pt]{nps__fdm__vrep_8cpp_ac07a0f8dffd889c21a81979e521a8d97_cgraph}
+\end{center}
+\end{figure}
+
+
+\index{nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}!nps\+\_\+fdm\+\_\+set\+\_\+wind@{nps\+\_\+fdm\+\_\+set\+\_\+wind}}
+\index{nps\+\_\+fdm\+\_\+set\+\_\+wind@{nps\+\_\+fdm\+\_\+set\+\_\+wind}!nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}}
+\subsubsection[{\texorpdfstring{nps\+\_\+fdm\+\_\+set\+\_\+wind(double speed, double dir)}{nps_fdm_set_wind(double speed, double dir)}}]{\setlength{\rightskip}{0pt plus 5cm}void nps\+\_\+fdm\+\_\+set\+\_\+wind (
+\begin{DoxyParamCaption}
+\item[{double}]{speed, }
+\item[{double}]{dir}
+\end{DoxyParamCaption}
+)}\hypertarget{nps__fdm__vrep_8cpp_ae4550df0adab6dedcc57ae3d67205479}{}\label{nps__fdm__vrep_8cpp_ae4550df0adab6dedcc57ae3d67205479}
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=265pt]{nps__fdm__vrep_8cpp_ae4550df0adab6dedcc57ae3d67205479_cgraph}
+\end{center}
+\end{figure}
+
+
+\index{nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}!nps\+\_\+fdm\+\_\+set\+\_\+wind\+\_\+ned@{nps\+\_\+fdm\+\_\+set\+\_\+wind\+\_\+ned}}
+\index{nps\+\_\+fdm\+\_\+set\+\_\+wind\+\_\+ned@{nps\+\_\+fdm\+\_\+set\+\_\+wind\+\_\+ned}!nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}}
+\subsubsection[{\texorpdfstring{nps\+\_\+fdm\+\_\+set\+\_\+wind\+\_\+ned(double wind\+\_\+north, double wind\+\_\+east, double wind\+\_\+down)}{nps_fdm_set_wind_ned(double wind_north, double wind_east, double wind_down)}}]{\setlength{\rightskip}{0pt plus 5cm}void nps\+\_\+fdm\+\_\+set\+\_\+wind\+\_\+ned (
+\begin{DoxyParamCaption}
+\item[{double}]{wind\+\_\+north, }
+\item[{double}]{wind\+\_\+east, }
+\item[{double}]{wind\+\_\+down}
+\end{DoxyParamCaption}
+)}\hypertarget{nps__fdm__vrep_8cpp_a05c90019f11f90f6855e9b0c3224b4a3}{}\label{nps__fdm__vrep_8cpp_a05c90019f11f90f6855e9b0c3224b4a3}
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=286pt]{nps__fdm__vrep_8cpp_a05c90019f11f90f6855e9b0c3224b4a3_cgraph}
+\end{center}
+\end{figure}
+
+
+\index{nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}!vrep\+Log@{vrep\+Log}}
+\index{vrep\+Log@{vrep\+Log}!nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}}
+\subsubsection[{\texorpdfstring{vrep\+Log(current\+\_\+path()/""vrep.\+log"")}{vrepLog(current_path()/"vrep.log")}}]{\setlength{\rightskip}{0pt plus 5cm}ofstream vrep\+Log (
+\begin{DoxyParamCaption}
+\item[{current\+\_\+path()/\char`\"{}vrep.\+log\char`\"{}}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{nps__fdm__vrep_8cpp_a639b4d0f122df7ae9ed51e2d81fb58ed}{}\label{nps__fdm__vrep_8cpp_a639b4d0f122df7ae9ed51e2d81fb58ed}
+
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=290pt]{nps__fdm__vrep_8cpp_a639b4d0f122df7ae9ed51e2d81fb58ed_icgraph}
+\end{center}
+\end{figure}
+
+
+
+
+\subsection{Variable Documentation}
+\index{nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}!fdm@{fdm}}
+\index{fdm@{fdm}!nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}}
+\subsubsection[{\texorpdfstring{fdm}{fdm}}]{\setlength{\rightskip}{0pt plus 5cm}struct Nps\+Fdm fdm}\hypertarget{nps__fdm__vrep_8cpp_ae64a4e3a8d8202a279b0d36c7a415c84}{}\label{nps__fdm__vrep_8cpp_ae64a4e3a8d8202a279b0d36c7a415c84}
+\index{nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}!io\+\_\+service@{io\+\_\+service}}
+\index{io\+\_\+service@{io\+\_\+service}!nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}}
+\subsubsection[{\texorpdfstring{io\+\_\+service}{io_service}}]{\setlength{\rightskip}{0pt plus 5cm}boost\+::asio\+::io\+\_\+service io\+\_\+service}\hypertarget{nps__fdm__vrep_8cpp_af0835c134db68beb99f0121111982625}{}\label{nps__fdm__vrep_8cpp_af0835c134db68beb99f0121111982625}
+\index{nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}!ltp\+Ref@{ltp\+Ref}}
+\index{ltp\+Ref@{ltp\+Ref}!nps\+\_\+fdm\+\_\+vrep.\+cpp@{nps\+\_\+fdm\+\_\+vrep.\+cpp}}
+\subsubsection[{\texorpdfstring{ltp\+Ref}{ltpRef}}]{\setlength{\rightskip}{0pt plus 5cm}struct Ltp\+Def\+\_\+d ltp\+Ref}\hypertarget{nps__fdm__vrep_8cpp_a81d7667e3b1dc8f0b6c1b6d46a191981}{}\label{nps__fdm__vrep_8cpp_a81d7667e3b1dc8f0b6c1b6d46a191981}

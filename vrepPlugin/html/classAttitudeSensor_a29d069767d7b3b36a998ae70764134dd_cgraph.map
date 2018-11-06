@@ -1,0 +1,4 @@
+<map id="AttitudeSensor::get" name="AttitudeSensor::get">
+<area shape="rect" id="node2" href="$classAttitudeSensor.html#a354f56cfccea6f60b4822b9e2603afc8" title="retrieves the sensor information, limited to the position of a detected object; see specific sensor d..." alt="" coords="188,5,323,32"/>
+<area shape="rect" id="node3" href="$classSensor.html#ac647e98897da5ffcc9711ba27ec45abd" title="Retrieves the sensor handle. " alt="" coords="371,5,501,32"/>
+</map>

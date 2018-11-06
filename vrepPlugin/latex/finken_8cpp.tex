@@ -1,0 +1,168 @@
+\hypertarget{finken_8cpp}{}\section{finken.\+cpp File Reference}
+\label{finken_8cpp}\index{finken.\+cpp@{finken.\+cpp}}
+{\ttfamily \#include \char`\"{}finken.\+h\char`\"{}}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$cstring$>$}\\*
+{\ttfamily \#include $<$cstdlib$>$}\\*
+{\ttfamily \#include \char`\"{}vrepplugin.\+h\char`\"{}}\\*
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$boost/filesystem.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/filesystem/fstream.\+hpp$>$}\\*
+{\ttfamily \#include $<$boost/asio.\+hpp$>$}\\*
+{\ttfamily \#include $<$chrono$>$}\\*
+{\ttfamily \#include $<$mutex$>$}\\*
+Include dependency graph for finken.\+cpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{finken_8cpp__incl}
+\end{center}
+\end{figure}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \hyperlink{finken_8cpp_accf829b29dcee7a09273bd9101f04e89}{Clock} = std\+::chrono\+::high\+\_\+resolution\+\_\+clock
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{finken_8cpp_ab8920c514423348469521fe0063534c4}{build\+Finken} (\hyperlink{classFinken}{Finken} \&finken)
+\begin{DoxyCompactList}\small\item\em Constructs a complete F\+I\+Nken from an empty F\+I\+Nken object using its handle. \end{DoxyCompactList}\item 
+double \hyperlink{finken_8cpp_a4e838d73ad5e098825ef4c227f6369b6}{thrust\+From\+Throttle} (double throttle)
+\begin{DoxyCompactList}\small\item\em Calculates thrust forces (Newton) from the rotor commands. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+ofstream \hyperlink{finken_8cpp_ae1ba8f68630cd20b37accfa634ead9c3}{csvdata}
+\item 
+int \hyperlink{finken_8cpp_aa9ab2d4a5ee27e4d9984e9d0a25b64d9}{cur\+Block}
+\item 
+int \hyperlink{finken_8cpp_a881d79e252d708b80137d533200ed3ca}{nav\+\_\+block}
+\item 
+std\+::array$<$ double, 6 $>$ \hyperlink{finken_8cpp_a6c6484ebb2a49ce506297ca334add2c4}{throttlevalues} = \{0, 0.\+5, 0.\+65, 0.\+75, 0.\+85, 1\}
+\begin{DoxyCompactList}\small\item\em Throttlevalues for the motors built into the F\+I\+Nken. \end{DoxyCompactList}\item 
+std\+::array$<$ double, 6 $>$ \hyperlink{finken_8cpp_a6b9ebe9dad3979425b54b2f62bf0017d}{thrustvalues} = \{0, 0.\+92,1.\+13,1.\+44,1.\+77,2.\+03\}
+\begin{DoxyCompactList}\small\item\em Thrust values in Newton coressponding to the trottle values. \end{DoxyCompactList}\item 
+std\+::timed\+\_\+mutex \hyperlink{finken_8cpp_a2a73f6002f1b82b5ec6dbfd59171dfd7}{send\+Sync}
+\item 
+std\+::timed\+\_\+mutex \hyperlink{finken_8cpp_ac4e20dfb154981b9dee8ab3b24dd1778}{read\+Sync}
+\item 
+vrep\+Packet \hyperlink{finken_8cpp_a76246e9f84792114d76311a7aaca677b}{out\+Packet}
+\item 
+paparazzi\+Packet \hyperlink{finken_8cpp_a542e7c91dce952d4c1abe4387d0ddb12}{in\+Packet}
+\item 
+std\+::string \hyperlink{finken_8cpp_ad8e794da472697af916fedd286d28e33}{vrep\+Home} =std\+::getenv(\char`\"{}V\+R\+E\+P\+\_\+\+H\+O\+ME\char`\"{})
+\end{DoxyCompactItemize}
+
+
+\subsection{Typedef Documentation}
+\index{finken.\+cpp@{finken.\+cpp}!Clock@{Clock}}
+\index{Clock@{Clock}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{Clock}{Clock}}]{\setlength{\rightskip}{0pt plus 5cm}using {\bf Clock} =  std\+::chrono\+::high\+\_\+resolution\+\_\+clock}\hypertarget{finken_8cpp_accf829b29dcee7a09273bd9101f04e89}{}\label{finken_8cpp_accf829b29dcee7a09273bd9101f04e89}
+
+
+\subsection{Function Documentation}
+\index{finken.\+cpp@{finken.\+cpp}!build\+Finken@{build\+Finken}}
+\index{build\+Finken@{build\+Finken}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{build\+Finken(\+Finken \&finken)}{buildFinken(Finken &finken)}}]{\setlength{\rightskip}{0pt plus 5cm}void build\+Finken (
+\begin{DoxyParamCaption}
+\item[{{\bf Finken} \&}]{finken}
+\end{DoxyParamCaption}
+)}\hypertarget{finken_8cpp_ab8920c514423348469521fe0063534c4}{}\label{finken_8cpp_ab8920c514423348469521fe0063534c4}
+
+
+Constructs a complete F\+I\+Nken from an empty F\+I\+Nken object using its handle. 
+
+Takes a unique\+\_\+ptr to a \hyperlink{classFinken}{Finken} and adds the correct handles for the sensors \& rotors from the V-\/\+R\+EP object tree. 
+\begin{DoxyParams}{Parameters}
+{\em finken} & the F\+I\+Nken object to be populated. \\
+\hline
+\end{DoxyParams}
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=280pt]{finken_8cpp_ab8920c514423348469521fe0063534c4_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=268pt]{finken_8cpp_ab8920c514423348469521fe0063534c4_icgraph}
+\end{center}
+\end{figure}
+
+
+\index{finken.\+cpp@{finken.\+cpp}!thrust\+From\+Throttle@{thrust\+From\+Throttle}}
+\index{thrust\+From\+Throttle@{thrust\+From\+Throttle}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{thrust\+From\+Throttle(double throttle)}{thrustFromThrottle(double throttle)}}]{\setlength{\rightskip}{0pt plus 5cm}double thrust\+From\+Throttle (
+\begin{DoxyParamCaption}
+\item[{double}]{throttle}
+\end{DoxyParamCaption}
+)}\hypertarget{finken_8cpp_a4e838d73ad5e098825ef4c227f6369b6}{}\label{finken_8cpp_a4e838d73ad5e098825ef4c227f6369b6}
+
+
+Calculates thrust forces (Newton) from the rotor commands. 
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{classFinken_aa4fe546d88b52ff92990bd67ced70567}{Finken\+::commands} 
+\end{DoxySeeAlso}
+
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=335pt]{finken_8cpp_a4e838d73ad5e098825ef4c227f6369b6_icgraph}
+\end{center}
+\end{figure}
+
+
+
+
+\subsection{Variable Documentation}
+\index{finken.\+cpp@{finken.\+cpp}!csvdata@{csvdata}}
+\index{csvdata@{csvdata}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{csvdata}{csvdata}}]{\setlength{\rightskip}{0pt plus 5cm}ofstream csvdata}\hypertarget{finken_8cpp_ae1ba8f68630cd20b37accfa634ead9c3}{}\label{finken_8cpp_ae1ba8f68630cd20b37accfa634ead9c3}
+\index{finken.\+cpp@{finken.\+cpp}!cur\+Block@{cur\+Block}}
+\index{cur\+Block@{cur\+Block}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{cur\+Block}{curBlock}}]{\setlength{\rightskip}{0pt plus 5cm}int cur\+Block}\hypertarget{finken_8cpp_aa9ab2d4a5ee27e4d9984e9d0a25b64d9}{}\label{finken_8cpp_aa9ab2d4a5ee27e4d9984e9d0a25b64d9}
+\index{finken.\+cpp@{finken.\+cpp}!in\+Packet@{in\+Packet}}
+\index{in\+Packet@{in\+Packet}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{in\+Packet}{inPacket}}]{\setlength{\rightskip}{0pt plus 5cm}paparazzi\+Packet in\+Packet}\hypertarget{finken_8cpp_a542e7c91dce952d4c1abe4387d0ddb12}{}\label{finken_8cpp_a542e7c91dce952d4c1abe4387d0ddb12}
+\index{finken.\+cpp@{finken.\+cpp}!nav\+\_\+block@{nav\+\_\+block}}
+\index{nav\+\_\+block@{nav\+\_\+block}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{nav\+\_\+block}{nav_block}}]{\setlength{\rightskip}{0pt plus 5cm}int nav\+\_\+block}\hypertarget{finken_8cpp_a881d79e252d708b80137d533200ed3ca}{}\label{finken_8cpp_a881d79e252d708b80137d533200ed3ca}
+\index{finken.\+cpp@{finken.\+cpp}!out\+Packet@{out\+Packet}}
+\index{out\+Packet@{out\+Packet}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{out\+Packet}{outPacket}}]{\setlength{\rightskip}{0pt plus 5cm}vrep\+Packet out\+Packet}\hypertarget{finken_8cpp_a76246e9f84792114d76311a7aaca677b}{}\label{finken_8cpp_a76246e9f84792114d76311a7aaca677b}
+\index{finken.\+cpp@{finken.\+cpp}!read\+Sync@{read\+Sync}}
+\index{read\+Sync@{read\+Sync}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{read\+Sync}{readSync}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::timed\+\_\+mutex read\+Sync}\hypertarget{finken_8cpp_ac4e20dfb154981b9dee8ab3b24dd1778}{}\label{finken_8cpp_ac4e20dfb154981b9dee8ab3b24dd1778}
+\index{finken.\+cpp@{finken.\+cpp}!send\+Sync@{send\+Sync}}
+\index{send\+Sync@{send\+Sync}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{send\+Sync}{sendSync}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::timed\+\_\+mutex send\+Sync}\hypertarget{finken_8cpp_a2a73f6002f1b82b5ec6dbfd59171dfd7}{}\label{finken_8cpp_a2a73f6002f1b82b5ec6dbfd59171dfd7}
+\index{finken.\+cpp@{finken.\+cpp}!throttlevalues@{throttlevalues}}
+\index{throttlevalues@{throttlevalues}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{throttlevalues}{throttlevalues}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::array$<$double,6$>$ throttlevalues = \{0, 0.\+5, 0.\+65, 0.\+75, 0.\+85, 1\}}\hypertarget{finken_8cpp_a6c6484ebb2a49ce506297ca334add2c4}{}\label{finken_8cpp_a6c6484ebb2a49ce506297ca334add2c4}
+
+
+Throttlevalues for the motors built into the F\+I\+Nken. 
+
+\index{finken.\+cpp@{finken.\+cpp}!thrustvalues@{thrustvalues}}
+\index{thrustvalues@{thrustvalues}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{thrustvalues}{thrustvalues}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::array$<$double,6$>$ thrustvalues = \{0, 0.\+92,1.\+13,1.\+44,1.\+77,2.\+03\}}\hypertarget{finken_8cpp_a6b9ebe9dad3979425b54b2f62bf0017d}{}\label{finken_8cpp_a6b9ebe9dad3979425b54b2f62bf0017d}
+
+
+Thrust values in Newton coressponding to the trottle values. 
+
+\index{finken.\+cpp@{finken.\+cpp}!vrep\+Home@{vrep\+Home}}
+\index{vrep\+Home@{vrep\+Home}!finken.\+cpp@{finken.\+cpp}}
+\subsubsection[{\texorpdfstring{vrep\+Home}{vrepHome}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::string vrep\+Home =std\+::getenv(\char`\"{}V\+R\+E\+P\+\_\+\+H\+O\+ME\char`\"{})}\hypertarget{finken_8cpp_ad8e794da472697af916fedd286d28e33}{}\label{finken_8cpp_ad8e794da472697af916fedd286d28e33}

@@ -1,0 +1,6 @@
+<map id="Finken::connect" name="Finken::connect">
+<area shape="rect" id="node2" href="$finken_8h.html#ab8920c514423348469521fe0063534c4" title="Constructs a complete FINken from an empty FINken object using its handle. " alt="" coords="189,31,277,57"/>
+<area shape="rect" id="node5" href="$finken_8h.html#a4e838d73ad5e098825ef4c227f6369b6" title="Calculates thrust forces (Newton) from the rotor commands. " alt="" coords="168,81,297,108"/>
+<area shape="rect" id="node3" href="$classFinken.html#a2f2adb211e80a689f580b87730aeb9d1" title="Adding sensors to the copter. " alt="" coords="345,5,476,32"/>
+<area shape="rect" id="node4" href="$classFinken.html#a4ac9d9b37fba41147a83a36286fbe91b" title="Adding rotors to the copter. " alt="" coords="349,56,472,83"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="Finken" name="Finken">
+<area shape="rect" id="node4" href="$classSensor.html" title="base Sensor class, all sensors should inherit from this " alt="" coords="5,13,68,39"/>
+<area shape="rect" id="node7" href="$classRotor.html" title="Implementation of a force sensor as a rotor. " alt="" coords="9,78,64,105"/>
+<area shape="rect" id="node8" title="STL class. " alt="" coords="453,137,537,163"/>
+</map>

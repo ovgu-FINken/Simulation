@@ -1,0 +1,12 @@
+\hypertarget{index_intro_sec}{}\section{Introduction}\label{index_intro_sec}
+This V-\/\+R\+EP plugin provides a framework for integrating the native Paparazzi control-\/loop for U\+A\+Vs into the 3D virtual-\/ robot experimentation platform V-\/\+R\+EP, created for the simulation of the quadcopters in the Otto-\/\+Von-\/\+Guericke University Swarm\+Lab.~\newline
+ It works by feeding the Paparazzi flight dynamics model data obtained from the 3D simulation environment provided by V-\/\+R\+EP, and then exectuing the commands Paparazzi provides based on that data.\hypertarget{index_install_sec}{}\section{Installation and usage}\label{index_install_sec}
+\hypertarget{index_step1}{}\subsection{Step 1\+: Repositories and V-\/\+R\+EP}\label{index_step1}
+Install V-\/\+R\+EP and Paparazzi. ~\newline
+ Clone \href{https://github.com/ovgu-FINken/Simulation/tree/paparazziSimSingle}{\tt https\+://github.\+com/ovgu-\/\+F\+I\+Nken/\+Simulation/tree/paparazzi\+Sim\+Single} for the V-\/\+R\+EP code(branch paparazzi\+Sim\+Single) ~\newline
+ and \href{https://github.com/ovgu-FINken/paparazzi}{\tt https\+://github.\+com/ovgu-\/\+F\+I\+Nken/paparazzi} (branch vrep\+Sim\+Orig).\hypertarget{index_step2}{}\subsection{Step 2\+: Dependencies and libraries}\label{index_step2}
+Install boost and eigen3. Make sure to add the variables P\+A\+P\+A\+R\+A\+Z\+Z\+I\+\_\+\+H\+O\+ME and V\+R\+E\+P\+\_\+\+H\+O\+ME to you environment variables, pointing to the respective root folders.\hypertarget{index_step3}{}\subsection{Step 3\+: Running the simulation}\label{index_step3}
+To run the simulation, open vrep and load the scene finken\+Rotated.\+ccc provided in the simulation repository. If you wish to build your own scene, make sure to include the \char`\"{}scriptloader\char`\"{} object in as in the example scene or the plugin will not work.~\newline
+ In paparazzi, select the aircraft \char`\"{}test\char`\"{} and build the target nps.
+
+Then press play on the vrep simulation, followed by executing the paparazzi simulation. 

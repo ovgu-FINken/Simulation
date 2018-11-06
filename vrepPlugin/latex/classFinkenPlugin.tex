@@ -1,0 +1,309 @@
+\hypertarget{classFinkenPlugin}{}\section{Finken\+Plugin Class Reference}
+\label{classFinkenPlugin}\index{Finken\+Plugin@{Finken\+Plugin}}
+
+
+The actual finken plugin.  
+
+
+
+
+Inheritance diagram for Finken\+Plugin\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=153pt]{classFinkenPlugin__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Finken\+Plugin\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=346pt]{classFinkenPlugin__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classFinkenPlugin_a03dadda0b43081bce8e8db1223289fe1}{Finken\+Plugin} ()
+\begin{DoxyCompactList}\small\item\em Empty constructor. \end{DoxyCompactList}\item 
+\hyperlink{classFinkenPlugin}{Finken\+Plugin} \& \hyperlink{classFinkenPlugin_a3ebea1e19535491b5db16c7f43df8e79}{operator=} (const \hyperlink{classFinkenPlugin}{Finken\+Plugin} \&)=delete
+\begin{DoxyCompactList}\small\item\em No copying the Finkenplugin. \end{DoxyCompactList}\item 
+\hyperlink{classFinkenPlugin_a5f4bc33c0d0bb05ca4f78090c7a2fda9}{Finken\+Plugin} (const \hyperlink{classFinkenPlugin}{Finken\+Plugin} \&)=delete
+\begin{DoxyCompactList}\small\item\em No copying the Finkenplugin. \end{DoxyCompactList}\item 
+virtual \hyperlink{classFinkenPlugin_acb58d49ecbfaaffd014ddeb80606dc52}{$\sim$\+Finken\+Plugin} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+virtual unsigned char \hyperlink{classFinkenPlugin_a046a229dfbc8185bac916ad2e49ec865}{version} () const 
+\item 
+virtual bool \hyperlink{classFinkenPlugin_afbe5d82635afe4b0c407de4724e8ee14}{load} ()
+\begin{DoxyCompactList}\small\item\em Loads the plugin into V-\/\+R\+EP. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classFinkenPlugin_ae9c984b362c6a828206fa6201291851c}{unload} ()
+\begin{DoxyCompactList}\small\item\em unloads the plugin \end{DoxyCompactList}\item 
+virtual const std\+::string \hyperlink{classFinkenPlugin_a1a7d0d65f88654c37b282e07d36417ec}{name} () const 
+\begin{DoxyCompactList}\small\item\em Function returning the name of the plugin . \end{DoxyCompactList}\item 
+void $\ast$ \hyperlink{classFinkenPlugin_a82c0cd5fa1b9fdb5f5a625458a9b545b}{scene\+Load} (int $\ast$auxiliary\+Data, void $\ast$custom\+Data, int $\ast$reply\+Data)
+\begin{DoxyCompactList}\small\item\em Called once on the loading of any scene, it checks for the presence of a Dummy object \char`\"{}\+Script\+Loader\char`\"{} in the scene. \end{DoxyCompactList}\item 
+void $\ast$ \hyperlink{classFinkenPlugin_a142f62305fcc926bb6cf86744edbb82b}{sim\+Start} (int $\ast$auxiliary\+Data, void $\ast$custom\+Data, int $\ast$reply\+Data)
+\begin{DoxyCompactList}\small\item\em Called when the Simulation is started. \end{DoxyCompactList}\item 
+void $\ast$ \hyperlink{classFinkenPlugin_aec5f5cf14ca485055ccc321a716780a4}{sim\+End} (int $\ast$auxiliary\+Data, void $\ast$custom\+Data, int $\ast$reply\+Data)
+\begin{DoxyCompactList}\small\item\em Ends the simulation run and cleans up the server and F\+I\+Nken. \end{DoxyCompactList}\item 
+void $\ast$ \hyperlink{classFinkenPlugin_a00d8bcdd7c4b28eb76712b84f512b12b}{action} (int $\ast$auxiliary\+Data, void $\ast$custom\+Data, int $\ast$reply\+Data)
+\begin{DoxyCompactList}\small\item\em This function controls the other parts of the plugin and synchronizes the vrep copters with the paparazzi copters. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+boost\+::asio\+::io\+\_\+service \hyperlink{classFinkenPlugin_a895a0de924a1c60e3cb65ff1cf139fdc}{io\+\_\+service}
+\begin{DoxyCompactList}\small\item\em The io service for the server. \end{DoxyCompactList}\item 
+std\+::unique\+\_\+ptr$<$ \hyperlink{classAsync__Server}{Async\+\_\+\+Server} $>$ \hyperlink{classFinkenPlugin_aeb198541b548eb5b1ba09221aaa35a26}{async\+\_\+server}
+\begin{DoxyCompactList}\small\item\em Pointer to the server responsible for communication with Paparazzi. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+The actual finken plugin. 
+
+Implementation of the baseline functionality for the plugin and the communication with Paparazzi.
+
+This class handles the main communication with vrep and calls for copter actions each timestep. It is also responsible for starting the server to communicate with paparazzi.
+
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000005}{Todo}]This could use a .h file. \end{DoxyRefDesc}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Finken\+Plugin@{Finken\+Plugin}!Finken\+Plugin@{Finken\+Plugin}}
+\index{Finken\+Plugin@{Finken\+Plugin}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{Finken\+Plugin()}{FinkenPlugin()}}]{\setlength{\rightskip}{0pt plus 5cm}Finken\+Plugin\+::\+Finken\+Plugin (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classFinkenPlugin_a03dadda0b43081bce8e8db1223289fe1}{}\label{classFinkenPlugin_a03dadda0b43081bce8e8db1223289fe1}
+
+
+Empty constructor. 
+
+\index{Finken\+Plugin@{Finken\+Plugin}!Finken\+Plugin@{Finken\+Plugin}}
+\index{Finken\+Plugin@{Finken\+Plugin}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{Finken\+Plugin(const Finken\+Plugin \&)=delete}{FinkenPlugin(const FinkenPlugin &)=delete}}]{\setlength{\rightskip}{0pt plus 5cm}Finken\+Plugin\+::\+Finken\+Plugin (
+\begin{DoxyParamCaption}
+\item[{const {\bf Finken\+Plugin} \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}\hypertarget{classFinkenPlugin_a5f4bc33c0d0bb05ca4f78090c7a2fda9}{}\label{classFinkenPlugin_a5f4bc33c0d0bb05ca4f78090c7a2fda9}
+
+
+No copying the Finkenplugin. 
+
+\index{Finken\+Plugin@{Finken\+Plugin}!````~Finken\+Plugin@{$\sim$\+Finken\+Plugin}}
+\index{````~Finken\+Plugin@{$\sim$\+Finken\+Plugin}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{$\sim$\+Finken\+Plugin()}{~FinkenPlugin()}}]{\setlength{\rightskip}{0pt plus 5cm}virtual Finken\+Plugin\+::$\sim$\+Finken\+Plugin (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\hypertarget{classFinkenPlugin_acb58d49ecbfaaffd014ddeb80606dc52}{}\label{classFinkenPlugin_acb58d49ecbfaaffd014ddeb80606dc52}
+
+
+Destructor. 
+
+
+
+\subsection{Member Function Documentation}
+\index{Finken\+Plugin@{Finken\+Plugin}!action@{action}}
+\index{action@{action}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{action(int $\ast$auxiliary\+Data, void $\ast$custom\+Data, int $\ast$reply\+Data)}{action(int *auxiliaryData, void *customData, int *replyData)}}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ Finken\+Plugin\+::action (
+\begin{DoxyParamCaption}
+\item[{int $\ast$}]{auxiliary\+Data, }
+\item[{void $\ast$}]{custom\+Data, }
+\item[{int $\ast$}]{reply\+Data}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\hypertarget{classFinkenPlugin_a00d8bcdd7c4b28eb76712b84f512b12b}{}\label{classFinkenPlugin_a00d8bcdd7c4b28eb76712b84f512b12b}
+
+
+This function controls the other parts of the plugin and synchronizes the vrep copters with the paparazzi copters. 
+
+
+
+Reimplemented from \hyperlink{classVREPPlugin_a048e1fbf7b4b5b7b96ea6ec132218e12}{V\+R\+E\+P\+Plugin}.
+
+\index{Finken\+Plugin@{Finken\+Plugin}!load@{load}}
+\index{load@{load}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{load()}{load()}}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Finken\+Plugin\+::load (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\hypertarget{classFinkenPlugin_afbe5d82635afe4b0c407de4724e8ee14}{}\label{classFinkenPlugin_afbe5d82635afe4b0c407de4724e8ee14}
+
+
+Loads the plugin into V-\/\+R\+EP. 
+
+\begin{DoxyReturn}{Returns}
+true 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classVREPPlugin_a4149b72b671ad72f63e9a75c58c0d628}{V\+R\+E\+P\+Plugin}.
+
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classFinkenPlugin_afbe5d82635afe4b0c407de4724e8ee14_cgraph}
+\end{center}
+\end{figure}
+
+
+\index{Finken\+Plugin@{Finken\+Plugin}!name@{name}}
+\index{name@{name}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{name() const }{name() const }}]{\setlength{\rightskip}{0pt plus 5cm}virtual const std\+::string Finken\+Plugin\+::name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\hypertarget{classFinkenPlugin_a1a7d0d65f88654c37b282e07d36417ec}{}\label{classFinkenPlugin_a1a7d0d65f88654c37b282e07d36417ec}
+
+
+Function returning the name of the plugin . 
+
+\begin{DoxyReturn}{Returns}
+Name as a string. 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classVREPPlugin_a345987cf0e2e8aa3af817cc0213e5c7a}{V\+R\+E\+P\+Plugin}.
+
+\index{Finken\+Plugin@{Finken\+Plugin}!operator=@{operator=}}
+\index{operator=@{operator=}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{operator=(const Finken\+Plugin \&)=delete}{operator=(const FinkenPlugin &)=delete}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Finken\+Plugin}\& Finken\+Plugin\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Finken\+Plugin} \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [delete]}}\hypertarget{classFinkenPlugin_a3ebea1e19535491b5db16c7f43df8e79}{}\label{classFinkenPlugin_a3ebea1e19535491b5db16c7f43df8e79}
+
+
+No copying the Finkenplugin. 
+
+\index{Finken\+Plugin@{Finken\+Plugin}!scene\+Load@{scene\+Load}}
+\index{scene\+Load@{scene\+Load}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{scene\+Load(int $\ast$auxiliary\+Data, void $\ast$custom\+Data, int $\ast$reply\+Data)}{sceneLoad(int *auxiliaryData, void *customData, int *replyData)}}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ Finken\+Plugin\+::scene\+Load (
+\begin{DoxyParamCaption}
+\item[{int $\ast$}]{auxiliary\+Data, }
+\item[{void $\ast$}]{custom\+Data, }
+\item[{int $\ast$}]{reply\+Data}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\hypertarget{classFinkenPlugin_a82c0cd5fa1b9fdb5f5a625458a9b545b}{}\label{classFinkenPlugin_a82c0cd5fa1b9fdb5f5a625458a9b545b}
+
+
+Called once on the loading of any scene, it checks for the presence of a Dummy object \char`\"{}\+Script\+Loader\char`\"{} in the scene. 
+
+Only if that object is found, the server is startet and full functionality established. 
+
+Reimplemented from \hyperlink{classVREPPlugin_a77e10632cbc7ae0581a151daea83ab1f}{V\+R\+E\+P\+Plugin}.
+
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classFinkenPlugin_a82c0cd5fa1b9fdb5f5a625458a9b545b_cgraph}
+\end{center}
+\end{figure}
+
+
+\index{Finken\+Plugin@{Finken\+Plugin}!sim\+End@{sim\+End}}
+\index{sim\+End@{sim\+End}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{sim\+End(int $\ast$auxiliary\+Data, void $\ast$custom\+Data, int $\ast$reply\+Data)}{simEnd(int *auxiliaryData, void *customData, int *replyData)}}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ Finken\+Plugin\+::sim\+End (
+\begin{DoxyParamCaption}
+\item[{int $\ast$}]{auxiliary\+Data, }
+\item[{void $\ast$}]{custom\+Data, }
+\item[{int $\ast$}]{reply\+Data}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\hypertarget{classFinkenPlugin_aec5f5cf14ca485055ccc321a716780a4}{}\label{classFinkenPlugin_aec5f5cf14ca485055ccc321a716780a4}
+
+
+Ends the simulation run and cleans up the server and F\+I\+Nken. 
+
+
+
+Reimplemented from \hyperlink{classVREPPlugin_a13ea56c8546d762468b21ebc141b4ca3}{V\+R\+E\+P\+Plugin}.
+
+\index{Finken\+Plugin@{Finken\+Plugin}!sim\+Start@{sim\+Start}}
+\index{sim\+Start@{sim\+Start}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{sim\+Start(int $\ast$auxiliary\+Data, void $\ast$custom\+Data, int $\ast$reply\+Data)}{simStart(int *auxiliaryData, void *customData, int *replyData)}}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ Finken\+Plugin\+::sim\+Start (
+\begin{DoxyParamCaption}
+\item[{int $\ast$}]{auxiliary\+Data, }
+\item[{void $\ast$}]{custom\+Data, }
+\item[{int $\ast$}]{reply\+Data}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\hypertarget{classFinkenPlugin_a142f62305fcc926bb6cf86744edbb82b}{}\label{classFinkenPlugin_a142f62305fcc926bb6cf86744edbb82b}
+
+
+Called when the Simulation is started. 
+
+
+
+Reimplemented from \hyperlink{classVREPPlugin_a58c9675c38c6ca1a75047864d3e4253c}{V\+R\+E\+P\+Plugin}.
+
+\index{Finken\+Plugin@{Finken\+Plugin}!unload@{unload}}
+\index{unload@{unload}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{unload()}{unload()}}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool Finken\+Plugin\+::unload (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\hypertarget{classFinkenPlugin_ae9c984b362c6a828206fa6201291851c}{}\label{classFinkenPlugin_ae9c984b362c6a828206fa6201291851c}
+
+
+unloads the plugin 
+
+\begin{DoxyReturn}{Returns}
+true 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classVREPPlugin_a49aff8a71c1c9f2af6e32b918eba99ff}{V\+R\+E\+P\+Plugin}.
+
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classFinkenPlugin_ae9c984b362c6a828206fa6201291851c_cgraph}
+\end{center}
+\end{figure}
+
+
+\index{Finken\+Plugin@{Finken\+Plugin}!version@{version}}
+\index{version@{version}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{version() const }{version() const }}]{\setlength{\rightskip}{0pt plus 5cm}virtual unsigned char Finken\+Plugin\+::version (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}\hypertarget{classFinkenPlugin_a046a229dfbc8185bac916ad2e49ec865}{}\label{classFinkenPlugin_a046a229dfbc8185bac916ad2e49ec865}
+
+
+Implements \hyperlink{classVREPPlugin_ae5e6764e97874aa134447122bbadbf2a}{V\+R\+E\+P\+Plugin}.
+
+
+
+\subsection{Member Data Documentation}
+\index{Finken\+Plugin@{Finken\+Plugin}!async\+\_\+server@{async\+\_\+server}}
+\index{async\+\_\+server@{async\+\_\+server}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{async\+\_\+server}{async_server}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::unique\+\_\+ptr$<${\bf Async\+\_\+\+Server}$>$ Finken\+Plugin\+::async\+\_\+server}\hypertarget{classFinkenPlugin_aeb198541b548eb5b1ba09221aaa35a26}{}\label{classFinkenPlugin_aeb198541b548eb5b1ba09221aaa35a26}
+
+
+Pointer to the server responsible for communication with Paparazzi. 
+
+\index{Finken\+Plugin@{Finken\+Plugin}!io\+\_\+service@{io\+\_\+service}}
+\index{io\+\_\+service@{io\+\_\+service}!Finken\+Plugin@{Finken\+Plugin}}
+\subsubsection[{\texorpdfstring{io\+\_\+service}{io_service}}]{\setlength{\rightskip}{0pt plus 5cm}boost\+::asio\+::io\+\_\+service Finken\+Plugin\+::io\+\_\+service}\hypertarget{classFinkenPlugin_a895a0de924a1c60e3cb65ff1cf139fdc}{}\label{classFinkenPlugin_a895a0de924a1c60e3cb65ff1cf139fdc}
+
+
+The io service for the server. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{finkenplugin_8cpp}{finkenplugin.\+cpp}\end{DoxyCompactItemize}

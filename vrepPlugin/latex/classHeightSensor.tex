@@ -1,0 +1,149 @@
+\hypertarget{classHeightSensor}{}\section{Height\+Sensor Class Reference}
+\label{classHeightSensor}\index{Height\+Sensor@{Height\+Sensor}}
+
+
+Class implementing a heightsensor.  
+
+
+
+
+{\ttfamily \#include $<$heightsensor.\+h$>$}
+
+
+
+Inheritance diagram for Height\+Sensor\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=156pt]{classHeightSensor__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Height\+Sensor\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=156pt]{classHeightSensor__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classHeightSensor_adce900c49d253c6e9cd85db00c2f0708}{Height\+Sensor} (int sensor\+Handle)
+\begin{DoxyCompactList}\small\item\em Basic constructor. \end{DoxyCompactList}\item 
+int \hyperlink{classHeightSensor_abd4b7d4cc5906a971da402757989f5da}{get} (std\+::vector$<$ float $>$ \&detect\+Point, int \&detect\+Handle, std\+::vector$<$ float $>$ \&detect\+Surface)
+\begin{DoxyCompactList}\small\item\em Retrieves the sensor information, including any detected object information. \end{DoxyCompactList}\item 
+void \hyperlink{classHeightSensor_ad02d8ea00644637867c61e32745ac43d}{update} (std\+::vector$<$ float $>$ \&detect\+Point, int \&detect\+Handle, std\+::vector$<$ float $>$ \&detect\+Surface)
+\begin{DoxyCompactList}\small\item\em Updates the sensor information, including any detected object information. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Class implementing a heightsensor. 
+
+Implementation of a proximitysensor as height sensor. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Height\+Sensor@{Height\+Sensor}!Height\+Sensor@{Height\+Sensor}}
+\index{Height\+Sensor@{Height\+Sensor}!Height\+Sensor@{Height\+Sensor}}
+\subsubsection[{\texorpdfstring{Height\+Sensor(int sensor\+Handle)}{HeightSensor(int sensorHandle)}}]{\setlength{\rightskip}{0pt plus 5cm}Height\+Sensor\+::\+Height\+Sensor (
+\begin{DoxyParamCaption}
+\item[{int}]{sensor\+Handle}
+\end{DoxyParamCaption}
+)}\hypertarget{classHeightSensor_adce900c49d253c6e9cd85db00c2f0708}{}\label{classHeightSensor_adce900c49d253c6e9cd85db00c2f0708}
+
+
+Basic constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sensor\+Handle} & the handle of the sensor in V-\/\+R\+EP \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Height\+Sensor@{Height\+Sensor}!get@{get}}
+\index{get@{get}!Height\+Sensor@{Height\+Sensor}}
+\subsubsection[{\texorpdfstring{get(std\+::vector$<$ float $>$ \&detect\+Point, int \&detect\+Handle, std\+::vector$<$ float $>$ \&detect\+Surface)}{get(std::vector< float > &detectPoint, int &detectHandle, std::vector< float > &detectSurface)}}]{\setlength{\rightskip}{0pt plus 5cm}int Height\+Sensor\+::get (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Point, }
+\item[{int \&}]{detect\+Handle, }
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Surface}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\hypertarget{classHeightSensor_abd4b7d4cc5906a971da402757989f5da}{}\label{classHeightSensor_abd4b7d4cc5906a971da402757989f5da}
+
+
+Retrieves the sensor information, including any detected object information. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em detect\+Point} & Coordinates of the closest detected point. \\
+\hline
+{\em detect\+Handle} & The handle of the detected object. \\
+\hline
+{\em detect\+Surface} & Normal vector of the detected surface.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 or 1, depending on the detection state of the sensor and -\/1 in case of any error. See the \href{http://www.coppeliarobotics.com/helpFiles/en/regularApi/simHandleProximitySensor.htm}{\tt V-\/\+R\+EP A\+PI} for more info. 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classSensor_a997a8679d48c4fa346e6ac43c1e6219a}{Sensor}.
+
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=309pt]{classHeightSensor_abd4b7d4cc5906a971da402757989f5da_cgraph}
+\end{center}
+\end{figure}
+
+
+\index{Height\+Sensor@{Height\+Sensor}!update@{update}}
+\index{update@{update}!Height\+Sensor@{Height\+Sensor}}
+\subsubsection[{\texorpdfstring{update(std\+::vector$<$ float $>$ \&detect\+Point, int \&detect\+Handle, std\+::vector$<$ float $>$ \&detect\+Surface)}{update(std::vector< float > &detectPoint, int &detectHandle, std::vector< float > &detectSurface)}}]{\setlength{\rightskip}{0pt plus 5cm}void Height\+Sensor\+::update (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Point, }
+\item[{int \&}]{detect\+Handle, }
+\item[{std\+::vector$<$ float $>$ \&}]{detect\+Surface}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\hypertarget{classHeightSensor_ad02d8ea00644637867c61e32745ac43d}{}\label{classHeightSensor_ad02d8ea00644637867c61e32745ac43d}
+
+
+Updates the sensor information, including any detected object information. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em detect\+Point} & Coordinates of the closest detected point. \\
+\hline
+{\em detect\+Handle} & The handle of the detected object. \\
+\hline
+{\em detect\+Surface} & Normal vector of the detected surface.\\
+\hline
+\end{DoxyParams}
+See the \href{http://www.coppeliarobotics.com/helpFiles/en/regularApi/simReadProximitySensor.htm}{\tt V-\/\+R\+EP A\+PI} for more info. 
+
+Implements \hyperlink{classSensor_aae4a856357eba6f54139b5add751d230}{Sensor}.
+
+
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=325pt]{classHeightSensor_ad02d8ea00644637867c61e32745ac43d_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{heightsensor_8h}{heightsensor.\+h}\item 
+\hyperlink{heightsensor_8cpp}{heightsensor.\+cpp}\end{DoxyCompactItemize}

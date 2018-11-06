@@ -1,10 +1,3 @@
-/** 
- * @file sensor.cpp 
- * \class Sensor
- * \brief base Sensor class, all sensors should inherit from this
- */
-
-
 #include "sensor.h"
 #include <iostream>
 

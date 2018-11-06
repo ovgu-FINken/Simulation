@@ -1,0 +1,5 @@
+<map id="FinkenPlugin::sceneLoad" name="FinkenPlugin::sceneLoad">
+<area shape="rect" id="node2" href="$classAsync__Server.html#a33e192d098956111828840a354da0891" title="Server constructor. " alt="" coords="221,5,371,47"/>
+<area shape="rect" id="node3" href="$classAsync__Server.html#a475dc9277092d67f647cdfeeb91f2943" title="Function waiting for new connections to accept. " alt="" coords="419,5,557,47"/>
+<area shape="rect" id="node4" href="$classAsync__Server.html#ab012fb8893a186c937c9287bdf10da03" title="Function handling any new connection. " alt="" coords="605,5,756,47"/>
+</map>

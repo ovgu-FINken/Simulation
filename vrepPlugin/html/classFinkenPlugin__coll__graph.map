@@ -1,0 +1,4 @@
+<map id="FinkenPlugin" name="FinkenPlugin">
+<area shape="rect" id="node2" href="$classVREPPlugin.html" title="Base vrepplugin class. " alt="" coords="5,102,100,129"/>
+<area shape="rect" id="node4" href="$classAsync__Server.html" title="Asynchronous (boost::Asio) Server class to accept new paparazzi connections and pair them with a vrep..." alt="" coords="229,5,333,32"/>
+</map>
