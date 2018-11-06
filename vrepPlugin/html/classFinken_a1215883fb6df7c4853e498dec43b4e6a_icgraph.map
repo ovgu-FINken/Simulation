@@ -1,4 +1,0 @@
-<map id="Finken::getSensors" name="Finken::getSensors">
-<area shape="rect" id="node2" href="$classFinken.html#afddc56af42f000ff17c4a00779b4ad6a" title="updates the values for copter position and attitude, namely the copter state vectors ..." alt="" coords="188,5,319,32"/>
-<area shape="rect" id="node3" href="$classFinken.html#ae3c3abbf571407e210f4b03b68cada9d" title="Main function containing the Paparazzi&#45;V&#45;REP communication loop. " alt="" coords="367,5,453,32"/>
-</map>

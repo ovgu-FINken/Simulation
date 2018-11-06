@@ -1,6 +1,0 @@
-<map id="main" name="main">
-<area shape="rect" id="node2" href="$threadSync_8cpp.html#a6e09c6c1ef60d5deaf0da4add8d5ca40" title="waits" alt="" coords="109,5,162,32"/>
-<area shape="rect" id="node3" href="$threadSync_8cpp.html#a82151c6adbe3e0cc4262ca4c658ffc5e" title="signals" alt="" coords="104,56,167,83"/>
-<area shape="rect" id="node4" href="$structSync.html#a12dd998a8af839e5e5663020f1607863" title="Sync::extend" alt="" coords="215,31,313,57"/>
-<area shape="rect" id="node5" href="$structSync.html#a11ca0966d2a696487fd3eb2c5b85f393" title="Sync::set" alt="" coords="225,81,303,108"/>
-</map>

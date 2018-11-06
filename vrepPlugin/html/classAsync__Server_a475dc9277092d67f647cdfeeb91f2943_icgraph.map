@@ -1,5 +1,0 @@
-<map id="Async_Server::start_accept" name="Async_Server::start_accept">
-<area shape="rect" id="node2" href="$classAsync__Server.html#a33e192d098956111828840a354da0891" title="Server constructor. " alt="" coords="193,5,342,47"/>
-<area shape="rect" id="node4" href="$classAsync__Server.html#ab012fb8893a186c937c9287bdf10da03" title="Function handling any new connection. " alt="" coords="192,71,343,112"/>
-<area shape="rect" id="node3" href="$classFinkenPlugin.html#a82c0cd5fa1b9fdb5f5a625458a9b545b" title="Called once on the loading of any scene, it checks for the presence of a Dummy object &quot;ScriptLoader&quot; ..." alt="" coords="391,13,559,39"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="Finken::addRotor" name="Finken::addRotor">
-<area shape="rect" id="node2" href="$finken_8h.html#ab8920c514423348469521fe0063534c4" title="Constructs a complete FINken from an empty FINken object using its handle. " alt="" coords="176,31,264,57"/>
-<area shape="rect" id="node3" href="$classFinken.html#ae3c3abbf571407e210f4b03b68cada9d" title="Main function containing the Paparazzi&#45;V&#45;REP communication loop. " alt="" coords="326,5,413,32"/>
-<area shape="rect" id="node4" href="$classFinken.html#aa4779668e3bf85253e371b30e0da808a" title="Called in the accept handler, this function passes the incoming connection to the corresponding finke..." alt="" coords="312,56,427,83"/>
-</map>

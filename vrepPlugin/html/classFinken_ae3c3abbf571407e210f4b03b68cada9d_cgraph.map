@@ -1,7 +1,0 @@
-<map id="Finken::run" name="Finken::run">
-<area shape="rect" id="node2" href="$finken_8cpp.html#ab8920c514423348469521fe0063534c4" title="Constructs a complete FINken from an empty FINken object using its handle. " alt="" coords="161,56,249,83"/>
-<area shape="rect" id="node5" href="$classFinken.html#afddc56af42f000ff17c4a00779b4ad6a" title="updates the values for copter position and attitude, namely the copter state vectors ..." alt="" coords="140,107,271,133"/>
-<area shape="rect" id="node3" href="$classFinken.html#a2f2adb211e80a689f580b87730aeb9d1" title="Adding sensors to the copter. " alt="" coords="321,5,451,32"/>
-<area shape="rect" id="node4" href="$classFinken.html#a4ac9d9b37fba41147a83a36286fbe91b" title="Adding rotors to the copter. " alt="" coords="325,56,447,83"/>
-<area shape="rect" id="node6" href="$classFinken.html#a1215883fb6df7c4853e498dec43b4e6a" title="returns a vector containing all sensors of the finken " alt="" coords="319,107,453,133"/>
-</map>

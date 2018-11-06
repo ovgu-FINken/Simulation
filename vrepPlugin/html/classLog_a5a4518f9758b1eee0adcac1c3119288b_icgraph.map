@@ -1,6 +1,0 @@
-<map id="Log::name" name="Log::name">
-<area shape="rect" id="node2" href="$classFinkenPlugin.html#afbe5d82635afe4b0c407de4724e8ee14" title="Loads the plugin into V&#45;REP. " alt="" coords="260,5,389,32"/>
-<area shape="rect" id="node3" href="$classLog.html#ab89f6644dd040b1fa07c1253cc12bafb" title="Log::out" alt="" coords="136,56,205,83"/>
-<area shape="rect" id="node5" href="$classLog.html#ad37da894b6f997bc5204ed81cace26c2" title="Log::err" alt="" coords="137,107,204,133"/>
-<area shape="rect" id="node4" href="$classFinkenPlugin.html#ae9c984b362c6a828206fa6201291851c" title="unloads the plugin " alt="" coords="253,56,396,83"/>
-</map>

@@ -1,8 +1,0 @@
-<map id="Sensor::getHandle" name="Sensor::getHandle">
-<area shape="rect" id="node2" href="$classHeightSensor.html#ad02d8ea00644637867c61e32745ac43d" title="Updates the sensor information, including any detected object information. " alt="" coords="184,5,332,32"/>
-<area shape="rect" id="node3" href="$classHeightSensor.html#abd4b7d4cc5906a971da402757989f5da" title="Retrieves the sensor information, including any detected object information. " alt="" coords="195,56,321,83"/>
-<area shape="rect" id="node4" href="$classPositionSensor.html#a0b8c45d846d3442d94e2ef767fddf31d" title="Retrieves the sensor information, including any detected object information. " alt="" coords="190,107,326,133"/>
-<area shape="rect" id="node5" href="$classSonar.html#ae6edd4f329f9892a64c5f0cab808c7a2" title="Basic constructor. " alt="" coords="209,157,307,184"/>
-<area shape="rect" id="node6" href="$classSonar.html#a2be4378ffd51271865a84822faffd78d" title="Updates the sensor information, including any detected object information. " alt="" coords="207,208,309,235"/>
-<area shape="rect" id="node7" href="$classSonar.html#a6881d0c104c0fafad95ad1aea917b6f3" title="Retrieves the sensor information, including any detected object information. " alt="" coords="217,259,299,285"/>
-</map>

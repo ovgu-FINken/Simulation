@@ -1,4 +1,0 @@
-<map id="thrustFromThrottle" name="thrustFromThrottle">
-<area shape="rect" id="node2" href="$classFinken.html#aaead1098c0752c8ec5b99bccd9945f3b" title="Applies the correct rotor speeds calculated by Paparazzi. " alt="" coords="183,5,345,32"/>
-<area shape="rect" id="node3" href="$classFinken.html#aa4779668e3bf85253e371b30e0da808a" title="Called in the accept handler, this function passes the incoming connection to the corresponding finke..." alt="" coords="207,56,321,83"/>
-</map>

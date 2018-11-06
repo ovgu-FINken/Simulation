@@ -1,4 +1,0 @@
-<map id="Finken::setRotorSpeeds" name="Finken::setRotorSpeeds">
-<area shape="rect" id="node2" href="$finken_8cpp.html#a4e838d73ad5e098825ef4c227f6369b6" title="Calculates thrust forces (Newton) from the rotor commands. " alt="" coords="216,5,345,32"/>
-<area shape="rect" id="node3" href="$classFinken.html#a610ce496f1c5f2ca22850ee26c54510c" title="returns a vector containing all rotors of the finken " alt="" coords="217,56,344,83"/>
-</map>
