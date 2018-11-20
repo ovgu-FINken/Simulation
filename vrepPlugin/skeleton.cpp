@@ -2,13 +2,15 @@
  * @file skeleton.cpp
  * \brief provides the basic functionality for communication with the running vrep Simulation"
  */
-
+#pragma once
 #include <vrepplugin.h>
 #include <v_repLib.h>
 #include <scriptFunctionData.h>
 #include <boost/filesystem.hpp>
 #include <iostream>
 #include <finken.h>
+#include <boost/process.hpp>
+
 
 LIBRARY vrepLib;
 
@@ -17,7 +19,8 @@ const char* libName="libv_rep.dll";
 #else
 const char* libName="libv_rep.so";
 #endif
-
+namespace bp = boost::process;
+std::string pprzHome=std::getenv("PAPARAZZI_HOME");
 /**
  * \anchor simFinken
  * Vector for all available (e.g. present in the plugin) copters
@@ -29,13 +32,13 @@ std::vector<std::unique_ptr<Finken>> simFinken;
 #define LUA_REGISTER_COMMAND "simExtPaparazzi_register"
 
 const int inArgs_REGISTER[]={
-    //4 arguments: handle, aircraftID, rotor count, sonar count 
-    4,
+    //4 arguments: handle, aircraftID, rotor count, sonar count, arciraft name 
+    5,
     sim_script_arg_int32,0,
     sim_script_arg_int32,0,
     sim_script_arg_int32,0,
     sim_script_arg_int32,0,
-
+    sim_script_arg_string,0,
 };
 /**
  * Function to register any FINken present in the vrep scene with the plugin.
@@ -54,8 +57,12 @@ void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
         int handle = inData->at(0).int32Data[0];
         int AC_ID = inData->at(1).int32Data[0];
         int rotorCount = inData->at(2).int32Data[0];
-	int sonarCount = inData->at(3).int32Data[0];
-        simFinken.emplace_back(new Finken(handle, AC_ID, rotorCount, sonarCount));        
+	    int sonarCount = inData->at(3).int32Data[0];
+        std::string ac_name = inData->at(3).stringData[0];
+        simFinken.emplace_back(new Finken(handle, AC_ID, rotorCount, sonarCount));  
+        std::string command = pprzHome + "/sw/simulator/pprzsim-launch -a " + ac_name + "-t nps";
+        bp::child c(command);
+        c.detach();   
         success = true;
     }
     D.pushOutData(CScriptFunctionDataItem(success));
@@ -64,6 +71,37 @@ void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
 
 }
 
+#define LUA_STARTSERVER_COMMAND "simExtPaparazzi_startServer"
+
+const int inArgs_startServer[]={
+    1,
+    sim_script_arg_string,0,
+};
+/**
+ * Function to register any FINken present in the vrep scene with the plugin.
+ * Every copter needs to call this in its child script to be accesible by the plugin.
+ * Stores the handle, aricraftID, rotor and sonar counts in \ref simFinken
+ *
+ */
+void LUA_STARTSERVER_CALLBACK(SScriptCallBack* cb)
+{   CScriptFunctionData D;
+    bool success = false;
+    if (D.readDataFromStack(cb->stackID,inArgs_startServer,inArgs_startServer[0],LUA_STARTSERVER_COMMAND))
+    {   
+        std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
+        std::string logs = inData->at(0).stringData[0];
+        std::string command = pprzHome + "/sw/ground_segment/tmtc/server -n";
+        bp::child server(command);
+        server.detach();
+        command = pprzHome + "/sw/ground_segment/cockpit/gcs";
+        bp::child gcs(command);
+        gcs.detach();
+        success = true;
+        
+    }
+    D.pushOutData(CScriptFunctionDataItem(success));
+    D.writeDataToStack(cb->stackID);
+}
 
 /**
 * @name vrep entry points
@@ -97,14 +135,23 @@ extern "C" unsigned char v_repStart(void* reservedPointer,int reservedInt)
         return(0);
     }
 
-
+    //add parameter info to custom registered function
     std::string s = "simExtPaparazzi_register@" + plugin.name();
     const char* cs;
     cs = s.c_str();
-    std::string t = "boolean result=simExtPaparazzi_register(number copterHandle, number AC_ID, number rotorCount, number sonarCount)";
+    std::string t = "boolean result=simExtPaparazzi_register(number copterHandle, number AC_ID, number rotorCount, number sonarCount, string aircraft_name)";
     const char* ts;
     ts = t.c_str();
     simRegisterScriptCallbackFunction(cs, ts ,LUA_REGISTER_CALLBACK);
+
+
+    s = "simExtPaparazzi_startServer@" + plugin.name();
+    const char* cs2;
+    cs2 = s.c_str();
+    std::string t2 = "boolean result=simExtPaparazzi_startServer(string aircraft_name)";
+    const char* ts2;
+    ts2 = t2.c_str();
+    simRegisterScriptCallbackFunction(cs2, ts2 ,LUA_STARTSERVER_CALLBACK);
 
     simLockInterface(1);
 
