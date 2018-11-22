@@ -22,6 +22,9 @@ and https://github.com/ovgu-FINken/paparazzi (branch vrepSimOrig).
 Install boost and eigen3.
 Make sure to add the variables PAPARAZZI_HOME and VREP_HOME to you environment variables,
 pointing to the respective root folders.
+Build the plugin in its directory containing the makefile, this generates the 
+v_repExtPaparazzi.so file for loading the plugin in V-REP.. This needs to be linked or copied to the V-REP folder.
+
 
  \subsection step3 Step 3: Running the simulation
 To run the simulation, open vrep and load the scene finkenRotated.ccc provided in the simulation repository.
