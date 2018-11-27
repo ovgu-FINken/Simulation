@@ -54,6 +54,7 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "utility": "cpp",
-        "dense": "cpp"
+        "dense": "cpp",
+        "string_view": "cpp"
     }
 }

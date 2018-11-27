@@ -27,7 +27,7 @@
 #include <condition_variable>
 #include <chrono>
 #include <boost/asio.hpp>
-
+#include <boost/process.hpp>
 #pragma GCC diagnostic ignored "-Wint-in-bool-context"
 #include <Eigen/Dense>
 #pragma GCC diagnostic pop
@@ -40,6 +40,7 @@ using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
 
 using boost::asio::ip::tcp;
+namespace bp = boost::process;
 
 bool serverLoaded = false;
 bool connectionEstablished = false;
@@ -48,6 +49,11 @@ extern std::vector<std::unique_ptr<Finken>> simFinken;
 std::unique_ptr<tcp::iostream> sPtr;
 VrepLog vrepLog;
 paparazziPacket firstPacket;
+bp::child pprzServer;
+std::string pprzHome=std::getenv("PAPARAZZI_HOME");
+std::string start_server_cmd = pprzHome + "/sw/ground_segment/tmtc/server";
+std::string start_gcs_cmd = pprzHome + "/sw/ground_segment/cockpit/gcs"
+std::string start_nps_cmd = pprzHome + "/sw/simulator/pprzsim-launch";
 
 
 /**
@@ -183,6 +189,9 @@ class FinkenPlugin: public VREPPlugin {
             boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
             serverLoaded = true;
             vrepLog << "[VREP] server done" << '\n';
+            std::cout << start_server_cmd << '\n';
+            pprzServer = bp::child(start_server_cmd, "-n");
+            pprzServer.detach();
         }
         else {
             vrepLog << "[VREP] ScriptLoader not found, not starting server" << '\n';
@@ -193,7 +202,15 @@ class FinkenPlugin: public VREPPlugin {
 
     /** Called when the Simulation is started. */
     void* simStart(int* auxiliaryData,void* customData,int* replyData)
-    {	
+    {   
+        try {
+            std::cout << start_nps_cmd << '\n';
+            bp::child nps(start_nps_cmd, "-a Test", "-t nps");
+            nps.detach();
+        }
+        catch (std::exception& e) {
+            pprzServer.terminate();
+        }
 	return NULL;
     }
 
@@ -224,8 +241,9 @@ class FinkenPlugin: public VREPPlugin {
 	
 		vrepLog << "[VREP] simulated copters: " << simFinken.size() << std::endl;
         	auto actionStart = Clock::now();
+
 	        // if there is no finken connected to paparazzi yet, we do nothing:
-	        if( std::none_of(simFinken.begin(), simFinken.end(), 
+	        if(std::none_of(simFinken.begin(), simFinken.end(), 
               [](const std::unique_ptr<Finken>& f){ return f->connected;}) )
             return NULL;
 	        auto then = Clock::now();
