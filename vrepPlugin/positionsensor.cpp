@@ -2,7 +2,7 @@
  * @file positionsensor.cpp 
  * \class PositionSensor
  * \brief wrapper to disguise vrep API calls as a position sensor
- * \todo actually use this in the sim
+ * \todo implement noise
  */
 #include "positionsensor.h"
 #include "v_repLib.h"
@@ -13,14 +13,6 @@
 PositionSensor::PositionSensor(int sensorHandle) : Sensor::Sensor(sensorHandle){
     std::cout << "creating position sensor with handle " << sensorHandle << '\n';
 }
-
-
-int PositionSensor::get(std::vector<float> &detectPosition){
-    std::vector<float> dummyVector;
-    int dummyInt;
-    return PositionSensor::get(detectPosition, dummyInt, dummyVector);
-}
-
 
 void PositionSensor::update(std::vector<float> &f, int &i, std::vector<float> &ff){}
 

@@ -4,8 +4,7 @@
  */
 
 
-#ifndef FINKEN_H
-#define FINKEN_H
+#pragma once
 #include <memory>
 #include <cstdlib>
 #include <iostream>
@@ -79,7 +78,7 @@ class VrepLog {
     std::ofstream log;
   public:
     VrepLog() {
-      log.open((current_path() / "vrep.log").c_str());
+      log.open((current_path() / "V-REP.log").c_str());
     }
     template<typename T>
     LogLine operator<<(T& t) {
@@ -90,7 +89,7 @@ extern VrepLog  vrepLog;
 
 /**
  * Finken class for handling any data exchanges between a
- * FINken and paparazzi. Also handles the application of
+ * FINken and Paparazzi. Also handles the application of
  * rotor mixing commands to the FINken.
  */
 class Finken
@@ -102,35 +101,40 @@ public:
     /** Basic Empty Constructor */
     Finken();
     /**
-     * Constructor for creating a uniquely identifiable finken
-     * @param fHandle the handle used to identify the finken in vrep
-     * @param _ac_id the Aircraft ID used to identify the copter in paparazzi
+     * Constructor for creating a uniquely identifiable FINken.
+     * @param fHandle the handle used to identify the FINken in V-REP.
+     * @param _ac_id the Aircraft ID used to identify the copter in Paparazzi.
+     * @param rotorCount the amount of rotors the copter has.
+     * @param sonarCount the amount of sonars the copter has.
      */
     Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount);
     /** Basic destructor */
     ~Finken() { runThread.join(); }
-    /** Integer representing the handle of the copter object in vrep */
+    /** Integer representing the handle of the copter object in V-REP */
     int handle;
-    /** Integer representing the handle of the copter base in Vrep.
-     * Copter base, not the copter object is used for the calculation of the copter state.
+
+    /** Integer representing the handle of the copter base in V-REP.
+     *  Copter base, not the copter object is used for the calculation of the copter state.
      */
     int baseHandle;    
-    /** Integer representing the Aircraft ID to match copters in vrep and paparazzi */
+
+    /** Integer representing the Aircraft ID to match copters in V-REP and Paparazzi. */
     const int ac_id;
-    /**Integer representing the amount of rotors, used in automatic finken construction
-     * @see buildFinken()
-     */
-    const int rotorCount;
-    /**Integer representing the amount of sonars, used in automatic finken construction**
-     * @see buildFinken
-     * /
-    **/
-    const int sonarCount;
-    /** current connection status of the copter **/
+
+    /** The number of rotors the copter has */
+    int rotorCount;
+
+    /** The number of sonars the copter has */
+    int sonarCount;
+
+    /** Current connection status of the copter. **/
     bool connected = 0;
+    /** The thread object for running the copter loop. */
     std::thread runThread;
-    /** Vector storing the commands provided by paparazzi */
+
+    /** Vector storing the commands provided by Paparazzi */
     std::vector<double> commands = {0,0,0,0};
+
     /** 
      * @anchor copterstate
      * @name Copter state
@@ -152,7 +156,7 @@ public:
     ///@}
     
     /**@name Construction functions
-     * Functions needed to construct the copter in the vrep plugin
+     * Functions needed to construct the copter in the V-REP plugin
      * @see buildFinken()
      */
     ///@{
@@ -173,45 +177,46 @@ public:
     }
 
     /**
-     * Main function containing the paparazzi-vrep communication loop.
-     * Called whenever a new connection from paparazzi to the
-     * vrep server is established, see Async_Server::handle_accept()
+     * Main function containing the Paparazzi-V-REP communication loop.
+     * Called whenever a new connection from Paparazzi to the
+     * V-REP server is established, see Async_Server::handle_accept()
      * @param sPtr the iostream of the connection
      * @see Async_Server::handle_accept()
      * 
      */
     void run(std::unique_ptr<tcp::iostream> sPtr);
+
     /**
-     * Applies the correct rotor speeds calculated by paparazzi
+     * Applies the correct rotor speeds calculated by Paparazzi
      * @see Finken::commands
      * @see thrustFromThrottle
      */
     void setRotorSpeeds();
+
     /**
      * updates the values for copter position and attitude, 
      * namely the @ref copterstate "copter state" vectors
      * @param finken reference to the finken to be updated
      */
     void updatePos(Finken& finken);
+
     /** returns a vector containing all sensors of the finken */
     std::vector<std::unique_ptr<Sensor>> &getSensors();
+
     /** returns a vector containing all rotors of the finken */
     std::vector<std::unique_ptr<Rotor>> &getRotors();
-    /** @private */
+
+    /** Deleted copy constructor (FINken objects need to be unique)*/
     Finken(const Finken&) = delete;
-    /** @private */
+    /** Deleted copy assignment operator (FINken objects need to be unique)*/
     Finken& operator=(const Finken&) = delete;
 };
-/**
- * identifies a copter in the vrep scene using its handle and constructs it.
- * Built finken are stored in #allFinken
- * @see Finken::addRotor()
- * @see Finken::addSensor()
+/** Constructs a complete FINken from an empty FINken object using its handle.
+ *  Takes a unique_ptr to a Finken and adds the correct handles for the sensors & rotors from the V-REP object tree.
+ *  @param finken the FINken object to be populated.
  */
 void buildFinken(Finken& finken);
 
-/** static vector containing all built finken */
-static std::vector<std::unique_ptr<Finken>> allFinken;
 
 /**
  * Calculates thrust forces (Newton) from the rotor commands
@@ -219,4 +224,4 @@ static std::vector<std::unique_ptr<Finken>> allFinken;
  */
 double thrustFromThrottle(double throttle);
 
-#endif // FINKEN_H
+

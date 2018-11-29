@@ -3,27 +3,46 @@
  * \class AttitudeSensor
  * \brief Implementation of an attitudesensor
  * 
- * \todo actually use this for attitude calculation.
+ * \todo actually use this for attitude calculation, implement noise.
  */
 
-#ifndef ATTITUDESENSOR_H
-#define ATTITUDESENSOR_H
+#pragma once
 
 #include "sensor.h"
 
 
 /**
- * currently unused class for an attitude sensor.
- * currently the attitude is grabbed directly from the copter base object in vrep
- * (which is the same as would be done in this class with more overhead)
- * may be extended for use later for extending sensor functionality, e.g. implementing inaccuacies and noise
+ * Currently unused class for an attitude sensor. 
  */
 class AttitudeSensor: public Sensor{
 
 public:
-    AttitudeSensor(int sensorHandle);
-    int get(std::vector<float> &detectAngles);
-    void update(std::vector<float> &f, int &i, std::vector<float> &ff);
+    /** Basic constructor.
+     * @param sensorHandle The handle of the sensor in V-REP
+     */
+    AttitudeSensor(int sensorHandle); 
+    
+    /**
+     * Updates the sensor information, including any detected object information.
+     * @param detectPoint Coordinates of the closest detected point.
+     * @param detectHandle The handle of the detected object. 
+     * @param detectSurface Normal vector of the detected surface.
+     * 
+     * See the <a href="http://www.coppeliarobotics.com/helpFiles/en/regularApi/simReadProximitySensor.htm">V-REP API</a> for more info. 
+
+     */
+    void update(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface);
+
+    /**
+     * Retrieves the sensor information, including any detected object information.
+     * @param detectPoint Coordinates of the closest detected point.
+     * @param detectHandle The handle of the detected object. 
+     * @param detectSurface Normal vector of the detected surface.
+     * 
+     * \returns 0 or 1, depending on the detection state of the sensor and -1 in case of any error.
+     * See the <a href="http://www.coppeliarobotics.com/helpFiles/en/regularApi/simHandleProximitySensor.htm">V-REP API</a> for more info. 
+
+     */
     int get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface);
 };
 
@@ -31,4 +50,4 @@ public:
 
 
 
-#endif // attitudeSensor_H
+

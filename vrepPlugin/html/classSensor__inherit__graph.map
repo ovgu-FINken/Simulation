@@ -1,6 +1,0 @@
-<map id="Sensor" name="Sensor">
-<area shape="rect" id="node2" href="$classAttitudeSensor.html" title="AttitudeSensor" alt="" coords="5,80,113,107"/>
-<area shape="rect" id="node3" href="$classHeightSensor.html" title="HeightSensor" alt="" coords="138,80,239,107"/>
-<area shape="rect" id="node4" href="$classPositionSensor.html" title="PositionSensor" alt="" coords="264,80,375,107"/>
-<area shape="rect" id="node5" href="$classSonar.html" title="Sonar" alt="" coords="399,80,455,107"/>
-</map>

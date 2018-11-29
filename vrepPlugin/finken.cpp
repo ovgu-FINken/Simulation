@@ -1,7 +1,7 @@
 /** 
  * @file finken.cpp 
  * \class Finken
- * \brief implementation of a Finken rotorcraft, includes communication loop
+ * \brief implementation of a Finken rotorcraft, includes communication loop.
  */
 #include "finken.h"
 #include <iostream>
@@ -40,10 +40,6 @@ std::string vrepHome=std::getenv("VREP_HOME");
 
 Finken::Finken(int fHandle, int _ac_id, int _rotorCount, int _sonarCount) : handle(fHandle), ac_id(_ac_id), rotorCount(_rotorCount), sonarCount(_sonarCount){}
 
-/*
-Finken::~Finken(){
-}
-*/
 void Finken::addSensor(std::unique_ptr<Sensor> &sensor){
     this->sensors.push_back(std::move(sensor));
     vrepLog << "Adding sensor to finken" << '\n';
@@ -287,12 +283,14 @@ void buildFinken(Finken& finken){
 
 
 void Finken::updatePos(Finken& finken) {
+    std::vector<float> dummyVector;
+    int dummyInt;
     std::vector<float> tempquat = {0,0,0,0};
     std::vector<float> temp = {0,0,0};
     std::vector<float> temp2 = {0,0,0};
     std::vector<float> oldVel = {0,0,0};
     std::vector<float> oldRotVel ={0,0,0};
-    if(finken.getSensors().at(0)->get(temp) >0) {
+    if(finken.getSensors().at(0)->get(temp, dummyInt, dummyVector) >0) {
         finken.pos[0] = temp[0];
         finken.pos[1] = temp[1];
         finken.pos[2] = temp[2];

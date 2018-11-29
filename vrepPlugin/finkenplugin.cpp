@@ -1,10 +1,8 @@
 /** 
  * @file finkenplugin.cpp 
  * \class FinkenPlugin
- * \brief implementation of the baseline functionality for the plugin and the communication, including the server class
- *
- * 
- * 
+ * \brief Implementation of the baseline functionality for the plugin and the communication with Paparazzi.
+ * \todo This could use a .h file.
  */
  
 
@@ -127,15 +125,24 @@ class Async_Server{
  */
 class FinkenPlugin: public VREPPlugin {
   public:
-    /** The io service for the server */
+    /** The io service for the server. */
     boost::asio::io_service io_service;
+    /** Pointer to the server responsible for communication with Paparazzi. */
     std::unique_ptr<Async_Server> async_server;
+    /** Empty constructor */
     FinkenPlugin() {}
+    /** No copying the Finkenplugin. */
     FinkenPlugin& operator=(const FinkenPlugin&) = delete;
+    /** No copying the Finkenplugin. */
     FinkenPlugin(const FinkenPlugin&) = delete;
+    /** Destructor. */
     virtual ~FinkenPlugin() {}
+    /* Version */
     virtual unsigned char version() const { return 1; }
-    /** loads the plugin into vrep */
+
+    /** Loads the plugin into V-REP.
+     * @returns true
+    */
     virtual bool load() {
       Log::name(name());
       std::string date = __DATE__;
@@ -144,12 +151,17 @@ class FinkenPlugin: public VREPPlugin {
       readSync.lock();
       return true;
     }
-    /** unloads the plugin */
+    /** unloads the plugin 
+     * @returns true
+    */
     virtual bool unload() {
       if (serverLoaded){io_service.stop();}
       Log::out() << "unloaded" << std::endl;
       return true;
     }
+    /** Function returning the name of the plugin .
+     * @returns Name as a string.
+    */
     virtual const std::string name() const {
       return "Finken Paparazzi Plugin";
     }
@@ -179,12 +191,14 @@ class FinkenPlugin: public VREPPlugin {
 	return NULL;
     }
 
+    /** Called when the Simulation is started. */
     void* simStart(int* auxiliaryData,void* customData,int* replyData)
     {	
 	return NULL;
     }
+
     /**
-     * Ends the simulation run and cleans up the server and Finken
+     * Ends the simulation run and cleans up the server and FINken
      */
     void* simEnd(int* auxiliaryData,void* customData,int* replyData)
     {
