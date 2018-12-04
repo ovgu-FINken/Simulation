@@ -2,10 +2,10 @@ VREP_PATH       :=${VREP_HOME}
 PAPARAZZI_HOME  ?=${PAPARAZZI_HOME}
 
 CXXFLAGS        += -Wall -O0 -g
-PLUGIN_SOURCES  := attitudesensor.cpp finken.cpp finkenplugin.cpp log.cpp positionsensor.cpp sensor.cpp sonar.cpp vrepplugin.cpp heightsensor.cpp rotor.cpp skeleton.cpp v_repLib.cpp
+PLUGIN_SOURCES  := attitudesensor.cpp finken.cpp finkenplugin.cpp log.cpp positionsensor.cpp accelerometer.cpp sensor.cpp sonar.cpp vrepplugin.cpp heightsensor.cpp rotor.cpp skeleton.cpp v_repLib.cpp
 
 TARGET          := Paparazzi
-INCLUDES        += . /usr/include/eigen3
+INCLUDES        += . /usr/include/eigen3 /usr/include/boost_1_66_0
 SRC             := ./src
 BUILD           := ./build
 LIB             := ./lib

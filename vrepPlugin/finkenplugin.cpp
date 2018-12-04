@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <positionsensor.h>
+#include <accelerometer.h>
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
@@ -24,6 +25,7 @@
 #include <boost/thread.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/format.hpp>
 #include <condition_variable>
 #include <chrono>
 #include <boost/asio.hpp>
@@ -50,9 +52,11 @@ std::unique_ptr<tcp::iostream> sPtr;
 VrepLog vrepLog;
 paparazziPacket firstPacket;
 bp::child pprzServer;
+bp::child gcs;
+std::vector<std::unique_ptr<bp::child>> paparazziClients;
 std::string pprzHome=std::getenv("PAPARAZZI_HOME");
 std::string start_server_cmd = pprzHome + "/sw/ground_segment/tmtc/server";
-std::string start_gcs_cmd = pprzHome + "/sw/ground_segment/cockpit/gcs"
+std::string start_gcs_cmd = pprzHome + "/sw/ground_segment/cockpit/gcs";
 std::string start_nps_cmd = pprzHome + "/sw/simulator/pprzsim-launch";
 
 
@@ -116,7 +120,7 @@ class Async_Server{
                         
         }
         else{
-            std::cerr << "error in accept handler: " << error.category().message(error.value()) << std::endl;
+            //std::cerr << "error in accept handler: " << error.category().message(error.value()) << std::endl;
         }
         start_accept();
     }
@@ -191,7 +195,7 @@ class FinkenPlugin: public VREPPlugin {
             vrepLog << "[VREP] server done" << '\n';
             std::cout << start_server_cmd << '\n';
             pprzServer = bp::child(start_server_cmd, "-n");
-            pprzServer.detach();
+            gcs = bp::child(start_gcs_cmd);
         }
         else {
             vrepLog << "[VREP] ScriptLoader not found, not starting server" << '\n';
@@ -203,14 +207,7 @@ class FinkenPlugin: public VREPPlugin {
     /** Called when the Simulation is started. */
     void* simStart(int* auxiliaryData,void* customData,int* replyData)
     {   
-        try {
-            std::cout << start_nps_cmd << '\n';
-            bp::child nps(start_nps_cmd, "-a Test", "-t nps");
-            nps.detach();
-        }
-        catch (std::exception& e) {
-            pprzServer.terminate();
-        }
+        
 	return NULL;
     }
 
@@ -230,6 +227,10 @@ class FinkenPlugin: public VREPPlugin {
         //restart the ioservice to prepare for a new simulation
         boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
 	    vrepLog << "[VREP] successfully reset server" << std::endl;
+
+        //pprzServer.terminate();
+        //gcs.terminate();
+        paparazziClients.clear();
         return NULL;
     }
     /**
@@ -237,10 +238,16 @@ class FinkenPlugin: public VREPPlugin {
      */
     void* action(int* auxiliaryData,void* customData,int* replyData)
     {   
-	try {
-	
-		vrepLog << "[VREP] simulated copters: " << simFinken.size() << std::endl;
+	try {   
+
+		    vrepLog << "[VREP] simulated copters: " << simFinken.size() << std::endl;
         	auto actionStart = Clock::now();
+            std::string coptername = "Test";
+            for(auto&& pFinken : simFinken) {
+                if(!pFinken->connected){                    
+                    paparazziClients.emplace_back(new bp::child(start_nps_cmd, "-a", coptername, "-t", "nps"));
+                } 
+            }
 
 	        // if there is no finken connected to paparazzi yet, we do nothing:
 	        if(std::none_of(simFinken.begin(), simFinken.end(), 
