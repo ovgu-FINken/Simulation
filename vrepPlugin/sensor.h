@@ -16,7 +16,7 @@ public:
      * Constructor. 
      * @param sensorHandle the handle of the sensor in vrep
      * */
-    Sensor(int sensorHandle);
+    Sensor(int sensorHandle) : handle(sensorHandle){}
     /**
      * Calls for Vrep to update the sensor information.
      * See specific sensor documentation for parameter information.
@@ -29,6 +29,7 @@ public:
     virtual int get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface)=0;
     
     /** Retrieves the sensor handle. */
-    virtual int getHandle();
-    virtual int get(double &d);
+    virtual int getHandle() { return handle; }
+    virtual void get(float& d) { d=0; }
+    virtual void get(float d) {  }
 };
