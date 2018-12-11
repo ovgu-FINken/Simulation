@@ -1,21 +1,20 @@
-import plotly.plotly as py
-import plotly.graph_objs as go
-import plotly.figure_factory as FF
+import matplotlib.pyplot as plt
 from os.path import expanduser
 
 import numpy as np
 import pandas as pd
 home = expanduser("~")
-df = pd.read_csv('straight-y.csv')
+df = pd.read_csv('circle.csv',sep='\t')
+print(df)
 
-sample_data_table = FF.create_table(df.head())
-py.iplot(sample_data_table, filename='sample-data-table')
-
-trace = go.Scatter(x = df['AAPL_x'], y = df['AAPL_y'],
-                  name='Share Prices (in USD)')
-layout = go.Layout(title='Apple Share Prices over time (2014)',
-                   plot_bgcolor='rgb(230, 230,230)', 
-                   showlegend=True)
-fig = go.Figure(data=[trace], layout=layout)
-
-py.iplot(fig, filename='apple-stock-prices')
+y = df['y']
+x = df['x']
+time = df['Time']
+time = time - 100
+plt.plot(time, x, 'r-', label='x')
+plt.plot(time, y, 'b-', label='y')
+plt.legend(loc='upper left')
+plt.xlabel('Time')
+plt.ylabel('Position')
+plt.savefig('circle.png')
+plt.show()
