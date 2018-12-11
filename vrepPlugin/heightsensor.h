@@ -1,7 +1,7 @@
 #pragma once
 
 #include "sensor.h"
-
+#include <boost/random.hpp>
 
 /**
  * Class implementing a heightsensor
@@ -12,7 +12,13 @@ public:
     /** Basic constructor.
      * @param sensorHandle the handle of the sensor in V-REP 
      */
-    HeightSensor(int sensorHandle);
+    HeightSensor(int sensorHandle, double sigma, boost::random::mt19937& gen);
+
+
+    double sigma;
+    boost::random::uniform_real_distribution<> dist;
+    boost::random::mt19937& gen;
+
 
     /**
      * Retrieves the sensor information, including any detected object information.
@@ -25,7 +31,7 @@ public:
 
      */
     int get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface);
-    
+    void get(float& test);
     /**
      * Updates the sensor information, including any detected object information.
      * @param detectPoint Coordinates of the closest detected point.

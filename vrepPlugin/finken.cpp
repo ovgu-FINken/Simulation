@@ -14,7 +14,9 @@
 #include <boost/asio.hpp>
 #include <chrono>
 #include <mutex>
-
+#include <ctime>
+#include <cstdint>
+#include <boost/random.hpp>
 ofstream csvdata;
 
 using std::endl;
@@ -230,7 +232,8 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
  */
 void buildFinken(Finken& finken){
     vrepLog << "[FINK] building finken" << std::endl;
-
+    std::time_t now = std::time(0);
+    finken.gen = boost::random::mt19937{static_cast<std::uint32_t>(now)};
     int foundSensorCount = 0, foundBaseCount = 0;
 
     //get the baseHandle which is used for attitude calculations
@@ -258,17 +261,11 @@ void buildFinken(Finken& finken){
         if(i < finken.sonarCount){
             std::unique_ptr<Sensor> ps(new Sonar (proxSensorHandles[i]));
             finken.addSensor(ps);
-        }
-        //the rest are HeightSensors:
-        else {
-            std::unique_ptr<Sensor> hs(new HeightSensor(proxSensorHandles[i]));
-            finken.addSensor(hs);
-        }
-
-    
+        }    
     }
-
-
+    double sigma = -0.2;
+    std::unique_ptr<Sensor> hs(new HeightSensor(finken.baseHandle, sigma, finken.gen));
+    finken.addSensor(hs);
     //Grab all Rotors and add them to the finken:
 
     for(int i = 0; i<finken.rotorCount; i++){
@@ -283,6 +280,8 @@ void buildFinken(Finken& finken){
 
 
 void Finken::updatePos(Finken& finken) {
+    double testNoise = 0;
+    finken.sensors.at(finken.sensors.size()-1)->get(testNoise);
     std::vector<float> dummyVector;
     int dummyInt;
     std::vector<float> tempquat = {0,0,0,0};

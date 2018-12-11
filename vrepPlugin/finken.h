@@ -19,6 +19,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
+#include <boost/random.hpp>
 #include <mutex>
 #include <vector>
 #include <v_repLib.h>
@@ -131,6 +132,9 @@ public:
     bool connected = 0;
     /** The thread object for running the copter loop. */
     std::thread runThread;
+
+    /** Random number generator */
+    boost::random::mt19937 gen;
 
     /** Vector storing the commands provided by Paparazzi */
     std::vector<double> commands = {0,0,0,0};

@@ -30,4 +30,5 @@ public:
     
     /** Retrieves the sensor handle. */
     virtual int getHandle();
+    virtual int get(double &d);
 };
