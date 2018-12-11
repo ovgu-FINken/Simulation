@@ -30,30 +30,37 @@ DEPS          := $(wildcard ${BUILD}/*.o.d) $(wildcard ${PLUGIN_BUILD}/*.o.d)
 vpath %.cpp ${VREP_SRC}:${PLUGIN_SRC}:${SRC}
 vpath %.o ${PLUGIN_BUILD}:${BUILD}
 
-.PHONY: all install clean distclean
+.PHONY: all install clean doc
 
 all: ${TARGET}
 
 ${PLUGIN_BUILD} ${BUILD} ${LIB}: %:
-	mkdir $@
+	@mkdir $@
 
 ${TARGET}: ${OBJECTS} ${PLUGIN_OBJS} ${VREP_OBJS} ${CUSTOM_OBJS} | ${LIB}
-	${CXX} -o $@ ${LDFLAGS} $^ ${LDPATHS} ${LIBS}
+	@echo "Linking $@ from [$^]"
+	@${CXX} -o $@ ${LDFLAGS} $^ ${LDPATHS} ${LIBS}
 
 ${OBJECTS}: ${BUILD}/%.o: %.cpp | ${BUILD}
-	${CXX} -c -MM -MT $@ ${CXXFLAGS} ${SYMBOLS} -o $@.d $< ${INCLUDES}
-	${CXX} -c ${CXXFLAGS} ${SYMBOLS} -o $@ $< ${INCLUDES}
+	@echo "Compiling $@ from $<"
+	@${CXX} -c -MM -MT $@ ${CXXFLAGS} ${SYMBOLS} -o $@.d $< ${INCLUDES}
+	@${CXX} -c ${CXXFLAGS} ${SYMBOLS} -o $@ $< ${INCLUDES}
 
 ${PLUGIN_BUILD}/%.o: %.cpp | ${PLUGIN_BUILD}
-	${CXX} -c -MM -MT $@ ${CXXFLAGS} ${SYMBOLS} -o $@.d $< ${INCLUDES}
-	${CXX} -c ${CXXFLAGS} ${SYMBOLS} -o $@ $< ${INCLUDES}
+	@echo "Compiling $@ from $<"
+	@${CXX} -c -MM -MT $@ ${CXXFLAGS} ${SYMBOLS} -o $@.d $< ${INCLUDES}
+	@${CXX} -c ${CXXFLAGS} ${SYMBOLS} -o $@ $< ${INCLUDES}
 
 install: ${TARGET}
-	cp $< ${VREP_PATH}
+	@echo "Install $< to ${VREP_PATH}"
+	@cp $< ${VREP_PATH}
 
 clean:
-	rm -f  ${TARGET} ${OBJECTS} ${DEPS}
-	rm -rf ${PLUGIN_BUILD}
-	rmdir  ${BUILD} ${LIB}
+	@echo "Cleaning"
+	@rm -rf ${PLUGIN_BUILD} ${BUILD} ${LIB} ./latex ./html
+
+doc:
+	@echo "Generating Documentation"
+	@doxygen Doxyfile
 
 -include ${DEPS}

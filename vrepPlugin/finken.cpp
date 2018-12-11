@@ -34,7 +34,7 @@ std::timed_mutex readSync;
 vrepPacket outPacket;
 paparazziPacket inPacket;
 
-std::string vrepHome=std::getenv("VREP_HOME");
+std::string vrepHome;
 
 
 
@@ -85,6 +85,14 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         nav_block = inPacket.block_ID;
         curBlock = nav_block;
         std::cout << "setting block to " << std::to_string(nav_block) << std::endl;
+        if(vrepHome.empty()) {
+          try {
+            vrepHome=std::getenv("VREP_HOME");
+          } catch(const std::exception& e) {
+            vrepLog << "Error: VREP_HOME not set" << std::endl;
+            vrepHome=std::getenv("HOME");
+          }
+        }
         csvdata.open((vrepHome + "/vreplogs/navBlock" + std::to_string(nav_block) + ".csv").c_str());
         csvdata << "TIME,NE,SE,SW,NW,Quat.x,Quat.y,Quat.z,Quat.w,EAST,NORTH,UP" << "\n";
         csvdata << simGetSimulationTime() << ",";
