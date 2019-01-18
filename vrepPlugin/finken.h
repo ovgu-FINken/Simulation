@@ -29,6 +29,7 @@
 #include "heightsensor.h"
 #include "rotor.h"
 #include "positionsensor.h"
+#include "accelerometer.h"
 
 
 
@@ -41,8 +42,43 @@ using boost::filesystem::current_path;
 using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
 
-extern std::timed_mutex sendSync;
-extern std::timed_mutex readSync;
+
+
+extern std::mutex readMutex, sendMutex, syncMutex;
+extern std::condition_variable cv_read, cv_send;
+extern bool readyToSend;
+
+struct Sync {
+  private:
+    Eigen::Matrix<bool, Eigen::Dynamic, 1> mData;
+
+  public:
+    size_t extend() { 
+      std::unique_lock<std::mutex> lk(syncMutex); 
+      size_t i = mData.rows(); 
+      mData.resize(i+1, 1); 
+      mData(i) = false; 
+      return i;
+    }
+    void set(size_t i) { 
+      std::unique_lock<std::mutex> lk(syncMutex);
+      mData(i)=true;
+    }
+    void unset() {
+        mData.setZero();
+    }
+    operator bool() const { 
+      std::unique_lock<std::mutex> lk(syncMutex);
+      return mData.prod();
+    }
+    void clear() {
+      std::unique_lock<std::mutex> lk(syncMutex);
+      mData.resize(0,1);
+    }
+  friend std::ostream& operator<<(std::ostream& o, const Sync s);
+};
+extern struct Sync readSync;
+
 
 
 /**
@@ -96,8 +132,10 @@ extern VrepLog  vrepLog;
 class Finken
 {
 private:
-     std::vector<std::unique_ptr<Sensor>> sensors;
+     std::vector<std::unique_ptr<Sensor>> sonars;
      std::vector<std::unique_ptr<Rotor>> rotors;
+     
+
 public:
     /** Basic Empty Constructor */
     Finken();
@@ -108,9 +146,12 @@ public:
      * @param rotorCount the amount of rotors the copter has.
      * @param sonarCount the amount of sonars the copter has.
      */
-    Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount);
+    Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount, std::string ac_name);
     /** Basic destructor */
-    ~Finken() { runThread.join(); }
+    ~Finken() { 
+        readSync.set(this->syncID);
+        runThread.join();         
+    }
     /** Integer representing the handle of the copter object in V-REP */
     int handle;
 
@@ -128,8 +169,24 @@ public:
     /** The number of sonars the copter has */
     int sonarCount;
 
+    /** The name of the aircraft */
+    std::string ac_name;
+
     /** Current connection status of the copter. **/
     bool connected = 0;
+
+    /** the ID used for the thread syncrhonization **/
+    size_t syncID;
+
+    /** pointer to heightSensor **/
+    std::unique_ptr<HeightSensor> heightSensor;
+
+    /** pointer to accelerometer **/
+    std::unique_ptr<Accelerometer> accelerometer;
+
+    /** pointer to positionSensor **/
+    std::unique_ptr<PositionSensor> positionSensor;
+
     /** The thread object for running the copter loop. */
     std::thread runThread;
 
@@ -165,7 +222,7 @@ public:
      */
     ///@{
     /** Adding sensors to the copter. */
-    void addSensor(std::unique_ptr<Sensor> &sensor);
+    void addSonar(std::unique_ptr<Sensor> &sensor);
     /** Adding rotors to the copter. */
     void addRotor(std::unique_ptr<Rotor> &rotor);
     ///@}    
@@ -205,7 +262,7 @@ public:
     void updatePos(Finken& finken);
 
     /** returns a vector containing all sensors of the finken */
-    std::vector<std::unique_ptr<Sensor>> &getSensors();
+    std::vector<std::unique_ptr<Sensor>> &getSonars();
 
     /** returns a vector containing all rotors of the finken */
     std::vector<std::unique_ptr<Rotor>> &getRotors();

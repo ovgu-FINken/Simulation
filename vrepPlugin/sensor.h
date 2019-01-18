@@ -1,6 +1,6 @@
 #pragma once 
 #include <vector>
-
+#include <iostream>
 /** 
  * @file sensor.cpp 
  * \class Sensor
@@ -29,7 +29,9 @@ public:
     virtual int get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface)=0;
     
     /** Retrieves the sensor handle. */
-    virtual int getHandle() { return handle; }
-    virtual void get(float& d) { d=0; }
-    virtual void get(float d) {  }
+    virtual int getHandle();
+
+    virtual void get_with_error(double &d){
+        std::cerr << "calling base get_with_Error function, this should never happen." << '\n' ;
+        };
 };

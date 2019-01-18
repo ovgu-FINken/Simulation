@@ -14,7 +14,6 @@ public:
      */
     HeightSensor(int sensorHandle, double sigma, boost::random::mt19937& gen);
 
-
     double sigma;
     boost::random::uniform_real_distribution<> dist;
     boost::random::mt19937& gen;
@@ -31,7 +30,11 @@ public:
 
      */
     int get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface);
-    void get(float& test);
+
+    /** TODO: doc, possibly remove inheritance architecture for sensors 
+     */
+    void get(float &height);
+    void get_with_error(float& height);
     /**
      * Updates the sensor information, including any detected object information.
      * @param detectPoint Coordinates of the closest detected point.
