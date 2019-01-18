@@ -1,6 +1,6 @@
 #pragma once
 #include "sensor.h"
-
+#include <boost/random.hpp>
 
 
 class PositionSensor: public Sensor{
@@ -9,7 +9,12 @@ public:
     /** Basic constructor.
      * @param sensorHandle the handle of the sensor in V-REP 
      */
-    PositionSensor(int sensorHandle);
+    PositionSensor(int sensorHandle, double sigma, boost::random::mt19937& gen);
+
+    double sigma;
+    boost::random::uniform_real_distribution<> dist;
+    boost::random::mt19937& gen;
+
 
     /**
      * Updates the sensor information, including any detected object information.
@@ -31,6 +36,9 @@ public:
      * See the <a href="http://www.coppeliarobotics.com/helpFiles/en/regularApi/simHandleProximitySensor.htm">V-REP API</a> for more info. 
      */
     int get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface);
+
+    void get(std::vector<float> &position);
+    void get_with_error(std::vector<float> &position);
 };
 
 

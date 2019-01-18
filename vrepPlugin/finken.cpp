@@ -17,6 +17,7 @@
 #include <ctime>
 #include <cstdint>
 #include <boost/random.hpp>
+
 ofstream csvdata;
 
 using std::endl;
@@ -31,8 +32,11 @@ std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
 /** Thrust values in Newton coressponding to the trottle values */
 std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
 
-std::timed_mutex sendSync;
-std::timed_mutex readSync;
+Sync readSync;
+std::mutex readMutex, sendMutex, syncMutex;
+std::condition_variable cv_read, cv_send;
+bool readyToSend;
+
 vrepPacket outPacket;
 paparazziPacket inPacket;
 
@@ -40,27 +44,32 @@ std::string vrepHome=std::getenv("VREP_HOME");
 
 
 
-Finken::Finken(int fHandle, int _ac_id, int _rotorCount, int _sonarCount) : handle(fHandle), ac_id(_ac_id), rotorCount(_rotorCount), sonarCount(_sonarCount){}
 
-void Finken::addSensor(std::unique_ptr<Sensor> &sensor){
-    this->sensors.push_back(std::move(sensor));
-    vrepLog << "Adding sensor to finken" << '\n';
+Finken::Finken(int fHandle, int _ac_id, int _rotorCount, int _sonarCount, std::string _ac_name) : handle(fHandle), ac_id(_ac_id), rotorCount(_rotorCount), sonarCount(_sonarCount) {
+    ac_name = _ac_name;
+}
+
+void Finken::addSonar(std::unique_ptr<Sensor> &sensor){
+    this->sonars.emplace_back(std::move(sensor));
+    vrepLog << "Adding sonar to finken" << '\n';
 }
 void Finken::addRotor(std::unique_ptr<Rotor> &rotor){
     vrepLog << "Adding rotor with name" << simGetObjectName(rotor->handle) << '\n';
     this->rotors.push_back((std::move(rotor)));
 }
 
-std::vector<std::unique_ptr<Sensor>> &Finken::getSensors(){
-    return this->sensors;
+
+std::vector<std::unique_ptr<Sensor>> &Finken::getSonars(){
+    return this->sonars;
 }
 std::vector<std::unique_ptr<Rotor>> &Finken::getRotors(){
     return this->rotors;
 }
 
 void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
-  auto runStart = Clock::now();
+    auto runStart = Clock::now();
     try {
+        this->syncID = readSync.extend();
         vrepLog << "[FINK] client connected" << std::endl;
 	    int simState = simGetSimulationState();
 	    vrepLog << "[FINK] simulation state: " << simState << std::endl;
@@ -70,7 +79,6 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         buildFinken(*this);
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         //first connection:
-        size_t id;
         int connection_nb =1;
         int commands_nb = 4;
         vrepLog << "[FINK] first connection" << std::endl;
@@ -97,19 +105,21 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         std::cout << "[FINK] first connection successfully read" << std::endl;
         
         
-        
 
-        readSync.unlock();
-        if(!sendSync.try_lock_for(std::chrono::seconds(10)))
-            throw std::runtime_error("Server blocked for more than 10 seconds");
-        /*while (!sendSync.load());{
-            //wait for vrep to actually apply the motor forces
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        }*/
-        //sendSync = false;
-
+        readSync.set(this->syncID);
+        cv_read.notify_all();
+        {
+            std::unique_lock<std::mutex> lck(sendMutex);
+            if(cv_send.wait_for(lck, std::chrono::seconds(5), [](){return readyToSend;})){
+            //all good, vrep done calculating
+            }
+            else{
+                throw std::runtime_error("Finken waiting for more than 5 seconds");
+            }
+        }
         //update position
         updatePos(*this);
+        
 
         //send initial position packet
         {
@@ -130,8 +140,6 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             *paparazzi-vrep loop
             */
         for (;;){
-
-            auto runStart = Clock::now();
             auto then = Clock::now();
             int commands_nb = 4;
             //receive data:
@@ -159,18 +167,20 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 
             //vrep sim loop
             then = Clock::now();
-            readSync.unlock();
-            if(!sendSync.try_lock_for(std::chrono::seconds(2)))
-                throw std::runtime_error("Server blocked for more then 2 seconds");
-            /*while (!sendSync.load());{
-                //wait for vrep to actually apply the motor forces
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            }*/
+            readSync.set(this->syncID);
+            cv_read.notify_all();
             now = Clock::now();
             vrepLog << "[FINK] time finken is waiting for vrep: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl << std::endl;
-
             then = Clock::now();
-            //sendSync = false;
+            {
+                std::unique_lock<std::mutex> lck(sendMutex);
+                if(cv_send.wait_for(lck, std::chrono::seconds(5), [](){return readyToSend;})){
+                    //all good, vrep done calculating
+                }            
+                else{
+                    throw std::runtime_error("Finken waiting for more than 5 seconds");
+                }
+            }
             updatePos(*this);
             //send position data
             {
@@ -231,6 +241,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
  *
  */
 void buildFinken(Finken& finken){
+    double sigma = 0.2; //TODO: sensor registration via vrep so sigma can be set indivdually for each sensor from the GUI
     vrepLog << "[FINK] building finken" << std::endl;
     std::time_t now = std::time(0);
     finken.gen = boost::random::mt19937{static_cast<std::uint32_t>(now)};
@@ -238,7 +249,7 @@ void buildFinken(Finken& finken){
 
     //get the baseHandle which is used for attitude calculations
     int* baseHandles = simGetObjectsInTree(finken.handle, sim_object_dummy_type, 1, &foundBaseCount);    
-    for(unsigned int i=0;i<foundBaseCount;i++) {
+    for(int i=0;i<foundBaseCount;i++) {
       char* dummyNameTemp = simGetObjectName(baseHandles[i]);
       std::string dummyName  = dummyNameTemp;
       simReleaseBuffer(dummyNameTemp);
@@ -251,21 +262,17 @@ void buildFinken(Finken& finken){
       }
     }
     //create positionsensor and add to the finken:
-    std::unique_ptr<Sensor> posSensor(new PositionSensor (finken.baseHandle));
-    finken.addSensor(posSensor);
-
-
+    finken.positionSensor.reset(new PositionSensor (finken.baseHandle, sigma, finken.gen));
     int* proxSensorHandles = simGetObjectsInTree(finken.handle, sim_object_proximitysensor_type, 1, &foundSensorCount);
     for(int i = 0; i<foundSensorCount; i++){
         //we have sonarCount sonars:
         if(i < finken.sonarCount){
             std::unique_ptr<Sensor> ps(new Sonar (proxSensorHandles[i]));
-            finken.addSensor(ps);
+            finken.addSonar(ps);
         }    
     }
-    double sigma = -0.2;
-    std::unique_ptr<Sensor> hs(new HeightSensor(finken.baseHandle, sigma, finken.gen));
-    finken.addSensor(hs);
+    
+    finken.heightSensor.reset(new HeightSensor(finken.baseHandle, sigma, finken.gen));
     //Grab all Rotors and add them to the finken:
 
     for(int i = 0; i<finken.rotorCount; i++){
@@ -280,24 +287,22 @@ void buildFinken(Finken& finken){
 
 
 void Finken::updatePos(Finken& finken) {
-    double testNoise = 0;
-    finken.sensors.at(finken.sensors.size()-1)->get(testNoise);
-    std::vector<float> dummyVector;
-    int dummyInt;
+   
+
+    float height;
+    std::vector<float> position = {0,0,0};
     std::vector<float> tempquat = {0,0,0,0};
-    std::vector<float> temp = {0,0,0};
-    std::vector<float> temp2 = {0,0,0};
+    std::vector<float> velocity = {0,0,0};
+    std::vector<float> rotVelocity = {0,0,0};
     std::vector<float> oldVel = {0,0,0};
     std::vector<float> oldRotVel ={0,0,0};
-    if(finken.getSensors().at(0)->get(temp, dummyInt, dummyVector) >0) {
-        finken.pos[0] = temp[0];
-        finken.pos[1] = temp[1];
-        finken.pos[2] = temp[2];
-    }
-    else {
-      simAddStatusbarMessage("Error retrieveing Finken Base Position");
-      vrepLog << "[FINK] Error retrieveing Finken Base Position. Handle:" << finken.handle << std::endl;
-    }
+
+    finken.positionSensor->get_with_error(position);
+    finken.pos[0] = position[0];
+    finken.pos[1] = position[1];
+    finken.heightSensor->get_with_error(height);
+    finken.pos[2] = height;
+
     if(simGetObjectQuaternion(finken.baseHandle, -1, &tempquat[0]) > 0) {
         //returns quat as x,y,z,w
         finken.quat[0] = tempquat[0];
@@ -310,19 +315,19 @@ void Finken::updatePos(Finken& finken) {
       simAddStatusbarMessage("error retrieveing Finken Base Orientation");
     }
 
-    if(simGetObjectVelocity(finken.baseHandle, &temp[0], &temp2[0]) > 0) {
-        finken.vel[0] = temp[0];
-        finken.vel[1] = temp[1];
-        finken.vel[2] = temp[2];
-        finken.rotVel[0] = temp2[0];
-        finken.rotVel[1] = temp2[1];
-        finken.rotVel[2] = temp2[2];
+    if(simGetObjectVelocity(finken.baseHandle, &velocity[0], &rotVelocity[0]) > 0) {
+        finken.vel[0] = velocity[0];
+        finken.vel[1] = velocity[1];
+        finken.vel[2] = velocity[2];
+        finken.rotVel[0] = rotVelocity[0];
+        finken.rotVel[1] = rotVelocity[1];
+        finken.rotVel[2] = rotVelocity[2];
         std::transform(finken.vel.begin(), finken.vel.end(), oldVel.begin(), finken.accel.begin(),
             [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});
         std::transform(finken.rotVel.begin(), finken.rotVel.end(), oldRotVel.begin(), finken.rotAccel.begin(),
             [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});
-        oldVel = temp;
-        oldRotVel = temp2;
+        oldVel = velocity;
+        oldRotVel = rotVelocity;
     }
     else {
         simAddStatusbarMessage("error retrieving finken velocity");
@@ -359,7 +364,7 @@ void remove_item(int id) {
 double thrustFromThrottle(double throttle) {
     if (throttle <= 0) return 0;
     else if (throttle ==1) return 2.03;
-    for(int i = 0; i<throttlevalues.size(); i++){
+    for(unsigned int i = 0; i<throttlevalues.size(); i++){
         if(throttle == throttlevalues[i]) return thrustvalues[i];
         else if (throttle < throttlevalues[i]){
             // y = y_1 + (x-x_1)*(y_2-y_2)/(x_2-x_1)

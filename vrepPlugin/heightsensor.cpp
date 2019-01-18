@@ -20,10 +20,19 @@ void HeightSensor::update(std::vector<float> &detectPoint, int &detectHandle, st
 
 
 int HeightSensor::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
-    return simReadProximitySensor(this->getHandle(), &detectPoint[0], &detectHandle, &detectSurface[0]);
+    return 1;
 }
 
-void HeightSensor::get(float& test){
-    test += this->dist(this->gen);
-    std::cout << test << "/n";
+
+
+void HeightSensor::get_with_error(float& heightValue){
+    double error = this->dist(this->gen);
+    this->get(heightValue);
+    heightValue += error;    
+}
+
+void HeightSensor::get(float& heightValue){
+    std::vector<float> position = {0,0,0};
+    simGetObjectPosition(this->getHandle(), -1, &position[0]); 
+    heightValue = position.at(2);
 }
