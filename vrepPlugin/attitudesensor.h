@@ -20,7 +20,7 @@ public:
     /** Basic constructor.
      * @param sensorHandle The handle of the sensor in V-REP
      */
-    AttitudeSensor(int sensorHandle); 
+    AttitudeSensor(int sensorHandle, double sigma, boost::random::mt19937& gen);
     
     /**
      * Updates the sensor information, including any detected object information.

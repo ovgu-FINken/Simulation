@@ -9,30 +9,37 @@
 #include "v_repLib.h"
 #include <iostream>
 
-HeightSensor::HeightSensor(int sensorHandle, double sigma, boost::random::mt19937& gen) : Sensor::Sensor(sensorHandle), sigma(sigma), dist(boost::random::uniform_real_distribution<> {-sigma, sigma}), gen(gen){
+HeightSensor::HeightSensor(int sensorHandle, double sigma, boost::random::mt19937& gen) : Sensor::Sensor(sensorHandle, sigma, gen){
+    sensorType = SensorTypes::Height;
     std::cout << "creating height sensor with handle " << sensorHandle << '\n';
 }
 
 
-void HeightSensor::update(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface) {
-    simHandleProximitySensor(this->getHandle(), &detectPoint[0], &detectHandle, &detectSurface[0]);
+void HeightSensor::update() {
+    int detectedHandle = 0;
+    std::vector<float> detectedPoint = {0,0,0,0};
+    std::vector<float> detectedSurfaceNormalVector = {0,0,0};
+    int retVal = simHandleProximitySensor(this->getHandle(), &detectedPoint[0], &detectedHandle, &detectedSurfaceNormalVector[0]);
+    if (retVal == -1) {
+        throw std::runtime_error("Error retrieving position Sensor data");
+        return;
+    }
+    else if (retVal == 0){
+        //TODO: what do we do if nothing was detected?
+    }
+    values[0] = detectedPoint[3];
 }
 
 
-int HeightSensor::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
-    return 1;
+std::vector<float> HeightSensor::get(){
+    std::vector<float> errorValues = {0};
+    float error = this->dist(this->gen);
+    errorValues[0] = error + values[0];
+    return errorValues;
 }
 
 
-
-void HeightSensor::get_with_error(float& heightValue){
-    double error = this->dist(this->gen);
-    this->get(heightValue);
-    heightValue += error;    
+std::vector<float> HeightSensor::get_without_error(){
+    return values;    
 }
 
-void HeightSensor::get(float& heightValue){
-    std::vector<float> position = {0,0,0};
-    simGetObjectPosition(this->getHandle(), -1, &position[0]); 
-    heightValue = position.at(2);
-}

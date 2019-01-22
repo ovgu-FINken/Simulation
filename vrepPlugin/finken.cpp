@@ -32,10 +32,6 @@ std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
 /** Thrust values in Newton coressponding to the trottle values */
 std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
 
-Sync readSync;
-std::mutex readMutex, sendMutex, syncMutex;
-std::condition_variable cv_read, cv_send;
-bool readyToSend;
 
 vrepPacket outPacket;
 paparazziPacket inPacket;
@@ -49,7 +45,7 @@ Finken::Finken(int fHandle, int _ac_id, int _rotorCount, int _sonarCount, std::s
     ac_name = _ac_name;
 }
 
-void Finken::addSonar(std::unique_ptr<Sensor> &sensor){
+void Finken::addSensor(std::unique_ptr<Sensor> &sensor){
     this->sonars.emplace_back(std::move(sensor));
     vrepLog << "Adding sonar to finken" << '\n';
 }
@@ -57,7 +53,6 @@ void Finken::addRotor(std::unique_ptr<Rotor> &rotor){
     vrepLog << "Adding rotor with name" << simGetObjectName(rotor->handle) << '\n';
     this->rotors.push_back((std::move(rotor)));
 }
-
 
 std::vector<std::unique_ptr<Sensor>> &Finken::getSonars(){
     return this->sonars;
@@ -104,9 +99,10 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         }
         std::cout << "[FINK] first connection successfully read" << std::endl;
         
-        
+        readData = True;
 
-        readSync.set(this->syncID);
+
+        
         cv_read.notify_all();
         {
             std::unique_lock<std::mutex> lck(sendMutex);
@@ -267,7 +263,7 @@ void buildFinken(Finken& finken){
     for(int i = 0; i<foundSensorCount; i++){
         //we have sonarCount sonars:
         if(i < finken.sonarCount){
-            std::unique_ptr<Sensor> ps(new Sonar (proxSensorHandles[i]));
+            std::unique_ptr<Sensor> ps(new Sonar (proxSensorHandles[i], sigma, finken.gen));
             finken.addSonar(ps);
         }    
     }
@@ -297,11 +293,10 @@ void Finken::updatePos(Finken& finken) {
     std::vector<float> oldVel = {0,0,0};
     std::vector<float> oldRotVel ={0,0,0};
 
-    finken.positionSensor->get_with_error(position);
+    position = finken.positionSensor->get();
     finken.pos[0] = position[0];
-    finken.pos[1] = position[1];
-    finken.heightSensor->get_with_error(height);
-    finken.pos[2] = height;
+    finken.pos[1] = position[1];    
+    finken.pos[2] = finken.heightSensor->get()[0];
 
     if(simGetObjectQuaternion(finken.baseHandle, -1, &tempquat[0]) > 0) {
         //returns quat as x,y,z,w

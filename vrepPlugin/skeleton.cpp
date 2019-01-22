@@ -2,7 +2,6 @@
  * @file skeleton.cpp
  * \brief provides the basic functionality for communication with the running vrep Simulation"
  */
-#pragma once
 #include <vrepplugin.h>
 #include <v_repLib.h>
 #include <scriptFunctionData.h>
@@ -31,7 +30,7 @@ std::vector<std::unique_ptr<Finken>> simFinken;
 #define LUA_REGISTER_COMMAND "simExtPaparazzi_register"
 
 const int inArgs_REGISTER[]={
-    //4 arguments: handle, aircraftID, rotor count, sonar count, arciraft name 
+    //5 arguments: handle, aircraftID, rotor count, sonar count, arciraft name 
     5,
     sim_script_arg_int32,0,
     sim_script_arg_int32,0,
@@ -39,6 +38,18 @@ const int inArgs_REGISTER[]={
     sim_script_arg_int32,0,
     sim_script_arg_string,0,
 };
+
+#define LUA_ADDSENSOR_COMMAND "simExtPaparazzi_addSensor"
+
+const int inArgs_ADDSENSOR[]={
+    //4 arguments: handle, handle of the finken it belongs to, type, error 
+    5,
+    sim_script_arg_int32,0,
+    sim_script_arg_int32,0,
+    sim_script_arg_string,0,
+    sim_script_arg_float,0,
+};
+
 /**
  * Function to register any FINken present in the vrep scene with the plugin.
  * Every copter needs to call this in its child script to be accesible by the plugin.
@@ -47,7 +58,6 @@ const int inArgs_REGISTER[]={
  */
 void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
 {   CScriptFunctionData D;
-    simAddStatusbarMessage("lua callback");
     std::cout << "finken registering" << '\n';
     bool success = false;
     if (D.readDataFromStack(cb->stackID,inArgs_REGISTER,inArgs_REGISTER[0],LUA_REGISTER_COMMAND))
@@ -65,6 +75,28 @@ void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
     D.writeDataToStack(cb->stackID);
     std::cout << "finken done registering" << '\n';
 
+}
+
+/**
+ * Function to register any sensor present in the vrep scene with the plugin.
+ * Every sensor needs to call this in its child script to get added to its finken.
+ *
+ */
+void LUA_ADDSENSOR_CALLBACK(SScriptCallBack* cb)
+{   CScriptFunctionData D;
+    bool success = false;
+    if (D.readDataFromStack(cb->stackID,inArgs_ADDSENSOR,inArgs_ADDSENSOR[0],LUA_ADDSENSOR_COMMAND))
+    {   
+        std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
+        int handle = inData->at(0).int32Data[0];
+        int finkenHandle = inData->at(1).int32Data[0];
+        std::string sensorType = inData->at(2).stringData[0];
+        float sigma = inData->at(3).floatData[0];
+        success = true;
+        /* \todo: actually add the sensors to the finken using this function
+    }
+    D.pushOutData(CScriptFunctionDataItem(success));
+    D.writeDataToStack(cb->stackID);
 }
 
 
@@ -108,6 +140,12 @@ extern "C" unsigned char v_repStart(void* reservedPointer,int reservedInt)
     const char* ts;
     ts = t.c_str();
     simRegisterScriptCallbackFunction(cs, ts ,LUA_REGISTER_CALLBACK);
+
+    s = "simExtPaparazzi_addSensor@" + plugin.name();
+    cs = s.c_str();
+    t = "boolean result=simExtPaparazzi_addSensor(number sensorHandle, number finkenHandle, string sensorType, float errorValue)";
+    ts = t.c_str();
+    simRegisterScriptCallbackFunction(cs, ts, LUA_ADDSENSOR_CALLBACK);
 
 
     simLockInterface(1);

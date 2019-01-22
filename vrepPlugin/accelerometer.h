@@ -15,7 +15,7 @@ public:
     /** Basic constructor
      * @param sensorHandle The handle of the object the acceleration is measured for
      */
-    Accelerometer(int sensorHandle); 
+    Accelerometer(int sensorHandle, double sigma, boost::random::mt19937& gen);
 
     /**
      * function wrapper calling actual update function

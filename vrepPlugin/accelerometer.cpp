@@ -4,8 +4,20 @@
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
-Accelerometer::Accelerometer(int sensorHandle) : Sensor::Sensor(sensorHandle){}
+/** 
+ * @file accelerometer.cpp 
+ * \class AttitudeSensor
+ * \brief Implementation of an accelerometer
+ * 
+ * \todo implement and use this.
+ */
 
+
+
+
+Accelerometer::Accelerometer(int sensorHandle, double sigma, boost::random::mt19937& gen) : Sensor::Sensor(sensorHandle, sigma, gen){
+    sensorType = SensorTypes::Acceleration;
+}
 
 void Accelerometer::update(std::vector<float> &velocities, std::vector<float> &accelerations){
             int i = 0;

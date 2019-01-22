@@ -10,26 +10,30 @@
 #include <vector>
 
 
-PositionSensor::PositionSensor(int sensorHandle, double sigma, boost::random::mt19937& gen) : Sensor::Sensor(sensorHandle), sigma(sigma), dist(boost::random::uniform_real_distribution<> {-sigma, sigma}), gen(gen){
+PositionSensor::PositionSensor(int sensorHandle, double sigma, boost::random::mt19937& gen) : Sensor::Sensor(sensorHandle, sigma, gen){
+    sensorType = SensorTypes::Position;
     std::cout << "creating position sensor with handle " << sensorHandle << '\n';
 }
 
 
-void PositionSensor::update(std::vector<float> &f, int &i, std::vector<float> &ff){}
 
-int PositionSensor::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
-    return simGetObjectPosition(this->getHandle(), -1, &detectPoint[0]);
+void PositionSensor::update(){
+    int retVal = simGetObjectPosition(this->getHandle(), -1, &values[0]);
+    if (retVal == -1) {
+        throw std::runtime_error("Error retrieving position Sensor data");
+    }
 }
 
-void PositionSensor::get_with_error(std::vector<float>& position){
-    this->get(position);
-    for(auto pos : position){
-        double error = this->dist(this->gen);
-        pos += error;
-    }        
+std::vector<float> PositionSensor::get_without_error(){
+    return values;
+}        
 
-}
 
-void PositionSensor::get(std::vector<float>& position){
-    simGetObjectPosition(this->getHandle(), -1, &position[0]); 
+std::vector<float> PositionSensor::get(){
+    std::vector<float> errorValues = {0,0,0};
+    for(auto&& error : errorValues){
+        error = this->dist(this->gen);
+    }
+    std::transform (errorValues.begin(), errorValues.end(), values.begin(), errorValues.begin(), std::plus<float>());
+    return errorValues;
 }

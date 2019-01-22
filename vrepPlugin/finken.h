@@ -42,44 +42,7 @@ using boost::filesystem::current_path;
 using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
 
-
-
-extern std::mutex readMutex, sendMutex, syncMutex;
-extern std::condition_variable cv_read, cv_send;
-extern bool readyToSend;
-
-struct Sync {
-  private:
-    Eigen::Matrix<bool, Eigen::Dynamic, 1> mData;
-
-  public:
-    size_t extend() { 
-      std::unique_lock<std::mutex> lk(syncMutex); 
-      size_t i = mData.rows(); 
-      mData.resize(i+1, 1); 
-      mData(i) = false; 
-      return i;
-    }
-    void set(size_t i) { 
-      std::unique_lock<std::mutex> lk(syncMutex);
-      mData(i)=true;
-    }
-    void unset() {
-        mData.setZero();
-    }
-    operator bool() const { 
-      std::unique_lock<std::mutex> lk(syncMutex);
-      return mData.prod();
-    }
-    void clear() {
-      std::unique_lock<std::mutex> lk(syncMutex);
-      mData.resize(0,1);
-    }
-  friend std::ostream& operator<<(std::ostream& o, const Sync s);
-};
-extern struct Sync readSync;
-
-
+extern std::timed_mutex finkenMutex;
 
 /**
  *  \brief Class for annotating log with time points

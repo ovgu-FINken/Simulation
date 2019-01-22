@@ -1,6 +1,6 @@
 #pragma once
 #include "sensor.h"
-#include <boost/random.hpp>
+
 
 
 class PositionSensor: public Sensor{
@@ -11,34 +11,23 @@ public:
      */
     PositionSensor(int sensorHandle, double sigma, boost::random::mt19937& gen);
 
-    double sigma;
-    boost::random::uniform_real_distribution<> dist;
-    boost::random::mt19937& gen;
-
+    /**
+     * Updates the sensor information
+     */
+    void update();
 
     /**
-     * Updates the sensor information, including any detected object information.
-     * @param detectPoint Coordinates of the closest detected point.
-     * @param detectHandle The handle of the detected object. 
-     * @param detectSurface Normal vector of the detected surface.
-     * 
-     * See the <a href="http://www.coppeliarobotics.com/helpFiles/en/regularApi/simReadProximitySensor.htm">V-REP API</a> for more info. 
+     * Retrieves the sensor information, including sensor noise
+     * \returns a vector storing the position 
      */
-    void update(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface);
+    std::vector<float> get();
 
     /**
-     * Retrieves the sensor information, including any detected object information.
-     * @param detectPoint Coordinates of the closest detected point.
-     * @param detectHandle The handle of the detected object. 
-     * @param detectSurface Normal vector of the detected surface.
-     * 
-     * \returns 0 or 1, depending on the detection state of the sensor and -1 in case of any error.
-     * See the <a href="http://www.coppeliarobotics.com/helpFiles/en/regularApi/simHandleProximitySensor.htm">V-REP API</a> for more info. 
+     * Retrieves the sensor information, not including sensor noise
+     * \returns a vector storing the position 
      */
-    int get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface);
+    std::vector<float>get_without_error();
 
-    void get(std::vector<float> &position);
-    void get_with_error(std::vector<float> &position);
 };
 
 
