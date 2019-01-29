@@ -4,3 +4,4 @@ build/
 vEnv
 vrepPlugin/html
 vrepPlugin/latex
+vrepPlugin/.vscode
