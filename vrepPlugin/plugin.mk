@@ -11,7 +11,7 @@ EIGEN_INCLUDE := ${VREP_PATH}/programming/include/Eigen
 PAPARAZZI_INCLUDE := ${PAPARAZZI_HOME}/sw/simulator/nps
 
 VREP_SOURCES  := v_repLib.cpp scriptFunctionData.cpp scriptFunctionDataItem.cpp
-PLUGIN_SOURCES ?= skeleton.cpp vrepplugin.cpp log.cpp attitudesensor.cpp finken.cpp accelerometer.cpp heightsensor.cpp log.cpp positionsensor.cpp sensor.cpp skeleton.cpp sonar.cpp rotor.cpp finkenPID.cpp server.cpp
+PLUGIN_SOURCES ?= skeleton.cpp vrepplugin.cpp log.cpp attitudesensor.cpp finken.cpp accelerometer.cpp heightsensor.cpp log.cpp positionsensor.cpp sensor.cpp skeleton.cpp sonar.cpp rotor.cpp 
 
 VREP_OBJS     := $(addsuffix .o, $(addprefix ${PLUGIN_BUILD}/, $(basename ${VREP_SOURCES})))
 PLUGIN_OBJS   := $(addsuffix .o, $(addprefix ${PLUGIN_BUILD}/, $(basename ${PLUGIN_SOURCES})))

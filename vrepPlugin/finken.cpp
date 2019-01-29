@@ -35,8 +35,11 @@ std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
 
 vrepPacket outPacket;
 paparazziPacket inPacket;
-
 std::string vrepHome=std::getenv("VREP_HOME");
+std::atomic<unsigned int> readyFinkenCount(0);
+std::condition_variable notifier;
+std::mutex vrepMutex;
+
 
 
 
@@ -62,9 +65,9 @@ std::vector<std::unique_ptr<Rotor>> &Finken::getRotors(){
 }
 
 void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
+    this->finkenMutex.lock();
     auto runStart = Clock::now();
     try {
-        this->syncID = readSync.extend();
         vrepLog << "[FINK] client connected" << std::endl;
 	    int simState = simGetSimulationState();
 	    vrepLog << "[FINK] simulation state: " << simState << std::endl;
@@ -99,20 +102,13 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         }
         std::cout << "[FINK] first connection successfully read" << std::endl;
         
-        readData = True;
-
-
-        
-        cv_read.notify_all();
         {
-            std::unique_lock<std::mutex> lck(sendMutex);
-            if(cv_send.wait_for(lck, std::chrono::seconds(5), [](){return readyToSend;})){
-            //all good, vrep done calculating
-            }
-            else{
-                throw std::runtime_error("Finken waiting for more than 5 seconds");
-            }
+            std::unique_lock<std::mutex> lock(vrepMutex);
+            readyFinkenCount++;
+            notifier.notify_all();
         }
+        
+        
         //update position
         updatePos(*this);
         
@@ -131,11 +127,14 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             out << outPacket;
         }
 
+
+
         csvdata << this->quat[0] << "," << this->quat[1] << "," << this->quat[2] << "," << this->quat[3] << "," << this->pos[0] <<"," << this->pos[1] << "," << this->pos[2] << "\n";
         /*
-            *paparazzi-vrep loop
-            */
+        paparazzi-vrep loop
+        */
         for (;;){
+            this->finkenMutex.lock();
             auto then = Clock::now();
             int commands_nb = 4;
             //receive data:
@@ -163,20 +162,17 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 
             //vrep sim loop
             then = Clock::now();
-            readSync.set(this->syncID);
-            cv_read.notify_all();
+            
+            {
+                std::unique_lock<std::mutex> lock(vrepMutex);
+                readyFinkenCount++;
+                notifier.notify_all();
+            }
+            
             now = Clock::now();
             vrepLog << "[FINK] time finken is waiting for vrep: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl << std::endl;
             then = Clock::now();
-            {
-                std::unique_lock<std::mutex> lck(sendMutex);
-                if(cv_send.wait_for(lck, std::chrono::seconds(5), [](){return readyToSend;})){
-                    //all good, vrep done calculating
-                }            
-                else{
-                    throw std::runtime_error("Finken waiting for more than 5 seconds");
-                }
-            }
+
             updatePos(*this);
             //send position data
             {
@@ -237,6 +233,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
  *
  */
 void buildFinken(Finken& finken){
+    
     double sigma = 0.2; //TODO: sensor registration via vrep so sigma can be set indivdually for each sensor from the GUI
     vrepLog << "[FINK] building finken" << std::endl;
     std::time_t now = std::time(0);
@@ -264,7 +261,7 @@ void buildFinken(Finken& finken){
         //we have sonarCount sonars:
         if(i < finken.sonarCount){
             std::unique_ptr<Sensor> ps(new Sonar (proxSensorHandles[i], sigma, finken.gen));
-            finken.addSonar(ps);
+            finken.addSensor(ps);
         }    
     }
     
@@ -279,13 +276,12 @@ void buildFinken(Finken& finken){
     simReleaseBuffer((char *) proxSensorHandles);
     simReleaseBuffer((char *) baseHandles);
     vrepLog << "[FINK] succesfully built finken " << finken.ac_id << std::endl; 
+    
 }
 
 
 void Finken::updatePos(Finken& finken) {
-   
-
-    float height;
+    
     std::vector<float> position = {0,0,0};
     std::vector<float> tempquat = {0,0,0,0};
     std::vector<float> velocity = {0,0,0};
@@ -327,8 +323,8 @@ void Finken::updatePos(Finken& finken) {
     else {
         simAddStatusbarMessage("error retrieving finken velocity");
     }
-
-
+    
+    
 
 }
 

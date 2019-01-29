@@ -82,6 +82,7 @@ void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
  * Every sensor needs to call this in its child script to get added to its finken.
  *
  */
+
 void LUA_ADDSENSOR_CALLBACK(SScriptCallBack* cb)
 {   CScriptFunctionData D;
     bool success = false;
@@ -93,12 +94,11 @@ void LUA_ADDSENSOR_CALLBACK(SScriptCallBack* cb)
         std::string sensorType = inData->at(2).stringData[0];
         float sigma = inData->at(3).floatData[0];
         success = true;
-        /* \todo: actually add the sensors to the finken using this function
+        // \todo: actually add the sensors to the finken using this function 
     }
     D.pushOutData(CScriptFunctionDataItem(success));
     D.writeDataToStack(cb->stackID);
 }
-
 
 /**
 * @name vrep entry points
@@ -140,13 +140,13 @@ extern "C" unsigned char v_repStart(void* reservedPointer,int reservedInt)
     const char* ts;
     ts = t.c_str();
     simRegisterScriptCallbackFunction(cs, ts ,LUA_REGISTER_CALLBACK);
-
+    
     s = "simExtPaparazzi_addSensor@" + plugin.name();
     cs = s.c_str();
     t = "boolean result=simExtPaparazzi_addSensor(number sensorHandle, number finkenHandle, string sensorType, float errorValue)";
     ts = t.c_str();
     simRegisterScriptCallbackFunction(cs, ts, LUA_ADDSENSOR_CALLBACK);
-
+    
 
     simLockInterface(1);
 

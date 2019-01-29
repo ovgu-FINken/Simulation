@@ -30,6 +30,7 @@
 #include <chrono>
 #include <boost/asio.hpp>
 #include <boost/process.hpp>
+#include <boost/random.hpp>
 #pragma GCC diagnostic ignored "-Wint-in-bool-context"
 #include <Eigen/Dense>
 #pragma GCC diagnostic pop
@@ -58,9 +59,10 @@ std::string pprzHome=std::getenv("PAPARAZZI_HOME");
 std::string start_server_cmd = pprzHome + "/sw/ground_segment/tmtc/server";
 std::string start_gcs_cmd = pprzHome + "/sw/ground_segment/cockpit/gcs";
 std::string start_nps_cmd = pprzHome + "/sw/simulator/pprzsim-launch";
-
-std::timed_mutex mtx;
-std::condition_variable cv;
+unsigned int connectedFinkenCount = 0;
+extern std::atomic<unsigned int> readyFinkenCount;
+extern std::condition_variable notifier;
+extern std::mutex vrepMutex;
 
 /**
  * \class Async_Server
@@ -113,11 +115,17 @@ class Async_Server{
                         break;
                     }
                     matchingCopterFound = true;
-                    pFinken->connect(std::move(sPtr));
-                    std::cout << "started a finken" << std::endl;
-                    connectionEstablished = true;
+                    try{
+                        pFinken->connect(std::move(sPtr));
+                        std::cout << "started a finken" << std::endl;
+                        connectionEstablished = true;
+                        connectedFinkenCount++;
+                    }
+                    catch(std::exception e){
+                        std::cout << "error connecting finken" << std::endl;
+                    }
                 }
-            } 
+            }   
             if(matchingCopterFound == false) {
                 std::cerr << "no matching copter was found" <<std::endl;
             }
@@ -161,8 +169,6 @@ class FinkenPlugin: public VREPPlugin {
       Log::name(name());
       std::string date = __DATE__;
       Log::out() << "loaded v " << date << std::endl;
-      readyToSend = false;
-      readSync.clear();
       return true;
     }
     /** unloads the plugin 
@@ -211,6 +217,7 @@ class FinkenPlugin: public VREPPlugin {
     /** Called when the Simulation is started. */
     void* simStart(int* auxiliaryData,void* customData,int* replyData)
     {   
+        connectedFinkenCount = 0;
         for(auto&& pFinken : simFinken) {
                 if(!pFinken->connected){                    
                     std::cout << "trying to pair copter #" << pFinken->ac_id << '\n';
@@ -231,9 +238,9 @@ class FinkenPlugin: public VREPPlugin {
         io_service.stop();
         io_service.reset();
         //reset the mutex to pre-Sim status
-        readyToSend=false;
         simFinken.clear();
-        readSync.clear();        
+        readyFinkenCount = 0;
+        connectedFinkenCount = 0;      
         //restart the ioservice to prepare for a new simulation
         boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
 	    vrepLog << "[VREP] successfully reset server" << std::endl;
@@ -249,6 +256,7 @@ class FinkenPlugin: public VREPPlugin {
     void* action(int* auxiliaryData,void* customData,int* replyData)
     {   
 	try {   
+
 		    vrepLog << "[VREP] simulated copters: " << simFinken.size() << std::endl;
         	auto actionStart = Clock::now();
             
@@ -258,15 +266,13 @@ class FinkenPlugin: public VREPPlugin {
             return NULL;
 	        auto then = Clock::now();
 	        //we wait for paparazzi to send us some commands:
-            if(!mtx.try_lock_for(std::chrono::seconds(2))) {
-                if(!(simGetSimulationState()&sim_simulation_advancing)) {
-                    vrepLog << "sim was already stopped, ending vrep main loop" << std::endl;
-                    return NULL;
-                }
-                else{
-                    sthrow std::runtime_error("Vrep waiting for more than 2 seconds");
-                }
+            
+            std::unique_lock<std::mutex> lock(vrepMutex);
+            
+            while(readyFinkenCount!=connectedFinkenCount) {
+                notifier.wait(lock);
             }
+
 	        auto now = Clock::now();
 	        vrepLog << "[VREP] time vrep is waiting for finken: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
 	        then =Clock::now();
@@ -278,13 +284,16 @@ class FinkenPlugin: public VREPPlugin {
                 }
             }
 	        //position data can be sent now
-	        readSync.unset();
+	        readyFinkenCount = 0;
+            for(auto&& pFinken : simFinken){
+                pFinken->finkenMutex.unlock();
+            }
             
 	        now = Clock::now();
 	        vrepLog << "[VREP] time setting rotor forces: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << 
 	        std::endl;
 	        vrepLog << "[VREP] time total finkenplugin action(): " << std::chrono::nanoseconds(now - actionStart).count()/1000000 << "ms" << std::endl;
-	
+            
         	return NULL;
 	}
 	catch (std::exception& e) {

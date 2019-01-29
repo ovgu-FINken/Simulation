@@ -42,7 +42,6 @@ using boost::filesystem::current_path;
 using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
 
-extern std::timed_mutex finkenMutex;
 
 /**
  *  \brief Class for annotating log with time points
@@ -112,7 +111,6 @@ public:
     Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount, std::string ac_name);
     /** Basic destructor */
     ~Finken() { 
-        readSync.set(this->syncID);
         runThread.join();         
     }
     /** Integer representing the handle of the copter object in V-REP */
@@ -138,9 +136,6 @@ public:
     /** Current connection status of the copter. **/
     bool connected = 0;
 
-    /** the ID used for the thread syncrhonization **/
-    size_t syncID;
-
     /** pointer to heightSensor **/
     std::unique_ptr<HeightSensor> heightSensor;
 
@@ -158,6 +153,9 @@ public:
 
     /** Vector storing the commands provided by Paparazzi */
     std::vector<double> commands = {0,0,0,0};
+
+    /** Mutex for the copter synchronization */
+    std::mutex finkenMutex;
 
     /** 
      * @anchor copterstate
@@ -185,7 +183,7 @@ public:
      */
     ///@{
     /** Adding sensors to the copter. */
-    void addSonar(std::unique_ptr<Sensor> &sensor);
+    void addSensor(std::unique_ptr<Sensor> &sensor);
     /** Adding rotors to the copter. */
     void addRotor(std::unique_ptr<Rotor> &rotor);
     ///@}    
