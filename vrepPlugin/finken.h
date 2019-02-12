@@ -30,6 +30,7 @@
 #include "rotor.h"
 #include "positionsensor.h"
 #include "accelerometer.h"
+#include "attitudesensor.h"
 
 
 
@@ -134,7 +135,7 @@ public:
     std::string ac_name;
 
     /** Current connection status of the copter. **/
-    bool connected = 0;
+    bool connected = false;
 
     /** pointer to heightSensor **/
     std::unique_ptr<HeightSensor> heightSensor;
@@ -144,6 +145,9 @@ public:
 
     /** pointer to positionSensor **/
     std::unique_ptr<PositionSensor> positionSensor;
+
+    /** pointer to positionSensor **/
+    std::unique_ptr<AttitudeSensor> attitudeSensor;
 
     /** The thread object for running the copter loop. */
     std::thread runThread;
@@ -164,17 +168,17 @@ public:
      */
     ///@{
     /** Copter position (ENU) */
-    std::vector<double> pos = {-1,-1,-1};
+    std::vector<float> pos = {-1,-1,-1};
     /** Copter Quaternion */
-    std::vector<double> quat = {-1,-1,-1,-1};
+    std::vector<float> quat = {-1,-1,-1,-1};
     /** Copter velocity */
-    std::vector<double> vel = {-1,-1,-1};
+    std::vector<float> vel = {-1,-1,-1};
     /** Copter rotational velocity (aka angular velocity) */
-    std::vector<double> rotVel ={-1,-1,-1};
+    std::vector<float> rotVel ={-1,-1,-1};
     /** Copter acceleration */
-    std::vector<double> accel = {-1,-1,-1};
+    std::vector<float> accel = {-1,-1,-1};
     /** Copter rotational acceleration (aka angular acceleration) */
-    std::vector<double> rotAccel ={-1,-1,-1};
+    std::vector<float> rotAccel ={-1,-1,-1};
     ///@}
     
     /**@name Construction functions
@@ -193,7 +197,7 @@ public:
      * to the corresponding finken in a new thread
      */
     void connect(std::unique_ptr<tcp::iostream>&& sPtr) {
-      connected=1;
+      connected=true;
       auto helper=[this,&sPtr](){run(std::move(sPtr));};
       runThread=std::move(std::thread(helper));
     }

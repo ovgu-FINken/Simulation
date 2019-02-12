@@ -31,7 +31,7 @@ public:
      * See the <a href="http://www.coppeliarobotics.com/helpFiles/en/regularApi/simReadProximitySensor.htm">V-REP API</a> for more info. 
 
      */
-    void update(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface);
+    void update();
 
     /**
      * Retrieves the sensor information, including any detected object information.
@@ -43,7 +43,8 @@ public:
      * See the <a href="http://www.coppeliarobotics.com/helpFiles/en/regularApi/simHandleProximitySensor.htm">V-REP API</a> for more info. 
 
      */
-    int get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface);
+    std::vector<float> get();
+    std::vector<float> get_without_error();
 };
 
 

@@ -25,7 +25,7 @@ public:
     /** 
      * Vector storing last velocity for acceleration calculation 
      */
-    std::vector<float> lastVelocities = {0,0,0,0,0,0};
+    std::vector<float> lastVelocities = {0,0,0,0,0,0,0,0,0,0,0,0};
 
     /**
      * Calculates the new acceleration and velocity based on the change in velocity since the last call 
@@ -33,8 +33,9 @@ public:
      * @param i unused parameter to conform to base class
      * @param accelerations ector to store acceleration[0-2] and rotational acceleration[3-5]
      */
-    void update(std::vector<float> &velocities, int &i, std::vector<float> &accelerations);
-    int get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface );
+    void update();
+    std::vector<float> get();
+    std::vector<float> get_without_error();
 };
 
 

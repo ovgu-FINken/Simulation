@@ -43,7 +43,7 @@ const int inArgs_REGISTER[]={
 
 const int inArgs_ADDSENSOR[]={
     //4 arguments: handle, handle of the finken it belongs to, type, error 
-    5,
+    4,
     sim_script_arg_int32,0,
     sim_script_arg_int32,0,
     sim_script_arg_string,0,
@@ -88,11 +88,39 @@ void LUA_ADDSENSOR_CALLBACK(SScriptCallBack* cb)
     bool success = false;
     if (D.readDataFromStack(cb->stackID,inArgs_ADDSENSOR,inArgs_ADDSENSOR[0],LUA_ADDSENSOR_COMMAND))
     {   
+        std::cout << "sensor registering" << '\n';
         std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
         int handle = inData->at(0).int32Data[0];
         int finkenHandle = inData->at(1).int32Data[0];
         std::string sensorType = inData->at(2).stringData[0];
         float sigma = inData->at(3).floatData[0];
+        for(auto&& pFinken : simFinken) {
+            if (pFinken->handle == finkenHandle) {
+                if (sensorType == "Accelerometer") {
+                    //Add acceleration Sensor
+                    std::cout << "adding acceleration sensor" << '\n';
+                    pFinken->accelerometer.reset(new Accelerometer(handle, sigma, pFinken->gen));
+                }
+                else if (sensorType == "Attitude") {
+                    //Add attitude Sensor
+                    std::cout << "adding attitude sensor" << '\n';
+                    pFinken->attitudeSensor.reset(new AttitudeSensor(handle, sigma, pFinken->gen));
+                }
+                else if (sensorType == "Height"){
+                    //add Height sensor
+                    std::cout << "adding height sensor" << '\n';
+                    pFinken->heightSensor.reset(new HeightSensor(handle, sigma, pFinken->gen));
+                }
+                else if (sensorType == "Position") {
+                    //Add acceleration Sensor
+                    std::cout << "adding position sensor" << '\n';
+                    pFinken->positionSensor.reset(new PositionSensor(handle, sigma, pFinken->gen));
+                }
+                else{
+                    std::cerr << "Unknown sensor type in finken " << finkenHandle << ": " << sensorType << ". \n"; 
+                }
+            }
+        }
         success = true;
         // \todo: actually add the sensors to the finken using this function 
     }

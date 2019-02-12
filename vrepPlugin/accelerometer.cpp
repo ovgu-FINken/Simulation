@@ -17,24 +17,30 @@
 
 Accelerometer::Accelerometer(int sensorHandle, double sigma, boost::random::mt19937& gen) : Sensor::Sensor(sensorHandle, sigma, gen){
     sensorType = SensorTypes::Acceleration;
+    //not so great implementation: 0-2: velocity, 3-5: rotVel, 6-8: accel, 9-11: rotaccel 
+    values = {0,0,0,0,0,0,0,0,0,0,0,0};
+    std::cout << "creating accel sensor with handle " << sensorHandle << '\n';
 }
 
-void Accelerometer::update(std::vector<float> &velocities, std::vector<float> &accelerations){
-            int i = 0;
-            this->update(velocities, i, accelerations);
-}
 
-void Accelerometer::update(std::vector<float> &velocities, int &i, std::vector<float> &accelerations){
-    if(simGetObjectVelocity(this->handle, &velocities[0], &velocities[3]) > 0) {
-        std::transform(velocities.begin(), velocities.end(), this->lastVelocities.begin(), accelerations.begin(),
+void Accelerometer::update(){
+    if(simGetObjectVelocity(this->handle, &values[0], &values[3]) > 0) {
+        std::transform(values.begin(), values.begin()+6, this->lastVelocities.begin(), values.begin()+6,
             [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});
-        this->lastVelocities = velocities;
+        this->lastVelocities = values;
     }
     else {
         simAddStatusbarMessage("error retrieving finken velocity");
     }
 }
 
-int Accelerometer::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
-    return 0;
+std::vector<float> Accelerometer::get(){
+    std::vector<float> errorValues = {0,0,0,0,0,0,0,0,0,0,0,0};
+    for(int i = 0; i<values.size(); i++) {
+        errorValues.at(i) = this->dist(this->gen) + values.at(i);
+    }
+    return errorValues;
+}
+std::vector<float> Accelerometer::get_without_error(){
+    return values;
 }

@@ -42,6 +42,8 @@ public:
     virtual std::vector<float> get()=0;
     
     /** Retrieves the sensor handle. */
-    virtual int getHandle();
+    virtual int getHandle(){
+        return handle;
+    }
 
 };

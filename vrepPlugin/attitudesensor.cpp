@@ -19,8 +19,17 @@ AttitudeSensor::AttitudeSensor(int sensorHandle, double sigma, boost::random::mt
 }
 
 
-void AttitudeSensor::update(std::vector<float> &f, int &i, std::vector<float> &ff){}
+void AttitudeSensor::update(){
+        simGetObjectQuaternion(handle, -1, &values[0]);
+}
 
-int AttitudeSensor::get(std::vector<float> &detectPoint, int &detectHandle, std::vector<float> &detectSurface ){
-    return 0;
+std::vector<float> AttitudeSensor::get(){
+    std::vector<float> errorValues = {0,0,0,0};
+    for(int i = 0; i<values.size(); i++) {
+        errorValues.at(i) = this->dist(this->gen) + values.at(i);
+    }
+    return errorValues;
+}
+std::vector<float> AttitudeSensor::get_without_error(){
+    return values;
 }

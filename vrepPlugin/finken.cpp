@@ -159,8 +159,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             vrepLog << "[FINK] recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl << std::endl;
             auto now = Clock::now();
             vrepLog << "[FINK] time receiving data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
-
-            //vrep sim loop
+            
             then = Clock::now();
             
             {
@@ -172,7 +171,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             now = Clock::now();
             vrepLog << "[FINK] time finken is waiting for vrep: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl << std::endl;
             then = Clock::now();
-
+            
             updatePos(*this);
             //send position data
             {
@@ -220,7 +219,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         sPtr.reset();
         connected=0;
         std::cerr <<  "cleanup finished, stopping sim" << std::endl;
-      //simAddStatusbarMessage("stopping sim from finken::run");
+        //simAddStatusbarMessage("stopping sim from finken::run");
 	    //simStopSimulation();
     	//simAdvanceSimulationByOneStep();
 
@@ -232,99 +231,63 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
  *the correct handles for the sensors & rotors
  *
  */
-void buildFinken(Finken& finken){
-    
-    double sigma = 0.2; //TODO: sensor registration via vrep so sigma can be set indivdually for each sensor from the GUI
+void buildFinken(Finken& finken){    
     vrepLog << "[FINK] building finken" << std::endl;
     std::time_t now = std::time(0);
-    finken.gen = boost::random::mt19937{static_cast<std::uint32_t>(now)};
-    int foundSensorCount = 0, foundBaseCount = 0;
-
-    //get the baseHandle which is used for attitude calculations
-    int* baseHandles = simGetObjectsInTree(finken.handle, sim_object_dummy_type, 1, &foundBaseCount);    
-    for(int i=0;i<foundBaseCount;i++) {
-      char* dummyNameTemp = simGetObjectName(baseHandles[i]);
-      std::string dummyName  = dummyNameTemp;
-      simReleaseBuffer(dummyNameTemp);
-      ssize_t endPos = dummyName.rfind('#');
-      vrepLog  << "[FINK] Found dummy element with name: "  << dummyName << endl;
-      if(dummyName.substr(0, endPos)=="SimFinken_base") {
-        finken.baseHandle=baseHandles[i];
-        vrepLog  << "[FINK]Found copter base with handle: "  << finken.baseHandle  << endl;
-        break;
-      }
-    }
-    //create positionsensor and add to the finken:
-    finken.positionSensor.reset(new PositionSensor (finken.baseHandle, sigma, finken.gen));
-    int* proxSensorHandles = simGetObjectsInTree(finken.handle, sim_object_proximitysensor_type, 1, &foundSensorCount);
-    for(int i = 0; i<foundSensorCount; i++){
-        //we have sonarCount sonars:
-        if(i < finken.sonarCount){
-            std::unique_ptr<Sensor> ps(new Sonar (proxSensorHandles[i], sigma, finken.gen));
-            finken.addSensor(ps);
-        }    
-    }
-    
-    finken.heightSensor.reset(new HeightSensor(finken.baseHandle, sigma, finken.gen));
-    //Grab all Rotors and add them to the finken:
-
+    finken.gen = boost::random::mt19937{static_cast<std::uint32_t>(now)};    
+    //add rotors to the finken
     for(int i = 0; i<finken.rotorCount; i++){
         int rHandle = simGetObjectHandle(("SimFinken_rotor_respondable" + std::to_string(i+1)).c_str());
         std::unique_ptr<Rotor> vr(new Rotor(rHandle));
         finken.addRotor(vr);
     }
-    simReleaseBuffer((char *) proxSensorHandles);
-    simReleaseBuffer((char *) baseHandles);
-    vrepLog << "[FINK] succesfully built finken " << finken.ac_id << std::endl; 
-    
+    vrepLog << "[FINK] succesfully built finken " << finken.ac_id << std::endl;     
 }
 
 
 void Finken::updatePos(Finken& finken) {
-    
-    std::vector<float> position = {0,0,0};
-    std::vector<float> tempquat = {0,0,0,0};
-    std::vector<float> velocity = {0,0,0};
-    std::vector<float> rotVelocity = {0,0,0};
-    std::vector<float> oldVel = {0,0,0};
-    std::vector<float> oldRotVel ={0,0,0};
+    std::cout << "updating accel" << '\n';
+    finken.accelerometer->update();
+    std::cout << "updating pos" << '\n';
+    finken.positionSensor->update();
+    std::cout << "updating height" << '\n';
+    finken.heightSensor->update();
+    std::cout << "updating att" << '\n';
+    finken.attitudeSensor->update();
 
+    std::vector<float> position = {0,0,0};
+    std::vector<float> velocities = {0,0,0,0,0,0,0,0,0,0,0,0};
+
+    std::cout << "grabbing sensor values" << '\n';
+    std::cout << "pos" << '\n';
     position = finken.positionSensor->get();
     finken.pos[0] = position[0];
     finken.pos[1] = position[1];    
+    std::cout << "height" << '\n';
     finken.pos[2] = finken.heightSensor->get()[0];
+    std::cout << "quat" << '\n';
+    finken.quat = finken.attitudeSensor->get();
 
-    if(simGetObjectQuaternion(finken.baseHandle, -1, &tempquat[0]) > 0) {
-        //returns quat as x,y,z,w
-        finken.quat[0] = tempquat[0];
-        finken.quat[1] = tempquat[1];
-        finken.quat[2] = tempquat[2];
-        finken.quat[3] = tempquat[3];
-        //std::cout << finken.quat[0] << " | " << finken.quat[1] << " | " << finken.quat[2] << " | " << finken.quat[3] << std::endl;
-    }
-    else {
-      simAddStatusbarMessage("error retrieveing Finken Base Orientation");
-    }
+    std::cout << "accel" << '\n';
+    velocities = finken.accelerometer->get();    
+    std::cout << "vel" << '\n';
+    finken.vel[0] = velocities[0];
+    finken.vel[1] = velocities[1];
+    finken.vel[2] = velocities[2];
+    std::cout << "rotvel" << '\n';
+    finken.rotVel[0] = velocities[3];
+    finken.rotVel[1] = velocities[4];
+    finken.rotVel[2] = velocities[5];
+    std::cout << "accel" << '\n';
+    finken.accel[0] = velocities[6];
+    finken.accel[1] = velocities[7];
+    finken.accel[2] = velocities[8];
+    std::cout << "rotaccel" << '\n';
+    finken.rotAccel[0] = velocities[9];
+    finken.rotAccel[1] = velocities[10];
+    finken.rotAccel[2] = velocities[11];
 
-    if(simGetObjectVelocity(finken.baseHandle, &velocity[0], &rotVelocity[0]) > 0) {
-        finken.vel[0] = velocity[0];
-        finken.vel[1] = velocity[1];
-        finken.vel[2] = velocity[2];
-        finken.rotVel[0] = rotVelocity[0];
-        finken.rotVel[1] = rotVelocity[1];
-        finken.rotVel[2] = rotVelocity[2];
-        std::transform(finken.vel.begin(), finken.vel.end(), oldVel.begin(), finken.accel.begin(),
-            [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});
-        std::transform(finken.rotVel.begin(), finken.rotVel.end(), oldRotVel.begin(), finken.rotAccel.begin(),
-            [](double a, double b) {return (a-b)/simGetSimulationTimeStep();});
-        oldVel = velocity;
-        oldRotVel = rotVelocity;
-    }
-    else {
-        simAddStatusbarMessage("error retrieving finken velocity");
-    }
-    
-    
+  
 
 }
 
