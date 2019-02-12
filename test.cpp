@@ -2,67 +2,52 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <atomic>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
-struct Vrep;
+std::vector<bool> finkenDone;
 
-struct Finken {
-  mutex m;
-  Vrep& vrep;
-  thread t;
+std::vector<condition_variable*> finkenCV;
 
-  Finken(Vrep& vrep);
+condition_variable cv;
+mutex m;
 
-};
+bool running = true;
 
-struct Vrep {
-  atomic<unsigned int> cnt;
-  mutex m;
-  condition_variable cv;
-  vector<Finken*> finken;
-
-  Vrep() :cnt(0) {}
-
-  void  start() {
-    while(1) {
+void run(int i) {
+  while(running) {
+    {
       unique_lock<mutex> lock(m);
-      while(cnt!=finken.size()) {
-        cv.wait(lock);
-      }
-      cnt=0;
-      cout << "Computing Simulation Step"  << endl;
-      for(auto ptr : finken)
-        ptr->m.unlock();
+      finkenDone[i]=true;
+      cv.notify_all();
+      while(finkenDone[i] && running)
+        finkenCV[i]->wait(lock);
+      if(!running) break;
     }
+    cout << "Finken " << i << " running"  <<  endl;
   }
-  void unlock() {
-    unique_lock<mutex> lock(m);
-    cnt++;
-    cv.notify_all();
-  }
-};
-
-
-void run(Finken* f) {
-    while(true) {
-      f->m.lock();
-      cout << "Comuputing next command" <<  endl;
-      f->vrep.unlock();
-    }
-  }
-
-Finken::Finken(Vrep& vrep)  : vrep(vrep),t(&run, this) {
-  vrep.finken.push_back(this);
 }
 
 int main() {
-  Vrep vrep;
-  std::vector<unique_ptr<Finken>> finken;
-  for(unsigned int i=0;i<10;i++)
-    finken.emplace_back(new Finken(vrep));
-  vrep.start();
+  const unsigned int n=10;
+  finkenDone.resize(n);
+  for(unsigned int i=0; i<n;  i++) {
+    finkenCV.emplace_back(new condition_variable());
+    thread(&run, i).detach();
+  }
+  while(running) {
+    {
+    unique_lock<mutex> lock(m);
+      for(unsigned int i=0; i<n; i++) {
+        finkenDone[i]=false;
+        finkenCV[i]->notify_all();
+      }
+      while(any_of(finkenDone.cbegin(), finkenDone.cend(), [](bool b){ return !b; }) && running)
+        cv.wait(lock);
+    }
+    cout << "VREP running" << endl;
+  }
   return 0;
 }
