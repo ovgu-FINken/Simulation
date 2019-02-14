@@ -26,6 +26,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/format.hpp>
+#include <boost/archive/archive_exception.hpp>
 #include <condition_variable>
 #include <chrono>
 #include <boost/asio.hpp>
@@ -49,7 +50,7 @@ bool serverLoaded = false;
 bool connectionEstablished = false;
 extern float execution_step_size;
 extern std::vector<std::unique_ptr<Finken>> simFinken;
-std::unique_ptr<tcp::iostream> sPtr;
+
 VrepLog vrepLog;
 paparazziPacket firstPacket;
 bp::child pprzServer;
@@ -61,10 +62,11 @@ std::string start_gcs_cmd = pprzHome + "/sw/ground_segment/cockpit/gcs";
 std::string start_nps_cmd = pprzHome + "/sw/simulator/pprzsim-launch";
 unsigned int connectedFinkenCount = 0;
 bool firstStartUp = true;
-extern std::atomic<unsigned int> readyFinkenCount;
+extern std::vector<bool> finkenDone;
+extern std::vector<std::condition_variable*> finkenCV;
 extern std::condition_variable notifier;
 extern std::mutex vrepMutex;
-
+extern bool running;
 /**
  * \class Async_Server
  * \brief Asynchronous (boost::Asio) Server class to accept new paparazzi connections and pair them with a vrep copter.
@@ -73,6 +75,7 @@ extern std::mutex vrepMutex;
  */
 class Async_Server{
     public:
+    std::unique_ptr<tcp::iostream> sPtr;
     /** Server constructor */	    
     Async_Server(boost::asio::io_service& io_service) :
       acceptor_(io_service,tcp::endpoint(tcp::v4(), 50013)){
@@ -113,8 +116,9 @@ class Async_Server{
             for(auto&& pFinken : simFinken) {
                 if (pFinken->ac_id == ac_id) {
                     if (pFinken->connected) {
-                        std::cerr << "finken with ac_id " << ac_id << "already connected" << std::endl;
-                        break;
+                        std::cerr << "finken with ac_id " << ac_id << " already connected" << std::endl;
+                        ac_id++;
+                        continue;
                     }
                     matchingCopterFound = true;
                     try{
@@ -122,6 +126,7 @@ class Async_Server{
                         std::cout << "started a finken" << std::endl;
                         connectionEstablished = true;
                         connectedFinkenCount++;
+                        break;
                     }
                     catch(std::exception e){
                         std::cout << "error connecting finken" << std::endl;
@@ -136,7 +141,6 @@ class Async_Server{
         else{
             std::cerr << "error in accept handler: " << error.category().message(error.value()) << std::endl;
         }
-        sPtr.reset(new tcp::iostream());
         start_accept();
     }
     tcp::acceptor acceptor_;
@@ -220,7 +224,7 @@ class FinkenPlugin: public VREPPlugin {
     /** Called when the Simulation is started. */
     void* simStart(int* auxiliaryData,void* customData,int* replyData)
     {   
-        
+        running = true;
 	    return NULL;
     }
 
@@ -229,22 +233,22 @@ class FinkenPlugin: public VREPPlugin {
      */
     void* simEnd(int* auxiliaryData,void* customData,int* replyData)
     {
+        running = false;
+        for(unsigned int i=0; i<simFinken.size(); i++) {
+                        finkenDone[i]=false;
+                        finkenCV[i]->notify_all();
+        }
         std::cerr << "[VREP] ending sim, resetting server" << std::endl;
 	    vrepLog << "[VREP] ending sim, resetting server" << std::endl;
         std::cerr << "[VREP] clearing paparazzi clients" << std::endl;
         paparazziClients.clear();
         //stopping and resetting the ioservice cleans up the server and any connections
         io_service.stop();
-        io_service.reset();
-        //reset the mutex to pre-Sim status        
-        std::cerr << "[VREP] clearing finken" << std::endl;
-        while(simFinken.size() > 0){
-             simFinken.clear();
-        }
-        
-        
-        readyFinkenCount = 0;
-        connectedFinkenCount = 0;        
+        io_service.reset();       
+        std::cerr << "[VREP] clearing finken" << std::endl;        
+        simFinken.clear();
+        finkenCV.clear();
+        finkenDone.clear();      
         firstStartUp = true;      
         //restart the ioservice to prepare for a new simulation
         boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
@@ -259,60 +263,66 @@ class FinkenPlugin: public VREPPlugin {
      * This function controls the other parts of the plugin and synchronizes the vrep copters with the paparazzi copters.
      */
     void* action(int* auxiliaryData,void* customData,int* replyData){ 
-	    try {   
-            if (firstStartUp) {
-                firstStartUp = false;
-                for(auto&& pFinken : simFinken) {            
-                    std::cout << "starting sim" << '\n';
-                    if(!pFinken->connected){                    
-                        std::cout << "trying to pair copter #" << pFinken->ac_id << '\n';
-                        paparazziClients.emplace_back(new bp::child(start_nps_cmd, "-a", pFinken->ac_name, "-t", "nps"));
-                    }
-                } 
-            }        
-		    vrepLog << "[VREP] simulated copters: " << simFinken.size() << std::endl;
-        	auto actionStart = Clock::now();
-            
-	        // if there is no finken connected to paparazzi yet, we do nothing:
-	        if(std::none_of(simFinken.begin(), simFinken.end(), 
-              [](const std::unique_ptr<Finken>& f){ return f->connected;}) )
-            return NULL;
-	        auto then = Clock::now();
-	        //we wait for paparazzi to send us some commands:
-            
-            std::unique_lock<std::mutex> lock(vrepMutex);
-            
-            while(readyFinkenCount!=connectedFinkenCount) {
-                notifier.wait(lock);
-            }
-
-	        auto now = Clock::now();
-	        vrepLog << "[VREP] time vrep is waiting for finken: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
-	        then =Clock::now();
-	
-	        //we apply those commands
-	        for(auto&& pFinken : simFinken) {
-                if (pFinken->connected) {
-                    pFinken->setRotorSpeeds();
+            try {   
+                if (firstStartUp) {
+                    firstStartUp = false;
+                    for(auto&& pFinken : simFinken) {            
+                        if(!pFinken->connected){                    
+                            std::cout << "trying to pair copter #" << pFinken->ac_id << '\n';
+                            paparazziClients.emplace_back(new bp::child(start_nps_cmd, "-a", pFinken->ac_name, "-t", "nps"));
+                            
+                        }
+                    } 
+                }        
+                vrepLog << "[VREP] simulated copters: " << simFinken.size() << std::endl;
+                auto actionStart = Clock::now();
+                
+                // if there is no finken connected to paparazzi yet, we do nothing:
+                if(std::none_of(simFinken.begin(), simFinken.end(), [](const std::unique_ptr<Finken>& f){ return f->connected;}) ){
+                    return NULL;
                 }
+                    
+                auto then = Clock::now();
+                /*
+                //send position data and get new commands:
+                {
+                    std::unique_lock<std::mutex> lock(vrepMutex);
+                    for(auto&& pFinken : simFinken) {
+                        if(pFinken->connected){
+                            finkenDone[pFinken->syncID]=false;
+                            finkenCV[pFinken->syncID]->notify_all();
+                        }
+                    }
+                    while(any_of(finkenDone.cbegin(), finkenDone.cend(), [](bool b){ return !b; }) && running) {
+                        notifier.wait(lock);
+                    }
+                }
+                */
+
+                auto now = Clock::now();
+                vrepLog << "[VREP] time vrep is waiting for finken: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
+                then =Clock::now();
+        
+                //we apply those commands
+                for(auto&& pFinken : simFinken) {
+                    if (pFinken->connected) {
+                        pFinken->setRotorSpeeds();
+                    }
+                }
+                //position data can be sent now
+                
+                
+                now = Clock::now();
+                vrepLog << "[VREP] time setting rotor forces: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << 
+                std::endl;
+                vrepLog << "[VREP] time total finkenplugin action(): " << std::chrono::nanoseconds(now - actionStart).count()/1000000 << "ms" << std::endl;
+                
+                return NULL;
             }
-	        //position data can be sent now
-	        readyFinkenCount = 0;
-            for(auto&& pFinken : simFinken){
-                pFinken->finkenMutex.unlock();
+            catch (std::exception& e) {
+                std::cerr << "[VREP] Exception in thread: " << e.what() << "\n";
+                return NULL;
             }
-            
-	        now = Clock::now();
-	        vrepLog << "[VREP] time setting rotor forces: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << 
-	        std::endl;
-	        vrepLog << "[VREP] time total finkenplugin action(): " << std::chrono::nanoseconds(now - actionStart).count()/1000000 << "ms" << std::endl;
-            
-        	return NULL;
-	    }
-	    catch (std::exception& e) {
-	        std::cerr << "[VREP] Exception in thread: " << e.what() << "\n";
-	        return NULL;
-	    }
     }
 
 } plugin;

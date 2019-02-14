@@ -33,18 +33,19 @@ std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
 std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
 
 
-vrepPacket outPacket;
-paparazziPacket inPacket;
+
 std::string vrepHome=std::getenv("VREP_HOME");
 std::atomic<unsigned int> readyFinkenCount(0);
-std::condition_variable notifier;
+std::vector<bool> finkenDone;
+std::vector<std::condition_variable*> finkenCV;
 std::mutex vrepMutex;
+std::condition_variable notifier;
+bool running = false;
 
 
 
 
-
-Finken::Finken(int fHandle, int _ac_id, int _rotorCount, int _sonarCount, std::string _ac_name) : handle(fHandle), ac_id(_ac_id), rotorCount(_rotorCount), sonarCount(_sonarCount) {
+Finken::Finken(int fHandle, int _ac_id, int _rotorCount, int _sonarCount, std::string _ac_name, unsigned int _syncID) : handle(fHandle), ac_id(_ac_id), rotorCount(_rotorCount), sonarCount(_sonarCount), syncID(_syncID) {
     ac_name = _ac_name;
 }
 
@@ -65,17 +66,14 @@ std::vector<std::unique_ptr<Rotor>> &Finken::getRotors(){
 }
 
 void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
-    this->finkenMutex.lock();
     auto runStart = Clock::now();
     try {
         vrepLog << "[FINK] client connected" << std::endl;
 	    int simState = simGetSimulationState();
-	    vrepLog << "[FINK] simulation state: " << simState << std::endl;
-	    
-		simStartSimulation();
-	    
+	    vrepLog << "[FINK] simulation state: " << simState << std::endl;	    
+		simStartSimulation();	    
         buildFinken(*this);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
         //first connection:
         int connection_nb =1;
         int commands_nb = 4;
@@ -83,9 +81,12 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         //read commands
         sPtr->flush();
         {               
-            boost::archive::binary_iarchive in(*sPtr,boost::archive::no_header);
-            in >> inPacket;
+                vrepLog << "[FINK] creating archive" << std::endl;            
+                boost::archive::binary_iarchive in(*sPtr,boost::archive::no_header);
+                vrepLog << "[FINK] recieving data" << std::endl;
+                in >> inPacket;
         }
+        vrepLog << "[FINK] setting commands" << std::endl;
         this->commands[0]=inPacket.pitch;
         this->commands[1]=inPacket.roll;
         this->commands[2]=inPacket.yaw;
@@ -101,14 +102,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             csvdata << commands[i] << ((i==commands_nb-1)?",":",");
         }
         std::cout << "[FINK] first connection successfully read" << std::endl;
-        
-        {
-            std::unique_lock<std::mutex> lock(vrepMutex);
-            readyFinkenCount++;
-            notifier.notify_all();
-        }
-        
-        
+        vrepLog << "[FINK] updating position" << std::endl;
         //update position
         updatePos(*this);
         
@@ -134,7 +128,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         paparazzi-vrep loop
         */
         for (;;){
-            this->finkenMutex.lock();
+
             auto then = Clock::now();
             int commands_nb = 4;
             //receive data:
@@ -161,13 +155,23 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             vrepLog << "[FINK] time receiving data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
             
             then = Clock::now();
-            
+            /*
             {
                 std::unique_lock<std::mutex> lock(vrepMutex);
-                readyFinkenCount++;
+                finkenDone.at(syncID) = true;
                 notifier.notify_all();
+                while(finkenDone[syncID] && running) {
+                    finkenCV.at(syncID)->wait(lock);     
+                }
+                if (!running) {
+                    //just to make sure this finken gets cleaned up correctly
+                    //TODO: maybe a custom exception to specifically handle intentional shutdown?
+                    throw std::runtime_error("Simulation no longer running, killing finken");
+                    break;
+                }
+                
             }
-            
+            */
             now = Clock::now();
             vrepLog << "[FINK] time finken is waiting for vrep: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl << std::endl;
             then = Clock::now();
@@ -246,43 +250,44 @@ void buildFinken(Finken& finken){
 
 
 void Finken::updatePos(Finken& finken) {
-    std::cout << "updating accel" << '\n';
+    
+    //std::cout << "updating accel" << '\n';
     finken.accelerometer->update();
-    std::cout << "updating pos" << '\n';
+    //std::cout << "updating pos" << '\n';
     finken.positionSensor->update();
-    std::cout << "updating height" << '\n';
+    //std::cout << "updating height" << '\n';
     finken.heightSensor->update();
-    std::cout << "updating att" << '\n';
+    //std::cout << "updating att" << '\n';
     finken.attitudeSensor->update();
-
+    
     std::vector<float> position = {0,0,0};
     std::vector<float> velocities = {0,0,0,0,0,0,0,0,0,0,0,0};
 
-    std::cout << "grabbing sensor values" << '\n';
-    std::cout << "pos" << '\n';
+    //std::cout << "grabbing sensor values" << '\n';
+    //std::cout << "pos" << '\n';
     position = finken.positionSensor->get();
     finken.pos[0] = position[0];
     finken.pos[1] = position[1];    
-    std::cout << "height" << '\n';
+    //std::cout << "height" << '\n';
     finken.pos[2] = finken.heightSensor->get()[0];
-    std::cout << "quat" << '\n';
+    //std::cout << "quat" << '\n';
     finken.quat = finken.attitudeSensor->get();
 
-    std::cout << "accel" << '\n';
+    //std::cout << "accel" << '\n';
     velocities = finken.accelerometer->get();    
-    std::cout << "vel" << '\n';
+    //std::cout << "vel" << '\n';
     finken.vel[0] = velocities[0];
     finken.vel[1] = velocities[1];
     finken.vel[2] = velocities[2];
-    std::cout << "rotvel" << '\n';
+    //std::cout << "rotvel" << '\n';
     finken.rotVel[0] = velocities[3];
     finken.rotVel[1] = velocities[4];
     finken.rotVel[2] = velocities[5];
-    std::cout << "accel" << '\n';
+    //std::cout << "accel" << '\n';
     finken.accel[0] = velocities[6];
     finken.accel[1] = velocities[7];
     finken.accel[2] = velocities[8];
-    std::cout << "rotaccel" << '\n';
+    //std::cout << "rotaccel" << '\n';
     finken.rotAccel[0] = velocities[9];
     finken.rotAccel[1] = velocities[10];
     finken.rotAccel[2] = velocities[11];

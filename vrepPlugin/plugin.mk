@@ -19,7 +19,7 @@ OBJECTS       := $(addsuffix .o, $(addprefix ${BUILD}/, $(basename ${SOURCES})))
 
 CXXFLAGS      += -std=gnu++11 -fPIC
 LDFLAGS       += -shared
-LIBS          := $(addprefix -l, ${LIBS} dl boost_filesystem boost_serialization boost_system boost_thread boost_random pthread)
+LIBS          := $(addprefix -l, ${LIBS} dl boost_filesystem boost_system boost_thread boost_random pthread boost_serialization)
 LDPATHS       := $(addprefix -L, ${LDPATHS})
 SOURCES       := $(addprefix ${SRC}/,${SOURCES})
 INCLUDES      := $(addprefix -I, ${INCLUDES} ${PLUGIN_INCLUDE} ${VREP_INCLUDE} ${EIGEN_INCLUDE} ${PAPARAZZI_INCLUDE})

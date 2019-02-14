@@ -24,7 +24,7 @@ const char* libName="libv_rep.so";
  * Vector for all available (e.g. present in the plugin) copters
  */
 std::vector<std::unique_ptr<Finken>> simFinken;
-
+extern std::vector<std::condition_variable*> finkenCV;
 
 
 #define LUA_REGISTER_COMMAND "simExtPaparazzi_register"
@@ -68,7 +68,10 @@ void LUA_REGISTER_CALLBACK(SScriptCallBack* cb)
         int rotorCount = inData->at(2).int32Data[0];
 	    int sonarCount = inData->at(3).int32Data[0];
         std::string ac_name = inData->at(4).stringData[0];
-        simFinken.emplace_back(new Finken(handle, AC_ID, rotorCount, sonarCount, ac_name));  
+        unsigned int syncID = simFinken.size();
+        finkenDone.emplace_back(true);
+        finkenCV.emplace_back(new std::condition_variable());
+        simFinken.emplace_back(new Finken(handle, AC_ID, rotorCount, sonarCount, ac_name, syncID));        
         success = true;
     }
     D.pushOutData(CScriptFunctionDataItem(success));

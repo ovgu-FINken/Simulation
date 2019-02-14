@@ -19,6 +19,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/archive_exception.hpp>
 #include <boost/random.hpp>
 #include <mutex>
 #include <vector>
@@ -42,7 +43,7 @@ using boost::filesystem::ofstream;
 using boost::filesystem::current_path;
 using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
-
+extern std::vector<bool> finkenDone;
 
 /**
  *  \brief Class for annotating log with time points
@@ -109,11 +110,18 @@ public:
      * @param rotorCount the amount of rotors the copter has.
      * @param sonarCount the amount of sonars the copter has.
      */
-    Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount, std::string ac_name);
+    Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount, std::string ac_name, unsigned int syncID);
     /** Basic destructor */
     ~Finken() { 
-        runThread.join();         
+        //make sure future loops wont block because of a nonexisting copter
+        finkenDone.at(syncID) = true;
+        connected = false;
+        runThread.join();        
     }
+    
+    
+    vrepPacket outPacket;
+    paparazziPacket inPacket;
     /** Integer representing the handle of the copter object in V-REP */
     int handle;
 
@@ -125,6 +133,8 @@ public:
     /** Integer representing the Aircraft ID to match copters in V-REP and Paparazzi. */
     const int ac_id;
 
+   
+
     /** The number of rotors the copter has */
     int rotorCount;
 
@@ -133,6 +143,11 @@ public:
 
     /** The name of the aircraft */
     std::string ac_name;
+
+    /**Integer representing the spot in the vector for syncing the copters
+    * this is used for correctly handling the sync in case of single copter failure
+    */
+    const unsigned int syncID;
 
     /** Current connection status of the copter. **/
     bool connected = false;
@@ -198,6 +213,7 @@ public:
      */
     void connect(std::unique_ptr<tcp::iostream>&& sPtr) {
       connected=true;
+      finkenDone.at(syncID) = true;
       auto helper=[this,&sPtr](){run(std::move(sPtr));};
       runThread=std::move(std::thread(helper));
     }
