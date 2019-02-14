@@ -1,0 +1,46 @@
+\section{Introduction and Motivation}
+
+\begin{frame}
+	\frametitle{Project goals}
+	\begin{itemize}
+		\item Creation of a simulation environment for the SwarmLab copters
+		\item Use existing Paparazzi infrastructure
+		\item Should be easy to use and extend
+	\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Why do we even need a Simulation?}
+\begin{itemize}
+	\item Simulation allows experiments without risking potentially expensive hardware
+	\item Exploration of a wide range of potential environments and conditions
+	\item Scalability
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Project idea}
+\begin{itemize}
+	\item Idea: V-REP plugin providing communication between Paparazzi and V-REP
+	\item V-REP provides the copter state, Paparazzi the corresponding commands
+	\item Main advantage: same code and infrastructure usable on simulated and real copters
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Work done in last project}
+	\begin{itemize}
+		\item Created basic framework
+		\item Communication, control loop, coordinate transformations	
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Goals of current project}
+\begin{itemize}
+	\item Implement sensors with error models, customizable from the GUI
+	\item Add swarm capability and synchronization
+\end{itemize}
+\end{frame}

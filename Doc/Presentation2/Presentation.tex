@@ -1,0 +1,49 @@
+\documentclass[nosymbols]{beamer}	% Is better for some Windows user.
+\usepackage{tikz}
+\usetikzlibrary{er,positioning}
+\usetikzlibrary{external}
+
+\tikzset{>=latex}
+\setbeamertemplate{caption}[numbered]
+\tikzstyle{every entity}=[fill=blue!20,draw=blue,thick,font=\small]
+\tikzstyle{every relationship}=[fill=orange!20,draw=orange,thick,aspect=1.5,font=\small]
+\tikzstyle{every attribute}=[fill=black!20,draw=black,font=\small]
+\usepackage{array}
+\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
+\newcolumntype{C}[1]{>{\PreserveBackslash\centering}p{#1}}
+\newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
+\newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
+\usepackage{pgf-umlsd}
+\tikzexternalize
+%
+\input{include/docinfo}				% Edit here author informations.
+\input{include/header}
+\input{include/titlepage}
+
+\input{include/headingsandfooter}
+%
+\begin{document}
+%
+	\addtocounter{framenumber}{-1}	% Exclude page from pagecounter.
+	\begin{frame}[plain]
+		\titlepage
+	\end{frame}
+	%
+	%\setcounter{framenumber}{0}
+	\frame{
+		\frametitle{Overview}
+		\tableofcontents
+	}
+	%
+	
+	\input{content/00_Intro}
+	\input{content/01_Architecture}
+	\input{content/03_Problems}
+	%
+	\addtocounter{framenumber}{-1}
+	\begin{frame}[plain]
+		
+		\titlepage
+	\end{frame}
+%
+\end{document}
