@@ -283,7 +283,7 @@ class FinkenPlugin: public VREPPlugin {
                 }
                     
                 auto then = Clock::now();
-                /*
+                
                 //send position data and get new commands:
                 {
                     std::unique_lock<std::mutex> lock(vrepMutex);
@@ -297,7 +297,7 @@ class FinkenPlugin: public VREPPlugin {
                         notifier.wait(lock);
                     }
                 }
-                */
+                
 
                 auto now = Clock::now();
                 vrepLog << "[VREP] time vrep is waiting for finken: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
