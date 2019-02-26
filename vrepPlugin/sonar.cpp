@@ -1,11 +1,14 @@
-
-
+/** 
+ * @file sonar.cpp
+ * \class Sonar
+*/
 #include "sonar.h"
 #include "v_repLib.h"
 #include <iostream>
 
 
 Sonar::Sonar(int sensorHandle, double sigma, boost::random::mt19937& gen) : Sensor::Sensor(sensorHandle, sigma, gen){
+    values = {0,0,0,0};
     sensorType = SensorTypes::Sonar;
     std::cout << "creating sonar with handle " << sensorHandle << '\n';
 }

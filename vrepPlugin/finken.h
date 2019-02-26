@@ -33,21 +33,22 @@
 #include "accelerometer.h"
 #include "attitudesensor.h"
 
-
-
 #pragma GCC diagnostic ignored "-Wint-in-bool-context"
-#include <Eigen/Dense>
 #pragma GCC diagnostic pop
 
 using boost::filesystem::ofstream;
 using boost::filesystem::current_path;
 using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
+
+/**
+ * Vector used to make sure all FINken are done reading data. 
+ * See \ref sync_page for a basic overview of the synchronization. 
+ */
 extern std::vector<bool> finkenDone;
 
 /**
  *  \brief Class for annotating log with time points
- *  \todo cleanup code from superfluous debug logging
  */
 class LogLine {
   private:
@@ -72,7 +73,6 @@ class LogLine {
 
 /**
  * \brief Class for creating a log file
- * \todo cleanup code from superfluous debug logging
  */
 class VrepLog {
   private:
@@ -109,6 +109,8 @@ public:
      * @param _ac_id the Aircraft ID used to identify the copter in Paparazzi.
      * @param rotorCount the amount of rotors the copter has.
      * @param sonarCount the amount of sonars the copter has.
+     * @param ac_name the name of the aircraft in the vrep scene
+     * @param syncID the entry this FINken occupies in the vector used to sync all FINken.
      */
     Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount, std::string ac_name, unsigned int syncID);
     /** Basic destructor */
@@ -119,8 +121,13 @@ public:
         runThread.join();        
     }
     
-    
+    /** Datapacket used to send information to paparazzi 
+     * See datapacket.h
+     */
     vrepPacket outPacket;
+    /** Datapacket used to receive information from paparazzi 
+     * See datapacket.h
+     */
     paparazziPacket inPacket;
     /** Integer representing the handle of the copter object in V-REP */
     int handle;
@@ -144,9 +151,9 @@ public:
     /** The name of the aircraft */
     std::string ac_name;
 
-    /**Integer representing the spot in the vector for syncing the copters
-    * this is used for correctly handling the sync in case of single copter failure
-    */
+    /** Integer representing the spot in the vector #finkenDone used to syncrhonize FINken thread execution. \n
+     * See \ref sync_page for a basic overview of the synchronization. 
+     */
     const unsigned int syncID;
 
     /** Current connection status of the copter. **/

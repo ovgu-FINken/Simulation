@@ -2,7 +2,7 @@
  * @file sonar.h 
  * \class Sonar
  * \brief implementation of a proximitysensor as sonar
- * \todo actually use this in the sim
+ * \todo implement paparazzi counterpart to accept sonar data
  */
 
 #pragma once
@@ -10,10 +10,19 @@
 #include <string>
 
 class Sonar: public Sensor{
+private:
+    /**
+     * Vector containing the sensor values. \n
+     * Elements represent the position of (0-2) and distance to (3) any detected object. \n
+     * These can be null if no object is detected.
+     */    
+    std::vector<float> values;  
 
 public:
     /** Basic constructor
-     * @param sensorHandle The handle of the sensor in V-REP
+     * @param sensorHandle The handle of the object the acceleration is measured for
+     * @param sigma The maximum error to add to any sensor values
+     * @param gen Reference to the random number generator of the FINken this sensor belongs to
      */
     Sonar(int sensorHandle, double sigma, boost::random::mt19937& gen); 
         

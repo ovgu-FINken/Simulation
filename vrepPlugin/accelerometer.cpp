@@ -7,9 +7,6 @@
 /** 
  * @file accelerometer.cpp 
  * \class AttitudeSensor
- * \brief Implementation of an accelerometer
- * 
- * \todo implement and use this.
  */
 
 
@@ -36,7 +33,7 @@ void Accelerometer::update(){
 
 std::vector<float> Accelerometer::get(){
     std::vector<float> errorValues = {0,0,0,0,0,0,0,0,0,0,0,0};
-    for(int i = 0; i<values.size(); i++) {
+    for(unsigned int i = 0; i<values.size(); i++) {
         errorValues.at(i) = this->dist(this->gen) + values.at(i);
     }
     return errorValues;

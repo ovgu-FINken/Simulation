@@ -3,7 +3,6 @@
  * \class AttitudeSensor
  * \brief Implementation of an attitudesensor
  * 
- * \todo actually use this for attitude calculation, implement noise.
  */
 
 #pragma once
@@ -11,39 +10,40 @@
 #include "sensor.h"
 
 
-/**
- * Currently unused class for an attitude sensor. 
- */
+
 class AttitudeSensor: public Sensor{
 
+private:
+    /**
+     * Vector containing the sensor values. \n
+     * Elements represent the quaternion of the FINken (x,y,z,w).
+     */    
+    std::vector<float> values;  
+
 public:
-    /** Basic constructor.
-     * @param sensorHandle The handle of the sensor in V-REP
+    /** Basic constructor
+     * @param sensorHandle The handle of the object the acceleration is measured for
+     * @param sigma The maximum error to add to any sensor values
+     * @param gen Reference to the random number generator of the FINken this sensor belongs to
      */
     AttitudeSensor(int sensorHandle, double sigma, boost::random::mt19937& gen);
     
     /**
-     * Updates the sensor information, including any detected object information.
-     * @param detectPoint Coordinates of the closest detected point.
-     * @param detectHandle The handle of the detected object. 
-     * @param detectSurface Normal vector of the detected surface.
-     * 
-     * See the <a href="http://www.coppeliarobotics.com/helpFiles/en/regularApi/simReadProximitySensor.htm">V-REP API</a> for more info. 
-
+     * Calls V-REP to update the sensor information and sotres it in the AttitudeSensor#values vector.
+     * See the <a href="http://www.coppeliarobotics.com/helpFiles/en/regularApi/simGetObjectQuaternion.htm">V-REP API</a> for more info. 
      */
     void update();
 
     /**
-     * Retrieves the sensor information, including any detected object information.
-     * @param detectPoint Coordinates of the closest detected point.
-     * @param detectHandle The handle of the detected object. 
-     * @param detectSurface Normal vector of the detected surface.
-     * 
-     * \returns 0 or 1, depending on the detection state of the sensor and -1 in case of any error.
-     * See the <a href="http://www.coppeliarobotics.com/helpFiles/en/regularApi/simHandleProximitySensor.htm">V-REP API</a> for more info. 
-
+     * Retrieves the last known sensor values and returns them.
+     * @returns The AttitudeSensor#values vector, including error values for each element 
      */
     std::vector<float> get();
+
+    /**
+     * Retrieves the last known sensor values without error.
+     * @returns The AttitudeSensor#values vector, not including error values
+     */
     std::vector<float> get_without_error();
 };
 

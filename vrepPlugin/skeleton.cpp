@@ -24,6 +24,10 @@ const char* libName="libv_rep.so";
  * Vector for all available (e.g. present in the plugin) copters
  */
 std::vector<std::unique_ptr<Finken>> simFinken;
+/*
+ * Vector used to make sure all FINken are done reading data. 
+ * See \ref sync_page for a basic overview of the synchronization. 
+ */
 extern std::vector<std::condition_variable*> finkenCV;
 
 
@@ -48,6 +52,16 @@ const int inArgs_ADDSENSOR[]={
     sim_script_arg_int32,0,
     sim_script_arg_string,0,
     sim_script_arg_float,0,
+};
+
+#define LUA_ADDROTOR_COMMAND "simExtPaparazzi_addRotor"
+
+const int inArgs_ADDROTOR[]={
+    //2 arguments: handle, handle of the finken it belongs to 
+    3,
+    sim_script_arg_int32,0,
+    sim_script_arg_int32,0,
+    sim_script_arg_string,0,
 };
 
 /**
@@ -124,8 +138,40 @@ void LUA_ADDSENSOR_CALLBACK(SScriptCallBack* cb)
                 }
             }
         }
+
+    }
+    D.pushOutData(CScriptFunctionDataItem(success));
+    D.writeDataToStack(cb->stackID);
+}
+
+/**
+ * Function to register any sensor present in the vrep scene with the plugin.
+ * Every sensor needs to call this in its child script to get added to its finken.
+ *
+ */
+
+void LUA_ADDROTOR_CALLBACK(SScriptCallBack* cb)
+{   CScriptFunctionData D;
+    bool success = false;
+    if (D.readDataFromStack(cb->stackID,inArgs_ADDROTOR,inArgs_ADDROTOR[0],LUA_ADDROTOR_COMMAND))
+    {   
+        std::cout << "rotor registering" << '\n';
+        std::vector<CScriptFunctionDataItem>* inData=D.getInDataPtr();
+        int handle = inData->at(0).int32Data[0];
+        int finkenHandle = inData->at(1).int32Data[0];
+        std::string position = inData->at(2).stringData[0];
+        const char* copterName = simGetObjectName(finkenHandle);
+        const char* rotorName = simGetObjectName(handle);
+        std::cout << "Adding " << rotorName << " to " << copterName << "\n";
+        for(auto&& pFinken : simFinken) {
+            if (pFinken->handle == finkenHandle) {                    
+                std::unique_ptr<Rotor> vr(new Rotor(handle, position));
+                pFinken->addRotor(vr);
+                break;
+            }
+        }
         success = true;
-        // \todo: actually add the sensors to the finken using this function 
+
     }
     D.pushOutData(CScriptFunctionDataItem(success));
     D.writeDataToStack(cb->stackID);
@@ -163,7 +209,8 @@ extern "C" unsigned char v_repStart(void* reservedPointer,int reservedInt)
         return(0);
     }
 
-    //add parameter info to custom registered function
+    //add parameter info to custom registered functions
+    //copter:
     std::string s = "simExtPaparazzi_register@" + plugin.name();
     const char* cs;
     cs = s.c_str();
@@ -171,13 +218,19 @@ extern "C" unsigned char v_repStart(void* reservedPointer,int reservedInt)
     const char* ts;
     ts = t.c_str();
     simRegisterScriptCallbackFunction(cs, ts ,LUA_REGISTER_CALLBACK);
-    
+    //sensor:
     s = "simExtPaparazzi_addSensor@" + plugin.name();
     cs = s.c_str();
     t = "boolean result=simExtPaparazzi_addSensor(number sensorHandle, number finkenHandle, string sensorType, float errorValue)";
     ts = t.c_str();
     simRegisterScriptCallbackFunction(cs, ts, LUA_ADDSENSOR_CALLBACK);
-    
+    //rotor:
+    s = "simExtPaparazzi_addRotor@" + plugin.name();
+    cs = s.c_str();
+    t = "boolean result=simExtPaparazzi_addRotor(number rotorHandle, number finkenHandle, string rotorPosition)";
+    ts = t.c_str();
+    simRegisterScriptCallbackFunction(cs, ts, LUA_ADDROTOR_CALLBACK);
+
 
     simLockInterface(1);
 

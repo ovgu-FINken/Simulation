@@ -32,3 +32,22 @@ In paparazzi, select the aircraft "test" and build the target nps.
 Then press play on the vrep simulation, followed by executing the paparazzi simulation.
 
  */
+
+/*! \page sync_page Synchronization structure
+ *
+ * \section sync_basic Basic structure
+ * Each FINken running in the Simulation needs to be synchronized so that each FINken loop is executed 
+ * exactly once during each V-REP simulation step. To this end, a vector( #finkenDone ) is used to track the progress of each FINken
+ * in its own loop.  <br>
+ * Simplified loop/communication synchronization overview for a single copter:
+ * \image html sequence.png
+ * \subsection sync_FINken FINken sync
+ * Once a FINken has read its data, its execution needs to be blocked until V-REP has processed the data.
+ * To this end, the entry in the vector that corresponds to this FINken (tracked in Finken#syncID) is set to 1, and the FINken can not
+ * continue until it is reset to 0. \n
+ * \subsection sync_vrep V-REP sync
+ * V-REP, in each simulation step, needs to wait for all FINken to receive new data before it can process all data (e.g. apply the correct
+ * force to each rotor of each FINken). As long as any FINken is not done, specifically as long as any entry in #finkenDone is 0, the execution halts.
+ * As soon as all FINken are done, V-REP applies the correct forces, sets #finkenDone to 0 and notifies all FINken to resume their loop.
+ *
+ */

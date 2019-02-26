@@ -17,7 +17,8 @@
 #include <ctime>
 #include <cstdint>
 #include <boost/random.hpp>
-
+#include <Eigen/Dense>
+#include <algorithm>
 ofstream csvdata;
 
 using std::endl;
@@ -35,12 +36,14 @@ std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
 
 std::string vrepHome=std::getenv("VREP_HOME");
 std::atomic<unsigned int> readyFinkenCount(0);
-std::vector<bool> finkenDone;
+
+
+std::vector<bool> finkenDone; 
+
 std::vector<std::condition_variable*> finkenCV;
 std::mutex vrepMutex;
 std::condition_variable notifier;
 bool running = false;
-
 
 
 
@@ -49,12 +52,12 @@ Finken::Finken(int fHandle, int _ac_id, int _rotorCount, int _sonarCount, std::s
 }
 
 void Finken::addSensor(std::unique_ptr<Sensor> &sensor){
-    this->sonars.emplace_back(std::move(sensor));
-    vrepLog << "Adding sonar to finken" << '\n';
+    this->sonars.push_back(std::move(sensor));
+    //vrepLog << "Adding sonar to finken" << '\n';
 }
 void Finken::addRotor(std::unique_ptr<Rotor> &rotor){
-    vrepLog << "Adding rotor with name" << simGetObjectName(rotor->handle) << '\n';
-    this->rotors.push_back((std::move(rotor)));
+    //vrepLog << "Adding rotor with name" << simGetObjectName(rotor->handle) << '\n';
+    this->rotors.push_back((std::move(rotor)));    
 }
 
 std::vector<std::unique_ptr<Sensor>> &Finken::getSonars(){
@@ -65,37 +68,49 @@ std::vector<std::unique_ptr<Rotor>> &Finken::getRotors(){
 }
 
 void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
-    auto runStart = Clock::now();
+    //auto runStart = Clock::now();
     try {
-        vrepLog << "[FINK] client connected" << std::endl;
-	    int simState = simGetSimulationState();
-	    vrepLog << "[FINK] simulation state: " << simState << std::endl;	    
-		simStartSimulation();	    
-        buildFinken(*this);
+        simStartSimulation();
+        std::cout << "Rotor order before sorting: ";
+        for(auto&& rotor : rotors) {
+            std::cout << rotor.get()->position << " | ";
+        }
+        std::sort(rotors.begin(),rotors.end(), [](std::unique_ptr<Rotor>& r1, std::unique_ptr<Rotor>& r2) {return *r1.get() < *r2.get();});	    
+        buildFinken(*this);        
+        std::cout << "Rotor order after sorting: ";
+        for(auto&& rotor : rotors) {
+            std::cout << rotor.get()->position << " | ";
+        }
+        std::cout << std::endl;
+        //vrepLog << "[FINK] client connected" << std::endl;
+	    //vrepLog << "[FINK] simulation state: " << simState << std::endl;	    
+		
+
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
         //first connection:
-        int connection_nb =1;
-        int commands_nb = 4;
-        vrepLog << "[FINK] first connection" << std::endl;
+        //int connection_nb =1;
+        //vrepLog << "[FINK] first connection" << std::endl;
         //read commands
         sPtr->flush();
         {               
-                vrepLog << "[FINK] creating archive" << std::endl;            
+                //vrepLog << "[FINK] creating archive" << std::endl;            
                 boost::archive::binary_iarchive in(*sPtr, boost::archive::no_header);
-                vrepLog << "[FINK] recieving data" << std::endl;
+                //vrepLog << "[FINK] recieving data" << std::endl;
                 in >> inPacket;
         }
-        vrepLog << "[FINK] setting commands" << std::endl;
-        this->commands[0]=inPacket.pitch;
-        this->commands[1]=inPacket.roll;
-        this->commands[2]=inPacket.yaw;
-        this->commands[3]=inPacket.thrust;
+        //vrepLog << "[FINK] setting commands" << std::endl;
+        this->commands[0]=inPacket.north_east;
+        this->commands[1]=inPacket.south_east;
+        this->commands[2]=inPacket.south_west;
+        this->commands[3]=inPacket.north_west;
+        /* commands to csv 
         for(int i=0;i<commands_nb;i++) {
-            vrepLog << commands[i] << ((i==commands_nb-1)?"":", ");
+            //vrepLog << commands[i] << ((i==commands_nb-1)?"":", ");
             csvdata << commands[i] << ((i==commands_nb-1)?",":",");
         }
+        */
         std::cout << "[FINK] first connection successfully read" << std::endl;
-        vrepLog << "[FINK] updating position" << std::endl;
+        //vrepLog << "[FINK] updating position" << std::endl;
         //update position
         updatePos(*this);
         
@@ -122,27 +137,26 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         */
         for (;;){
             sPtr->flush();
-            std::cout << "finken " <<ac_id <<" starting loop" << std::endl;
-            auto then = Clock::now();
-            int commands_nb = 4;
+            //std::cout << "finken " <<ac_id <<" starting loop" << std::endl;
+            //auto then = Clock::now();
             //receive data:
-            vrepLog << "[FINK] connection:" << connection_nb++ << std::endl;
+            //vrepLog << "[FINK] connection:" << connection_nb++ << std::endl;
             {
                 boost::archive::binary_iarchive in(*sPtr, boost::archive::no_header);
                 in >> inPacket;
             }
-            std::cout << "finken " <<ac_id <<" read data" << std::endl;
-            this->commands[0]=inPacket.pitch;
-            this->commands[1]=inPacket.roll;
-            this->commands[2]=inPacket.yaw;
-            this->commands[3]=inPacket.thrust;
-    
+            //std::cout << "finken " <<ac_id <<" read data" << std::endl;
+            this->commands[0]=inPacket.north_east;
+            this->commands[1]=inPacket.south_east;
+            this->commands[2]=inPacket.south_west;
+            this->commands[3]=inPacket.north_west;
             
-            vrepLog << "[FINK] recieved: " << inPacket.pitch << " | " << inPacket.roll << " | " << inPacket.yaw << " | " << inPacket.thrust << std::endl << std::endl;
+            /* logstuff
+            vrepLog << "[FINK] recieved: " << inPacket.north_east << " | " << inPacket.south_east << " | " << inPacket.south_west << " | " << inPacket.north_west << std::endl << std::endl;
             auto now = Clock::now();
-            vrepLog << "[FINK] time receiving data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
-            
+            //vrepLog << "[FINK] time receiving data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;            
             then = Clock::now();
+            */
             
             {
                 std::unique_lock<std::mutex> lock(vrepMutex);
@@ -159,11 +173,12 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
                 }
                 
             }
-            
+             /*logstuff
             now = Clock::now();
-            vrepLog << "[FINK] time finken is waiting for vrep: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl << std::endl;
+            //vrepLog << "[FINK] time finken is waiting for vrep: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl << std::endl;
             then = Clock::now();
-            
+            */
+
             updatePos(*this);
             //send position data
             {
@@ -179,7 +194,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             }
 
             /*logstuff
-            vrepLog << "[FINK] sending position/attitude data: "<< std::endl
+            //vrepLog << "[FINK] sending position/attitude data: "<< std::endl
             << "time: " << outPacket.simTime << std::endl
             << "pos: " << outPacket.pos[0] << " | "  << outPacket.pos[1] << " | " << outPacket.pos[2] << std::endl
             << "quat-xyzw: " << outPacket.quat[0] << " | "  << outPacket.quat[1] << " | " << outPacket.quat[2] << " | " << outPacket.quat[3] << std::endl
@@ -190,9 +205,9 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             
 
             now = Clock::now();
-            vrepLog << "[FINK] time sending data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
+            //vrepLog << "[FINK] time sending data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
             auto runEnd = Clock::now();
-            vrepLog << "[FINK] time total Finken::run() loop: " << std::chrono::nanoseconds(runEnd - runStart).count()/1000000 << "ms" << std::endl << "-------------------------------------------------------------------" << std::endl;;
+            //vrepLog << "[FINK] time total Finken::run() loop: " << std::chrono::nanoseconds(runEnd - runStart).count()/1000000 << "ms" << std::endl << "-------------------------------------------------------------------" << std::endl;;
             csvdata << simGetSimulationTime() << ",";
             for(int i=0;i<commands_nb;i++) {
                 csvdata << commands[i] << ((i==commands_nb-1)?",":",");
@@ -205,7 +220,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
   	catch (std::exception& e) {
 	    std::cerr << "Exception in thread: " << e.what() << "\n";
 	    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
-        vrepLog << "[FINK] Exception in thread: " << e.what() << "\n";
+        //vrepLog << "[FINK] Exception in thread: " << e.what() << "\n";
         std::cerr << "cleaning up... " << std::endl;
         sPtr->close();
         sPtr.reset();
@@ -219,21 +234,14 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
 }
 
 /*
- *Takes a unique_ptr to a Finken and adds
- *the correct handles for the sensors & rotors
+ *Takes a unique_ptr to a Finken and adds the random number generator
  *
  */
 void buildFinken(Finken& finken){    
-    vrepLog << "[FINK] building finken" << std::endl;
+    //vrepLog << "[FINK] building finken" << std::endl;
     std::time_t now = std::time(0);
     finken.gen = boost::random::mt19937{static_cast<std::uint32_t>(now)};    
-    //add rotors to the finken
-    for(int i = 0; i<finken.rotorCount; i++){
-        int rHandle = simGetObjectHandle(("SimFinken_rotor_respondable" + std::to_string(i+1)).c_str());
-        std::unique_ptr<Rotor> vr(new Rotor(rHandle));
-        finken.addRotor(vr);
-    }
-    vrepLog << "[FINK] succesfully built finken " << finken.ac_id << std::endl;     
+
 }
 
 
@@ -262,6 +270,7 @@ void Finken::updatePos(Finken& finken) {
     finken.quat = finken.attitudeSensor->get();
 
     //std::cout << "accel" << '\n';
+    //Element order:  0-2: velocity, 3-5: rotVel, 6-8: accel, 9-11: rotaccel
     velocities = finken.accelerometer->get();    
     //std::cout << "vel" << '\n';
     finken.vel[0] = velocities[0];
@@ -329,11 +338,11 @@ void Finken::setRotorSpeeds() {
     motorCommands[2]=thrustFromThrottle(motorCommands[2]);
     motorCommands[3]=thrustFromThrottle(motorCommands[3]);
 
-    //pprz: [NE, SE, SW, NW]
-    std::vector<float> motorNW  = {0, 0, motorCommands[3]};
-    std::vector<float> motorNE = {0, 0, motorCommands[0]};
-    std::vector<float> motorSE   = {0, 0, motorCommands[1]};
-    std::vector<float> motorSW  = {0, 0, motorCommands[2]};
+    //pprz: [NE, SE, SW, NW]; V-REP: NW, NE, SE, SW
+    std::vector<float> motorNW  = {0, 0, motorCommands[0]};
+    std::vector<float> motorNE = {0, 0, motorCommands[1]};
+    std::vector<float> motorSE   = {0, 0, motorCommands[2]};
+    std::vector<float> motorSW  = {0, 0, motorCommands[3]};
     std::vector<float> vtorque = {0,0,0};
     std::vector<std::vector<float>> motorForces= {motorNW, motorNE, motorSE, motorSW};
     Eigen::Quaternionf rotorQuat;
@@ -353,11 +362,11 @@ void Finken::setRotorSpeeds() {
         std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());        
         std::vector<float> simTorque(&torque[0], torque.data() + torque.rows() * torque.cols());
         /*logstuff    	
-        vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
-        vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;	
-        vrepLog << "[FINK] Rotor #" << i << " torque: " << torque[0] << " | "  << torque[1] << " | " << torque[2] <<  std::endl;	
-        vrepLog << "[FINK] adding force to rotor " << i << ": " << simForce[0] << " | " << simForce[1] << " | " << simForce[2] << std::endl;
-        vrepLog << "[FINK] adding torque to rotor " << i << ": " << simTorque[0] << " | " << simTorque[1] << " | " << simTorque[2] << std::endl;	
+        //vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
+        //vrepLog << "[FINK] Rotor #" << i << " force: " << force[0] << " | "  << force[1] << " | " << force[2] <<  std::endl;	
+        //vrepLog << "[FINK] Rotor #" << i << " torque: " << torque[0] << " | "  << torque[1] << " | " << torque[2] <<  std::endl;	
+        //vrepLog << "[FINK] adding force to rotor " << i << ": " << simForce[0] << " | " << simForce[1] << " | " << simForce[2] << std::endl;
+        //vrepLog << "[FINK] adding torque to rotor " << i << ": " << simTorque[0] << " | " << simTorque[1] << " | " << simTorque[2] << std::endl;	
         */
         //std::fill(simForce.begin(), simForce.end(), 0);
 		
@@ -367,3 +376,4 @@ void Finken::setRotorSpeeds() {
 
 
 }
+

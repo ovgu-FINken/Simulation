@@ -12,32 +12,38 @@
 
 class Sensor
 {
+private: 
+    std::vector<float> values; ///< Vector cointaining the sensor values, not all fields used by all sensors!
 protected:
-    int handle;  ///< Handle to access the sensor in vrep
-    std::vector<float> values; ///< Vector cointaining the sensor values, not all fields used by all sensors!  
-    double sigma;
-    boost::random::uniform_real_distribution<> dist;
-    boost::random::mt19937& gen;
+    int handle;  ///< Handle to access the sensor in vrep    
+    double sigma; ///< Maximum error value [-sigma, sigma] to add to any sensor data
+    boost::random::uniform_real_distribution<> dist; ///< The random distribution used to calculate sensor errors
+    boost::random::mt19937& gen; ///< reference to the random number generator of the FINken this sensor belongs to
 public:
-    /** 
-     * Constructor. 
-     * @param sensorHandle the handle of the sensor in vrep
-     * */
-    Sensor(int sensorHandle, double sigma, boost::random::mt19937& gen) : handle(sensorHandle), sigma(sigma), dist(boost::random::uniform_real_distribution<> {-sigma, sigma}), gen(gen) {
-        values = {0,0,0,0};
-    }
-    //the sensorType of the specific sensor
-    SensorTypes sensorType;
+    /** Basic constructor
+     * @param sensorHandle The handle of the object the acceleration is measured for
+     * @param sigma The maximum error to add to any sensor values
+     * @param gen Reference to the random number generator of the FINken this sensor belongs to
+     */
+    Sensor(int sensorHandle, double sigma, boost::random::mt19937& gen) : handle(sensorHandle), sigma(sigma), dist(boost::random::uniform_real_distribution<> {-sigma, sigma}), gen(gen) {};
+    
+    SensorTypes sensorType; ///<< The sensorType of the specific sensor
 
-    virtual void update()=0;
     /**
-     * retrieves the sensor information, without applying the sensor noise
+     * Calls for V-REP tp update the sensor information. \n 
      * see specific sensor documentation for more information
      */
-    virtual std::vector<float> get_without_error()=0;
+    virtual void update()=0;
+    
     /**
-     * retrieves the sensor information including noise;
-     * see specific sensor documentation for more  information
+     * Retrieves the sensor information, without applying the sensor noise.
+     * See specific sensor documentation for more information.
+     */
+    virtual std::vector<float> get_without_error()=0;
+    
+    /**
+     * Retrieves the sensor information including noise. \n 
+     * See specific sensor documentation for more  information.
      */
     virtual std::vector<float> get()=0;
     

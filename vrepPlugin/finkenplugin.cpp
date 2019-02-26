@@ -2,7 +2,6 @@
  * @file finkenplugin.cpp 
  * \class FinkenPlugin
  * \brief Implementation of the baseline functionality for the plugin and the communication with Paparazzi.
- * \todo This could use a .h file.
  */
  
 
@@ -26,14 +25,13 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/format.hpp>
-#include <boost/archive/archive_exception.hpp>
 #include <condition_variable>
 #include <chrono>
 #include <boost/asio.hpp>
 #include <boost/process.hpp>
 #include <boost/random.hpp>
 #pragma GCC diagnostic ignored "-Wint-in-bool-context"
-#include <Eigen/Dense>
+
 #pragma GCC diagnostic pop
 
 using std::endl;
@@ -47,31 +45,27 @@ using boost::asio::ip::tcp;
 namespace bp = boost::process;
 
 bool serverLoaded = false;
-bool connectionEstablished = false;
-extern float execution_step_size;
+bool connectionEstablished = false; /**< Tracks if a copter was succesffuly connected in Async_Server::handle_accept() */
+extern float execution_step_size; /**< the step size set in the simulation (dt) */
 extern std::vector<std::unique_ptr<Finken>> simFinken;
-
-VrepLog vrepLog;
-paparazziPacket firstPacket;
-bp::child pprzServer;
-bp::child gcs;
-std::vector<std::unique_ptr<bp::child>> paparazziClients;
-std::string pprzHome=std::getenv("PAPARAZZI_HOME");
-std::string start_server_cmd = pprzHome + "/sw/ground_segment/tmtc/server";
-std::string start_gcs_cmd = pprzHome + "/sw/ground_segment/cockpit/gcs";
-std::string start_nps_cmd = pprzHome + "/sw/simulator/pprzsim-launch";
-unsigned int connectedFinkenCount = 0;
-bool firstStartUp = true;
+//vrepLog; /**< logging class */
+bp::child pprzServer; /**< the child process containing the paparazzi server */
+bp::child gcs; /**< the child process containing the paparazzi gcs */
+std::vector<std::unique_ptr<bp::child>> paparazziClients; /**< Vector containing all child processes running paparazzi simulators */
+std::string pprzHome=std::getenv("PAPARAZZI_HOME"); /**< Path to the paparazzi home folder */
+std::string start_server_cmd = pprzHome + "/sw/ground_segment/tmtc/server"; /**< Path to the paparazzi server start script */
+std::string start_gcs_cmd = pprzHome + "/sw/ground_segment/cockpit/gcs"; /**< Path to the paparazzi gcs start script */
+std::string start_nps_cmd = pprzHome + "/sw/simulator/pprzsim-launch"; /**< Path to the paparazzi nps start script */
+bool firstStartUp = true; /**< Tracks if the ismulation was just started, to then start all copter processes */
 extern std::vector<bool> finkenDone;
-extern std::vector<std::condition_variable*> finkenCV;
-extern std::condition_variable notifier;
-extern std::mutex vrepMutex;
-extern bool running;
+extern std::vector<std::condition_variable*> finkenCV; /**< Condition variables used to notify all FINken to resume their loop */
+extern std::condition_variable notifier; /**< Condition variable to notify V-REP that a FINken has received its data */
+extern std::mutex vrepMutex; /**< Mutex used to lock acces to #finkenDone */
+extern bool running; /**< Tracks if the Sim is supposed to be running */
 /**
  * \class Async_Server
  * \brief Asynchronous (boost::Asio) Server class to accept new paparazzi connections and pair them with a vrep copter.
  * @see Finken::run()
- * \todo move to separate.cpp file
  */
 class Async_Server{
     public:
@@ -104,7 +98,8 @@ class Async_Server{
             simAddStatusbarMessage("New connection established");
             int ac_id=0;
             bool matchingCopterFound = false;
-            {
+            {   
+                paparazziPacket firstPacket;
                 boost::archive::binary_iarchive in(*sPtr, boost::archive::no_header);
                 in >> firstPacket;
                 ac_id=firstPacket.ac_id;
@@ -125,7 +120,6 @@ class Async_Server{
                         pFinken->connect(std::move(sPtr));
                         std::cout << "started a finken" << std::endl;
                         connectionEstablished = true;
-                        connectedFinkenCount++;
                         break;
                     }
                     catch(std::exception e){
@@ -200,22 +194,22 @@ class FinkenPlugin: public VREPPlugin {
     {   
         
         std::cout << "checking sceneload" << '\n';
-        vrepLog << "[VREP] ScriptLoader check" << '\n' ;
+        //vrepLog << "[VREP] ScriptLoader check" << '\n' ;
         std::string dummyName = "ScriptLoader";
         int handle = simGetObjectHandle(dummyName.c_str());
         std::cout << handle << '\n';
         if (handle > 0){
-            vrepLog << "[VREP] ScriptLoader found, starting asynchronous vrep server" << '\n';
+            //vrepLog << "[VREP] ScriptLoader found, starting asynchronous vrep server" << '\n';
             async_server.reset(new Async_Server(io_service));
             boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
             serverLoaded = true;
-            vrepLog << "[VREP] server done" << '\n';
+            //vrepLog << "[VREP] server done" << '\n';
             std::cout << start_server_cmd << '\n';
             pprzServer = bp::child(start_server_cmd, "-n");
             gcs = bp::child(start_gcs_cmd);
         }
         else {
-            vrepLog << "[VREP] ScriptLoader not found, not starting server" << '\n';
+            //vrepLog << "[VREP] ScriptLoader not found, not starting server" << '\n';
         }
     std::cout << "sceneload done" << '\n';
 	return NULL;
@@ -239,7 +233,7 @@ class FinkenPlugin: public VREPPlugin {
                         finkenCV[i]->notify_all();
         }
         std::cerr << "[VREP] ending sim, resetting server" << std::endl;
-	    vrepLog << "[VREP] ending sim, resetting server" << std::endl;
+	    //vrepLog << "[VREP] ending sim, resetting server" << std::endl;
         std::cerr << "[VREP] clearing paparazzi clients" << std::endl;
         paparazziClients.clear();
         //stopping and resetting the ioservice cleans up the server and any connections
@@ -252,7 +246,7 @@ class FinkenPlugin: public VREPPlugin {
         firstStartUp = true;      
         //restart the ioservice to prepare for a new simulation
         boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
-	    vrepLog << "[VREP] successfully reset server" << std::endl;
+	    //vrepLog << "[VREP] successfully reset server" << std::endl;
 
         //pprzServer.terminate();
         //gcs.terminate();
@@ -274,15 +268,13 @@ class FinkenPlugin: public VREPPlugin {
                         }
                     } 
                 }        
-                vrepLog << "[VREP] simulated copters: " << simFinken.size() << std::endl;
-                auto actionStart = Clock::now();
+                //vrepLog << "[VREP] simulated copters: " << simFinken.size() << std::endl;
                 
                 // if there is no finken connected to paparazzi yet, we do nothing:
                 if(std::none_of(simFinken.begin(), simFinken.end(), [](const std::unique_ptr<Finken>& f){ return f->connected;}) ){
                     return NULL;
                 }
                     
-                auto then = Clock::now();
                 
                 //send position data and get new commands:
                 {
@@ -297,12 +289,7 @@ class FinkenPlugin: public VREPPlugin {
                         notifier.wait(lock);
                     }
                 }
-                
 
-                auto now = Clock::now();
-                vrepLog << "[VREP] time vrep is waiting for finken: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;
-                then =Clock::now();
-        
                 //we apply those commands
                 for(auto&& pFinken : simFinken) {
                     if (pFinken->connected) {
@@ -310,12 +297,7 @@ class FinkenPlugin: public VREPPlugin {
                     }
                 }
                 //position data can be sent now
-                
-                
-                now = Clock::now();
-                vrepLog << "[VREP] time setting rotor forces: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << 
-                std::endl;
-                vrepLog << "[VREP] time total finkenplugin action(): " << std::chrono::nanoseconds(now - actionStart).count()/1000000 << "ms" << std::endl;
+
                 
                 return NULL;
             }
