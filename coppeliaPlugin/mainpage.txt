@@ -1,0 +1,53 @@
+/*! \mainpage VREP Integrated paparazzi simulation (VIPSIM?)
+ *
+ * \section intro_sec Introduction
+ *
+ * This V-REP plugin provides a framework for integrating
+ * the native Paparazzi control-loop for UAVs into the 3D virtual-
+ * robot experimentation platform V-REP, created for the simulation
+ * of the quadcopters in the Otto-Von-Guericke University SwarmLab.<br>
+ * It works by feeding the Paparazzi flight dynamics model data obtained from 
+ * the 3D simulation environment provided by V-REP, and then exectuing the commands
+ * Paparazzi provides based on that data.
+ *  
+ * \section install_sec Installation and usage
+  
+ \subsection step1 Step 1: Repositories and V-REP
+Install V-REP and Paparazzi. <br>
+Clone https://github.com/ovgu-FINken/Simulation/tree/paparazziSimSingle for the V-REP code(branch paparazziSimSingle) <br>
+and https://github.com/ovgu-FINken/paparazzi (branch vrepSimOrig).
+
+
+ \subsection step2 Step 2: Dependencies and libraries
+Install boost and eigen3.
+Make sure to add the variables PAPARAZZI_HOME and VREP_HOME to you environment variables,
+pointing to the respective root folders.
+
+ \subsection step3 Step 3: Running the simulation
+To run the simulation, open vrep and load the scene finkenRotated.ccc provided in the simulation repository.
+If you wish to build your own scene, make sure to include the "scriptloader" object in as in the example scene
+or the plugin will not work.<br>
+In paparazzi, select the aircraft "test" and build the target nps.
+
+Then press play on the vrep simulation, followed by executing the paparazzi simulation.
+
+ */
+
+/*! \page sync_page Synchronization structure
+ *
+ * \section sync_basic Basic structure
+ * Each FINken running in the Simulation needs to be synchronized so that each FINken loop is executed 
+ * exactly once during each V-REP simulation step. To this end, a vector( #finkenDone ) is used to track the progress of each FINken
+ * in its own loop.  <br>
+ * Simplified loop/communication synchronization overview for a single copter:
+ * \image html sequence.png
+ * \subsection sync_FINken FINken sync
+ * Once a FINken has read its data, its execution needs to be blocked until V-REP has processed the data.
+ * To this end, the entry in the vector that corresponds to this FINken (tracked in Finken#syncID) is set to 1, and the FINken can not
+ * continue until it is reset to 0. \n
+ * \subsection sync_vrep V-REP sync
+ * V-REP, in each simulation step, needs to wait for all FINken to receive new data before it can process all data (e.g. apply the correct
+ * force to each rotor of each FINken). As long as any FINken is not done, specifically as long as any entry in #finkenDone is 0, the execution halts.
+ * As soon as all FINken are done, V-REP applies the correct forces, sets #finkenDone to 0 and notifies all FINken to resume their loop.
+ *
+ */
