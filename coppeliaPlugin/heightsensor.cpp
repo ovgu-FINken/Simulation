@@ -7,7 +7,6 @@
  * 
  */
 
-
 #include "heightsensor.h"
 #include "stubs.h"
 #include <iostream>
@@ -19,12 +18,10 @@ HeightSensor::HeightSensor(int sensorHandle, double sigma, boost::random::mt1993
     std::cout << "creating height sensor with handle " << sensorHandle << '\n';
 }
 
-
 void HeightSensor::update() {
     auto pos = sim::getObjectPosition(this->getHandle(), -1);
     values[0] = pos[2];
 }
-
 
 std::vector<float> HeightSensor::get(){
     std::vector<float> errorValues = {0};
@@ -33,8 +30,6 @@ std::vector<float> HeightSensor::get(){
     return errorValues;
 }
 
-
 std::vector<float> HeightSensor::get_without_error(){
-    return values;    
+    return values;
 }
-

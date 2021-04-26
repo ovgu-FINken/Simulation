@@ -23,7 +23,7 @@ include_directories(${PAPARAZZI_HOME}/sw/simulator/nps/ ${EIGEN3_INCLUDE_DIRS})
 
 COPPELIASIM_ADD_PLUGIN(simExtPaparazzi SOURCES sonar.cpp positionsensor.cpp
   heightsensor.cpp finken.cpp attitudesensor.cpp accelerometer.cpp
-  finkenplugin.cpp rotor.cpp log.cpp sensor.cpp)
+  finkenplugin.cpp rotor.cpp log.cpp)
 
 target_link_libraries(simExtPaparazzi Boost::system Boost::random
   Boost::filesystem Boost::serialization Boost::thread)

@@ -3,8 +3,8 @@
  * \brief header for the finken implementation
  */
 
-
 #pragma once
+
 #include <memory>
 #include <cstdlib>
 #include <iostream>
@@ -42,15 +42,10 @@ using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
 
 /**
- * Vector used to make sure all FINken are done reading data. 
- * See \ref sync_page for a basic overview of the synchronization. 
- */
-extern std::vector<bool> finkenDone;
-
-/**
  *  \brief Class for annotating log with time points
  */
 class LogLine {
+
   private:
     std::ostream& o;
 
@@ -74,53 +69,35 @@ class LogLine {
 /**
  * \brief Class for creating a log file
  */
-class VrepLog {
+class FinkenLog {
+
   private:
     std::ofstream log;
+
   public:
-    VrepLog() {
-      log.open((current_path() / "V-REP.log").c_str());
+    FinkenLog(int ac_id) {
+      log.open( ( current_path() / ( std::string("finken_") + std::to_string(ac_id) + ".log" ) ).c_str() );
     }
     template<typename T>
     LogLine operator<<(T& t) {
       return log << Clock::now().time_since_epoch().count() << ", " << t;
     }
 };
-extern VrepLog  vrepLog;
 
 /**
  * Finken class for handling any data exchanges between a
  * FINken and Paparazzi. Also handles the application of
  * rotor mixing commands to the FINken.
  */
-class Finken
-{
-private:
+class Finken {
+
+  protected:
      std::vector<std::unique_ptr<Sensor>> sonars;
      std::vector<std::unique_ptr<Rotor>> rotors;
-     
 
-public:
-    /** Basic Empty Constructor */
-    Finken();
-    /**
-     * Constructor for creating a uniquely identifiable FINken.
-     * @param fHandle the handle used to identify the FINken in V-REP.
-     * @param _ac_id the Aircraft ID used to identify the copter in Paparazzi.
-     * @param rotorCount the amount of rotors the copter has.
-     * @param sonarCount the amount of sonars the copter has.
-     * @param ac_name the name of the aircraft in the vrep scene
-     * @param syncID the entry this FINken occupies in the vector used to sync all FINken.
-     */
-    Finken(int fHandle, int _ac_id, int rotorCount, int sonarCount, std::string ac_name, unsigned int syncID);
-    /** Basic destructor */
-    ~Finken() { 
-        //make sure future loops wont block because of a nonexisting copter
-        finkenDone.at(syncID) = true;
-        connected = false;
-        runThread.join();        
-    }
-    
+    /** Current connection status of the copter. **/
+    bool _connected = false;
+
     /** Datapacket used to send information to paparazzi 
      * See datapacket.h
      */
@@ -135,29 +112,10 @@ public:
     /** Integer representing the handle of the copter base in V-REP.
      *  Copter base, not the copter object is used for the calculation of the copter state.
      */
-    int baseHandle;    
+    int baseHandle;
 
-    /** Integer representing the Aircraft ID to match copters in V-REP and Paparazzi. */
-    const int ac_id;
+    FinkenLog log;
 
-   
-
-    /** The number of rotors the copter has */
-    int rotorCount;
-
-    /** The number of sonars the copter has */
-    int sonarCount;
-
-    /** The name of the aircraft */
-    std::string ac_name;
-
-    /** Integer representing the spot in the vector #finkenDone used to syncrhonize FINken thread execution. \n
-     * See \ref sync_page for a basic overview of the synchronization. 
-     */
-    const unsigned int syncID;
-
-    /** Current connection status of the copter. **/
-    bool connected = false;
 
     /** pointer to heightSensor **/
     std::unique_ptr<HeightSensor> heightSensor;
@@ -180,8 +138,17 @@ public:
     /** Vector storing the commands provided by Paparazzi */
     std::vector<double> commands = {0,0,0,0};
 
+    enum class CurrentActivity {
+      SIM,
+      CONTROL,
+      NONE
+    };
+
     /** Mutex for the copter synchronization */
-    std::mutex finkenMutex;
+    std::mutex mutex;
+    std::atomic<CurrentActivity> currentActivity = CurrentActivity::SIM;
+    std::condition_variable notifier;
+    std::condition_variable& simNotifier;
 
     /** 
      * @anchor copterstate
@@ -202,7 +169,49 @@ public:
     /** Copter rotational acceleration (aka angular acceleration) */
     std::vector<float> rotAccel ={-1,-1,-1};
     ///@}
-    
+
+public:
+    /** Integer representing the Aircraft ID to match copters in V-REP and Paparazzi. */
+    const int ac_id;
+
+    /** The name of the aircraft */
+    const std::string ac_name;
+
+    /** Basic Empty Constructor */
+    Finken();
+    /**
+     * Constructor for creating a uniquely identifiable FINken.
+     * @param fHandle the handle used to identify the FINken in V-REP.
+     * @param _ac_id the Aircraft ID used to identify the copter in Paparazzi.
+     * @param ac_name the name of the aircraft in the vrep scene
+     */
+    Finken(int fHandle, int _ac_id, const std::string& ac_name, std::condition_variable& simNotifier);
+    /** Basic destructor */
+    ~Finken() {
+        //make sure future loops wont block because of a nonexisting copter
+        currentActivity = CurrentActivity::SIM;
+        _connected = false;
+        runThread.join();
+    }
+
+    /** Throttlevalues for the motors built into the FINken */
+    static constexpr std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
+    /** Thrust values in Newton coressponding to the trottle values */
+    static constexpr std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
+
+    void control() {
+      currentActivity = CurrentActivity::CONTROL;
+      notifier.notify_all();
+    }
+
+    bool connected() const {
+      return _connected;
+    }
+
+    bool ready() const{
+      return currentActivity.load() == CurrentActivity::SIM;
+    }
+
     /**@name Construction functions
      * Functions needed to construct the copter in the V-REP plugin
      * @see buildFinken()
@@ -210,6 +219,7 @@ public:
     ///@{
     /** Adding sensors to the copter. */
     void addSensor(std::unique_ptr<Sensor> &sensor);
+
     /** Adding rotors to the copter. */
     void addRotor(std::unique_ptr<Rotor> &rotor);
     ///@}    
@@ -219,10 +229,10 @@ public:
      * to the corresponding finken in a new thread
      */
     void connect(std::unique_ptr<tcp::iostream>&& sPtr) {
-      connected=true;
-      finkenDone.at(syncID) = true;
+      _connected=true;
+      currentActivity = CurrentActivity::SIM;
       auto helper=[this,&sPtr](){run(std::move(sPtr));};
-      runThread=std::move(std::thread(helper));
+      runThread=std::thread(helper);
     }
 
     /**
@@ -257,8 +267,16 @@ public:
 
     /** Deleted copy constructor (FINken objects need to be unique)*/
     Finken(const Finken&) = delete;
+
     /** Deleted copy assignment operator (FINken objects need to be unique)*/
     Finken& operator=(const Finken&) = delete;
+
+    /**
+     * Calculates thrust forces (Newton) from the rotor commands
+     * @see Finken::commands
+     */
+    static double thrustFromThrottle(double throttle);
+    friend void buildFinken(Finken&);
 };
 /** Constructs a complete FINken from an empty FINken object using its handle.
  *  Takes a unique_ptr to a Finken and adds the correct handles for the sensors & rotors from the V-REP object tree.
@@ -267,10 +285,5 @@ public:
 void buildFinken(Finken& finken);
 
 
-/**
- * Calculates thrust forces (Newton) from the rotor commands
- * @see Finken::commands
- */
-double thrustFromThrottle(double throttle);
 
 

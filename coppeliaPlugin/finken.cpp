@@ -27,14 +27,10 @@ using boost::filesystem::ofstream;
 using boost::filesystem::current_path;
 using boost::asio::ip::tcp;
 using Clock = std::chrono::high_resolution_clock;
-/** Throttlevalues for the motors built into the FINken */
-std::array<double,6> throttlevalues = {0, 0.5, 0.65, 0.75, 0.85, 1};
-/** Thrust values in Newton coressponding to the trottle values */
-std::array<double,6> thrustvalues = {0, 0.92,1.13,1.44,1.77,2.03};
 
+using Lock = std::unique_lock<std::mutex>;
 
-
-std::string vrepHome=std::getenv("VREP_HOME");
+/* std::string vrepHome=std::getenv("VREP_HOME");
 std::atomic<unsigned int> readyFinkenCount(0);
 
 
@@ -44,11 +40,11 @@ std::vector<std::condition_variable*> finkenCV;
 std::mutex vrepMutex;
 std::condition_variable notifier;
 bool running = false;
+*/
 
 
-
-Finken::Finken(int fHandle, int _ac_id, int _rotorCount, int _sonarCount, std::string _ac_name, unsigned int _syncID) : handle(fHandle), ac_id(_ac_id), rotorCount(_rotorCount), sonarCount(_sonarCount), syncID(_syncID) {
-    ac_name = _ac_name;
+Finken::Finken(int fHandle, int _ac_id, const std::string& _ac_name, std::condition_variable& simNotifier)
+  : handle(fHandle), ac_id(_ac_id), log(_ac_id), ac_name(_ac_name), simNotifier(simNotifier) {
 }
 
 void Finken::addSensor(std::unique_ptr<Sensor> &sensor){
@@ -57,7 +53,7 @@ void Finken::addSensor(std::unique_ptr<Sensor> &sensor){
 }
 void Finken::addRotor(std::unique_ptr<Rotor> &rotor){
     //vrepLog << "Adding rotor with name" << simGetObjectName(rotor->handle) << '\n';
-    this->rotors.push_back((std::move(rotor)));    
+    this->rotors.push_back((std::move(rotor)));
 }
 
 std::vector<std::unique_ptr<Sensor>> &Finken::getSonars(){
@@ -75,16 +71,16 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         for(auto&& rotor : rotors) {
             std::cout << rotor.get()->position << " | ";
         }
-        std::sort(rotors.begin(),rotors.end(), [](std::unique_ptr<Rotor>& r1, std::unique_ptr<Rotor>& r2) {return *r1.get() < *r2.get();});	    
-        buildFinken(*this);        
+        std::sort(rotors.begin(),rotors.end(), [](std::unique_ptr<Rotor>& r1, std::unique_ptr<Rotor>& r2) {return *r1.get() < *r2.get();});
+        buildFinken(*this);
         std::cout << "Rotor order after sorting: ";
         for(auto&& rotor : rotors) {
             std::cout << rotor.get()->position << " | ";
         }
         std::cout << std::endl;
         //vrepLog << "[FINK] client connected" << std::endl;
-	    //vrepLog << "[FINK] simulation state: " << simState << std::endl;	    
-		
+	      //vrepLog << "[FINK] simulation state: " << simState << std::endl;	    
+
 
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
         //first connection:
@@ -92,7 +88,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         //vrepLog << "[FINK] first connection" << std::endl;
         //read commands
         sPtr->flush();
-        {               
+        {
                 //vrepLog << "[FINK] creating archive" << std::endl;            
                 boost::archive::binary_iarchive in(*sPtr, boost::archive::no_header);
                 //vrepLog << "[FINK] recieving data" << std::endl;
@@ -113,7 +109,7 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
         //vrepLog << "[FINK] updating position" << std::endl;
         //update position
         updatePos(*this);
-        
+
 
         //send initial position packet
         {
@@ -150,28 +146,26 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             this->commands[1]=inPacket.south_east;
             this->commands[2]=inPacket.south_west;
             this->commands[3]=inPacket.north_west;
-            
+
             /* logstuff
             vrepLog << "[FINK] recieved: " << inPacket.north_east << " | " << inPacket.south_east << " | " << inPacket.south_west << " | " << inPacket.north_west << std::endl << std::endl;
             auto now = Clock::now();
             //vrepLog << "[FINK] time receiving data: " << std::chrono::nanoseconds(now-then).count()/1000000 << "ms" << std::endl;            
             then = Clock::now();
             */
-            
+
             {
-                std::unique_lock<std::mutex> lock(vrepMutex);
-                finkenDone.at(syncID) = true;
-                notifier.notify_all();
-                while(finkenDone[syncID] && running) {
-                    finkenCV.at(syncID)->wait(lock);     
-                }
-                if (!running) {
+                currentActivity = CurrentActivity::SIM;
+                simNotifier.notify_all();
+                Lock lock(mutex);
+                notifier.wait(lock, [this](){ return currentActivity.load() != CurrentActivity::CONTROL; } );
+
+                if( currentActivity.load() != CurrentActivity::NONE ) {
                     //just to make sure this finken gets cleaned up correctly
                     //TODO: maybe a custom exception to specifically handle intentional shutdown?
                     throw std::runtime_error("Simulation no longer running, killing finken");
-                    break;
                 }
-                
+
             }
              /*logstuff
             now = Clock::now();
@@ -217,36 +211,34 @@ void Finken::run(std::unique_ptr<tcp::iostream> sPtr){
             */
         }
     }
-  	catch (std::exception& e) {
+    catch (std::exception& e) {
 	    std::cerr << "Exception in thread: " << e.what() << "\n";
 	    std::cerr << "Error Message: " << sPtr->error().message() << std::endl;
-        //vrepLog << "[FINK] Exception in thread: " << e.what() << "\n";
-        std::cerr << "cleaning up... " << std::endl;
-        sPtr->close();
-        sPtr.reset();
-        connected=0;
-        std::cerr <<  "cleanup finished, stopping sim" << std::endl;
-        //simAddStatusbarMessage("stopping sim from finken::run");
+      //vrepLog << "[FINK] Exception in thread: " << e.what() << "\n";
+      std::cerr << "cleaning up... " << std::endl;
+      sPtr->close();
+      sPtr.reset();
+      _connected = false;
+      std::cerr <<  "cleanup finished, stopping sim" << std::endl;
+      //simAddStatusbarMessage("stopping sim from finken::run");
 	    //simStopSimulation();
-    	//simAdvanceSimulationByOneStep();
-
-	}
+      ////simAdvanceSimulationByOneStep();
+	  }
 }
 
 /*
  *Takes a unique_ptr to a Finken and adds the random number generator
  *
  */
-void buildFinken(Finken& finken){    
+void buildFinken(Finken& finken){
     //vrepLog << "[FINK] building finken" << std::endl;
     std::time_t now = std::time(0);
-    finken.gen = boost::random::mt19937{static_cast<std::uint32_t>(now)};    
-
+    finken.gen = boost::random::mt19937{static_cast<std::uint32_t>(now)};
 }
 
 
 void Finken::updatePos(Finken& finken) {
-    
+
     //std::cout << "updating accel" << '\n';
     finken.accelerometer->update();
     //std::cout << "updating pos" << '\n';
@@ -255,7 +247,7 @@ void Finken::updatePos(Finken& finken) {
     finken.heightSensor->update();
     //std::cout << "updating att" << '\n';
     finken.attitudeSensor->update();
-    
+
     std::vector<float> position = {0,0,0};
     std::vector<float> velocities = {0,0,0,0,0,0,0,0,0,0,0,0};
 
@@ -263,7 +255,7 @@ void Finken::updatePos(Finken& finken) {
     //std::cout << "pos" << '\n';
     position = finken.positionSensor->get();
     finken.pos[0] = position[0];
-    finken.pos[1] = position[1];    
+    finken.pos[1] = position[1];
     //std::cout << "height" << '\n';
     finken.pos[2] = finken.heightSensor->get()[0];
     //std::cout << "quat" << '\n';
@@ -271,7 +263,7 @@ void Finken::updatePos(Finken& finken) {
 
     //std::cout << "accel" << '\n';
     //Element order:  0-2: velocity, 3-5: rotVel, 6-8: accel, 9-11: rotaccel
-    velocities = finken.accelerometer->get();    
+    velocities = finken.accelerometer->get();
     //std::cout << "vel" << '\n';
     finken.vel[0] = velocities[0];
     finken.vel[1] = velocities[1];
@@ -288,9 +280,6 @@ void Finken::updatePos(Finken& finken) {
     finken.rotAccel[0] = velocities[9];
     finken.rotAccel[1] = velocities[10];
     finken.rotAccel[2] = velocities[11];
-
-  
-
 }
 
 /*
@@ -317,7 +306,7 @@ void remove_item(int id) {
 }
 */
 
-double thrustFromThrottle(double throttle) {
+double Finken::thrustFromThrottle(double throttle) {
     if (throttle <= 0) return 0;
     else if (throttle ==1) return 2.03;
     for(unsigned int i = 0; i<throttlevalues.size(); i++){
@@ -352,14 +341,12 @@ void Finken::setRotorSpeeds() {
 	   get the quaternion for each rotor, rotate the corresponding force 
            and apply to the rotor */
         simGetObjectQuaternion(this->getRotors().at(i)->handle, -1, &rotorQuat.x());
-        
+
         Eigen::Vector3f force(motorForces.at(i).data());
         force = rotorQuat * force;
-	    Eigen::Vector3f torque = (pow(-1, (i)))*0*force;
-        
+	      Eigen::Vector3f torque = (pow(-1, (i)))*0*force;
 
-	    
-        std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());        
+        std::vector<float> simForce(&force[0], force.data() + force.rows() * force.cols());
         std::vector<float> simTorque(&torque[0], torque.data() + torque.rows() * torque.cols());
         /*logstuff    	
         //vrepLog << "[FINK] Rotor #" << i << " Quaternion-xyzw: " << rotorQuat.x() << " | "  << rotorQuat.y() << " | " << rotorQuat.z() << " | " << rotorQuat.w() << std::endl;
@@ -369,11 +356,7 @@ void Finken::setRotorSpeeds() {
         //vrepLog << "[FINK] adding torque to rotor " << i << ": " << simTorque[0] << " | " << simTorque[1] << " | " << simTorque[2] << std::endl;	
         */
         //std::fill(simForce.begin(), simForce.end(), 0);
-		
+
         this->getRotors().at(i)->set(simForce, simTorque);
-
     }
-
-
 }
-

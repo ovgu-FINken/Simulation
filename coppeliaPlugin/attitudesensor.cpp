@@ -3,19 +3,16 @@
  * \class AttitudeSensor
  */
 
-
 #include "attitudesensor.h"
 #include "stubs.h"
 #include <iostream>
 #include <vector>
-
 
 AttitudeSensor::AttitudeSensor(int sensorHandle, double sigma, boost::random::mt19937& gen) : Sensor::Sensor(sensorHandle, sigma, gen){
     values = {0,0,0,0};
     sensorType = SensorTypes::Attitude;
     std::cout << "creating attitude sensor with handle " << sensorHandle << '\n';
 }
-
 
 void AttitudeSensor::update(){
   auto quat = sim::getObjectQuaternion(handle, -1);

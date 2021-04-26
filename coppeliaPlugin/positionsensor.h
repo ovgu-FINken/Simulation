@@ -8,24 +8,22 @@
 #pragma once
 #include "sensor.h"
 
+class PositionSensor: public Sensor {
 
-
-class PositionSensor: public Sensor{
-
-private:
+  private:
     /**
      * Vector containing the sensor values. \n
      * Elements represent the x and y coordinates of the copter.
-     */    
-    std::vector<float> values;  
-        
+     */
+    std::vector<float> values;
+
     /**
      * Vector used to retrieve the position, the xand y values are then stored
      * in PositionSensor#values
      */
     std::vector<float> positionValues;
 
-public:
+  public:
     /** Basic constructor
      * @param sensorHandle The handle of the object the acceleration is measured for
      * @param sigma The maximum error to add to any sensor values
@@ -50,10 +48,4 @@ public:
      * \returns The PositionSensor#values vector not including error values
      */
     std::vector<float>get_without_error();
-
 };
-
-
-
-
-

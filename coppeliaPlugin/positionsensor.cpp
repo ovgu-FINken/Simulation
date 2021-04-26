@@ -2,11 +2,11 @@
  * @file positionsensor.cpp 
  * \class PositionSensor
  */
+
 #include "positionsensor.h"
 #include "stubs.h"
 #include <iostream>
 #include <vector>
-
 
 PositionSensor::PositionSensor(int sensorHandle, double sigma, boost::random::mt19937& gen) : Sensor::Sensor(sensorHandle, sigma, gen){
     values = {0,0};
@@ -14,8 +14,6 @@ PositionSensor::PositionSensor(int sensorHandle, double sigma, boost::random::mt
     sensorType = SensorTypes::Position;
     std::cout << "creating position sensor with handle " << sensorHandle << '\n';
 }
-
-
 
 void PositionSensor::update(){
     auto pos = sim::getObjectPosition(this->getHandle(), -1);
@@ -25,8 +23,7 @@ void PositionSensor::update(){
 
 std::vector<float> PositionSensor::get_without_error(){
     return values;
-}        
-
+}
 
 std::vector<float> PositionSensor::get(){
     std::vector<float> errorValues = {0,0};
