@@ -70,3 +70,9 @@ Thumbs.db
 *.dll
 *.exe
 
+.cache
+html
+images
+latex
+logplots
+scenes
