@@ -44,7 +44,7 @@ bool running = false;
 
 
 Finken::Finken(int fHandle, int _ac_id, const std::string& _ac_name, std::condition_variable& simNotifier)
-  : handle(fHandle), ac_id(_ac_id), log(_ac_id), ac_name(_ac_name), simNotifier(simNotifier) {
+  : _handle(fHandle), ac_id(_ac_id), log(_ac_id), ac_name(_ac_name), simNotifier(simNotifier) {
 }
 
 void Finken::addSensor(std::unique_ptr<Sensor> &sensor){

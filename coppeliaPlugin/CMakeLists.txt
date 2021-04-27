@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(PaparazziPlugin)
+project(simExtFinken)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -21,9 +21,9 @@ coppeliasim_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAK
 
 include_directories(${PAPARAZZI_HOME}/sw/simulator/nps/ ${EIGEN3_INCLUDE_DIRS})
 
-COPPELIASIM_ADD_PLUGIN(simExtPaparazzi SOURCES sonar.cpp positionsensor.cpp
+COPPELIASIM_ADD_PLUGIN(simExtFinken SOURCES sonar.cpp positionsensor.cpp
   heightsensor.cpp finken.cpp attitudesensor.cpp accelerometer.cpp
   finkenplugin.cpp rotor.cpp log.cpp)
 
-target_link_libraries(simExtPaparazzi Boost::system Boost::random
+target_link_libraries(simExtFinken Boost::system Boost::random
   Boost::filesystem Boost::serialization Boost::thread)

@@ -107,7 +107,7 @@ class Finken {
      */
     paparazziPacket inPacket;
     /** Integer representing the handle of the copter object in V-REP */
-    int handle;
+    int _handle;
 
     /** Integer representing the handle of the copter base in V-REP.
      *  Copter base, not the copter object is used for the calculation of the copter state.
@@ -204,6 +204,10 @@ public:
       notifier.notify_all();
     }
 
+    int handle() const {
+      return _handle;
+    }
+
     bool connected() const {
       return _connected;
     }
@@ -277,6 +281,7 @@ public:
      */
     static double thrustFromThrottle(double throttle);
     friend void buildFinken(Finken&);
+    friend class FinkenPlugin;
 };
 /** Constructs a complete FINken from an empty FINken object using its handle.
  *  Takes a unique_ptr to a Finken and adds the correct handles for the sensors & rotors from the V-REP object tree.

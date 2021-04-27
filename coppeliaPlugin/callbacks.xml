@@ -1,68 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <?xml-stylesheet type="text/xsl" href="callbacks.xsl"?>
 
-<plugin name="Test" author="steup@ovgu.de">
-    <description>An example plugin to test the plugin API of CoppeliaSIm</description>
-    <!--command name="createObject">
-        <description>Create an instance of the ExampleObject.</description>
+<plugin name="Finken" author="steup@ovgu.de">
+    <description>Link of the FINken Quadcopters controlled by Paparazzi to CoppeliaSIm</description>
+    <command name="registerCopter">
+        <description>Register a virtual FINKen with the plugin.</description>
         <params>
+            <param name="handle" type="int">
+                <description>Simulation handle of the copter.</description>
+            </param>
+            <param name="id" type="int">
+                <description>Aircraft ID of the copter.</description>
+            </param>
+            <param name="rotorCount" type="int">
+                <description>Number of rotors of the copter (unused).</description>
+            </param>
+            <param name="sensorCount" type="int">
+                <description>Number of sensors of the copter (unused).</description>
+            </param>
+            <param name="name" type="string">
+                <description>Name of the aircraft.</description>
+            </param>
         </params>
         <return>
-            <param name="handle" type="string">
-                <description>handle of the newly created object</description>
-            </param>
+          <param name="result" type="bool">
+            <description>True if successfully registered, false otherwise</description>
+          </param>
         </return>
     </command>
-    <command name="destroyObject">
-        <description>Create an instance of the ExampleObject.</description>
+    <command name="addSensor">
+        <description>Add a sensor to a copter.</description>
         <params>
-            <param name="handle" type="string">
-                <description>handle of the object</description>
+            <param name="sensorHandle" type="int">
+                <description>handle of the sensor object</description>
+            </param>
+            <param name="copterHandle" type="int">
+                <description>handle of the copter object</description>
+            </param>
+            <param name="type" type="string">
+                <description>type of the sensor (one of {Accelerometer, Attitude, Height, Position}</description>
+            </param>
+            <param name="sigma" type="float">
+                <description>Standard deviation of zero-mean gaussian noise added to sensor output</description>
             </param>
         </params>
         <return>
+          <param name="result" type="bool">
+            <description>True if successfully registered, false otherwise</description>
+          </param>
         </return>
     </command>
-    <command name="setData">
-        <description>Create an instance of the ExampleObject.</description>
+    <command name="addRotor">
+        <description>Add a rotor to a copter.</description>
         <params>
-            <param name="handle" type="string">
-                <description>handle of the object</description>
+            <param name="rotorHandle" type="int">
+                <description>handle of the rotor object</description>
             </param>
-            <param name="a" type="int">
-                <description>an integer argument</description>
+            <param name="copterHandle" type="int">
+                <description>handle of the copter object</description>
             </param>
-            <param name="b" type="int">
-                <description>an integer argument</description>
+            <param name="position" type="string">
+                <description>Position code of rotor for copter control (one of {NW, NE, SE, SW}).</description>
             </param>
         </params>
         <return>
+          <param name="result" type="bool">
+            <description>True if successfully registered, false otherwise</description>
+          </param>
         </return>
     </command>
-    <command name="compute">
-        <description>Compute some stuff using the data stored in the object.</description>
-        <params>
-            <param name="handle" type="string">
-                <description>handle of the object</description>
-            </param>
-        </params>
-        <return>
-            <param name="currentSize" type="int">
-                <description>Current size of the sequence</description>
-            </param>
-        </return>
-    </command>
-    <command name="getOutput">
-        <description>Get output stored in the object.</description>
-        <params>
-            <param name="handle" type="string">
-                <description>handle of the object</description>
-            </param>
-        </params>
-        <return>
-            <param name="output" type="table" item-type="int">
-                <description>a vector of integers</description>
-            </param>
-        </return>
-    </command-->
 </plugin>

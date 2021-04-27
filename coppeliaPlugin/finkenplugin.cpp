@@ -252,12 +252,12 @@ class FinkenPlugin: public sim::Plugin {
     /**
      * This function controls the other parts of the plugin and synchronizes the vrep copters with the paparazzi copters.
      */
-    void* action(int* auxiliaryData,void* customData,int* replyData){
+    virtual void onFirstInstancePass(const sim::InstancePassFlags& flags) {
             try {
                 if (firstStartUp) {
                     firstStartUp = false;
                     for(auto&& pFinken : simFinken) {
-                        if(!pFinken->connected()){
+                        if(!pFinken->connected()) {
                             std::cout << "trying to pair copter #" << pFinken->ac_id << '\n';
                             paparazziClients.emplace_back(new bp::child(start_nps_cmd, "-a", pFinken->ac_name, "-t", "nps"));
 
@@ -267,8 +267,9 @@ class FinkenPlugin: public sim::Plugin {
                 //vrepLog << "[VREP] simulated copters: " << simFinken.size() << std::endl;
 
                 // if there is no finken connected to paparazzi yet, we do nothing:
-                if(std::none_of(simFinken.begin(), simFinken.end(), [](const std::unique_ptr<Finken>& f){ return f->connected();}) ){
-                    return NULL;
+                if(std::none_of(simFinken.begin(), simFinken.end(),
+                                [](const std::unique_ptr<Finken>& f){ return f->connected();}) ) {
+                    return;
                 }
 
                 //send position data and get new commands:
@@ -290,14 +291,12 @@ class FinkenPlugin: public sim::Plugin {
                     }
                 }
                 //position data can be sent now
-
-                return NULL;
             }
             catch (std::exception& e) {
                 std::cerr << "[VREP] Exception in thread: " << e.what() << "\n";
-                return NULL;
             }
     }
+
     virtual void onStart() {
 
       if(!registerScriptStuff())
@@ -309,7 +308,74 @@ class FinkenPlugin: public sim::Plugin {
       std::cerr << "Paparazzi plugin terminated!" << endl;
     }
 
+    void registerCopter(registerCopter_in* in, registerCopter_out* out) {
+      std::cout << "finken registering" << '\n';
+      int handle = in->handle;
+      int AC_ID = in->id;
+      std::string ac_name = in->name;
+      simFinken.emplace_back(new Finken(handle, AC_ID, ac_name, notifier));
+      std::cout << "finken done registering" << '\n';
+      out->result=true;
+    }
+
+    void addSensor(addSensor_in* in, addSensor_out* out) {
+      std::cout << "sensor registering" << '\n';
+      int handle = in->sensorHandle;
+      int finkenHandle = in->copterHandle;
+      const std::string sensorType = in->type;
+      float sigma = in->sigma;
+      for(auto&& pFinken : simFinken) {
+          if (pFinken->handle() == finkenHandle) {
+              if (sensorType == "Accelerometer") {
+                  //Add acceleration Sensor
+                  std::cout << "adding acceleration sensor" << '\n';
+                  pFinken->accelerometer.reset(new Accelerometer(handle, sigma, pFinken->gen));
+              }
+              else if (sensorType == "Attitude") {
+                  //Add attitude Sensor
+                  std::cout << "adding attitude sensor" << '\n';
+                  pFinken->attitudeSensor.reset(new AttitudeSensor(handle, sigma, pFinken->gen));
+              }
+              else if (sensorType == "Height"){
+                  //add Height sensor
+                  std::cout << "adding height sensor" << '\n';
+                  pFinken->heightSensor.reset(new HeightSensor(handle, sigma, pFinken->gen));
+              }
+              else if (sensorType == "Position") {
+                  //Add acceleration Sensor
+                  std::cout << "adding position sensor" << '\n';
+                  pFinken->positionSensor.reset(new PositionSensor(handle, sigma, pFinken->gen));
+              }
+              else{
+                  std::cerr << "Unknown sensor type in finken " << finkenHandle << ": " << sensorType << ". \n";
+                  out->result = false;
+              }
+          }
+          out->result = true;
+          return;
+      }
+      out->result = false;
+    }
+
+    void addRotor(addRotor_in* in, addRotor_out* out) {
+      std::cout << "rotor registering" << '\n';
+      int handle = in->rotorHandle;
+      int finkenHandle = in->copterHandle;
+      std::string position = in->position;
+      const char* copterName = simGetObjectName(finkenHandle);
+      const char* rotorName = simGetObjectName(handle);
+      std::cout << "Adding " << rotorName << " to " << copterName << "\n";
+      for(auto&& pFinken : simFinken) {
+          if (pFinken->handle() == finkenHandle) {
+              std::unique_ptr<Rotor> vr(new Rotor(handle, position));
+              pFinken->addRotor(vr);
+              out->result = true;
+              return;
+          }
+      }
+      out->result = false;
+    }
 };
 
-SIM_PLUGIN("Paparazzi", 1, FinkenPlugin)
+SIM_PLUGIN(PLUGIN_NAME, PLUGIN_VERSION, FinkenPlugin)
 #include "stubsPlusPlus.cpp"
