@@ -142,8 +142,6 @@ class FinkenPlugin: public sim::Plugin {
     std::string start_gcs_cmd = pprzHome + "/sw/ground_segment/cockpit/gcs"; /**< Path to the paparazzi gcs start script */
     std::string start_nps_cmd = pprzHome + "/sw/simulator/pprzsim-launch"; /**< Path to the paparazzi nps start script */
     bool firstStartUp = true; /**< Tracks if the ismulation was just started, to then start all copter processes */
-    std::vector<bool> finkenDone;
-    std::vector<std::condition_variable*> finkenCV; /**< Condition variables used to notify all FINken to resume their loop */
     std::condition_variable notifier; /**< Condition variable to notify V-REP that a FINken has received its data */
     std::mutex vrepMutex; /**< Mutex used to lock acces to #finkenDone */
     bool running; /**< Tracks if the Sim is supposed to be running */
@@ -225,10 +223,6 @@ class FinkenPlugin: public sim::Plugin {
     virtual void onSimulationAboutToEnd()
     {
         running = false;
-        for(unsigned int i=0; i<simFinken.size(); i++) {
-                        finkenDone[i]=false;
-                        finkenCV[i]->notify_all();
-        }
         std::cerr << "[VREP] ending sim, resetting server" << std::endl;
 	      //vrepLog << "[VREP] ending sim, resetting server" << std::endl;
         std::cerr << "[VREP] clearing paparazzi clients" << std::endl;
@@ -238,8 +232,6 @@ class FinkenPlugin: public sim::Plugin {
         io_service.reset();
         std::cerr << "[VREP] clearing finken" << std::endl;
         simFinken.clear();
-        finkenCV.clear();
-        finkenDone.clear();
         firstStartUp = true;
         //restart the ioservice to prepare for a new simulation
         boost::thread(boost::bind(&boost::asio::io_service::run, &io_service)).detach();
@@ -298,7 +290,8 @@ class FinkenPlugin: public sim::Plugin {
     }
 
     virtual void onStart() {
-
+      simSetInt32Parameter(sim_intparam_verbosity, sim_verbosity_debug);
+      sim::enableStackDebug();
       if(!registerScriptStuff())
           throw std::runtime_error("script stuff initialization failed");
       std::cerr << "Paparazzi plugin started!" << endl;
