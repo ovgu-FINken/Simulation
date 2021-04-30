@@ -76,3 +76,12 @@ images
 latex
 logplots
 scenes
+compile_commands.json
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+*.plist
+generated
+sim_version_check.cpp
+install_manifest.txt
